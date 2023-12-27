@@ -6,19 +6,19 @@ A full copy of the license may be found in the projects root directory
 /** @file
  * Injector and Ignition (on/off) scheduling (functions).
  * There is usually 8 functions for cylinders 1-8 with same naming pattern.
- * 
+ *
  * ## Scheduling structures
- * 
+ *
  * Structures @ref FuelSchedule and @ref Schedule describe (from scheduler.h) describe the scheduling info for Fuel and Ignition respectively.
  * They contain duration, current activity status, start timing, end timing, callbacks to carry out action, etc.
- * 
+ *
  * ## Scheduling Functions
- * 
+ *
  * For Injection:
  * - setFuelSchedule*(tout,dur) - **Setup** schedule for (next) injection on the channel
  * - inj*StartFunction() - Execute **start** of injection (Interrupt handler)
  * - inj*EndFunction() - Execute **end** of injection (interrupt handler)
- * 
+ *
  * For Ignition (has more complex schedule setup):
  * - setIgnitionSchedule*(cb_st,tout,dur,cb_end) - **Setup** schedule for (next) ignition on the channel
  * - ign*StartFunction() - Execute **start** of ignition (Interrupt handler)
@@ -64,13 +64,13 @@ IgnitionSchedule ignitionSchedule7(IGN7_COUNTER, IGN7_COMPARE, IGN7_TIMER_DISABL
 IgnitionSchedule ignitionSchedule8(IGN8_COUNTER, IGN8_COMPARE, IGN8_TIMER_DISABLE, IGN8_TIMER_ENABLE);
 #endif
 
-static void reset(FuelSchedule &schedule) 
+static void reset(FuelSchedule &schedule)
 {
     schedule.Status = OFF;
     schedule.pTimerEnable();
 }
 
-static void reset(IgnitionSchedule &schedule) 
+static void reset(IgnitionSchedule &schedule)
 {
     schedule.Status = OFF;
     schedule.pTimerEnable();
@@ -121,7 +121,7 @@ void initialiseSchedulers()
   fuelSchedule3.pEndFunction = nullCallback;
   fuelSchedule4.pStartFunction = nullCallback;
   fuelSchedule4.pEndFunction = nullCallback;
-#if (INJ_CHANNELS >= 5)  
+#if (INJ_CHANNELS >= 5)
   fuelSchedule5.pStartFunction = nullCallback;
   fuelSchedule5.pEndFunction = nullCallback;
 #endif
@@ -244,7 +244,7 @@ void _setIgnitionScheduleRunning(IgnitionSchedule &schedule, unsigned long timeo
 
   noInterrupts();
   schedule.startCompare = schedule.counter + timeout_timer_compare; //As there is a tick every 4uS, there are timeout/4 ticks until the interrupt should be triggered ( >>2 divides by 4)
-  if(schedule.endScheduleSetByDecoder == false) { schedule.endCompare = schedule.startCompare + uS_TO_TIMER_COMPARE(duration); } //The .endCompare value is also set by the per tooth timing in decoders.ino. The check here is so that it's not getting overridden. 
+  if(schedule.endScheduleSetByDecoder == false) { schedule.endCompare = schedule.startCompare + uS_TO_TIMER_COMPARE(duration); } //The .endCompare value is also set by the per tooth timing in decoders.ino. The check here is so that it's not getting overridden.
   SET_COMPARE(schedule.compare, schedule.startCompare);
   schedule.Status = PENDING; //Turn this schedule on
   interrupts();
@@ -312,13 +312,16 @@ extern void beginInjectorPriming(void)
 // Shared ISR function for all fuel timers.
 // This is completely inlined into the ISR - there is no function call
 // overhead.
-static inline __attribute__((always_inline)) void fuelScheduleISR(FuelSchedule &schedule)
+static inline __attribute__((always_inline))
+void fuelScheduleISR(FuelSchedule &schedule)
 {
   if (schedule.Status == PENDING) //Check to see if this schedule is turn on
   {
     schedule.pStartFunction();
     schedule.Status = RUNNING; //Set the status to be in progress (ie The start callback has been called, but not the end callback)
-    SET_COMPARE(schedule.compare, schedule.counter + uS_TO_TIMER_COMPARE(schedule.duration) ); //Doing this here prevents a potential overflow on restarts
+    //Doing this here prevents a potential overflow on restarts
+    SET_COMPARE(schedule.compare,
+                schedule.counter + uS_TO_TIMER_COMPARE(schedule.duration) );
   }
   else if (schedule.Status == RUNNING)
   {
@@ -326,23 +329,23 @@ static inline __attribute__((always_inline)) void fuelScheduleISR(FuelSchedule &
       schedule.Status = OFF; //Turn off the schedule
 
       //If there is a next schedule queued up, activate it
-      if(schedule.hasNextSchedule == true)
+      if(schedule.hasNextSchedule)
       {
         SET_COMPARE(schedule.compare, schedule.nextStartCompare);
         SET_COMPARE(schedule.endCompare, schedule.nextEndCompare);
         schedule.Status = PENDING;
         schedule.hasNextSchedule = false;
       }
-      else 
-      { 
-        schedule.pTimerDisable(); 
+      else
+      {
+        schedule.pTimerDisable();
       }
   }
-  else if (schedule.Status == OFF) 
-  { 
+  else if (schedule.Status == OFF)
+  {
     schedule.pTimerDisable(); //Safety check. Turn off this output compare unit and return without performing any action
-  } 
-} 
+  }
+}
 
 /*******************************************************************************************************************************************************************************************************/
 /** fuelSchedule*Interrupt (All 8 ISR functions below) get called (as timed interrupts) when either the start time or the duration time are reached.
@@ -446,13 +449,19 @@ static inline __attribute__((always_inline)) void ignitionScheduleISR(IgnitionSc
     schedule.pStartCallback();
     schedule.Status = RUNNING; //Set the status to be in progress (ie The start callback has been called, but not the end callback)
     schedule.startTime = micros();
-    if(schedule.endScheduleSetByDecoder == true) { SET_COMPARE(schedule.compare, schedule.endCompare); }
-    else { SET_COMPARE(schedule.compare, schedule.counter + uS_TO_TIMER_COMPARE(schedule.duration) ); } //Doing this here prevents a potential overflow on restarts
+    if(schedule.endScheduleSetByDecoder)
+    {
+        SET_COMPARE(schedule.compare, schedule.endCompare);
+    }
+    else
+    {
+        SET_COMPARE(schedule.compare,
+                    schedule.counter + uS_TO_TIMER_COMPARE(schedule.duration));
+    } //Doing this here prevents a potential overflow on restarts
   }
   else if (schedule.Status == RUNNING)
   {
     schedule.pEndCallback();
-    schedule.Status = OFF; //Turn off the schedule
     schedule.endScheduleSetByDecoder = false;
     ignitionCount = ignitionCount + 1; //Increment the ignition counter
     currentStatus.actualDwell = DWELL_AVERAGE( (micros() - schedule.startTime) );
@@ -465,14 +474,15 @@ static inline __attribute__((always_inline)) void ignitionScheduleISR(IgnitionSc
       schedule.hasNextSchedule = false;
     }
     else
-    { 
-      schedule.pTimerDisable(); 
+    {
+      schedule.Status = OFF; //Turn off the schedule
+      schedule.pTimerDisable();
     }
   }
   else if (schedule.Status == OFF)
   {
     //Catch any spurious interrupts. This really shouldn't ever be called, but there as a safety
-    schedule.pTimerDisable(); 
+    schedule.pTimerDisable();
   }
 }
 
@@ -573,7 +583,7 @@ void disablePendingFuelSchedule(byte channel)
     case 1:
       if(fuelSchedule2.Status == PENDING) { fuelSchedule2.Status = OFF; }
       break;
-    case 2: 
+    case 2:
       if(fuelSchedule3.Status == PENDING) { fuelSchedule3.Status = OFF; }
       break;
     case 3:
@@ -613,7 +623,7 @@ void disablePendingIgnSchedule(byte channel)
     case 1:
       if(ignitionSchedule2.Status == PENDING) { ignitionSchedule2.Status = OFF; }
       break;
-    case 2: 
+    case 2:
       if(ignitionSchedule3.Status == PENDING) { ignitionSchedule3.Status = OFF; }
       break;
     case 3:
@@ -622,17 +632,17 @@ void disablePendingIgnSchedule(byte channel)
     case 4:
       if(ignitionSchedule5.Status == PENDING) { ignitionSchedule5.Status = OFF; }
       break;
-#if IGN_CHANNELS >= 6      
+#if IGN_CHANNELS >= 6
     case 6:
       if(ignitionSchedule6.Status == PENDING) { ignitionSchedule6.Status = OFF; }
       break;
 #endif
-#if IGN_CHANNELS >= 7      
+#if IGN_CHANNELS >= 7
     case 7:
       if(ignitionSchedule7.Status == PENDING) { ignitionSchedule7.Status = OFF; }
       break;
 #endif
-#if IGN_CHANNELS >= 8      
+#if IGN_CHANNELS >= 8
     case 8:
       if(ignitionSchedule8.Status == PENDING) { ignitionSchedule8.Status = OFF; }
       break;

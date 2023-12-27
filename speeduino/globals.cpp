@@ -118,7 +118,7 @@ uint16_t fixedCrankingOverride = 0;
 bool clutchTrigger;
 bool previousClutchTrigger;
 volatile uint32_t toothHistory[TOOTH_LOG_SIZE]; ///< Tooth trigger history - delta time (in uS) from last tooth (Indexed by @ref toothHistoryIndex)
-volatile uint8_t compositeLogHistory[TOOTH_LOG_SIZE]; 
+volatile uint8_t compositeLogHistory[TOOTH_LOG_SIZE];
 volatile bool fpPrimed = false; ///< Tracks whether or not the fuel pump priming has been completed yet
 volatile bool injPrimed = false; ///< Tracks whether or not the injectors priming has been completed yet
 volatile unsigned int toothHistoryIndex = 0; ///< Current index to @ref toothHistory array
@@ -140,7 +140,7 @@ volatile uint32_t seclx10;
 volatile byte HWTest_INJ = 0; /**< Each bit in this variable represents one of the injector channels and it's HW test status */
 volatile byte HWTest_INJ_Pulsed = 0; /**< Each bit in this variable represents one of the injector channels and it's pulsed HW test status */
 volatile byte HWTest_IGN = 0; /**< Each bit in this variable represents one of the ignition channels and it's HW test status */
-volatile byte HWTest_IGN_Pulsed = 0; 
+volatile byte HWTest_IGN_Pulsed = 0;
 byte maxIgnOutputs = 1; /**< Number of ignition outputs being used by the current tune configuration */
 byte maxInjOutputs = 1; /**< Number of injection outputs being used by the current tune configuration */
 
@@ -159,8 +159,13 @@ byte pinInjector5; ///< Output pin injector 5
 byte pinInjector6; ///< Output pin injector 6
 byte pinInjector7; ///< Output pin injector 7
 byte pinInjector8; ///< Output pin injector 8
-byte injectorOutputControl = OUTPUT_CONTROL_DIRECT; /**< Specifies whether the injectors are controlled directly (Via an IO pin)
-    or using something like the MC33810. 0 = Direct (OUTPUT_CONTROL_DIRECT), 10 = MC33810 (OUTPUT_CONTROL_MC33810) */
+
+/*
+ *  Specifies whether the injectors are controlled directly (Via an IO pin)
+ *  or using something like the MC33810.
+ */
+OUTPUT_CONTROL_TYPE injectorOutputControl = OUTPUT_CONTROL_DIRECT;
+
 byte pinCoil1; ///< Pin for coil 1
 byte pinCoil2; ///< Pin for coil 2
 byte pinCoil3; ///< Pin for coil 3
@@ -225,7 +230,7 @@ byte pinFuelPressure;
 byte pinOilPressure;
 byte pinWMIEmpty; // Water tank empty sensor
 byte pinWMIIndicator; // No water indicator bulb
-byte pinWMIEnabled; // ON-OFF output to relay/pump/solenoid 
+byte pinWMIEnabled; // ON-OFF output to relay/pump/solenoid
 byte pinMC33810_1_CS;
 byte pinMC33810_2_CS;
 byte pinSDEnable;
@@ -257,7 +262,7 @@ uint16_t iatCalibration_values[32];
 struct table2D iatCalibrationTable;
 uint16_t o2Calibration_bins[32];
 uint8_t o2Calibration_values[32];
-struct table2D o2CalibrationTable; 
+struct table2D o2CalibrationTable;
 
 //These function do checks on a pin to determine if it is already in use by another (higher importance) active function
 bool pinIsOutput(byte pin)
