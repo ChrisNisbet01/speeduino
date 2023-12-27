@@ -27,7 +27,7 @@
   #ifdef PLATFORMIO
     #define RTC_LIB_H <TimeLib.h>
   #else
-    #define RTC_LIB_H <Time.h>
+    #define RTC_LIB_H <time.h>
   #endif
   void initBoard(void);
   uint16_t freeRam(void);

@@ -1,19 +1,19 @@
 /** @file
  * Global defines, macros, struct definitions (@ref statuses, @ref config2, @ref config4, config*), extern-definitions (for globally accessible vars).
- * 
+ *
  * ### Note on configuration struct layouts
- * 
+ *
  * Once the struct members have been assigned to certain "role" (in certain SW version), they should not be "moved around"
  * as the structs are stored onto EEPROM as-is and the offset and size of member needs to remain constant. Also removing existing struct members
  * would disturb layouts. Because of this a certain amount unused old members will be left into the structs. For the storage related reasons also the
  * bit fields are defined in byte-size (or multiple of ...) chunks.
- * 
+ *
  * ### Config Structs and 2D, 3D Tables
- * 
+ *
  * The config* structures contain information coming from tuning SW (e.g. TS) for 2D and 3D tables, where looked up value is not a result of direct
  * array lookup, but from interpolation algorithm. Because of standard, reusable interpolation routines associated with structs table2D and table3D,
  * the values from config are copied from config* structs to table2D (table3D destined configurations are not stored in config* structures).
- * 
+ *
  * ### Board choice
  * There's a C-preprocessor based "#if defined" logic present in this header file based on the Arduino IDE compiler set CPU
  * (+board?) type, e.g. `__AVR_ATmega2560__`. This respectively drives (withi it's "#if defined ..." block):
@@ -29,6 +29,7 @@
 #include "table3d.h"
 #include <assert.h>
 #include "src/FastCRC/FastCRC.h"
+#include "types.h"
 
 #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__)
   #define BOARD_MAX_DIGITAL_PINS 54 //digital pins +1
@@ -107,7 +108,7 @@
 #endif
 
 //This can only be included after the above section
-#include BOARD_H //Note that this is not a real file, it is defined in globals.h. 
+#include BOARD_H //Note that this is not a real file, it is defined in globals.h.
 
 //Handy bitsetting macros
 #define BIT_SET(a,b) ((a) |= (1U<<(b)))
@@ -209,7 +210,7 @@
 #define VALID_MAP_MAX 1022 //The largest ADC value that is valid for the MAP sensor
 #define VALID_MAP_MIN 2 //The smallest ADC value that is valid for the MAP sensor
 
-#ifndef UNIT_TEST 
+#ifndef UNIT_TEST
 #define TOOTH_LOG_SIZE      127
 #else
 #define TOOTH_LOG_SIZE      1
@@ -222,7 +223,7 @@
 // note the sequence of these defines which refernce the bits used in a byte has moved when the third trigger & engine cycle was incorporated
 #define COMPOSITE_LOG_PRI   0
 #define COMPOSITE_LOG_SEC   1
-#define COMPOSITE_LOG_THIRD 2 
+#define COMPOSITE_LOG_THIRD 2
 #define COMPOSITE_LOG_TRIG 3
 #define COMPOSITE_LOG_SYNC 4
 #define COMPOSITE_ENGINE_CYCLE 5
@@ -241,9 +242,6 @@
 
 #define INJ_PAIR_13_24      0
 #define INJ_PAIR_14_23      1
-
-#define OUTPUT_CONTROL_DIRECT   0
-#define OUTPUT_CONTROL_MC33810  10
 
 #define IGN_MODE_WASTED     0U
 #define IGN_MODE_SINGLE     1U
@@ -424,7 +422,7 @@ extern struct table3d8RpmLoad vvtTable; //8x8 vvt map
 extern struct table3d8RpmLoad vvt2Table; //8x8 vvt map
 extern struct table3d8RpmLoad wmiTable; //8x8 wmi map
 
-typedef table3d6RpmLoad trimTable3d; 
+typedef table3d6RpmLoad trimTable3d;
 
 extern trimTable3d trim1Table; //6x6 Fuel trim 1 map
 extern trimTable3d trim2Table; //6x6 Fuel trim 2 map
@@ -579,7 +577,7 @@ struct statuses {
   volatile bool injPrimed : 1; //Tracks whether or not the injector priming has been completed yet
   volatile bool tachoSweepEnabled : 1;
   volatile bool tachoAlt : 1;
-    
+
   uint16_t RPM;   ///< RPM - Current Revs per minute
   byte RPMdiv100; ///< RPM value scaled (divided by 100) to fit a byte (0-255, e.g. 12000 => 120)
   long longRPM;   ///< RPM as long int (gets assigned to / maintained in statuses.RPM as well)
@@ -646,11 +644,11 @@ struct statuses {
   unsigned int PW8; ///< In uS
   volatile byte runSecs; /**< Counter of seconds since cranking commenced (Maxes out at 255 to prevent overflow) */
   volatile byte secl; /**< Counter incrementing once per second. Will overflow after 255 and begin again. This is used by TunerStudio to maintain comms sync */
-  volatile uint32_t loopsPerSecond; /**< A performance indicator showing the number of main loops that are being executed each second */ 
+  volatile uint32_t loopsPerSecond; /**< A performance indicator showing the number of main loops that are being executed each second */
   bool launchingSoft; /**< Indicator showing whether soft launch control adjustments are active */
   bool launchingHard; /**< Indicator showing whether hard launch control adjustments are active */
   uint16_t freeRAM;
-  unsigned int clutchEngagedRPM; /**< The RPM at which the clutch was last depressed. Used for distinguishing between launch control and flat shift */ 
+  unsigned int clutchEngagedRPM; /**< The RPM at which the clutch was last depressed. Used for distinguishing between launch control and flat shift */
   bool flatShiftingHard;
   volatile uint32_t startRevolutions; /**< A counter for how many revolutions have been completed since sync was achieved. */
   uint16_t boostTarget;
@@ -707,7 +705,7 @@ static inline bool HasAnySync(const statuses &status) {
  * (and stored to e.g. EEPROM) from configuration/tuning SW (from outside by USBserial/bluetooth).
  * Contains a lots of *Min, *Max (named) variables to constrain values to sane ranges.
  * See the ini file for further reference.
- * 
+ *
  */
 struct config2 {
 
@@ -822,7 +820,7 @@ struct config2 {
   byte idleAdvEnabled : 2;
   byte idleAdvAlgorithm : 1;
   byte idleAdvDelay : 5;
-  
+
   byte idleAdvRPM;
   byte idleAdvTPS;
 
@@ -835,7 +833,7 @@ struct config2 {
   //VSS Stuff
   byte vssMode : 2; ///< VSS (Vehicle speed sensor) mode (0=none, 1=CANbus, 2,3=Interrupt driven)
   byte vssPin : 6; ///< VSS (Vehicle speed sensor) pin number
-  
+
   uint16_t vssPulsesPerKm; ///< VSS (Vehicle speed sensor) pulses per Km
   byte vssSmoothing;
   uint16_t vssRatio1;
@@ -942,7 +940,7 @@ struct config4 {
   uint8_t ADCFILTER_BAT;
   uint8_t ADCFILTER_MAP; //This is only used on Instantaneous MAP readings and is intentionally very weak to allow for faster response
   uint8_t ADCFILTER_BARO;
-  
+
   byte cltAdvBins[6];   /**< Coolant Temp timing advance curve bins */
   byte cltAdvValues[6]; /**< Coolant timing advance curve values. These are translated by 15 to allow for negative values */
 
@@ -983,7 +981,7 @@ struct config6 {
   byte egoAlgorithm : 2; ///< EGO Algorithm - Simple, PID, No correction
   byte egoType : 2;      ///< EGO Sensor Type 0=Disabled/None, 1=Narrowband, 2=Wideband
   byte boostEnabled : 1; ///< Boost control enabled 0 =off, 1 = on
-  byte vvtEnabled : 1;   ///< 
+  byte vvtEnabled : 1;   ///<
   byte engineProtectType : 2;
 
   byte egoKP;
@@ -1019,7 +1017,7 @@ struct config6 {
   // Launch stuff, see beginning of speeduino.ino main loop
   byte launchPin : 6; ///< Launch (control ?) pin
   byte launchEnabled : 1; ///< Launch ...???... (control?) enabled
-  byte launchHiLo : 1;  // 
+  byte launchHiLo : 1;  //
 
   byte lnchSoftLim;
   int8_t lnchRetard; //Allow for negative advance value (ATDC)
@@ -1091,7 +1089,7 @@ struct config9 {
   uint16_t caninput_source_can_address[16];        //u16 [15] array holding can address of input
   uint8_t caninput_source_start_byte[16];     //u08 [15] array holds the start byte number(value of 0-7)
   uint16_t caninput_source_num_bytes;     //u16 bit status of the number of bytes length 1 or 2
-  
+
   byte caninputEndianess:1;
   //byte unused:2
   //...
@@ -1122,7 +1120,7 @@ struct config9 {
 
   byte iacMaxSteps; // Step limit beyond which the stepper won't be driven. Should always be less than homing steps. Stored div 3 as per home steps.
   byte idleAdvStartDelay;     //delay for idle advance engage
-  
+
   byte boostByGear1;
   byte boostByGear2;
   byte boostByGear3;
@@ -1151,7 +1149,7 @@ struct config9 {
   byte afrProtectDeviation; /* < Maximum deviation from AFR target table. Stored value is multiplied by 10 */
   byte afrProtectCutTime; /* < Time in ms before cut. Stored value is divided by 100. Maximum of 2550 ms */
   byte afrProtectReactivationTPS; /* Disable engine protection cut once below this TPS percentage */
-  
+
 #if defined(CORE_AVR)
   };
 #else
@@ -1239,7 +1237,7 @@ struct config10 {
   byte knock_firstStep; //Byte 116
   byte knock_stepSize; //Byte 117
   byte knock_stepTime; //Byte 118
-        
+
   byte knock_duration; //Time after knock retard starts that it should start recovering. Byte 119
   byte knock_recoveryStepTime; //Byte 120
   byte knock_recoveryStep; //Byte 121
@@ -1274,7 +1272,7 @@ struct config10 {
 
   byte fuelPressurePin : 5;
   byte unused11_165 : 3;
-  
+
   int8_t fuelPressureMin;
   byte fuelPressureMax;
   int8_t oilPressureMin;
@@ -1285,7 +1283,7 @@ struct config10 {
 
   byte wmiEnabled : 1; // Byte 149
   byte wmiMode : 6;
-  
+
   byte wmiAdvEnabled : 1;
 
   byte wmiTPS; // Byte 150
@@ -1370,26 +1368,26 @@ struct config13 {
 
   byte unused12_106_116[10];
 
-  byte onboard_log_csv_separator :2;  //";", ",", "tab", "space"  
-  byte onboard_log_file_style    :2;  // "Disabled", "CSV", "Binary", "INVALID" 
-  byte onboard_log_file_rate     :2;  // "1Hz", "4Hz", "10Hz", "30Hz" 
-  byte onboard_log_filenaming    :2;  // "Overwrite", "Date-time", "Sequential", "INVALID" 
+  byte onboard_log_csv_separator :2;  //";", ",", "tab", "space"
+  byte onboard_log_file_style    :2;  // "Disabled", "CSV", "Binary", "INVALID"
+  byte onboard_log_file_rate     :2;  // "1Hz", "4Hz", "10Hz", "30Hz"
+  byte onboard_log_filenaming    :2;  // "Overwrite", "Date-time", "Sequential", "INVALID"
   byte onboard_log_storage       :2;  // "sd-card", "INVALID", "INVALID", "INVALID" ;In the future maybe an onboard spi flash can be used, or switch between SDIO vs SPI sd card interfaces.
   byte onboard_log_trigger_boot  :1;  // "Disabled", "On boot"
   byte onboard_log_trigger_RPM   :1;  // "Disabled", "Enabled"
   byte onboard_log_trigger_prot  :1;  // "Disabled", "Enabled"
   byte onboard_log_trigger_Vbat  :1;  // "Disabled", "Enabled"
-  byte onboard_log_trigger_Epin  :2;  // "Disabled", "polling", "toggle" , "INVALID" 
+  byte onboard_log_trigger_Epin  :2;  // "Disabled", "polling", "toggle" , "INVALID"
   uint16_t onboard_log_tr1_duration;  // Duration of logging that starts on boot
   byte onboard_log_tr2_thr_on;        //  "RPM",      100.0,  0.0,    0,     10000,  0
   byte onboard_log_tr2_thr_off;       //  "RPM",      100.0,  0.0,    0,     10000,  0
   byte onboard_log_tr3_thr_RPM   :1;  // "Disabled", "Enabled"
   byte onboard_log_tr3_thr_MAP   :1;  // "Disabled", "Enabled"
   byte onboard_log_tr3_thr_Oil   :1;  // "Disabled", "Enabled"
-  byte onboard_log_tr3_thr_AFR   :1;  // "Disabled", "Enabled"     
-  byte onboard_log_tr4_thr_on;        // "V",        0.1,   0.0,  0.0,  15.90,      2 ; * (  1 byte)    
-  byte onboard_log_tr4_thr_off;       // "V",        0.1,   0.0,  0.0,  15.90,      2 ; * (  1 byte)   
-  byte onboard_log_tr5_Epin_pin  :6;        // "pin",      0,    0, 0,  1,    255,        0 ;  
+  byte onboard_log_tr3_thr_AFR   :1;  // "Disabled", "Enabled"
+  byte onboard_log_tr4_thr_on;        // "V",        0.1,   0.0,  0.0,  15.90,      2 ; * (  1 byte)
+  byte onboard_log_tr4_thr_off;       // "V",        0.1,   0.0,  0.0,  15.90,      2 ; * (  1 byte)
+  byte onboard_log_tr5_Epin_pin  :6;        // "pin",      0,    0, 0,  1,    255,        0 ;
   byte unused13_125_2            :2;
 
   byte hwTestIgnDuration;
@@ -1403,14 +1401,14 @@ struct config13 {
 
 /**
 Page 15 - second page for VVT and boost control.
-256 bytes long. 
+256 bytes long.
 */
 struct config15 {
-  byte boostControlEnable : 1; 
+  byte boostControlEnable : 1;
   byte unused15_1 : 7; //7bits unused
   byte boostDCWhenDisabled;
   byte boostControlEnableThreshold; //if fixed value enable set threshold here.
-  
+
   //Byte 83 - Air conditioning binary points
   byte airConEnable : 1;
   byte airConCompPol : 1;
@@ -1441,7 +1439,7 @@ struct config15 {
 
   int8_t rollingProtRPMDelta[4]; // Signed RPM value representing how much below the RPM limit. Divided by 10
   byte rollingProtCutPercent[4];
-  
+
   //Bytes 98-255
   byte Unused15_98_255[150];
 
@@ -1459,7 +1457,9 @@ extern byte pinInjector5; //Output pin injector 5
 extern byte pinInjector6; //Output pin injector 6
 extern byte pinInjector7; //Output pin injector 7
 extern byte pinInjector8; //Output pin injector 8
-extern byte injectorOutputControl; //Specifies whether the injectors are controlled directly (Via an IO pin) or using something like the MC33810
+
+extern OUTPUT_CONTROL_TYPE injectorOutputControl;
+
 extern byte pinCoil1; //Pin for coil 1
 extern byte pinCoil2; //Pin for coil 2
 extern byte pinCoil3; //Pin for coil 3
@@ -1516,7 +1516,7 @@ extern byte pinStepperEnable; //Turning the DRV8825 driver on/off
 extern byte pinLaunch;
 extern byte pinIgnBypass; //The pin used for an ignition bypass (Optional)
 extern byte pinFlex; //Pin with the flex sensor attached
-extern byte pinVSS; 
+extern byte pinVSS;
 extern byte pinBaro; //Pin that an external barometric pressure sensor is attached to (If used)
 extern byte pinResetControl; // Output pin used control resetting the Arduino
 extern byte pinFuelPressure;

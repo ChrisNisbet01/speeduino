@@ -6,34 +6,462 @@
 /** @file
  * Injector and Coil (toggle/open/close) control (under various situations, eg with particular cylinder count, rotary engine type or wasted spark ign, etc.).
  * Also accounts for presence of MC33810 injector/ignition (dwell, etc.) control circuit.
- * Functions here are typically assigned (at initialisation) to callback function variables (e.g. inj1StartFunction or inj1EndFunction) 
- * form where they are called (by scheduler.ino).
+ * Functions here are typically assigned (at initialisation) to callback function variables (e.g. inj1StartFunction or inj1EndFunction)
+ * from where they are called (by scheduler.ino).
  */
-void openInjector1(void)   { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { openInjector1_DIRECT(); }   else { openInjector1_MC33810(); } }
-void closeInjector1(void)  { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { closeInjector1_DIRECT(); }  else { closeInjector1_MC33810(); } }
-void openInjector2(void)   { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { openInjector2_DIRECT(); }   else { openInjector2_MC33810(); } }
-void closeInjector2(void)  { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { closeInjector2_DIRECT(); }  else { closeInjector2_MC33810(); } }
-void openInjector3(void)   { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { openInjector3_DIRECT(); }   else { openInjector3_MC33810(); } }
-void closeInjector3(void)  { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { closeInjector3_DIRECT(); }  else { closeInjector3_MC33810(); } }
-void openInjector4(void)   { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { openInjector4_DIRECT(); }   else { openInjector4_MC33810(); } }
-void closeInjector4(void)  { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { closeInjector4_DIRECT(); }  else { closeInjector4_MC33810(); } }
-void openInjector5(void)   { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { openInjector5_DIRECT(); }   else { openInjector5_MC33810(); } }
-void closeInjector5(void)  { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { closeInjector5_DIRECT(); }  else { closeInjector5_MC33810(); } }
-void openInjector6(void)   { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { openInjector6_DIRECT(); }   else { openInjector6_MC33810(); } }
-void closeInjector6(void)  { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { closeInjector6_DIRECT(); }  else { closeInjector6_MC33810(); } }
-void openInjector7(void)   { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { openInjector7_DIRECT(); }   else { openInjector7_MC33810(); } }
-void closeInjector7(void)  { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { closeInjector7_DIRECT(); }  else { closeInjector7_MC33810(); } }
-void openInjector8(void)   { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { openInjector8_DIRECT(); }   else { openInjector8_MC33810(); } }
-void closeInjector8(void)  { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { closeInjector8_DIRECT(); }  else { closeInjector8_MC33810(); } }
 
-void injector1Toggle(void) { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { injector1Toggle_DIRECT(); } else { injector1Toggle_MC33810(); } }
-void injector2Toggle(void) { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { injector2Toggle_DIRECT(); } else { injector2Toggle_MC33810(); } }
-void injector3Toggle(void) { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { injector3Toggle_DIRECT(); } else { injector3Toggle_MC33810(); } }
-void injector4Toggle(void) { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { injector4Toggle_DIRECT(); } else { injector4Toggle_MC33810(); } }
-void injector5Toggle(void) { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { injector5Toggle_DIRECT(); } else { injector5Toggle_MC33810(); } }
-void injector6Toggle(void) { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { injector6Toggle_DIRECT(); } else { injector6Toggle_MC33810(); } }
-void injector7Toggle(void) { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { injector7Toggle_DIRECT(); } else { injector7Toggle_MC33810(); } }
-void injector8Toggle(void) { if(injectorOutputControl != OUTPUT_CONTROL_MC33810) { injector8Toggle_DIRECT(); } else { injector8Toggle_MC33810(); } }
+typedef void (*open_injector_fn)(void);
+typedef void (*close_injector_fn)(void);
+typedef void (*toggle_injector_fn)(void);
+
+static void open_injector1_direct(void)
+{
+    openInjector1_DIRECT();
+}
+
+static void open_injector2_direct(void)
+{
+    openInjector2_DIRECT();
+}
+
+static void open_injector3_direct(void)
+{
+    openInjector3_DIRECT();
+}
+
+static void open_injector4_direct(void)
+{
+    openInjector4_DIRECT();
+}
+
+static void open_injector5_direct(void)
+{
+    openInjector5_DIRECT();
+}
+
+static void open_injector6_direct(void)
+{
+    openInjector6_DIRECT();
+}
+
+static void open_injector7_direct(void)
+{
+    openInjector7_DIRECT();
+}
+
+static void open_injector8_direct(void)
+{
+    openInjector8_DIRECT();
+}
+
+static void close_injector1_direct(void)
+{
+    closeInjector1_DIRECT();
+}
+
+static void close_injector2_direct(void)
+{
+    closeInjector2_DIRECT();
+}
+
+static void close_injector3_direct(void)
+{
+    closeInjector3_DIRECT();
+}
+
+static void close_injector4_direct(void)
+{
+    closeInjector4_DIRECT();
+}
+
+static void close_injector5_direct(void)
+{
+    closeInjector5_DIRECT();
+}
+
+static void close_injector6_direct(void)
+{
+    closeInjector6_DIRECT();
+}
+
+static void close_injector7_direct(void)
+{
+    closeInjector7_DIRECT();
+}
+
+static void close_injector8_direct(void)
+{
+    closeInjector8_DIRECT();
+}
+
+static void toggle_injector1_direct(void)
+{
+    injector1Toggle_DIRECT();
+}
+
+static void toggle_injector2_direct(void)
+{
+    injector2Toggle_DIRECT();
+}
+
+static void toggle_injector3_direct(void)
+{
+    injector3Toggle_DIRECT();
+}
+
+static void toggle_injector4_direct(void)
+{
+    injector4Toggle_DIRECT();
+}
+
+static void toggle_injector5_direct(void)
+{
+    injector5Toggle_DIRECT();
+}
+
+static void toggle_injector6_direct(void)
+{
+    injector6Toggle_DIRECT();
+}
+
+static void toggle_injector7_direct(void)
+{
+    injector7Toggle_DIRECT();
+}
+
+static void toggle_injector8_direct(void)
+{
+    injector8Toggle_DIRECT();
+}
+
+static void open_injector1_mc33810(void)
+{
+    openInjector1_MC33810();
+}
+
+static void open_injector2_mc33810(void)
+{
+    openInjector2_MC33810();
+}
+
+static void open_injector3_mc33810(void)
+{
+    openInjector3_MC33810();
+}
+
+static void open_injector4_mc33810(void)
+{
+    openInjector4_MC33810();
+}
+
+static void open_injector5_mc33810(void)
+{
+    openInjector5_MC33810();
+}
+
+static void open_injector6_mc33810(void)
+{
+    openInjector6_MC33810();
+}
+
+static void open_injector7_mc33810(void)
+{
+    openInjector7_MC33810();
+}
+
+static void open_injector8_mc33810(void)
+{
+    openInjector8_MC33810();
+}
+
+static void close_injector1_mc33810(void)
+{
+    closeInjector1_MC33810();
+}
+
+static void close_injector2_mc33810(void)
+{
+    closeInjector2_MC33810();
+}
+
+static void close_injector3_mc33810(void)
+{
+    closeInjector3_MC33810();
+}
+
+static void close_injector4_mc33810(void)
+{
+    closeInjector4_MC33810();
+}
+
+static void close_injector5_mc33810(void)
+{
+    closeInjector5_MC33810();
+}
+
+static void close_injector6_mc33810(void)
+{
+    closeInjector6_MC33810();
+}
+
+static void close_injector7_mc33810(void)
+{
+    closeInjector7_MC33810();
+}
+
+static void close_injector8_mc33810(void)
+{
+    closeInjector8_MC33810();
+}
+
+static void toggle_injector1_mc33810(void)
+{
+    injector1Toggle_MC33810();
+}
+
+static void toggle_injector2_mc33810(void)
+{
+    injector2Toggle_MC33810();
+}
+
+static void toggle_injector3_mc33810(void)
+{
+    injector3Toggle_MC33810();
+}
+
+static void toggle_injector4_mc33810(void)
+{
+    injector4Toggle_MC33810();
+}
+
+static void toggle_injector5_mc33810(void)
+{
+    injector5Toggle_MC33810();
+}
+
+static void toggle_injector6_mc33810(void)
+{
+    injector6Toggle_MC33810();
+}
+
+static void toggle_injector7_mc33810(void)
+{
+    injector7Toggle_MC33810();
+}
+
+static void toggle_injector8_mc33810(void)
+{
+    injector8Toggle_MC33810();
+}
+
+open_injector_fn _openInjector1 = open_injector1_direct;
+open_injector_fn _openInjector2 = open_injector2_direct;
+open_injector_fn _openInjector3 = open_injector3_direct;
+open_injector_fn _openInjector4 = open_injector4_direct;
+open_injector_fn _openInjector5 = open_injector5_direct;
+open_injector_fn _openInjector6 = open_injector6_direct;
+open_injector_fn _openInjector7 = open_injector7_direct;
+open_injector_fn _openInjector8 = open_injector8_direct;
+close_injector_fn _closeInjector1 = close_injector1_direct;
+close_injector_fn _closeInjector2 = close_injector2_direct;
+close_injector_fn _closeInjector3 = close_injector3_direct;
+close_injector_fn _closeInjector4 = close_injector4_direct;
+close_injector_fn _closeInjector5 = close_injector5_direct;
+close_injector_fn _closeInjector6 = close_injector6_direct;
+close_injector_fn _closeInjector7 = close_injector7_direct;
+close_injector_fn _closeInjector8 = close_injector8_direct;
+toggle_injector_fn _injector1Toggle = toggle_injector1_direct;
+toggle_injector_fn _injector2Toggle = toggle_injector2_direct;
+toggle_injector_fn _injector3Toggle = toggle_injector3_direct;
+toggle_injector_fn _injector4Toggle = toggle_injector4_direct;
+toggle_injector_fn _injector5Toggle = toggle_injector5_direct;
+toggle_injector_fn _injector6Toggle = toggle_injector6_direct;
+toggle_injector_fn _injector7Toggle = toggle_injector7_direct;
+toggle_injector_fn _injector8Toggle = toggle_injector8_direct;
+
+void openInjector1(void)
+{
+    _openInjector1();
+}
+
+void closeInjector1(void)
+{
+    _closeInjector1();
+}
+
+void openInjector2(void)
+{
+    _openInjector2();
+}
+
+void closeInjector2(void)
+{
+    _closeInjector2();
+}
+
+void openInjector3(void)
+{
+    _openInjector3();
+}
+
+void closeInjector3(void)
+{
+    _closeInjector3();
+}
+
+void openInjector4(void)
+{
+    _openInjector4();
+}
+
+void closeInjector4(void)
+{
+    _closeInjector4();
+}
+
+void openInjector5(void)
+{
+    _openInjector5();
+}
+
+void closeInjector5(void)
+{
+    _closeInjector5();
+}
+
+void openInjector6(void)
+{
+    _openInjector6();
+}
+
+void closeInjector6(void)
+{
+    _closeInjector6();
+}
+
+void openInjector7(void)
+{
+    _openInjector7();
+}
+
+void closeInjector7(void)
+{
+    _closeInjector7();
+}
+
+void openInjector8(void)
+{
+    _openInjector8();
+}
+
+void closeInjector8(void)
+{
+    _closeInjector8();
+}
+
+void injector1Toggle(void)
+{
+    _injector1Toggle();
+}
+
+void injector2Toggle(void)
+{
+    _injector2Toggle();
+}
+
+void injector3Toggle(void)
+{
+    _injector3Toggle();
+}
+
+void injector4Toggle(void)
+{
+    _injector4Toggle();
+}
+
+void injector5Toggle(void)
+{
+    _injector5Toggle();
+}
+
+void injector6Toggle(void)
+{
+    _injector6Toggle();
+}
+
+void injector7Toggle(void)
+{
+    _injector7Toggle();
+}
+
+void injector8Toggle(void)
+{
+    _injector8Toggle();
+}
+
+void injector_control_update(OUTPUT_CONTROL_TYPE const control_method)
+{
+    if (control_method == OUTPUT_CONTROL_MC33810)
+    {
+        _openInjector1 = open_injector1_mc33810;
+        _openInjector2 = open_injector2_mc33810;
+        _openInjector3 = open_injector3_mc33810;
+        _openInjector4 = open_injector4_mc33810;
+        _openInjector5 = open_injector5_mc33810;
+        _openInjector6 = open_injector6_mc33810;
+        _openInjector7 = open_injector7_mc33810;
+        _openInjector8 = open_injector8_mc33810;
+        _closeInjector1 = close_injector1_mc33810;
+        _closeInjector2 = close_injector2_mc33810;
+        _closeInjector3 = close_injector3_mc33810;
+        _closeInjector4 = close_injector4_mc33810;
+        _closeInjector5 = close_injector5_mc33810;
+        _closeInjector6 = close_injector6_mc33810;
+        _closeInjector7 = close_injector7_mc33810;
+        _closeInjector8 = close_injector8_mc33810;
+        _injector1Toggle = toggle_injector1_mc33810;
+        _injector2Toggle = toggle_injector2_mc33810;
+        _injector3Toggle = toggle_injector3_mc33810;
+        _injector4Toggle = toggle_injector4_mc33810;
+        _injector5Toggle = toggle_injector5_mc33810;
+        _injector6Toggle = toggle_injector6_mc33810;
+        _injector7Toggle = toggle_injector7_mc33810;
+        _injector8Toggle = toggle_injector8_mc33810;
+    }
+    else
+    {
+        _openInjector1 = open_injector1_direct;
+        _openInjector2 = open_injector2_direct;
+        _openInjector3 = open_injector3_direct;
+        _openInjector4 = open_injector4_direct;
+        _openInjector5 = open_injector5_direct;
+        _openInjector6 = open_injector6_direct;
+        _openInjector7 = open_injector7_direct;
+        _openInjector8 = open_injector8_direct;
+        _closeInjector1 = close_injector1_direct;
+        _closeInjector2 = close_injector2_direct;
+        _closeInjector3 = close_injector3_direct;
+        _closeInjector4 = close_injector4_direct;
+        _closeInjector5 = close_injector5_direct;
+        _closeInjector6 = close_injector6_direct;
+        _closeInjector7 = close_injector7_direct;
+        _closeInjector8 = close_injector8_direct;
+        _injector1Toggle = toggle_injector1_direct;
+        _injector2Toggle = toggle_injector2_direct;
+        _injector3Toggle = toggle_injector3_direct;
+        _injector4Toggle = toggle_injector4_direct;
+        _injector5Toggle = toggle_injector5_direct;
+        _injector6Toggle = toggle_injector6_direct;
+        _injector7Toggle = toggle_injector7_direct;
+        _injector8Toggle = toggle_injector8_direct;
+    }
+}
+
+void injectorControlMethodAssign(OUTPUT_CONTROL_TYPE const control_method)
+{
+    injectorOutputControl = control_method;
+    injector_control_update(control_method);
+}
 
 void coil1Toggle(void)     { if(ignitionOutputControl != OUTPUT_CONTROL_MC33810) { coil1Toggle_DIRECT(); } else { coil1Toggle_MC33810(); } }
 void coil2Toggle(void)     { if(ignitionOutputControl != OUTPUT_CONTROL_MC33810) { coil2Toggle_DIRECT(); } else { coil2Toggle_MC33810(); } }
