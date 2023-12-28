@@ -11,7 +11,6 @@
  * from where they are called (by scheduler.ino).
  */
 static ignition_st const * ignition = &ignition_direct;
-static ignition_control_st const * ignition_control = ignition->control;
 
 static void tachoOutputOn(void)
 {
@@ -30,19 +29,19 @@ static void tachoOutputOff(void)
   }
 }
 
-static inline void coil_begin_charge(ignition_id_t coil)
+static void coil_begin_charge(ignition_id_t coil)
 {
-  ignition_control[coil].begin_charge();
+  ignition->begin_charge(coil);
 }
 
-static inline void coil_end_charge(ignition_id_t coil)
+static void coil_end_charge(ignition_id_t coil)
 {
-  ignition_control[coil].end_charge();
+  ignition->end_charge(coil);
 }
 
-static inline void coil_toggle(ignition_id_t coil)
+static void coil_toggle(ignition_id_t coil)
 {
-  ignition_control[coil].toggle();
+  ignition->toggle(coil);
 }
 
 void coil1Toggle(void)
@@ -268,7 +267,6 @@ static void ignition_control_update(OUTPUT_CONTROL_TYPE const control_method)
   {
     ignition = &ignition_direct;
   }
-  ignition_control = ignition->control;
 }
 
 void ignitionControlMethodAssign(OUTPUT_CONTROL_TYPE const control_method)

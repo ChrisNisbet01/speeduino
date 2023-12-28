@@ -1,6 +1,17 @@
 #include "ignition_schedule_direct.h"
 #include "globals.h"
 
+typedef void (*ignition_begin_charge_fn)(void);
+typedef void (*ignition_end_charge_fn)(void);
+typedef void (*ignition_toggle_fn)(void);
+typedef struct ignition_control_st
+{
+  ignition_begin_charge_fn begin_charge;
+  ignition_end_charge_fn end_charge;
+  ignition_toggle_fn toggle;
+} ignition_control_st;
+
+
 #define coil1Low_DIRECT()       (*ign1_pin_port &= ~(ign1_pin_mask))
 #define coil1High_DIRECT()      (*ign1_pin_port |= (ign1_pin_mask))
 #define coil1Toggle_DIRECT() (*ign1_pin_port ^= ign1_pin_mask )
@@ -236,9 +247,26 @@ static void init_direct_ignition(void)
   ign8_pin_mask = digitalPinToBitMask(pinCoil8);
 }
 
+static void coil_begin_charge(ignition_id_t coil)
+{
+  ignition_control_direct[coil].begin_charge();
+}
+
+static void coil_end_charge(ignition_id_t coil)
+{
+  ignition_control_direct[coil].end_charge();
+}
+
+static void coil_toggle(ignition_id_t coil)
+{
+  ignition_control_direct[coil].toggle();
+}
+
 ignition_st const ignition_direct =
 {
   .init = init_direct_ignition,
-  .control = ignition_control_direct,
+  .begin_charge = coil_begin_charge,
+  .end_charge = coil_end_charge,
+  .toggle = coil_toggle,
 };
 
