@@ -521,7 +521,7 @@ void initialiseAll(void)
         //The below are true regardless of whether this is running sequential or not
         if (configPage2.engineType == EVEN_FIRE ) { channel2InjDegrees = 180; }
         else { channel2InjDegrees = configPage2.oddfire2; }
-        if (!configPage2.injTiming)
+        if (configPage2.injTiming == false)
         {
           //For simultaneous, all squirts happen at the same time
           channel1InjDegrees = 0;
@@ -579,7 +579,7 @@ void initialiseAll(void)
             channel3InjDegrees = (channel3InjDegrees * 2) / currentStatus.nSquirts;
           }
 
-          if (!configPage2.injTiming)
+          if (configPage2.injTiming == false)
           {
             //For simultaneous, all squirts happen at the same time
             channel1InjDegrees = 0;
@@ -671,7 +671,7 @@ void initialiseAll(void)
         {
           channel2InjDegrees = 180;
 
-          if (!configPage2.injTiming)
+          if (configPage2.injTiming == false)
           {
             //For simultaneous, all squirts happen at the same time
             channel1InjDegrees = 0;
@@ -760,7 +760,7 @@ void initialiseAll(void)
         //For alternating injection, the squirt occurs at different times for each channel
         if( (configPage2.injLayout == INJ_SEMISEQUENTIAL) || (configPage2.injLayout == INJ_PAIRED) || (configPage2.strokes == TWO_STROKE) )
         {
-          if (!configPage2.injTiming)
+          if (configPage2.injTiming == false)
           {
             //For simultaneous, all squirts happen at the same time
             channel1InjDegrees = 0;
@@ -829,7 +829,7 @@ void initialiseAll(void)
           channel1InjDegrees = 0;
           channel2InjDegrees = 120;
           channel3InjDegrees = 240;
-          if (!configPage2.injTiming)
+          if (configPage2.injTiming == false)
           {
             //For simultaneous, all squirts happen at the same time
             channel1InjDegrees = 0;
@@ -919,7 +919,7 @@ void initialiseAll(void)
           channel3InjDegrees = 180;
           channel4InjDegrees = 270;
 
-          if (!configPage2.injTiming)
+          if (configPage2.injTiming == false)
           {
             //For simultaneous, all squirts happen at the same time
             channel1InjDegrees = 0;
@@ -2998,14 +2998,14 @@ void setPinMapping(byte boardID)
   bool const using_spi = ignitionOutputControl == OUTPUT_CONTROL_MC33810
       || injectorOutputControl == OUTPUT_CONTROL_MC33810;
 
-  if (using_spi)
+  if (using_spi == true)
   {
     initMC33810();
 
     bool const builtin_led_used_for_spi =
         LED_BUILTIN == SCK || LED_BUILTIN == MOSI || LED_BUILTIN != MISO;
 
-    if (!builtin_led_used_for_spi)
+    if (builtin_led_used_for_spi == false)
     {
         //This is required on as the LED pin can otherwise be reset to an input.
         pinMode(LED_BUILTIN, OUTPUT);
