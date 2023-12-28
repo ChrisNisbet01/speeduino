@@ -1,6 +1,18 @@
 #include "injector_schedule_direct.h"
 #include "globals.h"
 
+typedef void (*open_injector_fn)(void);
+typedef void (*close_injector_fn)(void);
+typedef void (*toggle_injector_fn)(void);
+
+typedef struct injector_control_st
+{
+  open_injector_fn open;
+  close_injector_fn close;
+  toggle_injector_fn toggle;
+} injector_control_st;
+
+
 //Macros are used to define how each injector control system functions. These are then called by the master openInjectx() function.
 //The DIRECT macros (ie individual pins) are defined below. Others should be defined in their relevant acc_x.h file
 #define openInjector1_DIRECT()  { *inj1_pin_port |= (inj1_pin_mask); BIT_SET(currentStatus.status1, BIT_STATUS1_INJ1); }
@@ -235,9 +247,26 @@ static void init_direct_injectors(void)
   inj8_pin_mask = digitalPinToBitMask(pinInjector8);
 }
 
+static void openInjector(injector_id_t injector)
+{
+  injector_control_direct[injector].open();
+}
+
+static void closeInjector(injector_id_t injector)
+{
+  injector_control_direct[injector].close();
+}
+
+static void toggleInjector(injector_id_t injector)
+{
+  injector_control_direct[injector].toggle();
+}
+
 injectors_st injectors_direct =
 {
   .init = init_direct_injectors,
-  .control = injector_control_direct,
+  .open = openInjector,
+  .close = closeInjector,
+  .toggle = toggleInjector,
 };
 
