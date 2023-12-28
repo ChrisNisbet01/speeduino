@@ -10,6 +10,7 @@
 #include "comms_secondary.h"
 #include "comms_CAN.h"
 #include "utilities.h"
+#include "ignition_schedule.h"
 #include "injector_schedule.h"
 #include "scheduledIO.h"
 #include "scheduler.h"
@@ -1359,7 +1360,7 @@ void setPinMapping(byte boardID)
 {
   //Force set defaults. Will be overwritten below if needed.
   injectorControlMethodAssign(OUTPUT_CONTROL_DIRECT);
-  ignitionOutputControl = OUTPUT_CONTROL_DIRECT;
+  ignitionControlMethodAssign(OUTPUT_CONTROL_DIRECT);
 
   switch (boardID)
   {
@@ -2355,7 +2356,7 @@ void setPinMapping(byte boardID)
       #if defined(CORE_TEENSY)
       //Pin mappings for the DropBear
       injectorControlMethodAssign(OUTPUT_CONTROL_MC33810);
-      ignitionOutputControl = OUTPUT_CONTROL_MC33810;
+      ignitionControlMethodAssign(OUTPUT_CONTROL_MC33810);
 
       //The injector pins below are not used directly as the control is via SPI through the MC33810s, however the pin numbers are set to be the SPI pins (SCLK, MOSI, MISO and CS) so that nothing else will set them as inputs
       pinInjector1 = 13; //SCLK
@@ -2921,42 +2922,7 @@ void setPinMapping(byte boardID)
   //This is a legacy mode option to revert the MAP reading behaviour to match what was in place prior to the 201905 firmware
   if(configPage2.legacyMAP > 0) { digitalWrite(pinMAP, HIGH); }
 
-  if(ignitionOutputControl == OUTPUT_CONTROL_DIRECT)
-  {
-    pinMode(pinCoil1, OUTPUT);
-    pinMode(pinCoil2, OUTPUT);
-    pinMode(pinCoil3, OUTPUT);
-    pinMode(pinCoil4, OUTPUT);
-    #if (IGN_CHANNELS >= 5)
-    pinMode(pinCoil5, OUTPUT);
-    #endif
-    #if (IGN_CHANNELS >= 6)
-    pinMode(pinCoil6, OUTPUT);
-    #endif
-    #if (IGN_CHANNELS >= 7)
-    pinMode(pinCoil7, OUTPUT);
-    #endif
-    #if (IGN_CHANNELS >= 8)
-    pinMode(pinCoil8, OUTPUT);
-    #endif
-
-    ign1_pin_port = portOutputRegister(digitalPinToPort(pinCoil1));
-    ign1_pin_mask = digitalPinToBitMask(pinCoil1);
-    ign2_pin_port = portOutputRegister(digitalPinToPort(pinCoil2));
-    ign2_pin_mask = digitalPinToBitMask(pinCoil2);
-    ign3_pin_port = portOutputRegister(digitalPinToPort(pinCoil3));
-    ign3_pin_mask = digitalPinToBitMask(pinCoil3);
-    ign4_pin_port = portOutputRegister(digitalPinToPort(pinCoil4));
-    ign4_pin_mask = digitalPinToBitMask(pinCoil4);
-    ign5_pin_port = portOutputRegister(digitalPinToPort(pinCoil5));
-    ign5_pin_mask = digitalPinToBitMask(pinCoil5);
-    ign6_pin_port = portOutputRegister(digitalPinToPort(pinCoil6));
-    ign6_pin_mask = digitalPinToBitMask(pinCoil6);
-    ign7_pin_port = portOutputRegister(digitalPinToPort(pinCoil7));
-    ign7_pin_mask = digitalPinToBitMask(pinCoil7);
-    ign8_pin_port = portOutputRegister(digitalPinToPort(pinCoil8));
-    ign8_pin_mask = digitalPinToBitMask(pinCoil8);
-  }
+  ignition_pins_init();
 
   injector_pins_init();
 
@@ -2965,8 +2931,6 @@ void setPinMapping(byte boardID)
 
   if (using_spi == true)
   {
-    initMC33810();
-
     bool const builtin_led_used_for_spi =
         LED_BUILTIN == SCK || LED_BUILTIN == MOSI || LED_BUILTIN != MISO;
 

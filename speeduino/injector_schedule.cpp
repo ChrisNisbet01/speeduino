@@ -266,7 +266,7 @@ void closeInjector4and8(void)
   closeInjector(injector_id_8);
 }
 
-void injector_control_update(OUTPUT_CONTROL_TYPE const control_method)
+static void injector_control_update(OUTPUT_CONTROL_TYPE const control_method)
 {
   if (control_method == OUTPUT_CONTROL_MC33810)
   {
@@ -289,3 +289,4 @@ void injector_pins_init(void)
 {
   injectors->init();
 }
+

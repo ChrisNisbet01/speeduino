@@ -1,4 +1,5 @@
 #include "injector_schedule_mc33810.h"
+#include "ignition.h"
 #include "acc_mc33810.h"
 
 static void open_injector1_mc33810(void)
