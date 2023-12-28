@@ -2,6 +2,17 @@
 #include "globals.h"
 #include "acc_mc33810.h"
 
+typedef void (*ignition_begin_charge_fn)(void);
+typedef void (*ignition_end_charge_fn)(void);
+typedef void (*ignition_toggle_fn)(void);
+typedef struct ignition_control_st
+{
+  ignition_begin_charge_fn begin_charge;
+  ignition_end_charge_fn end_charge;
+  ignition_toggle_fn toggle;
+} ignition_control_st;
+
+
 //Set the value of the coil pins to the coilHIGH or coilLOW state
 #define coil1Charging_MC33810()      if(configPage4.IgInv == GOING_HIGH) { coil1Low_MC33810();  } else { coil1High_MC33810(); }
 #define coil1StopCharging_MC33810()  if(configPage4.IgInv == GOING_HIGH) { coil1High_MC33810(); } else { coil1Low_MC33810();  }
@@ -173,8 +184,25 @@ static void init_mc33810_ignition(void)
   initMC33810();
 }
 
+static void coil_begin_charge(ignition_id_t coil)
+{
+  ignition_control_mc33810[coil].begin_charge();
+}
+
+static void coil_end_charge(ignition_id_t coil)
+{
+  ignition_control_mc33810[coil].end_charge();
+}
+
+static void coil_toggle(ignition_id_t coil)
+{
+  ignition_control_mc33810[coil].toggle();
+}
+
 ignition_st const ignition_mc33810 =
 {
   .init = init_mc33810_ignition,
-  .control = ignition_control_mc33810,
+  .begin_charge = coil_begin_charge,
+  .end_charge = coil_end_charge,
+  .toggle = coil_toggle,
 };
