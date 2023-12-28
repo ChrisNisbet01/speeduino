@@ -46,10 +46,6 @@ See page 136 of the processors datasheet: http://www.atmel.com/Images/doc2549.pd
 #define USE_IGN_REFRESH
 #define IGNITION_REFRESH_THRESHOLD  30 //Time in uS that the refresh functions will check to ensure there is enough time before changing the end compare
 
-#define DWELL_AVERAGE_ALPHA 30
-#define DWELL_AVERAGE(input) (((long)input * (256 - DWELL_AVERAGE_ALPHA) + ((long)currentStatus.actualDwell * DWELL_AVERAGE_ALPHA))) >> 8
-//#define DWELL_AVERAGE(input) (currentStatus.dwell) //Can be use to disable the above for testing
-
 void initialiseSchedulers(void);
 void beginInjectorPriming(void);
 
@@ -144,7 +140,7 @@ struct IgnitionSchedule {
   counter_t &counter;  // Reference to the counter register. E.g. TCNT3
   compare_t &compare;  // Reference to the compare register. E.g. OCR3A
   void (&pTimerDisable)();    // Reference to the timer disable function
-  void (&pTimerEnable)();     // Reference to the timer enable function  
+  void (&pTimerEnable)();     // Reference to the timer enable function
 };
 
 void _setIgnitionScheduleRunning(IgnitionSchedule &schedule, unsigned long timeout, unsigned long duration);
@@ -186,7 +182,7 @@ struct FuelSchedule {
   volatile COMPARE_TYPE startCompare; ///< The counter value of the timer when this will start
   volatile COMPARE_TYPE endCompare;   ///< The counter value of the timer when this will end
   void (*pStartFunction)(void);
-  void (*pEndFunction)(void);  
+  void (*pEndFunction)(void);
   COMPARE_TYPE nextStartCompare;
   COMPARE_TYPE nextEndCompare;
   volatile bool hasNextSchedule = false;
@@ -194,7 +190,7 @@ struct FuelSchedule {
   counter_t &counter;  // Reference to the counter register. E.g. TCNT3
   compare_t &compare;  // Reference to the compare register. E.g. OCR3A
   void (&pTimerDisable)();    // Reference to the timer disable function
-  void (&pTimerEnable)();     // Reference to the timer enable function  
+  void (&pTimerEnable)();     // Reference to the timer enable function
 };
 
 void _setFuelScheduleRunning(FuelSchedule &schedule, unsigned long timeout, unsigned long duration);

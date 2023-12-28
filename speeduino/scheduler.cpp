@@ -30,6 +30,11 @@ A full copy of the license may be found in the projects root directory
 #include "timers.h"
 #include "schedule_calcs.h"
 
+#define DWELL_SMOOTHED_ALPHA 30
+#define DWELL_SMOOTHED(current_dwell, input) ((((long)(input) * (256 - DWELL_SMOOTHED_ALPHA) + ((long)(current_dwell) * DWELL_SMOOTHED_ALPHA))) >> 8)
+//#define DWELL_SMOOTHED(current_dwell, input) (current_dwell) //Can be use to disable the above for testing
+
+
 FuelSchedule fuelSchedule1(FUEL1_COUNTER, FUEL1_COMPARE, FUEL1_TIMER_DISABLE, FUEL1_TIMER_ENABLE);
 FuelSchedule fuelSchedule2(FUEL2_COUNTER, FUEL2_COMPARE, FUEL2_TIMER_DISABLE, FUEL2_TIMER_ENABLE);
 FuelSchedule fuelSchedule3(FUEL3_COUNTER, FUEL3_COMPARE, FUEL3_TIMER_DISABLE, FUEL3_TIMER_ENABLE);
@@ -464,7 +469,7 @@ static inline __attribute__((always_inline)) void ignitionScheduleISR(IgnitionSc
     schedule.pEndCallback();
     schedule.endScheduleSetByDecoder = false;
     ignitionCount = ignitionCount + 1; //Increment the ignition counter
-    currentStatus.actualDwell = DWELL_AVERAGE( (micros() - schedule.startTime) );
+    currentStatus.actualDwell = DWELL_SMOOTHED(currentStatus.actualDwell, micros() - schedule.startTime);
 
     //If there is a next schedule queued up, activate it
     if(schedule.hasNextSchedule == true)
