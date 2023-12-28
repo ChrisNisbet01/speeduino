@@ -1,4 +1,4 @@
-// Note that all functions with an underscore prefix are NOT part 
+// Note that all functions with an underscore prefix are NOT part
 // of the public API. They are only here so we can inline them.
 
 #include "scheduler.h"
@@ -29,10 +29,10 @@ static inline uint32_t _calculateInjectorTimeout(const FuelSchedule &schedule, u
   int16_t delta = openAngle - crankAngle;
   if (delta<0)
   {
-    if ((schedule.Status == RUNNING) && (delta>-CRANK_ANGLE_MAX_INJ)) 
-    { 
+    if ((schedule.Status == RUNNING) && (delta>-CRANK_ANGLE_MAX_INJ))
+    {
       // Guarenteed to be >0
-      delta = delta + CRANK_ANGLE_MAX_INJ; 
+      delta = delta + CRANK_ANGLE_MAX_INJ;
     }
     else
     {
@@ -77,10 +77,10 @@ static inline uint32_t _calculateIgnitionTimeout(const IgnitionSchedule &schedul
   int16_t delta = startAngle - crankAngle;
   if (delta<0)
   {
-    if ((schedule.Status == RUNNING) && (delta>-CRANK_ANGLE_MAX_IGN)) 
-    { 
-      // Msut be >0
-      delta = delta + CRANK_ANGLE_MAX_IGN; 
+    if ((schedule.Status == RUNNING) && (delta>-CRANK_ANGLE_MAX_IGN))
+    {
+      // Must be > 0
+      delta = delta + CRANK_ANGLE_MAX_IGN;
     }
     else
     {
@@ -107,11 +107,11 @@ static inline uint32_t calculateIgnitionTimeout(const IgnitionSchedule &schedule
 #define MIN_CYCLES_FOR_ENDCOMPARE 6
 
 inline void adjustCrankAngle(IgnitionSchedule &schedule, int endAngle, int crankAngle) {
-  if( (schedule.Status == RUNNING) ) { 
-    SET_COMPARE(schedule.compare, schedule.counter + uS_TO_TIMER_COMPARE( angleToTimeMicroSecPerDegree( ignitionLimits( (endAngle - crankAngle) ) ) ) ); 
+  if( (schedule.Status == RUNNING) ) {
+    SET_COMPARE(schedule.compare, schedule.counter + uS_TO_TIMER_COMPARE( angleToTimeMicroSecPerDegree( ignitionLimits( (endAngle - crankAngle) ) ) ) );
   }
-  else if(currentStatus.startRevolutions > MIN_CYCLES_FOR_ENDCOMPARE) { 
-    schedule.endCompare = schedule.counter + uS_TO_TIMER_COMPARE( angleToTimeMicroSecPerDegree( ignitionLimits( (endAngle - crankAngle) ) ) ); 
-    schedule.endScheduleSetByDecoder = true; 
+  else if(currentStatus.startRevolutions > MIN_CYCLES_FOR_ENDCOMPARE) {
+    schedule.endCompare = schedule.counter + uS_TO_TIMER_COMPARE( angleToTimeMicroSecPerDegree( ignitionLimits( (endAngle - crankAngle) ) ) );
+    schedule.endScheduleSetByDecoder = true;
   }
 }

@@ -1263,14 +1263,13 @@ void boostDisable(void)
   {
     FAN_OFF();
     FAN_TIMER_COMPARE = FAN_TIMER_COUNTER + (fan_pwm_max_count - fan_pwm_cur_value);
-    fan_pwm_state = false;
   }
   else
   {
     FAN_ON();
     FAN_TIMER_COMPARE = FAN_TIMER_COUNTER + fan_pwm_value;
     fan_pwm_cur_value = fan_pwm_value;
-    fan_pwm_state = true;
   }
+  fan_pwm_state = !fan_pwm_state;
 }
 #endif
