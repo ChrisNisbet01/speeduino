@@ -3722,15 +3722,9 @@ void changeHalfToFullSync(void)
     switch (configPage2.nCylinders)
     {
       case 4:
-        maxInjOutputs = 4;
-        break;
-
       case 6:
-        maxInjOutputs = 6;
-        break;
-
       case 8:
-        maxInjOutputs = 8;
+        maxInjOutputs = configPage2.nCylinders;
         break;
 
       default:
