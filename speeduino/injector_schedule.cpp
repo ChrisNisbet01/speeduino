@@ -1,4 +1,5 @@
 #include "injector_schedule.h"
+#include "injectors.h"
 #include "injector_schedule_direct.h"
 #include "injector_schedule_mc33810.h"
 #include "globals.h"
@@ -10,7 +11,8 @@
  * from where they are called (by scheduler.ino).
  */
 
-static injector_control_st const * injector_control = injector_control_direct;
+static injectors_st const * injectors = &injectors_direct;
+static injector_control_st const * injector_control = injectors->control;
 
 static void openInjector(injector_id_t injector)
 {
@@ -268,16 +270,22 @@ void injector_control_update(OUTPUT_CONTROL_TYPE const control_method)
 {
   if (control_method == OUTPUT_CONTROL_MC33810)
   {
-    injector_control = injector_control_mc33810;
+    injectors = &injectors_mc33810;
   }
   else
   {
-    injector_control = injector_control_direct;
+    injectors = &injectors_direct;
   }
+  injector_control = injectors->control;
 }
 
 void injectorControlMethodAssign(OUTPUT_CONTROL_TYPE const control_method)
 {
   injectorOutputControl = control_method;
   injector_control_update(control_method);
+}
+
+void injector_pins_init(void)
+{
+  injectors->init();
 }
