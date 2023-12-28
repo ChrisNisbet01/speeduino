@@ -10,6 +10,7 @@
 #include "comms_secondary.h"
 #include "comms_CAN.h"
 #include "utilities.h"
+#include "injector_schedule.h"
 #include "scheduledIO.h"
 #include "scheduler.h"
 #include "schedule_calcs.h"

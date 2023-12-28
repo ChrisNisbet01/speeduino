@@ -3,70 +3,6 @@
 
 #include <Arduino.h>
 
-#include "types.h"
-
-void injectorControlMethodAssign(OUTPUT_CONTROL_TYPE control_method);
-
-void openInjector1(void);
-void closeInjector1(void);
-
-void openInjector2(void);
-void closeInjector2(void);
-
-void openInjector3(void);
-void closeInjector3(void);
-
-void openInjector4(void);
-void closeInjector4(void);
-
-void openInjector5(void);
-void closeInjector5(void);
-
-void openInjector6(void);
-void closeInjector6(void);
-
-void openInjector7(void);
-void closeInjector7(void);
-
-void openInjector8(void);
-void closeInjector8(void);
-
-// These are for Semi-Sequential and 5 Cylinder injection
-void openInjector1and3(void);
-void closeInjector1and3(void);
-void openInjector2and4(void);
-void closeInjector2and4(void);
-void openInjector1and4(void);
-void closeInjector1and4(void);
-void openInjector2and3(void);
-void closeInjector2and3(void);
-
-void openInjector3and5(void);
-void closeInjector3and5(void);
-
-void openInjector2and5(void);
-void closeInjector2and5(void);
-void openInjector3and6(void);
-void closeInjector3and6(void);
-
-void openInjector1and5(void);
-void closeInjector1and5(void);
-void openInjector2and6(void);
-void closeInjector2and6(void);
-void openInjector3and7(void);
-void closeInjector3and7(void);
-void openInjector4and8(void);
-void closeInjector4and8(void);
-
-void injector1Toggle(void);
-void injector2Toggle(void);
-void injector3Toggle(void);
-void injector4Toggle(void);
-void injector5Toggle(void);
-void injector6Toggle(void);
-void injector7Toggle(void);
-void injector8Toggle(void);
-
 void beginCoil1Charge(void);
 void endCoil1Charge(void);
 
@@ -133,25 +69,6 @@ void tachoOutputOn(void);
 void tachoOutputOff(void);
 
 
-//Macros are used to define how each injector control system functions. These are then called by the master openInjectx() function.
-//The DIRECT macros (ie individual pins) are defined below. Others should be defined in their relevant acc_x.h file
-#define openInjector1_DIRECT()  { *inj1_pin_port |= (inj1_pin_mask); BIT_SET(currentStatus.status1, BIT_STATUS1_INJ1); }
-#define closeInjector1_DIRECT() { *inj1_pin_port &= ~(inj1_pin_mask);  BIT_CLEAR(currentStatus.status1, BIT_STATUS1_INJ1); }
-#define openInjector2_DIRECT()  { *inj2_pin_port |= (inj2_pin_mask); BIT_SET(currentStatus.status1, BIT_STATUS1_INJ2); }
-#define closeInjector2_DIRECT() { *inj2_pin_port &= ~(inj2_pin_mask);  BIT_CLEAR(currentStatus.status1, BIT_STATUS1_INJ2); }
-#define openInjector3_DIRECT()  { *inj3_pin_port |= (inj3_pin_mask); BIT_SET(currentStatus.status1, BIT_STATUS1_INJ3); }
-#define closeInjector3_DIRECT() { *inj3_pin_port &= ~(inj3_pin_mask);  BIT_CLEAR(currentStatus.status1, BIT_STATUS1_INJ3); }
-#define openInjector4_DIRECT()  { *inj4_pin_port |= (inj4_pin_mask); BIT_SET(currentStatus.status1, BIT_STATUS1_INJ4); }
-#define closeInjector4_DIRECT() { *inj4_pin_port &= ~(inj4_pin_mask);  BIT_CLEAR(currentStatus.status1, BIT_STATUS1_INJ4); }
-#define openInjector5_DIRECT()  { *inj5_pin_port |= (inj5_pin_mask); }
-#define closeInjector5_DIRECT() { *inj5_pin_port &= ~(inj5_pin_mask); }
-#define openInjector6_DIRECT()  { *inj6_pin_port |= (inj6_pin_mask); }
-#define closeInjector6_DIRECT() { *inj6_pin_port &= ~(inj6_pin_mask); }
-#define openInjector7_DIRECT()  { *inj7_pin_port |= (inj7_pin_mask); }
-#define closeInjector7_DIRECT() { *inj7_pin_port &= ~(inj7_pin_mask); }
-#define openInjector8_DIRECT()  { *inj8_pin_port |= (inj8_pin_mask); }
-#define closeInjector8_DIRECT() { *inj8_pin_port &= ~(inj8_pin_mask); }
-
 #define coil1Low_DIRECT()       (*ign1_pin_port &= ~(ign1_pin_mask))
 #define coil1High_DIRECT()      (*ign1_pin_port |= (ign1_pin_mask))
 #define coil2Low_DIRECT()       (*ign2_pin_port &= ~(ign2_pin_mask))
@@ -212,15 +129,6 @@ void tachoOutputOff(void);
 #define coil6Toggle_DIRECT() (*ign6_pin_port ^= ign6_pin_mask )
 #define coil7Toggle_DIRECT() (*ign7_pin_port ^= ign7_pin_mask )
 #define coil8Toggle_DIRECT() (*ign8_pin_port ^= ign8_pin_mask )
-
-#define injector1Toggle_DIRECT() (*inj1_pin_port ^= inj1_pin_mask )
-#define injector2Toggle_DIRECT() (*inj2_pin_port ^= inj2_pin_mask )
-#define injector3Toggle_DIRECT() (*inj3_pin_port ^= inj3_pin_mask )
-#define injector4Toggle_DIRECT() (*inj4_pin_port ^= inj4_pin_mask )
-#define injector5Toggle_DIRECT() (*inj5_pin_port ^= inj5_pin_mask )
-#define injector6Toggle_DIRECT() (*inj6_pin_port ^= inj6_pin_mask )
-#define injector7Toggle_DIRECT() (*inj7_pin_port ^= inj7_pin_mask )
-#define injector8Toggle_DIRECT() (*inj8_pin_port ^= inj8_pin_mask )
 
 void nullCallback(void);
 

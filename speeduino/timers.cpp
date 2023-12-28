@@ -14,6 +14,7 @@ Timers are typically low resolution (Compared to Schedulers), with maximum frequ
 #include "globals.h"
 #include "sensors.h"
 #include "scheduler.h"
+#include "injector_schedule.h"
 #include "scheduledIO.h"
 #include "speeduino.h"
 #include "scheduler.h"
@@ -60,15 +61,15 @@ void initialiseTimers(void)
 
 static inline void applyOverDwellCheck(IgnitionSchedule &schedule, uint32_t targetOverdwellTime) {
   //Check first whether each spark output is currently on. Only check it's dwell time if it is
-  if ((schedule.Status == RUNNING) && (schedule.startTime < targetOverdwellTime)) { 
-    schedule.pEndCallback(); schedule.Status = OFF; 
+  if ((schedule.Status == RUNNING) && (schedule.startTime < targetOverdwellTime)) {
+    schedule.pEndCallback(); schedule.Status = OFF;
   }
 }
 
 //Timer2 Overflow Interrupt Vector, called when the timer overflows.
 //Executes every ~1ms.
 #if defined(CORE_AVR) //AVR chips use the ISR for this
-//This MUST be no block. Turning NO_BLOCK off messes with timing accuracy. 
+//This MUST be no block. Turning NO_BLOCK off messes with timing accuracy.
 ISR(TIMER2_OVF_vect, ISR_NOBLOCK) //cppcheck-suppress misra-c2012-8.2
 #else
 void oneMSInterval(void) //Most ARM chips can simply call a function
@@ -88,7 +89,7 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
   //Overdwell check
   uint32_t targetOverdwellTime = micros() - dwellLimit_uS; //Set a target time in the past that all coil charging must have begun after. If the coil charge began before this time, it's been running too long
   bool isCrankLocked = configPage4.ignCranklock && (currentStatus.RPM < currentStatus.crankRPM); //Dwell limiter is disabled during cranking on setups using the locked cranking timing. WE HAVE to do the RPM check here as relying on the engine cranking bit can be potentially too slow in updating
-  if ((configPage4.useDwellLim == 1) && (isCrankLocked != true)) 
+  if ((configPage4.useDwellLim == 1) && (isCrankLocked != true))
   {
     applyOverDwellCheck(ignitionSchedule1, targetOverdwellTime);
 #if IGN_CHANNELS >= 2
@@ -120,15 +121,15 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
   if( currentStatus.tachoSweepEnabled )
   {
     if( (currentStatus.engine != 0) || (ms_counter >= TACHO_SWEEP_TIME_MS) )  { currentStatus.tachoSweepEnabled = false; }  // Stop the sweep after SWEEP_TIME, or if real tach signals have started
-    else 
+    else
     {
       // Ramp the needle smoothly to the max over the SWEEP_RAMP time
       if( ms_counter < TACHO_SWEEP_RAMP_MS ) { tachoSweepAccum += map(ms_counter, 0, TACHO_SWEEP_RAMP_MS, 0, tachoSweepIncr); }
       else                                   { tachoSweepAccum += tachoSweepIncr;                                             }
-             
+
       // Each time it rolls over, it's time to pulse the Tach
-      if( tachoSweepAccum >= MS_PER_SEC ) 
-      {  
+      if( tachoSweepAccum >= MS_PER_SEC )
+      {
         tachoOutputFlag = READY;
         tachoSweepAccum -= MS_PER_SEC;
       }
@@ -139,8 +140,8 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
   if(tachoOutputFlag == READY)
   {
     //Check for half speed tacho
-    if( (configPage2.tachoDiv == 0) || (currentStatus.tachoAlt == true) ) 
-    { 
+    if( (configPage2.tachoDiv == 0) || (currentStatus.tachoAlt == true) )
+    {
       TACHO_PULSE_LOW();
       //ms_counter is cast down to a byte as the tacho duration can only be in the range of 1-6, so no extra resolution above that is required
       tachoEndTime = (uint8_t)ms_counter + configPage2.tachoDuration;
@@ -151,7 +152,7 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
       //Don't run on this pulse (Half speed tacho)
       tachoOutputFlag = TACHO_INACTIVE;
     }
-    currentStatus.tachoAlt = !currentStatus.tachoAlt; //Flip the alternating value in case half speed tacho is in use. 
+    currentStatus.tachoAlt = !currentStatus.tachoAlt; //Flip the alternating value in case half speed tacho is in use.
   }
   else if(tachoOutputFlag == ACTIVE)
   {
@@ -168,7 +169,7 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
   {
     loop5ms = 0; //Reset counter
     BIT_SET(TIMER_mask, BIT_TIMER_200HZ);
-  }  
+  }
 
   //30Hz loop
   if (loop33ms == 33)
@@ -287,7 +288,7 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     //Set the flex reading (if enabled). The flexCounter is updated with every pulse from the sensor. If cleared once per second, we get a frequency reading
     if(configPage2.flexEnabled == true)
     {
-      byte tempEthPct = 0; 
+      byte tempEthPct = 0;
       if(flexCounter < 50)
       {
         tempEthPct = 0; //Standard GM Continental sensor reads from 50Hz (0 ethanol) to 150Hz (Pure ethanol). Subtracting 50 from the frequency therefore gives the ethanol percentage.
@@ -343,12 +344,12 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
         if(BIT_CHECK(HWTest_INJ_Pulsed, INJ6_CMD_BIT)) { closeInjector6(); }
         if(BIT_CHECK(HWTest_INJ_Pulsed, INJ7_CMD_BIT)) { closeInjector7(); }
         if(BIT_CHECK(HWTest_INJ_Pulsed, INJ8_CMD_BIT)) { closeInjector8(); }
-        
+
         testInjectorPulseCount = 0;
       }
       else { testInjectorPulseCount++; }
     }
-    
+
 
     //Check for pulsed ignition output test
     if( (HWTest_IGN_Pulsed > 0) )
@@ -368,7 +369,7 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
       }
       else { testIgnitionPulseCount++; }
     }
-    
+
   }
 
 
