@@ -12,21 +12,20 @@
  */
 
 static injectors_st const * injectors = &injectors_direct;
-static injector_control_st const * injector_control = injectors->control;
 
 static void openInjector(injector_id_t injector)
 {
-  injector_control[injector].open();
+  injectors->open(injector);
 }
 
 static void closeInjector(injector_id_t injector)
 {
-  injector_control[injector].close();
+  injectors->close(injector);
 }
 
 static void toggleInjector(injector_id_t injector)
 {
-  injector_control[injector].toggle();
+  injectors->toggle(injector);
 }
 
 void openInjector1(void)
@@ -276,7 +275,6 @@ static void injector_control_update(OUTPUT_CONTROL_TYPE const control_method)
   {
     injectors = &injectors_direct;
   }
-  injector_control = injectors->control;
 }
 
 void injectorControlMethodAssign(OUTPUT_CONTROL_TYPE const control_method)

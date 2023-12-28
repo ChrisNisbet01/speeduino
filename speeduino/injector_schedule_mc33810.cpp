@@ -2,6 +2,17 @@
 #include "ignition.h"
 #include "acc_mc33810.h"
 
+typedef void (*open_injector_fn)(void);
+typedef void (*close_injector_fn)(void);
+typedef void (*toggle_injector_fn)(void);
+
+typedef struct injector_control_st
+{
+  open_injector_fn open;
+  close_injector_fn close;
+  toggle_injector_fn toggle;
+} injector_control_st;
+
 static void open_injector1_mc33810(void)
 {
   openInjector1_MC33810();
@@ -170,9 +181,26 @@ static void init_mc38810_injectors(void)
   initMC33810();
 }
 
+static void openInjector(injector_id_t injector)
+{
+  injector_control_mc33810[injector].open();
+}
+
+static void closeInjector(injector_id_t injector)
+{
+  injector_control_mc33810[injector].close();
+}
+
+static void toggleInjector(injector_id_t injector)
+{
+  injector_control_mc33810[injector].toggle();
+}
+
 injectors_st injectors_mc33810 =
 {
   .init = init_mc38810_injectors,
-  .control = injector_control_mc33810,
+  .open = openInjector,
+  .close = closeInjector,
+  .toggle = toggleInjector,
 };
 
