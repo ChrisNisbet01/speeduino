@@ -1,9 +1,9 @@
 #ifndef INJECTOR_SCHEDULE_MC33810__
 #define INJECTOR_SCHEDULE_MC33810__
 
-#include "injector_schedule.h"
+#include "injectors.h"
 
-extern injector_control_st const injector_control_mc33810[injector_id_COUNT];
+extern injectors_st injectors_mc33810;
 
 #endif /* INJECTOR_SCHEDULE_MC33810__ */
 

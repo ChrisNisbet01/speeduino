@@ -121,7 +121,7 @@ static void toggle_injector8_mc33810(void)
   injector8Toggle_MC33810();
 }
 
-injector_control_st const injector_control_mc33810[injector_id_COUNT] = {
+static injector_control_st const injector_control_mc33810[injector_id_COUNT] = {
   [injector_id_1] = {
     .open = open_injector1_mc33810,
     .close = close_injector1_mc33810,
@@ -162,5 +162,16 @@ injector_control_st const injector_control_mc33810[injector_id_COUNT] = {
     .close = close_injector8_mc33810,
     .toggle = toggle_injector8_mc33810,
   }
+};
+
+static void init_mc38810_injectors(void)
+{
+  initMC33810();
+}
+
+injectors_st injectors_mc33810 =
+{
+  .init = init_mc38810_injectors,
+  .control = injector_control_mc33810,
 };
 

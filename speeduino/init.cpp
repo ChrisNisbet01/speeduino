@@ -2958,42 +2958,7 @@ void setPinMapping(byte boardID)
     ign8_pin_mask = digitalPinToBitMask(pinCoil8);
   }
 
-  if(injectorOutputControl == OUTPUT_CONTROL_DIRECT)
-  {
-    pinMode(pinInjector1, OUTPUT);
-    pinMode(pinInjector2, OUTPUT);
-    pinMode(pinInjector3, OUTPUT);
-    pinMode(pinInjector4, OUTPUT);
-    #if (INJ_CHANNELS >= 5)
-    pinMode(pinInjector5, OUTPUT);
-    #endif
-    #if (INJ_CHANNELS >= 6)
-    pinMode(pinInjector6, OUTPUT);
-    #endif
-    #if (INJ_CHANNELS >= 7)
-    pinMode(pinInjector7, OUTPUT);
-    #endif
-    #if (INJ_CHANNELS >= 8)
-    pinMode(pinInjector8, OUTPUT);
-    #endif
-
-    inj1_pin_port = portOutputRegister(digitalPinToPort(pinInjector1));
-    inj1_pin_mask = digitalPinToBitMask(pinInjector1);
-    inj2_pin_port = portOutputRegister(digitalPinToPort(pinInjector2));
-    inj2_pin_mask = digitalPinToBitMask(pinInjector2);
-    inj3_pin_port = portOutputRegister(digitalPinToPort(pinInjector3));
-    inj3_pin_mask = digitalPinToBitMask(pinInjector3);
-    inj4_pin_port = portOutputRegister(digitalPinToPort(pinInjector4));
-    inj4_pin_mask = digitalPinToBitMask(pinInjector4);
-    inj5_pin_port = portOutputRegister(digitalPinToPort(pinInjector5));
-    inj5_pin_mask = digitalPinToBitMask(pinInjector5);
-    inj6_pin_port = portOutputRegister(digitalPinToPort(pinInjector6));
-    inj6_pin_mask = digitalPinToBitMask(pinInjector6);
-    inj7_pin_port = portOutputRegister(digitalPinToPort(pinInjector7));
-    inj7_pin_mask = digitalPinToBitMask(pinInjector7);
-    inj8_pin_port = portOutputRegister(digitalPinToPort(pinInjector8));
-    inj8_pin_mask = digitalPinToBitMask(pinInjector8);
-  }
+  injector_pins_init();
 
   bool const using_spi = ignitionOutputControl == OUTPUT_CONTROL_MC33810
       || injectorOutputControl == OUTPUT_CONTROL_MC33810;
