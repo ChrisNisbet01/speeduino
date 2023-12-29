@@ -63,7 +63,7 @@ void initialiseTimers(void)
 static inline void applyOverDwellCheck(IgnitionSchedule &schedule, uint32_t targetOverdwellTime) {
   //Check first whether each spark output is currently on. Only check it's dwell time if it is
   if ((schedule.Status == RUNNING) && (schedule.startTime < targetOverdwellTime)) {
-    schedule.pEndCallback(); schedule.Status = OFF;
+    schedule.end.pCallback(schedule.end.args[0], schedule.end.args[1]); schedule.Status = OFF;
   }
 }
 
@@ -181,25 +181,25 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     if( BIT_CHECK(currentStatus.testOutputs, 1) && (currentStatus.RPM == 0) )
     {
       //Check for pulsed injector output test
-      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ1_CMD_BIT)) { openInjector1(); }
-      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ2_CMD_BIT)) { openInjector2(); }
-      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ3_CMD_BIT)) { openInjector3(); }
-      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ4_CMD_BIT)) { openInjector4(); }
-      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ5_CMD_BIT)) { openInjector5(); }
-      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ6_CMD_BIT)) { openInjector6(); }
-      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ7_CMD_BIT)) { openInjector7(); }
-      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ8_CMD_BIT)) { openInjector8(); }
+      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ1_CMD_BIT)) { openSingleInjector(injector_id_1); }
+      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ2_CMD_BIT)) { openSingleInjector(injector_id_2); }
+      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ3_CMD_BIT)) { openSingleInjector(injector_id_3); }
+      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ4_CMD_BIT)) { openSingleInjector(injector_id_4); }
+      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ5_CMD_BIT)) { openSingleInjector(injector_id_5); }
+      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ6_CMD_BIT)) { openSingleInjector(injector_id_6); }
+      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ7_CMD_BIT)) { openSingleInjector(injector_id_7); }
+      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ8_CMD_BIT)) { openSingleInjector(injector_id_8); }
       testInjectorPulseCount = 0;
 
       //Check for pulsed ignition output test
-      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN1_CMD_BIT)) { beginCoil1Charge(); }
-      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN2_CMD_BIT)) { beginCoil2Charge(); }
-      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN3_CMD_BIT)) { beginCoil3Charge(); }
-      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN4_CMD_BIT)) { beginCoil4Charge(); }
-      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN5_CMD_BIT)) { beginCoil5Charge(); }
-      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN6_CMD_BIT)) { beginCoil6Charge(); }
-      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN7_CMD_BIT)) { beginCoil7Charge(); }
-      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN8_CMD_BIT)) { beginCoil8Charge(); }
+      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN1_CMD_BIT)) { singleCoilBeginCharge(ignition_id_1); }
+      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN2_CMD_BIT)) { singleCoilBeginCharge(ignition_id_2); }
+      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN3_CMD_BIT)) { singleCoilBeginCharge(ignition_id_3); }
+      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN4_CMD_BIT)) { singleCoilBeginCharge(ignition_id_4); }
+      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN5_CMD_BIT)) { singleCoilBeginCharge(ignition_id_5); }
+      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN6_CMD_BIT)) { singleCoilBeginCharge(ignition_id_6); }
+      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN7_CMD_BIT)) { singleCoilBeginCharge(ignition_id_7); }
+      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN8_CMD_BIT)) { singleCoilBeginCharge(ignition_id_8); }
       testIgnitionPulseCount = 0;
     }
 
@@ -337,14 +337,14 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     {
       if(testInjectorPulseCount >= configPage13.hwTestInjDuration)
       {
-        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ1_CMD_BIT)) { closeInjector1(); }
-        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ2_CMD_BIT)) { closeInjector2(); }
-        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ3_CMD_BIT)) { closeInjector3(); }
-        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ4_CMD_BIT)) { closeInjector4(); }
-        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ5_CMD_BIT)) { closeInjector5(); }
-        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ6_CMD_BIT)) { closeInjector6(); }
-        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ7_CMD_BIT)) { closeInjector7(); }
-        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ8_CMD_BIT)) { closeInjector8(); }
+        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ1_CMD_BIT)) { closeSingleInjector(injector_id_1); }
+        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ2_CMD_BIT)) { closeSingleInjector(injector_id_2); }
+        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ3_CMD_BIT)) { closeSingleInjector(injector_id_3); }
+        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ4_CMD_BIT)) { closeSingleInjector(injector_id_4); }
+        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ5_CMD_BIT)) { closeSingleInjector(injector_id_5); }
+        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ6_CMD_BIT)) { closeSingleInjector(injector_id_6); }
+        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ7_CMD_BIT)) { closeSingleInjector(injector_id_7); }
+        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ8_CMD_BIT)) { closeSingleInjector(injector_id_8); }
 
         testInjectorPulseCount = 0;
       }
@@ -357,14 +357,14 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     {
       if(testIgnitionPulseCount >= configPage13.hwTestIgnDuration)
       {
-        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN1_CMD_BIT)) { endCoil1Charge(); }
-        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN2_CMD_BIT)) { endCoil2Charge(); }
-        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN3_CMD_BIT)) { endCoil3Charge(); }
-        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN4_CMD_BIT)) { endCoil4Charge(); }
-        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN5_CMD_BIT)) { endCoil5Charge(); }
-        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN6_CMD_BIT)) { endCoil6Charge(); }
-        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN7_CMD_BIT)) { endCoil7Charge(); }
-        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN8_CMD_BIT)) { endCoil8Charge(); }
+        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN1_CMD_BIT)) { singleCoilEndCharge(ignition_id_1); }
+        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN2_CMD_BIT)) { singleCoilEndCharge(ignition_id_2); }
+        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN3_CMD_BIT)) { singleCoilEndCharge(ignition_id_3); }
+        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN4_CMD_BIT)) { singleCoilEndCharge(ignition_id_4); }
+        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN5_CMD_BIT)) { singleCoilEndCharge(ignition_id_5); }
+        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN6_CMD_BIT)) { singleCoilEndCharge(ignition_id_6); }
+        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN7_CMD_BIT)) { singleCoilEndCharge(ignition_id_7); }
+        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN8_CMD_BIT)) { singleCoilEndCharge(ignition_id_8); }
 
         testIgnitionPulseCount = 0;
       }

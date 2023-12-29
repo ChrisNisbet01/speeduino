@@ -126,8 +126,16 @@ struct IgnitionSchedule {
 
   volatile unsigned long duration;///< Scheduled duration (uS ?)
   volatile ScheduleStatus Status; ///< Schedule status: OFF, PENDING, STAGED, RUNNING
-  void (*pStartCallback)(void);        ///< Start Callback function for schedule
-  void (*pEndCallback)(void);          ///< End Callback function for schedule
+  struct
+  {
+    void (*pCallback)(uint8_t arg1, uint8_t arg2);
+    uint8_t args[2];
+  } start;
+  struct
+  {
+    void (*pCallback)(uint8_t arg1, uint8_t arg2);
+    uint8_t args[2];
+  } end;
   volatile unsigned long startTime; /**< The system time (in uS) that the schedule started, used by the overdwell protection in timers.ino */
   volatile COMPARE_TYPE startCompare; ///< The counter value of the timer when this will start
   volatile COMPARE_TYPE endCompare;   ///< The counter value of the timer when this will end
@@ -181,8 +189,16 @@ struct FuelSchedule {
   volatile ScheduleStatus Status; ///< Schedule status: OFF, PENDING, STAGED, RUNNING
   volatile COMPARE_TYPE startCompare; ///< The counter value of the timer when this will start
   volatile COMPARE_TYPE endCompare;   ///< The counter value of the timer when this will end
-  void (*pStartFunction)(void);
-  void (*pEndFunction)(void);
+  struct
+  {
+    void (*pCallback)(uint8_t arg1, uint8_t arg2);
+    uint8_t args[2];
+  } start;
+  struct
+  {
+    void (*pCallback)(uint8_t arg1, uint8_t arg2);
+    uint8_t args[2];
+  } end;
   COMPARE_TYPE nextStartCompare;
   COMPARE_TYPE nextEndCompare;
   volatile bool hasNextSchedule = false;
