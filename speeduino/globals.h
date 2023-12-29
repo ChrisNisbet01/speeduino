@@ -128,10 +128,13 @@
 #define SERIAL_PORT_PRIMARY   0
 #define SERIAL_PORT_SECONDARY 3
 
-//Define the load algorithm
-#define LOAD_SOURCE_MAP         0
-#define LOAD_SOURCE_TPS         1
-#define LOAD_SOURCE_IMAPEMAP    2
+//Define the load algorithms
+typedef enum load_source_t
+{
+  LOAD_SOURCE_MAP,
+  LOAD_SOURCE_TPS,
+  LOAD_SOURCE_IMAPEMAP,
+} load_source_t;
 
 //Define bit positions within engine variable
 #define BIT_ENGINE_RUN      0   // Engine running

@@ -1,13 +1,14 @@
 #include "globals.h"
 #include "secondaryTables.h"
 #include "corrections.h"
+#include "engine_load_calcs.h"
 
 void calculateSecondaryFuel(void)
 {
   //If the secondary fuel table is in use, also get the VE value from there
-  BIT_CLEAR(currentStatus.status3, BIT_STATUS3_FUEL2_ACTIVE); //Clear the bit indicating that the 2nd fuel table is in use. 
+  BIT_CLEAR(currentStatus.status3, BIT_STATUS3_FUEL2_ACTIVE); //Clear the bit indicating that the 2nd fuel table is in use.
   if(configPage10.fuel2Mode > 0)
-  { 
+  {
     if(configPage10.fuel2Mode == FUEL2_MODE_MULTIPLY)
     {
       currentStatus.VE2 = getVE2();
@@ -30,7 +31,7 @@ void calculateSecondaryFuel(void)
       {
         if(currentStatus.RPM > configPage10.fuel2SwitchValue)
         {
-          BIT_SET(currentStatus.status3, BIT_STATUS3_FUEL2_ACTIVE); //Set the bit indicating that the 2nd fuel table is in use. 
+          BIT_SET(currentStatus.status3, BIT_STATUS3_FUEL2_ACTIVE); //Set the bit indicating that the 2nd fuel table is in use.
           currentStatus.VE2 = getVE2();
           currentStatus.VE = currentStatus.VE2;
         }
@@ -39,7 +40,7 @@ void calculateSecondaryFuel(void)
       {
         if(currentStatus.MAP > configPage10.fuel2SwitchValue)
         {
-          BIT_SET(currentStatus.status3, BIT_STATUS3_FUEL2_ACTIVE); //Set the bit indicating that the 2nd fuel table is in use. 
+          BIT_SET(currentStatus.status3, BIT_STATUS3_FUEL2_ACTIVE); //Set the bit indicating that the 2nd fuel table is in use.
           currentStatus.VE2 = getVE2();
           currentStatus.VE = currentStatus.VE2;
         }
@@ -48,7 +49,7 @@ void calculateSecondaryFuel(void)
       {
         if(currentStatus.TPS > configPage10.fuel2SwitchValue)
         {
-          BIT_SET(currentStatus.status3, BIT_STATUS3_FUEL2_ACTIVE); //Set the bit indicating that the 2nd fuel table is in use. 
+          BIT_SET(currentStatus.status3, BIT_STATUS3_FUEL2_ACTIVE); //Set the bit indicating that the 2nd fuel table is in use.
           currentStatus.VE2 = getVE2();
           currentStatus.VE = currentStatus.VE2;
         }
@@ -57,7 +58,7 @@ void calculateSecondaryFuel(void)
       {
         if(currentStatus.ethanolPct > configPage10.fuel2SwitchValue)
         {
-          BIT_SET(currentStatus.status3, BIT_STATUS3_FUEL2_ACTIVE); //Set the bit indicating that the 2nd fuel table is in use. 
+          BIT_SET(currentStatus.status3, BIT_STATUS3_FUEL2_ACTIVE); //Set the bit indicating that the 2nd fuel table is in use.
           currentStatus.VE2 = getVE2();
           currentStatus.VE = currentStatus.VE2;
         }
@@ -67,7 +68,7 @@ void calculateSecondaryFuel(void)
     {
       if(digitalRead(pinFuel2Input) == configPage10.fuel2InputPolarity)
       {
-        BIT_SET(currentStatus.status3, BIT_STATUS3_FUEL2_ACTIVE); //Set the bit indicating that the 2nd fuel table is in use. 
+        BIT_SET(currentStatus.status3, BIT_STATUS3_FUEL2_ACTIVE); //Set the bit indicating that the 2nd fuel table is in use.
         currentStatus.VE2 = getVE2();
         currentStatus.VE = currentStatus.VE2;
       }
@@ -79,9 +80,9 @@ void calculateSecondaryFuel(void)
 void calculateSecondarySpark(void)
 {
   //Same as above but for the secondary ignition table
-  BIT_CLEAR(currentStatus.spark2, BIT_SPARK2_SPARK2_ACTIVE); //Clear the bit indicating that the 2nd spark table is in use. 
+  BIT_CLEAR(currentStatus.spark2, BIT_SPARK2_SPARK2_ACTIVE); //Clear the bit indicating that the 2nd spark table is in use.
   if(configPage10.spark2Mode > 0)
-  { 
+  {
     if(configPage10.spark2Mode == SPARK2_MODE_MULTIPLY)
     {
       BIT_SET(currentStatus.spark2, BIT_SPARK2_SPARK2_ACTIVE);
@@ -96,7 +97,7 @@ void calculateSecondarySpark(void)
     }
     else if(configPage10.spark2Mode == SPARK2_MODE_ADD)
     {
-      BIT_SET(currentStatus.spark2, BIT_SPARK2_SPARK2_ACTIVE); //Set the bit indicating that the 2nd spark table is in use. 
+      BIT_SET(currentStatus.spark2, BIT_SPARK2_SPARK2_ACTIVE); //Set the bit indicating that the 2nd spark table is in use.
       currentStatus.advance2 = getAdvance2();
       //Spark tables are added together, but a check is made to make sure this won't overflow the 8-bit VE value
       int16_t combinedAdvance = (int16_t)currentStatus.advance1 + (int16_t)currentStatus.advance2;
@@ -110,7 +111,7 @@ void calculateSecondarySpark(void)
       {
         if(currentStatus.RPM > configPage10.spark2SwitchValue)
         {
-          BIT_SET(currentStatus.spark2, BIT_SPARK2_SPARK2_ACTIVE); //Set the bit indicating that the 2nd spark table is in use. 
+          BIT_SET(currentStatus.spark2, BIT_SPARK2_SPARK2_ACTIVE); //Set the bit indicating that the 2nd spark table is in use.
           currentStatus.advance2 = getAdvance2();
           currentStatus.advance = currentStatus.advance2;
         }
@@ -119,7 +120,7 @@ void calculateSecondarySpark(void)
       {
         if(currentStatus.MAP > configPage10.spark2SwitchValue)
         {
-          BIT_SET(currentStatus.spark2, BIT_SPARK2_SPARK2_ACTIVE); //Set the bit indicating that the 2nd spark table is in use. 
+          BIT_SET(currentStatus.spark2, BIT_SPARK2_SPARK2_ACTIVE); //Set the bit indicating that the 2nd spark table is in use.
           currentStatus.advance2 = getAdvance2();
           currentStatus.advance = currentStatus.advance2;
         }
@@ -128,7 +129,7 @@ void calculateSecondarySpark(void)
       {
         if(currentStatus.TPS > configPage10.spark2SwitchValue)
         {
-          BIT_SET(currentStatus.spark2, BIT_SPARK2_SPARK2_ACTIVE); //Set the bit indicating that the 2nd spark table is in use. 
+          BIT_SET(currentStatus.spark2, BIT_SPARK2_SPARK2_ACTIVE); //Set the bit indicating that the 2nd spark table is in use.
           currentStatus.advance2 = getAdvance2();
           currentStatus.advance = currentStatus.advance2;
         }
@@ -137,7 +138,7 @@ void calculateSecondarySpark(void)
       {
         if(currentStatus.ethanolPct > configPage10.spark2SwitchValue)
         {
-          BIT_SET(currentStatus.spark2, BIT_SPARK2_SPARK2_ACTIVE); //Set the bit indicating that the 2nd spark table is in use. 
+          BIT_SET(currentStatus.spark2, BIT_SPARK2_SPARK2_ACTIVE); //Set the bit indicating that the 2nd spark table is in use.
           currentStatus.advance2 = getAdvance2();
           currentStatus.advance = currentStatus.advance2;
         }
@@ -147,7 +148,7 @@ void calculateSecondarySpark(void)
     {
       if(digitalRead(pinSpark2Input) == configPage10.spark2InputPolarity)
       {
-        BIT_SET(currentStatus.spark2, BIT_SPARK2_SPARK2_ACTIVE); //Set the bit indicating that the 2nd spark table is in use. 
+        BIT_SET(currentStatus.spark2, BIT_SPARK2_SPARK2_ACTIVE); //Set the bit indicating that the 2nd spark table is in use.
         currentStatus.advance2 = getAdvance2();
         currentStatus.advance = currentStatus.advance2;
       }
@@ -161,60 +162,28 @@ void calculateSecondarySpark(void)
 
 /**
  * @brief Looks up and returns the VE value from the secondary fuel table
- * 
+ *
  * This performs largely the same operations as getVE() however the lookup is of the secondary fuel table and uses the secondary load source
- * @return byte 
+ * @return byte
  */
 byte getVE2(void)
 {
-  byte tempVE = 100;
-  if( configPage10.fuel2Algorithm == LOAD_SOURCE_MAP)
-  {
-    //Speed Density
-    currentStatus.fuelLoad2 = currentStatus.MAP;
-  }
-  else if (configPage10.fuel2Algorithm == LOAD_SOURCE_TPS)
-  {
-    //Alpha-N
-    currentStatus.fuelLoad2 = currentStatus.TPS * 2;
-  }
-  else if (configPage10.fuel2Algorithm == LOAD_SOURCE_IMAPEMAP)
-  {
-    //IMAP / EMAP
-    currentStatus.fuelLoad2 = ((int16_t)currentStatus.MAP * 100U) / currentStatus.EMAP;
-  }
-  else { currentStatus.fuelLoad2 = currentStatus.MAP; } //Fallback position
-  tempVE = get3DTableValue(&fuelTable2, currentStatus.fuelLoad2, currentStatus.RPM); //Perform lookup into fuel map for RPM vs MAP value
+  currentStatus.fuelLoad2 = calculate_engine_load((load_source_t)configPage10.fuel2Algorithm, currentStatus, currentStatus.MAP);
+  byte tempVE = get3DTableValue(&fuelTable2, currentStatus.fuelLoad2, currentStatus.RPM); //Perform lookup into fuel map for RPM vs MAP value
 
   return tempVE;
 }
 
 /**
  * @brief Performs a lookup of the second ignition advance table. The values used to look this up will be RPM and whatever load source the user has configured
- * 
+ *
  * @return byte The current target advance value in degrees
  */
 byte getAdvance2(void)
 {
-  byte tempAdvance = 0;
-  if (configPage10.spark2Algorithm == LOAD_SOURCE_MAP) //Check which fuelling algorithm is being used
-  {
-    //Speed Density
-    currentStatus.ignLoad2 = currentStatus.MAP;
-  }
-  else if(configPage10.spark2Algorithm == LOAD_SOURCE_TPS)
-  {
-    //Alpha-N
-    currentStatus.ignLoad2 = currentStatus.TPS * 2;
-
-  }
-  else if (configPage10.spark2Algorithm == LOAD_SOURCE_IMAPEMAP)
-  {
-    //IMAP / EMAP
-    currentStatus.ignLoad2 = (currentStatus.MAP * 100) / currentStatus.EMAP;
-  }
-  else { currentStatus.ignLoad2 = currentStatus.MAP; }
-  tempAdvance = get3DTableValue(&ignitionTable2, currentStatus.ignLoad2, currentStatus.RPM) - OFFSET_IGNITION; //As above, but for ignition advance
+  currentStatus.ignLoad2 = calculate_engine_load((load_source_t)configPage10.spark2Algorithm, currentStatus, currentStatus.MAP);
+  //As for VE2, but for ignition advance
+  byte tempAdvance = get3DTableValue(&ignitionTable2, currentStatus.ignLoad2, currentStatus.RPM) - OFFSET_IGNITION;
   tempAdvance = correctionsIgn(tempAdvance);
 
   return tempAdvance;
