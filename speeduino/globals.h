@@ -27,7 +27,6 @@
 #include <Arduino.h>
 #include "table2d.h"
 #include "table3d.h"
-#include <assert.h>
 #include "src/FastCRC/FastCRC.h"
 #include "types.h"
 
@@ -118,8 +117,6 @@
 #define BIT_WRITE(var, pos, bitvalue) ((bitvalue) ? BIT_SET((var), (pos)) : bitClear((var), (pos)))
 
 #define CRANK_ANGLE_MAX (max(CRANK_ANGLE_MAX_IGN, CRANK_ANGLE_MAX_INJ))
-
-#define interruptSafe(c) (noInterrupts(); {c} interrupts();) //Wraps any code between nointerrupt and interrupt calls
 
 #define MICROS_PER_SEC INT32_C(1000000)
 #define MICROS_PER_MIN INT32_C(MICROS_PER_SEC*60U)
@@ -282,8 +279,11 @@ typedef enum load_source_t
 #define EGO_ALGORITHM_SIMPLE  0
 #define EGO_ALGORITHM_PID     2
 
-#define STAGING_MODE_TABLE  0
-#define STAGING_MODE_AUTO   1
+typedef enum staging_mode_t
+{
+  STAGING_MODE_TABLE = 0,
+  STAGING_MODE_AUTO = 1,
+} staging_mode_t;
 
 #define NITROUS_OFF         0
 #define NITROUS_STAGE1      1

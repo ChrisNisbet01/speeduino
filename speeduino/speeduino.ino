@@ -1420,7 +1420,9 @@ void calculateStaging(uint32_t pwLimit)
     currentStatus.PW1 -= inj_opentime_uS; //Subtract the opening time from PW1 as it needs to be multiplied out again by the pri/sec req_fuel values below. It is added on again after that calculation.
     uint32_t tempPW1 = div100((uint32_t)currentStatus.PW1 * staged_req_fuel_mult_pri);
 
-    if(configPage10.stagingMode == STAGING_MODE_TABLE)
+    switch ((staging_mode_t)configPage10.stagingMode)
+    {
+    case STAGING_MODE_TABLE:
     {
       uint32_t tempPW3 = div100((uint32_t)currentStatus.PW1 * staged_req_fuel_mult_sec); //This is ONLY needed in in table mode. Auto mode only calculates the difference.
 
@@ -1429,7 +1431,7 @@ void calculateStaging(uint32_t pwLimit)
       currentStatus.PW1 += inj_opentime_uS;
 
       //PW2 is used temporarily to hold the secondary injector pulsewidth. It will be assigned to the correct channel below
-      if(stagingSplit > 0)
+      if (stagingSplit > 0)
       {
         BIT_SET(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE); //Set the staging active flag
         currentStatus.PW2 = div100(stagingSplit * tempPW3);
@@ -1440,13 +1442,15 @@ void calculateStaging(uint32_t pwLimit)
         BIT_CLEAR(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE); //Clear the staging active flag
         currentStatus.PW2 = 0;
       }
+      break;
     }
-    else if(configPage10.stagingMode == STAGING_MODE_AUTO)
+
+    case STAGING_MODE_AUTO:
     {
       currentStatus.PW1 = tempPW1;
       //If automatic mode, the primary injectors are used all the way up to their limit (Configured by the pulsewidth limit setting)
       //If they exceed their limit, the extra duty is passed to the secondaries
-      if(tempPW1 > pwLimit)
+      if (tempPW1 > pwLimit)
       {
         BIT_SET(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE); //Set the staging active flag
         uint32_t extraPW = tempPW1 - pwLimit + inj_opentime_uS; //The open time must be added here AND below because tempPW1 does not include an open time. The addition of it here takes into account the fact that pwLlimit does not contain an allowance for an open time.
@@ -1461,6 +1465,11 @@ void calculateStaging(uint32_t pwLimit)
         BIT_CLEAR(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE); //Clear the staging active flag
         currentStatus.PW2 = 0;
       }
+      break;
+    }
+
+    default:
+      break;
     }
 
     //Allocate the primary and secondary pulse widths based on the fuel configuration
