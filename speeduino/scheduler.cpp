@@ -118,79 +118,79 @@ void initialiseSchedulers()
     reset(ignitionSchedule8);
 #endif
 
-  fuelSchedule1.pStartFunction = nullCallback;
-  fuelSchedule1.pEndFunction = nullCallback;
-  fuelSchedule2.pStartFunction = nullCallback;
-  fuelSchedule2.pEndFunction = nullCallback;
-  fuelSchedule3.pStartFunction = nullCallback;
-  fuelSchedule3.pEndFunction = nullCallback;
-  fuelSchedule4.pStartFunction = nullCallback;
-  fuelSchedule4.pEndFunction = nullCallback;
+  fuelSchedule1.start.pCallback = nullCallback;
+  fuelSchedule1.end.pCallback = nullCallback;
+  fuelSchedule2.start.pCallback = nullCallback;
+  fuelSchedule2.end.pCallback = nullCallback;
+  fuelSchedule3.start.pCallback = nullCallback;
+  fuelSchedule3.end.pCallback = nullCallback;
+  fuelSchedule4.start.pCallback = nullCallback;
+  fuelSchedule4.end.pCallback = nullCallback;
 #if (INJ_CHANNELS >= 5)
-  fuelSchedule5.pStartFunction = nullCallback;
-  fuelSchedule5.pEndFunction = nullCallback;
+  fuelSchedule5.start.pCallback = nullCallback;
+  fuelSchedule5.end.pCallback = nullCallback;
 #endif
 #if (INJ_CHANNELS >= 6)
-  fuelSchedule6.pStartFunction = nullCallback;
-  fuelSchedule6.pEndFunction = nullCallback;
+  fuelSchedule6.start.pCallback = nullCallback;
+  fuelSchedule6.end.pCallback = nullCallback;
 #endif
 #if (INJ_CHANNELS >= 7)
-  fuelSchedule7.pStartFunction = nullCallback;
-  fuelSchedule7.pEndFunction = nullCallback;
+  fuelSchedule7.start.pCallback = nullCallback;
+  fuelSchedule7.end.pCallback = nullCallback;
 #endif
 #if (INJ_CHANNELS >= 8)
-  fuelSchedule8.pStartFunction = nullCallback;
-  fuelSchedule8.pEndFunction = nullCallback;
+  fuelSchedule8.start.pCallback = nullCallback;
+  fuelSchedule8.end.pCallback = nullCallback;
 #endif
 
-  ignitionSchedule1.pStartCallback = nullCallback;
-  ignitionSchedule1.pEndCallback = nullCallback;
+  ignitionSchedule1.start.pCallback = nullCallback;
+  ignitionSchedule1.end.pCallback = nullCallback;
   ignition1StartAngle=0;
   ignition1EndAngle=0;
   channel1IgnDegrees=0; /**< The number of crank degrees until cylinder 1 is at TDC (This is obviously 0 for virtually ALL engines, but there's some weird ones) */
 
-  ignitionSchedule2.pStartCallback = nullCallback;
-  ignitionSchedule2.pEndCallback = nullCallback;
+  ignitionSchedule2.start.pCallback = nullCallback;
+  ignitionSchedule2.end.pCallback = nullCallback;
   ignition2StartAngle=0;
   ignition2EndAngle=0;
   channel2IgnDegrees=0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
 
-  ignitionSchedule3.pStartCallback = nullCallback;
-  ignitionSchedule3.pEndCallback = nullCallback;
+  ignitionSchedule3.start.pCallback = nullCallback;
+  ignitionSchedule3.end.pCallback = nullCallback;
   ignition3StartAngle=0;
   ignition3EndAngle=0;
   channel3IgnDegrees=0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
 
-  ignitionSchedule4.pStartCallback = nullCallback;
-  ignitionSchedule4.pEndCallback = nullCallback;
+  ignitionSchedule4.start.pCallback = nullCallback;
+  ignitionSchedule4.end.pCallback = nullCallback;
   ignition4StartAngle=0;
   ignition4EndAngle=0;
   channel4IgnDegrees=0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
 
 #if (IGN_CHANNELS >= 5)
-  ignitionSchedule5.pStartCallback = nullCallback;
-  ignitionSchedule5.pEndCallback = nullCallback;
+  ignitionSchedule5.start.pCallback = nullCallback;
+  ignitionSchedule5.end.pCallback = nullCallback;
   ignition5StartAngle=0;
   ignition5EndAngle=0;
   channel5IgnDegrees=0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
 #endif
 #if (IGN_CHANNELS >= 6)
-  ignitionSchedule6.pStartCallback = nullCallback;
-  ignitionSchedule6.pEndCallback = nullCallback;
+  ignitionSchedule6.start.pCallback = nullCallback;
+  ignitionSchedule6.end.pCallback = nullCallback;
   ignition6StartAngle=0;
   ignition6EndAngle=0;
   channel6IgnDegrees=0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
 #endif
 #if (IGN_CHANNELS >= 7)
-  ignitionSchedule7.pStartCallback = nullCallback;
-  ignitionSchedule7.pEndCallback = nullCallback;
+  ignitionSchedule7.start.pCallback = nullCallback;
+  ignitionSchedule7.end.pCallback = nullCallback;
   ignition7StartAngle=0;
   ignition7EndAngle=0;
   channel7IgnDegrees=0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
 #endif
 #if (IGN_CHANNELS >= 8)
-  ignitionSchedule8.pStartCallback = nullCallback;
-  ignitionSchedule8.pEndCallback = nullCallback;
+  ignitionSchedule8.start.pCallback = nullCallback;
+  ignitionSchedule8.end.pCallback = nullCallback;
   ignition8StartAngle=0;
   ignition8EndAngle=0;
   channel8IgnDegrees=0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
@@ -322,7 +322,7 @@ void fuelScheduleISR(FuelSchedule &schedule)
 {
   if (schedule.Status == PENDING) //Check to see if this schedule is turn on
   {
-    schedule.pStartFunction();
+    schedule.start.pCallback(schedule.start.args[0], schedule.start.args[1]);
     schedule.Status = RUNNING; //Set the status to be in progress (ie The start callback has been called, but not the end callback)
     //Doing this here prevents a potential overflow on restarts
     SET_COMPARE(schedule.compare,
@@ -330,7 +330,7 @@ void fuelScheduleISR(FuelSchedule &schedule)
   }
   else if (schedule.Status == RUNNING)
   {
-      schedule.pEndFunction();
+      schedule.end.pCallback(schedule.end.args[0], schedule.end.args[1]);
       schedule.Status = OFF; //Turn off the schedule
 
       //If there is a next schedule queued up, activate it
@@ -451,7 +451,7 @@ static inline __attribute__((always_inline)) void ignitionScheduleISR(IgnitionSc
 {
   if (schedule.Status == PENDING) //Check to see if this schedule is turn on
   {
-    schedule.pStartCallback();
+    schedule.start.pCallback(schedule.start.args[0], schedule.start.args[1]);
     schedule.Status = RUNNING; //Set the status to be in progress (ie The start callback has been called, but not the end callback)
     schedule.startTime = micros();
     if(schedule.endScheduleSetByDecoder)
@@ -466,7 +466,7 @@ static inline __attribute__((always_inline)) void ignitionScheduleISR(IgnitionSc
   }
   else if (schedule.Status == RUNNING)
   {
-    schedule.pEndCallback();
+    schedule.end.pCallback(schedule.end.args[0], schedule.end.args[1]);
     schedule.endScheduleSetByDecoder = false;
     ignitionCount = ignitionCount + 1; //Increment the ignition counter
     currentStatus.actualDwell = DWELL_SMOOTHED(currentStatus.actualDwell, micros() - schedule.startTime);

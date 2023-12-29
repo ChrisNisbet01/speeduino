@@ -1,7 +1,9 @@
 #ifndef SCHEDULEDIO_H
 #define SCHEDULEDIO_H
 
-void nullCallback(void);
+#include <cstdint>
+
+void nullCallback(uint8_t arg1, uint8_t arg2);
 
 typedef void (*voidVoidCallback)(void);
 

@@ -28,84 +28,41 @@ static void toggleInjector(injector_id_t injector)
   injectors->toggle(injector);
 }
 
+void openSingleInjector(uint8_t injector_id, uint8_t unused)
+{
+  openInjector((injector_id_t)injector_id);
+}
+
+void openSingleInjector(uint8_t injector_id)
+{
+  openInjector((injector_id_t)injector_id);
+}
+
+void closeSingleInjector(uint8_t injector_id, uint8_t unused)
+{
+  closeInjector((injector_id_t)injector_id);
+}
+
+void closeSingleInjector(uint8_t injector_id)
+{
+  closeInjector((injector_id_t)injector_id);
+}
+
+void openTwoInjectors(uint8_t arg1, uint8_t arg2)
+{
+  openInjector((injector_id_t)arg1);
+  openInjector((injector_id_t)arg2);
+}
+
+void closeTwoInjectors(uint8_t arg1, uint8_t arg2)
+{
+  closeInjector((injector_id_t)arg1);
+  closeInjector((injector_id_t)arg2);
+}
+
 void openInjector1(void)
 {
   openInjector(injector_id_1);
-}
-
-void closeInjector1(void)
-{
-  closeInjector(injector_id_1);
-}
-
-void openInjector2(void)
-{
-  openInjector(injector_id_2);
-}
-
-void closeInjector2(void)
-{
-  closeInjector(injector_id_2);
-}
-
-void openInjector3(void)
-{
-  openInjector(injector_id_3);
-}
-
-void closeInjector3(void)
-{
-  closeInjector(injector_id_3);
-}
-
-void openInjector4(void)
-{
-  openInjector(injector_id_4);
-}
-
-void closeInjector4(void)
-{
-  closeInjector(injector_id_4);
-}
-
-void openInjector5(void)
-{
-  openInjector(injector_id_5);
-}
-
-void closeInjector5(void)
-{
-  closeInjector(injector_id_5);
-}
-
-void openInjector6(void)
-{
-  openInjector(injector_id_6);
-}
-
-void closeInjector6(void)
-{
-  closeInjector(injector_id_6);
-}
-
-void openInjector7(void)
-{
-  openInjector(injector_id_7);
-}
-
-void closeInjector7(void)
-{
-  closeInjector(injector_id_7);
-}
-
-void openInjector8(void)
-{
-  openInjector(injector_id_8);
-}
-
-void closeInjector8(void)
-{
-  closeInjector(injector_id_8);
 }
 
 void injector1Toggle(void)
@@ -146,123 +103,6 @@ void injector7Toggle(void)
 void injector8Toggle(void)
 {
   toggleInjector(injector_id_8);
-}
-
-// These are for Semi-Sequential and 5 Cylinder injection
-//Standard 4 cylinder pairings
-void openInjector1and3(void)
-{
-  openInjector(injector_id_1);
-  openInjector(injector_id_3);
-}
-void closeInjector1and3(void)
-{
-  closeInjector(injector_id_1);
-  closeInjector(injector_id_3);
-}
-void openInjector2and4(void)
-{
-  openInjector(injector_id_2);
-  openInjector(injector_id_4);
-}
-void closeInjector2and4(void)
-{
-  closeInjector(injector_id_2);
-  closeInjector(injector_id_4);
-}
-//Alternative output pairings
-void openInjector1and4(void)
-{
-  openInjector(injector_id_1);
-  openInjector(injector_id_4);
-}
-void closeInjector1and4(void)
-{
-  closeInjector(injector_id_1);
-  closeInjector(injector_id_4);
-}
-void openInjector2and3(void)
-{
-  openInjector(injector_id_2);
-  openInjector(injector_id_3);
-}
-void closeInjector2and3(void)
-{
-  closeInjector(injector_id_2);
-  closeInjector(injector_id_3);
-}
-
-void openInjector3and5(void)
-{
-  openInjector(injector_id_3);
-  openInjector(injector_id_5);
-}
-void closeInjector3and5(void)
-{
-  closeInjector(injector_id_3);
-  closeInjector(injector_id_5);
-}
-
-void openInjector2and5(void)
-{
-  openInjector(injector_id_2);
-  openInjector(injector_id_5);
-}
-void closeInjector2and5(void)
-{
-  closeInjector(injector_id_2);
-  closeInjector(injector_id_5);
-}
-void openInjector3and6(void)
-{
-  openInjector(injector_id_3);
-  openInjector(injector_id_6);
-}
-void closeInjector3and6(void)
-{
-  closeInjector(injector_id_3);
-  closeInjector(injector_id_6);
-}
-
-void openInjector1and5(void)
-{
-  openInjector(injector_id_1);
-  openInjector(injector_id_5);
-}
-void closeInjector1and5(void)
-{
-  closeInjector(injector_id_1);
-  closeInjector(injector_id_5);
-}
-void openInjector2and6(void)
-{
-  openInjector(injector_id_2);
-  openInjector(injector_id_6);
-}
-void closeInjector2and6(void)
-{
-  closeInjector(injector_id_2);
-  closeInjector(injector_id_6);
-}
-void openInjector3and7(void)
-{
-  openInjector(injector_id_3);
-  openInjector(injector_id_7);
-}
-void closeInjector3and7(void)
-{
-  closeInjector(injector_id_3);
-  closeInjector(injector_id_7);
-}
-void openInjector4and8(void)
-{
-  openInjector(injector_id_4);
-  openInjector(injector_id_8);
-}
-void closeInjector4and8(void)
-{
-  closeInjector(injector_id_4);
-  closeInjector(injector_id_8);
 }
 
 static void injector_control_update(OUTPUT_CONTROL_TYPE const control_method)
