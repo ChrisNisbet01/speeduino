@@ -26,8 +26,6 @@ bool correctionDFCO(void); //Decelleration fuel cutoff
 
 
 int8_t correctionsIgn(int8_t advance);
-int8_t correctionFixedTiming(int8_t advance);
-int8_t correctionCrankingFixedTiming(int8_t advance);
 int8_t correctionFlexTiming(int8_t advance);
 int8_t correctionWMITiming(int8_t advance);
 int8_t correctionIATretard(int8_t advance);
@@ -42,8 +40,8 @@ int8_t correctionDFCOignition(int8_t advance);
 
 uint16_t correctionsDwell(uint16_t dwell);
 
-extern byte activateMAPDOT; //The mapDOT value seen when the MAE was activated. 
-extern byte activateTPSDOT; //The tpsDOT value seen when the MAE was activated. 
+extern byte activateMAPDOT; //The mapDOT value seen when the MAE was activated.
+extern byte activateTPSDOT; //The tpsDOT value seen when the MAE was activated.
 
 extern uint16_t AFRnextCycle;
 extern unsigned long knockStartTime;

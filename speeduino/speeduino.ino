@@ -1273,7 +1273,7 @@ uint16_t PW(int REQ_FUEL, byte VE, long MAP, uint16_t corrections, int injOpen)
  */
 byte getVE1(void)
 {
-  currentStatus.fuelLoad = calculate_engine_load((load_source_t)configPage2.fuelAlgorithm, currentStatus, currentStatus.MAP);
+  currentStatus.fuelLoad = calculate_engine_load((load_source_t)configPage2.fuelAlgorithm, currentStatus);
   //Perform lookup into fuel map for RPM vs MAP value
   byte tempVE = get3DTableValue(&fuelTable, currentStatus.fuelLoad, currentStatus.RPM);
 
@@ -1287,7 +1287,7 @@ byte getVE1(void)
  */
 byte getAdvance1(void)
 {
-  currentStatus.ignLoad = calculate_engine_load((load_source_t)configPage2.ignAlgorithm, currentStatus, currentStatus.MAP);
+  currentStatus.ignLoad = calculate_engine_load((load_source_t)configPage2.ignAlgorithm, currentStatus);
   //As for VE, but for ignition advance
   byte tempAdvance = get3DTableValue(&ignitionTable, currentStatus.ignLoad, currentStatus.RPM) - OFFSET_IGNITION;
   tempAdvance = correctionsIgn(tempAdvance);

@@ -708,6 +708,29 @@ byte correctionAFRClosedLoop(void)
 }
 
 //******************************** IGNITION ADVANCE CORRECTIONS ********************************
+/** Correct ignition timing to configured fixed value.
+ * Must be called near end to override all other corrections.
+ */
+static int8_t correctionFixedTiming(int8_t advance)
+{
+  int8_t ignFixValue = advance;
+  if (configPage2.fixAngEnable == 1) { ignFixValue = configPage4.FixAng; } //Check whether the user has set a fixed timing angle
+  return ignFixValue;
+}
+/** Correct ignition timing to configured fixed value to use during cranking.
+ * Must be called near end to override all other corrections.
+ */
+static int8_t correctionCrankingFixedTiming(int8_t advance)
+{
+  int8_t ignCrankFixValue = advance;
+  if ( BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) )
+  {
+    if ( configPage2.crkngAddCLTAdv == 0 ) { ignCrankFixValue = configPage4.CrankAng; } //Use the fixed cranking ignition angle
+    else { ignCrankFixValue = correctionCLTadvance(configPage4.CrankAng); } //Use the CLT compensated cranking ignition angle
+  }
+  return ignCrankFixValue;
+}
+
 /** Dispatch calculations for all ignition related corrections.
  * @param base_advance - Base ignition advance (deg. ?)
  * @return Advance considering all (~12) individual corrections
@@ -733,28 +756,6 @@ int8_t correctionsIgn(int8_t base_advance)
   advance = correctionCrankingFixedTiming(advance); //This overrides the regular fixed timing, must come last
 
   return advance;
-}
-/** Correct ignition timing to configured fixed value.
- * Must be called near end to override all other corrections.
- */
-int8_t correctionFixedTiming(int8_t advance)
-{
-  int8_t ignFixValue = advance;
-  if (configPage2.fixAngEnable == 1) { ignFixValue = configPage4.FixAng; } //Check whether the user has set a fixed timing angle
-  return ignFixValue;
-}
-/** Correct ignition timing to configured fixed value to use during cranking.
- * Must be called near end to override all other corrections.
- */
-int8_t correctionCrankingFixedTiming(int8_t advance)
-{
-  int8_t ignCrankFixValue = advance;
-  if ( BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) )
-  {
-    if ( configPage2.crkngAddCLTAdv == 0 ) { ignCrankFixValue = configPage4.CrankAng; } //Use the fixed cranking ignition angle
-    else { ignCrankFixValue = correctionCLTadvance(configPage4.CrankAng); } //Use the CLT compensated cranking ignition angle
-  }
-  return ignCrankFixValue;
 }
 
 int8_t correctionFlexTiming(int8_t advance)
