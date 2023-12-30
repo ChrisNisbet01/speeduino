@@ -31,6 +31,8 @@
   #include "rtc_common.h"
 #endif
 
+static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
+
 static void configure_schedule_for_single_injector(FuelSchedule &fuelSchedule, injector_id_t injector_id)
 {
   fuelSchedule.start.pCallback = openSingleInjector;
@@ -409,7 +411,8 @@ void initialiseAll(void)
     }
 
     //Once the configs have been loaded, a number of one time calculations can be completed
-    req_fuel_uS = configPage2.reqFuel * 100; //Convert to uS and an int. This is the only variable to be used in calculations
+    req_fuel_init_uS = configPage2.reqFuel * 100; //Convert to uS and an int. This is the only variable to be used in calculations
+    req_fuel_uS = req_fuel_init_uS;
     inj_opentime_uS = configPage2.injOpen * 100; //Injector open time. Comes through as ms*10 (Eg 15.5ms = 155).
 
     if(configPage10.stagingEnabled == true)
@@ -475,7 +478,8 @@ void initialiseAll(void)
     if(configPage2.strokes == FOUR_STROKE)
     {
       //Default is 1 squirt per revolution, so we halve the given req-fuel figure (Which would be over 2 revolutions)
-      req_fuel_uS /= 2; //The req_fuel calculation above gives the total required fuel (At VE 100%) in the full cycle. If we're doing more than 1 squirt per cycle then we need to split the amount accordingly. (Note that in a non-sequential 4-stroke setup you cannot have less than 2 squirts as you cannot determine the stroke to make the single squirt on)
+      req_fuel_init_uS /= 2; //The req_fuel calculation above gives the total required fuel (At VE 100%) in the full cycle. If we're doing more than 1 squirt per cycle then we need to split the amount accordingly. (Note that in a non-sequential 4-stroke setup you cannot have less than 2 squirts as you cannot determine the stroke to make the single squirt on)
+      req_fuel_uS = req_fuel_init_uS;
     }
 
     //Initial values for loop times
@@ -530,7 +534,7 @@ void initialiseAll(void)
         {
           CRANK_ANGLE_MAX_INJ = 720;
           currentStatus.nSquirts = 1;
-          req_fuel_uS *= 2;
+          req_fuel_uS = req_fuel_init_uS * 2;
         }
 
         //Check if injector staging is enabled
@@ -559,7 +563,7 @@ void initialiseAll(void)
         {
           CRANK_ANGLE_MAX_INJ = 720;
           currentStatus.nSquirts = 1;
-          req_fuel_uS *= 2;
+          req_fuel_uS = req_fuel_init_uS * 2;
         }
         //The below are true regardless of whether this is running sequential or not
         if (configPage2.engineType == EVEN_FIRE ) { channel2InjDegrees = 180; }
@@ -644,7 +648,7 @@ void initialiseAll(void)
           }
           else
           {
-            req_fuel_uS *= 2;
+            req_fuel_uS = req_fuel_init_uS * 2;
             channel1InjDegrees = 0;
             channel2InjDegrees = 240;
             channel3InjDegrees = 480;
@@ -711,7 +715,9 @@ void initialiseAll(void)
         }
 
         //For alternating injection, the squirt occurs at different times for each channel
-        if( (configPage2.injLayout == INJ_SEMISEQUENTIAL) || (configPage2.injLayout == INJ_PAIRED) || (configPage2.strokes == TWO_STROKE) )
+        if (configPage2.injLayout == INJ_SEMISEQUENTIAL
+            || configPage2.injLayout == INJ_PAIRED
+            || configPage2.strokes == TWO_STROKE)
         {
           channel2InjDegrees = 180;
 
@@ -738,7 +744,7 @@ void initialiseAll(void)
 
           CRANK_ANGLE_MAX_INJ = 720;
           currentStatus.nSquirts = 1;
-          req_fuel_uS *= 2;
+          req_fuel_uS = req_fuel_init_uS * 2;
         }
         else
         {
@@ -763,7 +769,7 @@ void initialiseAll(void)
               channel8InjDegrees = channel4InjDegrees;
             #else
               //This is an invalid config as there are not enough outputs to support sequential + staging
-              //Put the staging output to the non-existant channel 5
+              //Put the staging output to the non-existent channel 5
               #if (INJ_CHANNELS >= 5)
               maxInjOutputs = 5;
               channel5InjDegrees = channel1InjDegrees;
@@ -841,7 +847,7 @@ void initialiseAll(void)
 
           CRANK_ANGLE_MAX_INJ = 720;
           currentStatus.nSquirts = 1;
-          req_fuel_uS *= 2;
+          req_fuel_uS = req_fuel_init_uS * 2;
         }
     #endif
 
@@ -902,7 +908,7 @@ void initialiseAll(void)
 
           CRANK_ANGLE_MAX_INJ = 720;
           currentStatus.nSquirts = 1;
-          req_fuel_uS *= 2;
+          req_fuel_uS = req_fuel_init_uS * 2;
         }
         else if(configPage10.stagingEnabled == true) //Check if injector staging is enabled
         {
@@ -996,7 +1002,7 @@ void initialiseAll(void)
 
           CRANK_ANGLE_MAX_INJ = 720;
           currentStatus.nSquirts = 1;
-          req_fuel_uS *= 2;
+          req_fuel_uS = req_fuel_init_uS * 2;
         }
     #endif
 
@@ -3599,7 +3605,7 @@ void changeHalfToFullSync(void)
   if (configPage2.injLayout == INJ_SEQUENTIAL && CRANK_ANGLE_MAX_INJ != 720 && !isAnyFuelScheduleRunning())
   {
     CRANK_ANGLE_MAX_INJ = 720;
-    req_fuel_uS *= 2;
+    req_fuel_uS = req_fuel_init_uS * 2;
 
     configure_schedule_for_single_injector(fuelSchedule1, injector_id_1);
     configure_schedule_for_single_injector(fuelSchedule2, injector_id_2);
@@ -3674,7 +3680,7 @@ void changeFullToHalfSync(void)
   if(configPage2.injLayout == INJ_SEQUENTIAL && CRANK_ANGLE_MAX_INJ != 360)
   {
     CRANK_ANGLE_MAX_INJ = 360;
-    req_fuel_uS /= 2;
+    req_fuel_uS = req_fuel_init_uS;
     switch (configPage2.nCylinders)
     {
       case 4:
