@@ -1547,7 +1547,7 @@ void calculateStaging(uint32_t pwLimit)
             currentStatus.PW4 = currentStatus.PW1;
           #else
             //This is an invalid config as there are not enough outputs to support sequential + staging
-            //Put the staging output to the non-existant channel 5
+            //Put the staging output to the non-existent channel 5
             currentStatus.PW5 = currentStatus.PW2;
           #endif
         }
