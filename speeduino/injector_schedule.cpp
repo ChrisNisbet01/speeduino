@@ -3,6 +3,7 @@
 #include "injector_schedule_direct.h"
 #include "injector_schedule_mc33810.h"
 #include "globals.h"
+#include "utilities.h"
 
 /** @file
  * Injector (toggle/open/close) control (under various situations, eg with particular cylinder count, rotary engine type or wasted spark ign, etc.).
@@ -30,6 +31,7 @@ static void toggleInjector(injector_id_t injector)
 
 void openSingleInjector(uint8_t injector_id, uint8_t unused)
 {
+  UNUSED(unused);
   openInjector((injector_id_t)injector_id);
 }
 
@@ -40,6 +42,7 @@ void openSingleInjector(uint8_t injector_id)
 
 void closeSingleInjector(uint8_t injector_id, uint8_t unused)
 {
+  UNUSED(unused);
   closeInjector((injector_id_t)injector_id);
 }
 

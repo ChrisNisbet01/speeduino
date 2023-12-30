@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ignition_id.h"
 
-#include <cstdint>
+#include <stdint.h>
 
 void singleCoilBeginCharge(uint8_t coil_id, uint8_t unused);
 void singleCoilBeginCharge(uint8_t coil_id);

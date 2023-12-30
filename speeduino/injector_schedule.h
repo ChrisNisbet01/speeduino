@@ -4,7 +4,7 @@
 #include "types.h"
 #include "injector_id.h"
 
-#include <cstdint>
+#include <stdint.h>
 
 void injectorControlMethodAssign(OUTPUT_CONTROL_TYPE control_method);
 
