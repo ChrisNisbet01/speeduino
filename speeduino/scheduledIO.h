@@ -1,7 +1,7 @@
 #ifndef SCHEDULEDIO_H
 #define SCHEDULEDIO_H
 
-#include <cstdint>
+#include <stdint.h>
 
 void nullCallback(uint8_t arg1, uint8_t arg2);
 

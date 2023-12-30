@@ -80,7 +80,7 @@ static inline uint32_t _calculateIgnitionTimeout(const IgnitionSchedule &schedul
     if ((schedule.Status == RUNNING) && (delta>-CRANK_ANGLE_MAX_IGN))
     {
       // Must be > 0
-      delta = delta + CRANK_ANGLE_MAX_IGN;
+      delta += CRANK_ANGLE_MAX_IGN;
     }
     else
     {

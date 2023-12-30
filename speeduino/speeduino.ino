@@ -440,14 +440,14 @@ void loop(void)
         int16_t adderRange = (configPage10.n2o_stage1_maxRPM - configPage10.n2o_stage1_minRPM) * 100;
         int16_t adderPercent = ((currentStatus.RPM - (configPage10.n2o_stage1_minRPM * 100)) * 100) / adderRange; //The percentage of the way through the RPM range
         adderPercent = 100 - adderPercent; //Flip the percentage as we go from a higher adder to a lower adder as the RPMs rise
-        currentStatus.PW1 = currentStatus.PW1 + (configPage10.n2o_stage1_adderMax + percentage(adderPercent, (configPage10.n2o_stage1_adderMin - configPage10.n2o_stage1_adderMax))) * 100; //Calculate the above percentage of the calculated ms value.
+        currentStatus.PW1 += (configPage10.n2o_stage1_adderMax + percentage(adderPercent, (configPage10.n2o_stage1_adderMin - configPage10.n2o_stage1_adderMax))) * 100; //Calculate the above percentage of the calculated ms value.
       }
       if( (currentStatus.nitrous_status == NITROUS_STAGE2) || (currentStatus.nitrous_status == NITROUS_BOTH) )
       {
         int16_t adderRange = (configPage10.n2o_stage2_maxRPM - configPage10.n2o_stage2_minRPM) * 100;
         int16_t adderPercent = ((currentStatus.RPM - (configPage10.n2o_stage2_minRPM * 100)) * 100) / adderRange; //The percentage of the way through the RPM range
         adderPercent = 100 - adderPercent; //Flip the percentage as we go from a higher adder to a lower adder as the RPMs rise
-        currentStatus.PW1 = currentStatus.PW1 + (configPage10.n2o_stage2_adderMax + percentage(adderPercent, (configPage10.n2o_stage2_adderMin - configPage10.n2o_stage2_adderMax))) * 100; //Calculate the above percentage of the calculated ms value.
+        currentStatus.PW1 += (configPage10.n2o_stage2_adderMax + percentage(adderPercent, (configPage10.n2o_stage2_adderMin - configPage10.n2o_stage2_adderMax))) * 100; //Calculate the above percentage of the calculated ms value.
       }
 
       int injector1StartAngle = 0;
@@ -562,7 +562,10 @@ void loop(void)
 
           if((configPage2.injLayout == INJ_SEQUENTIAL) && currentStatus.hasSync)
           {
-            if( CRANK_ANGLE_MAX_INJ != 720 ) { changeHalfToFullSync(); }
+            if (CRANK_ANGLE_MAX_INJ != 720)
+            {
+              changeHalfToFullSync();
+            }
 
             injector3StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel3InjDegrees, currentStatus.injAngle);
             injector4StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel4InjDegrees, currentStatus.injAngle);
@@ -593,7 +596,10 @@ void loop(void)
           }
           else
           {
-            if( BIT_CHECK(currentStatus.status3, BIT_STATUS3_HALFSYNC) && (CRANK_ANGLE_MAX_INJ != 360) ) { changeFullToHalfSync(); }
+            if (BIT_CHECK(currentStatus.status3, BIT_STATUS3_HALFSYNC) && CRANK_ANGLE_MAX_INJ != 360)
+            {
+              changeFullToHalfSync();
+            }
           }
           break;
         //5 cylinders
@@ -623,7 +629,10 @@ void loop(void)
           #if INJ_CHANNELS >= 6
             if((configPage2.injLayout == INJ_SEQUENTIAL) && currentStatus.hasSync)
             {
-              if( CRANK_ANGLE_MAX_INJ != 720 ) { changeHalfToFullSync(); }
+              if (CRANK_ANGLE_MAX_INJ != 720)
+              {
+                changeHalfToFullSync();
+              }
 
               injector4StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel4InjDegrees, currentStatus.injAngle);
               injector5StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel5InjDegrees, currentStatus.injAngle);
@@ -652,7 +661,10 @@ void loop(void)
             }
             else
             {
-              if( BIT_CHECK(currentStatus.status3, BIT_STATUS3_HALFSYNC) && (CRANK_ANGLE_MAX_INJ != 360) ) { changeFullToHalfSync(); }
+              if (BIT_CHECK(currentStatus.status3, BIT_STATUS3_HALFSYNC) && CRANK_ANGLE_MAX_INJ != 360)
+              {
+                changeFullToHalfSync();
+              }
 
               if( (configPage10.stagingEnabled == true) && (BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE) == true) )
               {
@@ -673,7 +685,10 @@ void loop(void)
           #if INJ_CHANNELS >= 8
             if((configPage2.injLayout == INJ_SEQUENTIAL) && currentStatus.hasSync)
             {
-              if( CRANK_ANGLE_MAX_INJ != 720 ) { changeHalfToFullSync(); }
+              if (CRANK_ANGLE_MAX_INJ != 720)
+              {
+                changeHalfToFullSync();
+              }
 
               injector5StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel5InjDegrees, currentStatus.injAngle);
               injector6StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel6InjDegrees, currentStatus.injAngle);
@@ -694,7 +709,10 @@ void loop(void)
             }
             else
             {
-              if( BIT_CHECK(currentStatus.status3, BIT_STATUS3_HALFSYNC) && (CRANK_ANGLE_MAX_INJ != 360) ) { changeFullToHalfSync(); }
+              if (BIT_CHECK(currentStatus.status3, BIT_STATUS3_HALFSYNC) && CRANK_ANGLE_MAX_INJ != 360)
+              {
+                changeFullToHalfSync();
+              }
 
               if( (configPage10.stagingEnabled == true) && (BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE) == true) )
               {
@@ -1301,8 +1319,6 @@ byte getAdvance1(void)
  */
 void calculateIgnitionAngles(int dwellAngle)
 {
-
-
   //This test for more cylinders and do the same thing
   switch (configPage2.nCylinders)
   {
@@ -1329,7 +1345,10 @@ void calculateIgnitionAngles(int dwellAngle)
       #if IGN_CHANNELS >= 4
       if((configPage4.sparkMode == IGN_MODE_SEQUENTIAL) && currentStatus.hasSync)
       {
-        if( CRANK_ANGLE_MAX_IGN != 720 ) { changeHalfToFullSync(); }
+        if (CRANK_ANGLE_MAX_IGN != 720)
+        {
+          changeHalfToFullSync();
+        }
 
         calculateIgnitionAngle(dwellAngle, channel3IgnDegrees, currentStatus.advance, &ignition3EndAngle, &ignition3StartAngle);
         calculateIgnitionAngle(dwellAngle, channel4IgnDegrees, currentStatus.advance, &ignition4EndAngle, &ignition4StartAngle);
@@ -1345,7 +1364,10 @@ void calculateIgnitionAngles(int dwellAngle)
       }
       else
       {
-        if( BIT_CHECK(currentStatus.status3, BIT_STATUS3_HALFSYNC) && (CRANK_ANGLE_MAX_IGN != 360) ) { changeFullToHalfSync(); }
+        if (BIT_CHECK(currentStatus.status3, BIT_STATUS3_HALFSYNC) && CRANK_ANGLE_MAX_IGN != 360)
+        {
+          changeFullToHalfSync();
+        }
       }
       #endif
       break;
@@ -1368,7 +1390,10 @@ void calculateIgnitionAngles(int dwellAngle)
       #if IGN_CHANNELS >= 6
       if((configPage4.sparkMode == IGN_MODE_SEQUENTIAL) && currentStatus.hasSync)
       {
-        if( CRANK_ANGLE_MAX_IGN != 720 ) { changeHalfToFullSync(); }
+        if (CRANK_ANGLE_MAX_IGN != 720)
+        {
+          changeHalfToFullSync();
+        }
 
         calculateIgnitionAngle(dwellAngle, channel4IgnDegrees, currentStatus.advance, &ignition4EndAngle, &ignition4StartAngle);
         calculateIgnitionAngle(dwellAngle, channel5IgnDegrees, currentStatus.advance, &ignition5EndAngle, &ignition5StartAngle);
@@ -1376,7 +1401,10 @@ void calculateIgnitionAngles(int dwellAngle)
       }
       else
       {
-        if( BIT_CHECK(currentStatus.status3, BIT_STATUS3_HALFSYNC) && (CRANK_ANGLE_MAX_IGN != 360) ) { changeFullToHalfSync(); }
+        if (BIT_CHECK(currentStatus.status3, BIT_STATUS3_HALFSYNC) && CRANK_ANGLE_MAX_IGN != 360)
+        {
+          changeFullToHalfSync();
+        }
       }
       #endif
       break;
@@ -1390,7 +1418,10 @@ void calculateIgnitionAngles(int dwellAngle)
       #if IGN_CHANNELS >= 8
       if((configPage4.sparkMode == IGN_MODE_SEQUENTIAL) && currentStatus.hasSync)
       {
-        if( CRANK_ANGLE_MAX_IGN != 720 ) { changeHalfToFullSync(); }
+        if (CRANK_ANGLE_MAX_IGN != 720)
+        {
+          changeHalfToFullSync();
+        }
 
         calculateIgnitionAngle(dwellAngle, channel5IgnDegrees, currentStatus.advance, &ignition5EndAngle, &ignition5StartAngle);
         calculateIgnitionAngle(dwellAngle, channel6IgnDegrees, currentStatus.advance, &ignition6EndAngle, &ignition6StartAngle);
@@ -1399,7 +1430,10 @@ void calculateIgnitionAngles(int dwellAngle)
       }
       else
       {
-        if( BIT_CHECK(currentStatus.status3, BIT_STATUS3_HALFSYNC) && (CRANK_ANGLE_MAX_IGN != 360) ) { changeFullToHalfSync(); }
+        if (BIT_CHECK(currentStatus.status3, BIT_STATUS3_HALFSYNC) && CRANK_ANGLE_MAX_IGN != 360)
+        {
+          changeFullToHalfSync();
+        }
       }
       #endif
       break;

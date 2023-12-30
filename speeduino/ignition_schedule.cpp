@@ -3,6 +3,7 @@
 #include "ignition_schedule_mc33810.h"
 #include "globals.h"
 #include "timers.h"
+#include "utilities.h"
 
 /** @file
  * Coil (toggle/open/close) control (under various situations, eg with particular cylinder count, rotary engine type or wasted spark ign, etc.).
@@ -69,6 +70,7 @@ void coil8Toggle(void)
 
 void singleCoilBeginCharge(uint8_t coil_id, uint8_t unused)
 {
+  UNUSED(unused);
   ignition->begin_charge((ignition_id_t)coil_id);
   tachoOutputOn();
 }
@@ -81,6 +83,7 @@ void singleCoilBeginCharge(uint8_t coil_id)
 
 void singleCoilEndCharge(uint8_t coil_id, uint8_t unused)
 {
+  UNUSED(unused);
   ignition->end_charge((ignition_id_t)coil_id);
   tachoOutputOff();
 }
@@ -108,14 +111,20 @@ void twoCoilsEndCharge(uint8_t coil_id1, uint8_t coil_id2)
 //The below 3 calls are all part of the rotary ignition mode
 void beginTrailingCoilCharge(uint8_t unused1, uint8_t unused2)
 {
+  UNUSED(unused1);
+  UNUSED(unused2);
   singleCoilBeginCharge(ignition_id_2);
 }
 void endTrailingCoilCharge1(uint8_t unused1, uint8_t unused2) //Sets ign3 (Trailing select) high
 {
+  UNUSED(unused1);
+  UNUSED(unused2);
   singleCoilEndCharge(ignition_id_2); singleCoilBeginCharge(ignition_id_3);
 }
 void endTrailingCoilCharge2(uint8_t unused1, uint8_t unused2) //sets ign3 (Trailing select) low
 {
+  UNUSED(unused1);
+  UNUSED(unused2);
   singleCoilEndCharge(ignition_id_2); singleCoilEndCharge(ignition_id_3);
 }
 
