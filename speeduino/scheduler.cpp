@@ -285,31 +285,36 @@ void refreshIgnitionSchedule1(unsigned long timeToEnd)
  */
 extern void beginInjectorPriming(void)
 {
+  static unsigned long const priming_delay_us = 100;
   unsigned long primingValue = table2D_getValue(&PrimingPulseTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET);
   if( (primingValue > 0) && (currentStatus.TPS < configPage4.floodClear) )
   {
-    primingValue = primingValue * 100 * 5; //to achieve long enough priming pulses, the values in tuner studio are divided by 0.5 instead of 0.1, so multiplier of 5 is required.
-    if ( maxInjOutputs >= 1 ) { setFuelSchedule(fuelSchedule1, 100, primingValue); }
+    // To achieve long enough priming pulses, the values in tuner studio are divided by 0.5 instead of 0.1,
+    // so multiplier of 5 is required.
+    // XXX - Should that be _multiplied_ by 0.5, which also means the value should be multiplied by 2?
+    static unsigned config_multiplier = 5;
+    primingValue = primingValue * priming_delay_us * config_multiplier;
+    if ( maxInjOutputs >= 1 ) { setFuelSchedule(fuelSchedule1, priming_delay_us, primingValue); }
 #if (INJ_CHANNELS >= 2)
-    if ( maxInjOutputs >= 2 ) { setFuelSchedule(fuelSchedule2, 100, primingValue); }
+    if ( maxInjOutputs >= 2 ) { setFuelSchedule(fuelSchedule2, priming_delay_us, primingValue); }
 #endif
 #if (INJ_CHANNELS >= 3)
-    if ( maxInjOutputs >= 3 ) { setFuelSchedule(fuelSchedule3, 100, primingValue); }
+    if ( maxInjOutputs >= 3 ) { setFuelSchedule(fuelSchedule3, priming_delay_us, primingValue); }
 #endif
 #if (INJ_CHANNELS >= 4)
-    if ( maxInjOutputs >= 4 ) { setFuelSchedule(fuelSchedule4, 100, primingValue); }
+    if ( maxInjOutputs >= 4 ) { setFuelSchedule(fuelSchedule4, priming_delay_us, primingValue); }
 #endif
 #if (INJ_CHANNELS >= 5)
-    if ( maxInjOutputs >= 5 ) { setFuelSchedule(fuelSchedule5, 100, primingValue); }
+    if ( maxInjOutputs >= 5 ) { setFuelSchedule(fuelSchedule5, priming_delay_us, primingValue); }
 #endif
 #if (INJ_CHANNELS >= 6)
-    if ( maxInjOutputs >= 6 ) { setFuelSchedule(fuelSchedule6, 100, primingValue); }
+    if ( maxInjOutputs >= 6 ) { setFuelSchedule(fuelSchedule6, priming_delay_us, primingValue); }
 #endif
 #if (INJ_CHANNELS >= 7)
-    if ( maxInjOutputs >= 7) { setFuelSchedule(fuelSchedule7, 100, primingValue); }
+    if ( maxInjOutputs >= 7) { setFuelSchedule(fuelSchedule7, priming_delay_us, primingValue); }
 #endif
 #if (INJ_CHANNELS >= 8)
-    if ( maxInjOutputs >= 8 ) { setFuelSchedule(fuelSchedule8, 100, primingValue); }
+    if ( maxInjOutputs >= 8 ) { setFuelSchedule(fuelSchedule8, priming_delay_us, primingValue); }
 #endif
   }
 }
