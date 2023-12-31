@@ -32,7 +32,7 @@ Default CAN3 pins are PA8 & PA15. Alternative (ALT) pins are PB3 & PB4.
     #else //Blue/Black Pills
       SPIClass SPI_for_flash(PB15, PB14, PB13);
     #endif
- 
+
     //winbond W25Q16 SPI flash EEPROM emulation
     EEPROM_Emulation_Config EmulatedEEPROMMconfig{255UL, 4096UL, 31, 0x00100000UL};
     Flash_SPI_Config SPIconfig{USE_SPI_EEPROM, SPI_for_flash};
@@ -115,7 +115,7 @@ STM32RTC& rtc = STM32RTC::getInstance();
     if( (configPage6.iacAlgorithm == IAC_ALGORITHM_PWM_OL) || (configPage6.iacAlgorithm == IAC_ALGORITHM_PWM_CL) || (configPage6.iacAlgorithm == IAC_ALGORITHM_PWM_OLCL))
     {
         idle_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (TIMER_RESOLUTION * configPage6.idleFreq * 2U)); //Converts the frequency in Hz to the number of ticks (at 4uS) it takes to complete 1 cycle. Note that the frequency is divided by 2 coming from TS to allow for up to 5KHz
-    } 
+    }
 
     //This must happen at the end of the idle init
     #if ( STM32_CORE_VERSION_MAJOR < 2 )
@@ -166,7 +166,7 @@ STM32RTC& rtc = STM32RTC::getInstance();
     Timer1.setMode(2, TIMER_OUTPUT_COMPARE);
     Timer1.setMode(3, TIMER_OUTPUT_COMPARE);
     #else //2.0 forward
-	Timer1.setMode(1, TIMER_OUTPUT_COMPARE_TOGGLE);
+    Timer1.setMode(1, TIMER_OUTPUT_COMPARE_TOGGLE);
     Timer1.setMode(2, TIMER_OUTPUT_COMPARE_TOGGLE);
     Timer1.setMode(3, TIMER_OUTPUT_COMPARE_TOGGLE);
     #endif
@@ -249,7 +249,7 @@ STM32RTC& rtc = STM32RTC::getInstance();
     #endif
 
     //Ignition
-    Timer2.attachInterrupt(1, ignitionSchedule1Interrupt); 
+    Timer2.attachInterrupt(1, ignitionSchedule1Interrupt);
     Timer2.attachInterrupt(2, ignitionSchedule2Interrupt);
     Timer2.attachInterrupt(3, ignitionSchedule3Interrupt);
     Timer2.attachInterrupt(4, ignitionSchedule4Interrupt);
@@ -350,7 +350,7 @@ STM32RTC& rtc = STM32RTC::getInstance();
   ***********************************************************************************************************
   * Interrupt callback functions
   */
-  #if ((STM32_CORE_VERSION_MINOR<=8) & (STM32_CORE_VERSION_MAJOR==1)) 
+  #if ((STM32_CORE_VERSION_MINOR<=8) & (STM32_CORE_VERSION_MAJOR==1))
   void oneMSInterval(HardwareTimer*){oneMSInterval();}
   void boostInterrupt(HardwareTimer*){boostInterrupt();}
   void fuelSchedule1Interrupt(HardwareTimer*){fuelSchedule1Interrupt();}
