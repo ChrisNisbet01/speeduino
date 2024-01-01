@@ -10,11 +10,11 @@
 
 /*
   //These are declared locally in comms_CAN now due to this issue: https://github.com/tonton81/FlexCAN_T4/issues/67
-#if defined(__MK64FX512__)         // use for Teensy 3.5 only 
+#if defined(__MK64FX512__)         // use for Teensy 3.5 only
   FlexCAN_T4<CAN0, RX_SIZE_256, TX_SIZE_16> Can0;
 #elif defined(__MK66FX1M0__)         // use for Teensy 3.6 only
   FlexCAN_T4<CAN0, RX_SIZE_256, TX_SIZE_16> Can0;
-  FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1; 
+  FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
 #endif
 */
 
@@ -166,7 +166,9 @@ void initBoard()
 
         boost_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (32U * configPage6.boostFreq * 2U)); //Converts the frequency in Hz to the number of ticks (at 16uS) it takes to complete 1 cycle. Note that the frequency is divided by 2 coming from TS to allow for up to 512hz
         vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (32U * configPage6.vvtFreq * 2U));     //Converts the frequency in Hz to the number of ticks (at 16uS) it takes to complete 1 cycle. Note that the frequency is divided by 2 coming from TS to allow for up to 512hz
+    #if defined(PWM_FAN_AVAILABLE)
         fan_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (32U * configPage6.fanFreq * 2U));     //Converts the frequency in Hz to the number of ticks (at 16uS) it takes to complete 1 cycle. Note that the frequency is divided by 2 coming from TS to allow for up to 512hz
+    #endif
     }
 
     /*
@@ -379,7 +381,7 @@ void ftm1_isr(void)
 
 //Idle and spare handler
 void ftm2_isr(void)
-{ 
+{
   //FTM2 only has 2 compare channels
   //Use separate variables for each test to ensure conversion to bool
   bool interrupt1 = (FTM2_C0SC & FTM_CSC_CHF);

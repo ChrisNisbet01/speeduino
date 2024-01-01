@@ -126,6 +126,21 @@ void jumpToBootloader();
     #define A14  PA4
     #define A15  PA5
   #endif
+#elif defined(ARDUINO_DISCO_F407VG)
+  #define pinIsReserved(pin)  (false)
+
+  #ifndef PB11 //Hack for F4 BlackPills
+    #define PB11 PB10
+  #endif
+  //Hack to allow compilation on small STM boards
+  #ifndef A10
+    #define A10  PA0
+    #define A11  PA1
+    #define A12  PA2
+    #define A13  PA3
+    #define A14  PA4
+    #define A15  PA5
+  #endif
 #else
   #ifdef USE_SPI_EEPROM
     #define pinIsReserved(pin)  ( ((pin) == PA11) || ((pin) == PA12) || ((pin) == PB3) || ((pin) == PB4) || ((pin) == PB5) || ((pin) == USE_SPI_EEPROM) ) //Forbidden pins like USB
@@ -134,7 +149,7 @@ void jumpToBootloader();
   #endif
 #endif
 
-#define PWM_FAN_AVAILABLE
+//#define PWM_FAN_AVAILABLE
 
 #ifndef LED_BUILTIN
   #define LED_BUILTIN PA7
@@ -357,7 +372,9 @@ void fuelSchedule8Interrupt(HardwareTimer*);
 #endif
 void idleInterrupt(HardwareTimer*);
 void vvtInterrupt(HardwareTimer*);
+#if defined(PWM_FAN_AVAILABLE)
 void fanInterrupt(HardwareTimer*);
+#endif
 void ignitionSchedule1Interrupt(HardwareTimer*);
 void ignitionSchedule2Interrupt(HardwareTimer*);
 void ignitionSchedule3Interrupt(HardwareTimer*);
