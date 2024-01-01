@@ -74,7 +74,7 @@
   #define INJ_CHANNELS 8
   #define IGN_CHANNELS 8
 
-#elif defined(STM32_MCU_SERIES) || defined(ARDUINO_ARCH_STM32) || defined(STM32)
+#elif defined(STM32_MCU_SERIES) || defined(ARDUINO_ARCH_STM32) || defined(STM32) || defined(STM32F4)
   #define BOARD_H "board_stm32_official.h"
   #define CORE_STM32
 

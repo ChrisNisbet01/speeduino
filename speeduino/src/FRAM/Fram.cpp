@@ -28,11 +28,11 @@
 #endif
 
 void FramClass::assertCS(void)
-{ 
+{
 #ifdef SPI_HAS_TRANSACTION
-  spi->beginTransaction(FRAMSettings); 
+  spi->beginTransaction(FRAMSettings);
 #endif
-  *csPort &= ~(csMask); 
+  *csPort &= ~(csMask);
 }
 
 void FramClass::deassertCS(void)
@@ -114,7 +114,7 @@ void FramClass::setClock(uint32_t clockSpeed) {
   spiSpeed = 1000000 / (clockSpeed * 2);
   #ifdef SPI_HAS_TRANSACTION
   FRAMSettings = SPISettings(clockSpeed, MSBFIRST, SPI_MODE0);
-  #if defined(ARDUINO_ARCH_STM32)
+  #if !defined(ARDUINO_ARCH_STM32)
   spi->beginTransaction(csPin, FRAMSettings);
   #else
   spi->beginTransaction(FRAMSettings);
@@ -144,7 +144,7 @@ void FramClass::begin (uint8_t ssel, SPIClass &_spi)
   clkPin = mosiPin = misoPin = NC;
   csPin = ssel;
   spi = &_spi;
-  
+
   // Set CS pin HIGH and configure it as an output
   csPinInit();
   deassertCS();
@@ -305,7 +305,7 @@ uint32_t FramClass::length(void)
   return FRAM_SIZE;
 }
 
-uint8_t FramClass::spiSend(uint8_t data) 
+uint8_t FramClass::spiSend(uint8_t data)
 {
   uint8_t reply = 0;
   if(clkPin != NC)
@@ -320,7 +320,7 @@ uint8_t FramClass::spiSend(uint8_t data)
     }
     fastWrite(clkPort, clkMask, LOW);
   }
-#if defined(ARDUINO_ARCH_STM32)
+#if !defined(ARDUINO_ARCH_STM32)
   else { reply = spi->transfer(csPin, data, SPI_CONTINUE); }
 #else
   else { reply = spi->transfer(data); }
@@ -330,7 +330,7 @@ uint8_t FramClass::spiSend(uint8_t data)
 
 /*-----------------------------------------------------------------------------*/
 
-uint16_t FramClass::spiSend16(uint16_t data) 
+uint16_t FramClass::spiSend16(uint16_t data)
 {
   uint16_t reply = 0;
   if(clkPin != NC)
@@ -345,7 +345,7 @@ uint16_t FramClass::spiSend16(uint16_t data)
     }
     fastWrite(clkPort, clkMask, LOW);
   }
-#if defined(ARDUINO_ARCH_STM32)
+#if !defined(ARDUINO_ARCH_STM32)
   else { reply = spi->transfer16(csPin, data, SPI_CONTINUE); }
 #else
   else { reply = spi->transfer16(data); }
