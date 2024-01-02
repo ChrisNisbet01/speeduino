@@ -63,6 +63,11 @@ Default CAN3 pins are PA8 & PA15. Alternative (ALT) pins are PB3 & PB4.
     InternalSTM32F4_EEPROM_Class EEPROM(EmulatedEEPROMMconfig);
 #endif
 
+//When building for Black board Serial1 is instantiated,
+//building generic STM32F4x7 has serial2 and serial 1 must be done here
+#if SERIAL_UART_INSTANCE==2
+HardwareSerial Serial1(PA10, PA9);
+#endif
 
 HardwareTimer Timer1(TIM1);
 HardwareTimer Timer2(TIM2);
@@ -92,10 +97,10 @@ STM32RTC& rtc = STM32RTC::getInstance();
     #endif
     delay(10);
 
-    //#ifndef HAVE_HWSERIAL2 //Hack to get the code to compile on BlackPills
-    //#define Serial2 Serial1
-    //#endif
-    //pSecondarySerial = &Serial2;
+    #ifndef HAVE_HWSERIAL2 //Hack to get the code to compile on BlackPills
+    #define Serial2 Serial1
+    #endif
+    pSecondarySerial = &Serial2;
 
     /*
     ***********************************************************************************************************
