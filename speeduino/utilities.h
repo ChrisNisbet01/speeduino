@@ -3,6 +3,7 @@ These are some utility functions and variables used through the main code
 */
 #ifndef UTILS_H
 #define UTILS_H
+#include "globals.h"
 
 #include <Arduino.h>
 

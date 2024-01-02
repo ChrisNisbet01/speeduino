@@ -98,9 +98,8 @@ inline uint32_t  digitalPinToInterrupt(uint32_t Interrupt_pin) { return Interrup
 #endif
 #define USE_SERIAL3
 
-//When building for Black board Serial1 is instantiated,building generic STM32F4x7 has serial2 and serial 1 must be done here
 #if SERIAL_UART_INSTANCE==2
-HardwareSerial Serial1(PA10, PA9);
+extern HardwareSerial Serial1;
 #endif
 
 extern STM32RTC& rtc;
