@@ -10,8 +10,10 @@
 #define SECONDARY_SERIAL_PROTO_MSDROID        3
 #define SECONDARY_SERIAL_PROTO_REALDASH       4
 
+#if defined(secondarySerial_AVAILABLE)
 extern SECONDARY_SERIAL_T *pSecondarySerial;
 #define secondarySerial (*pSecondarySerial)
+#endif
 
 void secondserial_Command(void);//This is the heart of the Command Line Interpreter.  All that needed to be done was to make it human readable.
 void sendCancommand(uint8_t cmdtype , uint16_t canadddress, uint8_t candata1, uint8_t candata2, uint16_t sourcecanAddress);
