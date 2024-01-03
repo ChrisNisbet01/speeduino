@@ -75,7 +75,7 @@ void legacySerialCommand(void)
       legacySerialHandler(currentCommand, Serial, serialStatusFlag);
       break;
 
-    case 'B': // AS above but for the serial compatibility mode. 
+    case 'B': // AS above but for the serial compatibility mode.
       BIT_SET(currentStatus.status4, BIT_STATUS4_COMMS_COMPAT); //Force the compat mode
       legacySerialHandler(currentCommand, Serial, serialStatusFlag);
       break;
@@ -96,13 +96,13 @@ void legacySerialCommand(void)
       {
         Serial.read(); //Ignore the first byte value, it's always 0
         uint32_t CRC32_val = calculatePageCRC32( Serial.read() );
-        
+
         //Split the 4 bytes of the CRC32 value into individual bytes and send
         Serial.write( ((CRC32_val >> 24) & 255) );
         Serial.write( ((CRC32_val >> 16) & 255) );
         Serial.write( ((CRC32_val >> 8) & 255) );
         Serial.write( (CRC32_val & 255) );
-        
+
         serialStatusFlag = SERIAL_INACTIVE;
       }
       break;
@@ -124,7 +124,7 @@ void legacySerialCommand(void)
 
     //The G/g commands are used for bulk reading and writing to the EEPROM directly. This is typically a non-user feature but will be incorporated into SpeedyLoader for anyone programming many boards at once
     case 'G': // Dumps the EEPROM values to serial
-    
+
       //The format is 2 bytes for the overall EEPROM size, a comma and then a raw dump of the EEPROM values
       Serial.write(lowByte(getEEPROMSize()));
       Serial.write(highByte(getEEPROMSize()));
@@ -144,7 +144,7 @@ void legacySerialCommand(void)
       uint16_t eepromSize = word(Serial.read(), Serial.read());
       if(eepromSize != getEEPROMSize())
       {
-        //Client is trying to send the wrong EEPROM size. Don't let it 
+        //Client is trying to send the wrong EEPROM size. Don't let it
         Serial.println(F("ERR; Incorrect EEPROM size"));
         break;
       }
@@ -205,7 +205,7 @@ void legacySerialCommand(void)
 
     case 'o': //Stop the composite logger 2nd cam (tertiary)
       stopCompositeLoggerTertiary();
-      break;      
+      break;
 
     case 'X': //Start the composite logger 2nd cam (teritary)
       startCompositeLoggerCams();
@@ -214,7 +214,7 @@ void legacySerialCommand(void)
 
     case 'x': //Stop the composite logger 2nd cam (tertiary)
       stopCompositeLoggerCams();
-      break;  
+      break;
 
     case 'P': // set the current page
       //This is a legacy function and is no longer used by TunerStudio. It is maintained for compatibility with other systems
@@ -519,7 +519,7 @@ void legacySerialHandler(byte cmd, Stream &targetPort, SerialStatus &targetStatu
       }
       break;
 
-    case 'B': // AS above but for the serial compatibility mode. 
+    case 'B': // AS above but for the serial compatibility mode.
       targetStatusFlag = SERIAL_COMMAND_INPROGRESS_LEGACY;
 
       if (targetPort.available() >= 2)
@@ -537,13 +537,13 @@ void legacySerialHandler(byte cmd, Stream &targetPort, SerialStatus &targetStatu
       {
         targetPort.read(); //Ignore the first byte value, it's always 0
         uint32_t CRC32_val = calculatePageCRC32( targetPort.read() );
-        
+
         //Split the 4 bytes of the CRC32 value into individual bytes and send
         targetPort.write( ((CRC32_val >> 24) & 255) );
         targetPort.write( ((CRC32_val >> 16) & 255) );
         targetPort.write( ((CRC32_val >> 8) & 255) );
         targetPort.write( (CRC32_val & 255) );
-        
+
         targetStatusFlag = SERIAL_INACTIVE;
       }
       break;
@@ -580,7 +580,7 @@ void legacySerialHandler(byte cmd, Stream &targetPort, SerialStatus &targetStatu
       }
       //This CANNOT be an else of the above if statement as chunkPending gets set to true above
       if(chunkPending == true)
-      { 
+      {
         while( (targetPort.available() > 0) && (chunkComplete < chunkSize) )
         {
           setPageValue(currentPage, (valueOffset + chunkComplete), targetPort.read());
@@ -672,23 +672,30 @@ void legacySerialHandler(byte cmd, Stream &targetPort, SerialStatus &targetStatu
  * E.g. tuning sw command 'A' (Send all values) will send data from field number 0, LOG_ENTRY_SIZE fields.
  * @return the current values of a fixed group of variables
  */
-void sendValues(uint16_t offset, uint16_t packetLength, byte cmd, Stream &targetPort, SerialStatus &targetStatusFlag) { sendValues(offset, packetLength, cmd, targetPort, targetStatusFlag, &getTSLogEntry); } //Defaults to using the standard TS log function
+void sendValues(uint16_t offset, uint16_t packetLength, byte cmd, Stream &targetPort, SerialStatus &targetStatusFlag)
+{
+  // Defaults to using the standard TS log function
+  sendValues(offset, packetLength, cmd, targetPort, targetStatusFlag, &getTSLogEntry);
+}
+
 void sendValues(uint16_t offset, uint16_t packetLength, byte cmd, Stream &targetPort, SerialStatus &targetStatusFlag, uint8_t (*logFunction)(uint16_t))
-{  
+{
   #if defined(secondarySerial_AVAILABLE)
   if (&targetPort == &secondarySerial)
   {
     //Using Secondary serial, check if selected protocol requires the echo back of the command
-    if( (configPage9.secondarySerialProtocol == SECONDARY_SERIAL_PROTO_GENERIC_FIXED) || (configPage9.secondarySerialProtocol == SECONDARY_SERIAL_PROTO_GENERIC_INI) || (configPage9.secondarySerialProtocol == SECONDARY_SERIAL_PROTO_REALDASH))
+    if (configPage9.secondarySerialProtocol == SECONDARY_SERIAL_PROTO_GENERIC_FIXED
+        || configPage9.secondarySerialProtocol == SECONDARY_SERIAL_PROTO_GENERIC_INI
+        || configPage9.secondarySerialProtocol == SECONDARY_SERIAL_PROTO_REALDASH)
     {
-        if (cmd == 0x30) 
+        if (cmd == 0x30)
         {
           secondarySerial.write("r");         //confirm cmd type
           secondarySerial.write(cmd);
         }
         else if (cmd == 0x31)
         {
-          secondarySerial.write("A");         // confirm command type   
+          secondarySerial.write("A");         // confirm command type
         }
         else if (cmd == 0x32)
         {
@@ -696,15 +703,15 @@ void sendValues(uint16_t offset, uint16_t packetLength, byte cmd, Stream &target
           secondarySerial.write(cmd);                       // send command type  , 0x32 (dec50) is ascii '0'
           secondarySerial.write(NEW_CAN_PACKET_SIZE);       // send the packet size the receiving device should expect.
         }
-    }  
+    }
   }
   else
   #endif
   {
-    if(firstCommsRequest) 
-    { 
+    if(firstCommsRequest)
+    {
       firstCommsRequest = false;
-      currentStatus.secl = 0; 
+      currentStatus.secl = 0;
     }
   }
 
@@ -719,21 +726,21 @@ void sendValues(uint16_t offset, uint16_t packetLength, byte cmd, Stream &target
     //targetPort.write(getTSLogEntry(offset+x));
     targetPort.write(logFunction(offset+x));
 
-    if( (&targetPort == &Serial) ) 
-    { 
+    if( (&targetPort == &Serial) )
+    {
       //If the transmit buffer is full, wait for it to clear. This cannot be used with Read Dash as it will cause a timeout
       if(targetPort.availableForWrite() < 1) { bufferFull = true; }
     }
 
     //Check whether the tx buffer still has space
-    if(bufferFull == true) 
-    { 
+    if(bufferFull == true)
+    {
       //tx buffer is full. Store the current state so it can be resumed later
       logItemsTransmitted = offset + x + 1;
       inProgressLength = packetLength - x - 1;
       return;
     }
-    
+
   }
 
   targetStatusFlag = SERIAL_INACTIVE;
@@ -913,7 +920,7 @@ namespace {
     case Table:
       return send_table_entity(entity);
       break;
-    
+
     case NoEntity:
       // No-op
       break;
@@ -926,9 +933,9 @@ namespace {
 }
 
 /** Pack the data within the current page (As set with the 'P' command) into a buffer and send it.
- * 
+ *
  * Creates a page iterator by @ref page_begin() (See: pages.cpp). Sends page given in @ref currentPage.
- * 
+ *
  * Note that some translation of the data is required to lay it out in the way Megasquirt / TunerStudio expect it.
  * Data is sent in binary format, as defined by in each page in the speeduino.ini.
  */
@@ -1039,8 +1046,8 @@ namespace {
 
 /** Send page as ASCII for debugging purposes.
  * Similar to sendPage(), however data is sent in human readable format. Sends page given in @ref currentPage.
- * 
- * This is used for testing only (Not used by TunerStudio) in order to see current map and config data without the need for TunerStudio. 
+ *
+ * This is used for testing only (Not used by TunerStudio) in order to see current map and config data without the need for TunerStudio.
  */
 void sendPageASCII(void)
 {
@@ -1130,7 +1137,7 @@ void sendPageASCII(void)
       Serial.println(F("\n2nd Fuel Map"));
       serial_print_3dtable(&fuelTable2, fuelTable2.type_key);
       break;
-   
+
     case ignMap2Page:
       Serial.println(F("\n2nd Ignition Map"));
       serial_print_3dtable(&ignitionTable2, ignitionTable2.type_key);
@@ -1154,7 +1161,7 @@ void sendPageASCII(void)
 
 /** Processes an incoming stream of calibration data (for CLT, IAT or O2) from TunerStudio.
  * Result is store in EEPROM and memory.
- * 
+ *
  * @param tableID - calibration table to process. 0 = Coolant Sensor. 1 = IAT Sensor. 2 = O2 Sensor.
  */
 void receiveCalibration(byte tableID)
@@ -1212,7 +1219,7 @@ void receiveCalibration(byte tableID)
         ((uint8_t*)pnt_TargetTable_values)[(x/32)] = (byte)tempValue; //O2 table stores 8 bit values
         pnt_TargetTable_bins[(x/32)] = (x);
       }
-      
+
     }
   }
   else
@@ -1225,14 +1232,14 @@ void receiveCalibration(byte tableID)
       tempBuffer[1] = Serial.read();
 
       tempValue = (int16_t)(word(tempBuffer[1], tempBuffer[0])); //Combine the 2 bytes into a single, signed 16-bit value
-      tempValue = div(tempValue, DIVISION_FACTOR).quot; //TS sends values multiplied by 10 so divide back to whole degrees. 
+      tempValue = div(tempValue, DIVISION_FACTOR).quot; //TS sends values multiplied by 10 so divide back to whole degrees.
       tempValue = ((tempValue - 32) * 5) / 9; //Convert from F to C
-      
+
       //Apply the temp offset and check that it results in all values being positive
       tempValue = tempValue + OFFSET;
       if (tempValue < 0) { tempValue = 0; }
 
-      
+
       ((uint16_t*)pnt_TargetTable_values)[x] = tempValue; //Both temp tables have 16-bit values
       pnt_TargetTable_bins[x] = (x * 32U);
       writeCalibration();
@@ -1251,7 +1258,7 @@ void sendToothLog_legacy(byte startOffset) /* Blocking */
   //We need TOOTH_LOG_SIZE number of records to send to TunerStudio. If there aren't that many in the buffer then we just return and wait for the next call
   if (BIT_CHECK(currentStatus.status1, BIT_STATUS1_TOOTHLOG1READY)) //Sanity check. Flagging system means this should always be true
   {
-      serialStatusFlag = SERIAL_TRANSMIT_TOOTH_INPROGRESS_LEGACY; 
+      serialStatusFlag = SERIAL_TRANSMIT_TOOTH_INPROGRESS_LEGACY;
       for (int x = startOffset; x < TOOTH_LOG_SIZE; x++)
       {
         Serial.write(toothHistory[x] >> 24);
@@ -1260,18 +1267,18 @@ void sendToothLog_legacy(byte startOffset) /* Blocking */
         Serial.write(toothHistory[x]);
       }
       BIT_CLEAR(currentStatus.status1, BIT_STATUS1_TOOTHLOG1READY);
-      serialStatusFlag = SERIAL_INACTIVE; 
+      serialStatusFlag = SERIAL_INACTIVE;
       toothHistoryIndex = 0;
   }
-  else 
-  { 
+  else
+  {
     //TunerStudio has timed out, send a LOG of all 0s
     for(int x = 0; x < (4*TOOTH_LOG_SIZE); x++)
     {
       Serial.write(static_cast<byte>(0x00)); //GCC9 fix
     }
-    serialStatusFlag = SERIAL_INACTIVE; 
-  } 
+    serialStatusFlag = SERIAL_INACTIVE;
+  }
 }
 
 void sendCompositeLog_legacy(byte startOffset) /* Non-blocking */
@@ -1283,15 +1290,15 @@ void sendCompositeLog_legacy(byte startOffset) /* Non-blocking */
       for (int x = startOffset; x < TOOTH_LOG_SIZE; x++)
       {
         //Check whether the tx buffer still has space
-        if(Serial.availableForWrite() < 4) 
-        { 
+        if(Serial.availableForWrite() < 4)
+        {
           //tx buffer is full. Store the current state so it can be resumed later
           logItemsTransmitted = x;
           return;
         }
 
         uint32_t inProgressCompositeTime = toothHistory[x]; //This combined runtime (in us) that the log was going for by this record)
-        
+
         Serial.write(inProgressCompositeTime >> 24);
         Serial.write(inProgressCompositeTime >> 16);
         Serial.write(inProgressCompositeTime >> 8);
@@ -1301,17 +1308,17 @@ void sendCompositeLog_legacy(byte startOffset) /* Non-blocking */
       }
       BIT_CLEAR(currentStatus.status1, BIT_STATUS1_TOOTHLOG1READY);
       toothHistoryIndex = 0;
-      serialStatusFlag = SERIAL_INACTIVE; 
+      serialStatusFlag = SERIAL_INACTIVE;
   }
-  else 
-  { 
+  else
+  {
     //TunerStudio has timed out, send a LOG of all 0s
     for(int x = 0; x < (5*TOOTH_LOG_SIZE); x++)
     {
       Serial.write(static_cast<byte>(0x00)); //GCC9 fix
     }
-    serialStatusFlag = SERIAL_INACTIVE; 
-  } 
+    serialStatusFlag = SERIAL_INACTIVE;
+  }
 }
 
 void testComm(void)

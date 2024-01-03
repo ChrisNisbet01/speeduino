@@ -5,16 +5,17 @@
 #include <STM32RTC.h>
 #include <HardwareTimer.h>
 #include <HardwareSerial.h>
+#include <USBSerial.h>
 #include <SPI.h>
 
-//#ifndef PLATFORMIO
-//  #ifndef USBCON
-//    #warning "USBCON must be defined in boards.txt"
-//  #endif
-//  #ifndef USBD_USE_CDC
-//    #warning "USBD_USE_CDC must be defined in boards.txt"
-//  #endif
-//#endif
+#ifndef PLATFORMIO
+  #ifndef USBCON
+    #warning "USBCON must be defined in boards.txt"
+  #endif
+  #ifndef USBD_USE_CDC
+    #warning "USBD_USE_CDC must be defined in boards.txt"
+  #endif
+#endif
 
 #if defined(STM32F1)
   #include "stm32f1xx_ll_tim.h"
@@ -403,8 +404,11 @@ void ignitionSchedule8Interrupt(HardwareTimer*);
 extern STM32_CAN Can0;
 #endif
 
-#define secondarySerial_AVAILABLE
-#if defined(STM32GENERIC) // STM32GENERIC core
+//#define secondarySerial_AVAILABLE
+#if defined(ARDUINO_DISCO_F407VG)
+#define SECONDARY_SERIAL_T
+#define Serial SerialUSB
+#elif defined(STM32GENERIC) // STM32GENERIC core
   #define SECONDARY_SERIAL_T SerialUART
 #else //libmaple core aka STM32DUINO
   #define SECONDARY_SERIAL_T HardwareSerial
