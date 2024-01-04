@@ -2657,6 +2657,105 @@ void setPinMapping(byte boardID)
       break;
 
     case BOARD_ID_RUSEFI_FRANKENSO_STM32_F407_DISC:
+      //******************************************
+      //******** PORTA CONNECTIONS ***************
+      //******************************************
+      pinMAP = PA0;
+      // = PA1;
+      pinTPS = PA2;
+      // = PA3;
+      // = PA4;
+      pinTrigger = PA5;
+      pinTrigger2 = PA6;
+      // = PA7; // ALT crank
+      // = PA8; // Thermocouple #3 /CS
+      // = PA9;
+      // = PA10
+      // = PA11;
+      // = PA12;
+      // = PA13
+      // = PA14
+      // = PA15
+
+      //******************************************
+      //******** PORTB CONNECTIONS ***************
+      //******************************************
+      // PB0; Knock sensor /CS
+      // PB1;
+      // = PB2;
+      // = PB3;
+      // = PB4; USB SPI MISO
+      // = PB5; USB SPI MOSI
+      // = PB6; CAN TX
+      // = PB7; Injector 12
+      // = PB8; Injector 11
+      // = PB9;
+      // = PB10;
+      // PB11; Knock sensor INT
+      // = PB12; CAN RX
+      /* = PB13; */ // Knock sensor SPI2_SCK
+      /* = PB14; */ // Knock sensor SPI2_MISO
+      /* = PB15; */ // Knock sensor SPI2_MOSI
+
+      //******************************************
+      //******** PORTC CONNECTIONS ***************
+      //******************************************
+      // = PC0; Knock sensor output.
+      pinIAT = PC1;
+      pinCLT = PC2;
+      pinO2 = PC3;
+      pinBat = PC4;
+      pinTrigger2 = PC5;
+      // = PC6;
+      pinCoil1 = PC7;
+      /* = PC8; */ //(DO NOT USE FOR SPEEDUINO) - SDIO_D0
+      pinCoil3 = PC9;
+      /* = PC10; */ // USART TX
+      /* = PC11; */ // USART RX
+      /* = PC12; */ //(DO NOT USE FOR SPEEDUINO) - SDIO_SCK
+      pinInjector4 = PC13;
+      /* = PC14; */ //(DO NOT USE FOR SPEEDUINO) - OSC32_IN
+      /* = PC15; */ //(DO NOT USE FOR SPEEDUINO) - OSC32_OUT
+
+      //******************************************
+      //******** PORTD CONNECTIONS ***************
+      //******************************************
+      /* = PD0; */ //CANRX
+      /* = PD1; */ //CANTX
+      /* = PD2; */ //(DO NOT USE FOR SPEEDUINO) - SDIO_CMD
+      pinInjector7 = PD3;
+      /* = PD4; */ // USB SD /CS
+      // = PD5; // Injector 10
+      // = PD6;
+      pinInjector3 = PD7; //
+      pinCoil7 = PD8;
+      pinCoil8 = PD9;
+      /* = PD10; */ //
+      /* = PD11; */ //
+      /* = PD12; */ //
+      /* = PD13; */ //
+      /* = PD14; */ //
+      /* = PD15; */ //
+
+      //******************************************
+      //******** PORTE CONNECTIONS ***************
+      //******************************************
+      // = PE0; //
+      // = PE1; //
+      pinInjector8 = PE2;
+      pinInjector5 = PE3;
+      pinInjector6 = PE4;
+      pinInjector2 = PE5;
+      pinInjector6 = PE6;
+      // = PE7; //
+      pinCoil5 = PE8;
+      /* = PE9; */ //
+      pinCoil6 = PE10;
+      // = PE11;
+      pinCoil4 = PE12;
+      /* = PE13; */ //
+      pinCoil2 = PE14;
+      /* = PE15; */ //
       break;
 
     default:
