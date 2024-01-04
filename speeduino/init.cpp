@@ -30,6 +30,7 @@
   #include "SD_logger.h"
   #include "rtc_common.h"
 #endif
+#include "board_ids.h"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 
@@ -2654,6 +2655,10 @@ void setPinMapping(byte boardID)
 
     #endif
       break;
+
+    case BOARD_ID_RUSEFI_FRANKENSO_STM32_F407_DISC:
+      break;
+
     default:
       #if defined(STM32F407xx)
       //Pin definitions for experimental board Tjeerd
