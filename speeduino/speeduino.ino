@@ -91,7 +91,7 @@ inline uint16_t applyFuelTrimToPW(trimTable3d *pTrimTable, int16_t fuelLoad, int
  */
 void loop(void)
 {
-      mainLoopCount++;
+    mainLoopCount++;
       LOOP_TIMER = TIMER_mask;
 
       //SERIAL Comms
@@ -190,6 +190,7 @@ void loop(void)
       boostDisable();
       if(configPage4.ignBypassEnabled > 0) { digitalWrite(pinIgnBypass, LOW); } //Reset the ignition bypass ready for next crank attempt
     }
+
     //***Perform sensor reads***
     //-----------------------------------------------------------------------------------------------------
     if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1KHZ)) //Every 1ms. NOTE: This is NOT guaranteed to run at 1kHz on AVR systems. It will run at 1kHz if possible or as fast as loops/s allows if not.

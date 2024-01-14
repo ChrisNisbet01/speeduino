@@ -2666,7 +2666,7 @@ void setPinMapping(byte boardID)
       // = PA3;
       // = PA4;
       pinTrigger = PA5;
-      pinTrigger2 = PA6;
+      // = PA6;
       // = PA7; // ALT crank
       // = PA8; // Thermocouple #3 /CS
       // = PA9;
@@ -2705,8 +2705,8 @@ void setPinMapping(byte boardID)
       pinCLT = PC2;
       pinO2 = PC3;
       pinBat = PC4;
-      pinTrigger2 = PC5;
-      // = PC6;
+      // = PC5;
+      pinTrigger2 = PC6;
       pinCoil1 = PC7;
       /* = PC8; */ //(DO NOT USE FOR SPEEDUINO) - SDIO_D0
       pinCoil3 = PC9;
