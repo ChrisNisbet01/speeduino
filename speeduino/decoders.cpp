@@ -480,8 +480,16 @@ void triggerSetup_missingTooth(void)
   toothOneMinusOneTime = 0;
   MAX_STALL_TIME = ((MICROS_PER_DEG_1_RPM/50U) * triggerToothAngle * (configPage4.triggerMissingTeeth + 1U)); //Minimum 50rpm. (3333uS is the time per degree at 50rpm)
 
-  if( (configPage4.TrigSpeed == CRANK_SPEED) &&  ( (configPage4.sparkMode == IGN_MODE_SEQUENTIAL) || (configPage2.injLayout == INJ_SEQUENTIAL) ) ) { BIT_SET(decoderState, BIT_DECODER_HAS_SECONDARY); }
-  else { BIT_CLEAR(decoderState, BIT_DECODER_HAS_SECONDARY); }
+  if (configPage4.TrigSpeed == CRANK_SPEED
+      && (configPage4.sparkMode == IGN_MODE_SEQUENTIAL
+          || configPage2.injLayout == INJ_SEQUENTIAL))
+  {
+    BIT_SET(decoderState, BIT_DECODER_HAS_SECONDARY);
+  }
+  else
+  {
+    BIT_CLEAR(decoderState, BIT_DECODER_HAS_SECONDARY);
+  }
 #ifdef USE_LIBDIVIDE
   divTriggerToothAngle = libdivide::libdivide_s16_gen(triggerToothAngle);
 #endif
@@ -499,7 +507,7 @@ void triggerPri_missingTooth(void)
   BIT_SET(decoderState, BIT_DECODER_VALID_TRIGGER); //Flag this pulse as being a valid trigger (ie that it passed filters)
 
   //if(toothCurrentCount > checkSyncToothCount || currentStatus.hasSync == false)
-  if( (toothLastToothTime > 0) && (toothLastMinusOneToothTime > 0) )
+  if (toothLastToothTime > 0 && toothLastMinusOneToothTime > 0)
   {
     bool isMissingTooth = false;
 
@@ -510,73 +518,103 @@ void triggerPri_missingTooth(void)
     2. We have sync and are in the final 1/4 of the wheel (Missing tooth will/should never occur in the first 3/4)
     3. RPM is under 2000. This is to ensure that we don't interfere with strange timing when cranking or idling. Optimisation not really required at these speeds anyway
     */
-    if( (currentStatus.hasSync == false) || (currentStatus.RPM < 2000) || (toothCurrentCount >= (3 * triggerActualTeeth >> 2)) )
+    if (!currentStatus.hasSync || currentStatus.RPM < 2000 || toothCurrentCount >= (3 * triggerActualTeeth >> 2))
     {
       //Begin the missing tooth detection
       //If the time between the current tooth and the last is greater than 1.5x the time between the last tooth and the tooth before that, we make the assertion that we must be at the first tooth after the gap
-      if(configPage4.triggerMissingTeeth == 1) { targetGap = (3 * (toothLastToothTime - toothLastMinusOneToothTime)) >> 1; } //Multiply by 1.5 (Checks for a gap 1.5x greater than the last one) (Uses bitshift to multiply by 3 then divide by 2. Much faster than multiplying by 1.5)
-      else { targetGap = ((toothLastToothTime - toothLastMinusOneToothTime)) * configPage4.triggerMissingTeeth; } //Multiply by 2 (Checks for a gap 2x greater than the last one)
+      if (configPage4.triggerMissingTeeth == 1) //Multiply by 1.5 (Checks for a gap 1.5x greater than the last one) (Uses bitshift to multiply by 3 then divide by 2. Much faster than multiplying by 1.5)
+      {
+        targetGap = (3 * (toothLastToothTime - toothLastMinusOneToothTime)) >> 1;
+      }
+      else //Multiply by 2 (Checks for a gap 2x greater than the last one)
+      {
+        targetGap = ((toothLastToothTime - toothLastMinusOneToothTime)) * configPage4.triggerMissingTeeth;
+      }
 
-      if( (toothLastToothTime == 0) || (toothLastMinusOneToothTime == 0) ) { curGap = 0; }
+      if ((toothLastToothTime == 0) || (toothLastMinusOneToothTime == 0))
+      {
+        curGap = 0;
+      }
 
-      if ( (curGap > targetGap) || (toothCurrentCount > triggerActualTeeth) )
+      if ((curGap > targetGap) || (toothCurrentCount > triggerActualTeeth))
       {
         //Missing tooth detected
         isMissingTooth = true;
-        if( (toothCurrentCount < triggerActualTeeth) && (currentStatus.hasSync == true) )
+        if ((toothCurrentCount < triggerActualTeeth) && (currentStatus.hasSync == true))
         {
-            //This occurs when we're at tooth #1, but haven't seen all the other teeth. This indicates a signal issue so we flag lost sync so this will attempt to resync on the next revolution.
-            currentStatus.hasSync = false;
-            BIT_CLEAR(currentStatus.status3, BIT_STATUS3_HALFSYNC); //No sync at all, so also clear HalfSync bit.
-            currentStatus.syncLossCounter++;
+          //This occurs when we're at tooth #1, but haven't seen all the other teeth. This indicates a signal issue so we flag lost sync so this will attempt to resync on the next revolution.
+          currentStatus.hasSync = false;
+          BIT_CLEAR(currentStatus.status3, BIT_STATUS3_HALFSYNC); //No sync at all, so also clear HalfSync bit.
+          currentStatus.syncLossCounter++;
         }
         //This is to handle a special case on startup where sync can be obtained and the system immediately thinks the revs have jumped:
         //else if (currentStatus.hasSync == false && toothCurrentCount < checkSyncToothCount ) { triggerFilterTime = 0; }
         else
         {
-            if((currentStatus.hasSync == true) || BIT_CHECK(currentStatus.status3, BIT_STATUS3_HALFSYNC))
+          if ((currentStatus.hasSync == true) || BIT_CHECK(currentStatus.status3, BIT_STATUS3_HALFSYNC))
+          {
+            currentStatus.startRevolutions++; //Counter
+            if (configPage4.TrigSpeed == CAM_SPEED) //Add an extra revolution count if we're running at cam speed
             {
-              currentStatus.startRevolutions++; //Counter
-              if ( configPage4.TrigSpeed == CAM_SPEED ) { currentStatus.startRevolutions++; } //Add an extra revolution count if we're running at cam speed
+              currentStatus.startRevolutions++;
             }
-            else { currentStatus.startRevolutions = 0; }
+          }
+          else
+          {
+            currentStatus.startRevolutions = 0;
+          }
 
-            toothCurrentCount = 1;
-            if (configPage4.trigPatternSec == SEC_TRIGGER_POLL) // at tooth one check if the cam sensor is high or low in poll level mode
+          toothCurrentCount = 1;
+          if (configPage4.trigPatternSec == SEC_TRIGGER_POLL) // at tooth one check if the cam sensor is high or low in poll level mode
+          {
+            if (configPage4.PollLevelPolarity == READ_SEC_TRIGGER())
             {
-              if (configPage4.PollLevelPolarity == READ_SEC_TRIGGER()) { revolutionOne = 1; }
-              else { revolutionOne = 0; }
+              revolutionOne = 1;
             }
-            else {revolutionOne = !revolutionOne;} //Flip sequential revolution tracker if poll level is not used
-            toothOneMinusOneTime = toothOneTime;
-            toothOneTime = curTime;
+            else
+            {
+              revolutionOne = 0;
+            }
+          }
+          else //Flip sequential revolution tracker if poll level is not used
+          {
+            revolutionOne = !revolutionOne;
+          }
+          toothOneMinusOneTime = toothOneTime;
+          toothOneTime = curTime;
 
-            //if Sequential fuel or ignition is in use, further checks are needed before determining sync
-            if( (configPage4.sparkMode == IGN_MODE_SEQUENTIAL) || (configPage2.injLayout == INJ_SEQUENTIAL) )
+          //if Sequential fuel or ignition is in use, further checks are needed before determining sync
+          if ((configPage4.sparkMode == IGN_MODE_SEQUENTIAL) || (configPage2.injLayout == INJ_SEQUENTIAL))
+          {
+            //If either fuel or ignition is sequential, only declare sync if the cam tooth has been seen OR if the missing wheel is on the cam
+            if ((secondaryToothCount > 0) || (configPage4.TrigSpeed == CAM_SPEED) || (configPage4.trigPatternSec == SEC_TRIGGER_POLL) || (configPage2.strokes == TWO_STROKE))
             {
-              //If either fuel or ignition is sequential, only declare sync if the cam tooth has been seen OR if the missing wheel is on the cam
-              if( (secondaryToothCount > 0) || (configPage4.TrigSpeed == CAM_SPEED) || (configPage4.trigPatternSec == SEC_TRIGGER_POLL) || (configPage2.strokes == TWO_STROKE) )
-              {
-                currentStatus.hasSync = true;
-                BIT_CLEAR(currentStatus.status3, BIT_STATUS3_HALFSYNC); //the engine is fully synced so clear the Half Sync bit
-              }
-              else if(currentStatus.hasSync != true) { BIT_SET(currentStatus.status3, BIT_STATUS3_HALFSYNC); } //If there is primary trigger but no secondary we only have half sync.
+              currentStatus.hasSync = true;
+              BIT_CLEAR(currentStatus.status3, BIT_STATUS3_HALFSYNC); //the engine is fully synced so clear the Half Sync bit
             }
-            else { currentStatus.hasSync = true;  BIT_CLEAR(currentStatus.status3, BIT_STATUS3_HALFSYNC); } //If nothing is using sequential, we have sync and also clear half sync bit
-            if(configPage4.trigPatternSec == SEC_TRIGGER_SINGLE || configPage4.trigPatternSec == SEC_TRIGGER_TOYOTA_3) //Reset the secondary tooth counter to prevent it overflowing, done outside of sequental as v6 & v8 engines could be batch firing with VVT that needs the cam resetting
+            else if (currentStatus.hasSync != true) //If there is primary trigger but no secondary we only have half sync.
             {
-              secondaryToothCount = 0;
+              BIT_SET(currentStatus.status3, BIT_STATUS3_HALFSYNC);
             }
+          }
+          else //If nothing is using sequential, we have sync and also clear half sync bit
+          {
+            currentStatus.hasSync = true;  BIT_CLEAR(currentStatus.status3, BIT_STATUS3_HALFSYNC);
+          }
+          if (configPage4.trigPatternSec == SEC_TRIGGER_SINGLE || configPage4.trigPatternSec == SEC_TRIGGER_TOYOTA_3) //Reset the secondary tooth counter to prevent it overflowing, done outside of sequental as v6 & v8 engines could be batch firing with VVT that needs the cam resetting
+          {
+            secondaryToothCount = 0;
+          }
 
-            triggerFilterTime = 0; //This is used to prevent a condition where serious intermittent signals (Eg someone furiously plugging the sensor wire in and out) can leave the filter in an unrecoverable state
-            toothLastMinusOneToothTime = toothLastToothTime;
-            toothLastToothTime = curTime;
-            BIT_CLEAR(decoderState, BIT_DECODER_TOOTH_ANG_CORRECT); //The tooth angle is double at this point
+          triggerFilterTime = 0; //This is used to prevent a condition where serious intermittent signals (Eg someone furiously plugging the sensor wire in and out) can leave the filter in an unrecoverable state
+          toothLastMinusOneToothTime = toothLastToothTime;
+          toothLastToothTime = curTime;
+          BIT_CLEAR(decoderState, BIT_DECODER_TOOTH_ANG_CORRECT); //The tooth angle is double at this point
         }
       }
     }
 
-    if(isMissingTooth == false)
+    if (isMissingTooth == false)
     {
       //Regular (non-missing) tooth
       setFilter(curGap);
@@ -594,16 +632,27 @@ void triggerPri_missingTooth(void)
 
 
   //NEW IGNITION MODE
-  if( (configPage2.perToothIgn == true) && (!BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK)) )
+  if (configPage2.perToothIgn
+      && !BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK))
   {
-    int16_t crankAngle = ( (toothCurrentCount-1) * triggerToothAngle ) + configPage4.triggerAngle;
-    if( (configPage4.sparkMode == IGN_MODE_SEQUENTIAL) && (revolutionOne == true) && (configPage4.TrigSpeed == CRANK_SPEED) && (configPage2.strokes == FOUR_STROKE) )
+    int16_t crankAngle =
+      ((toothCurrentCount - 1) * triggerToothAngle) + configPage4.triggerAngle;
+    uint16_t currentTooth;
+
+    if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL
+        && revolutionOne
+        && configPage4.TrigSpeed == CRANK_SPEED
+        && configPage2.strokes == FOUR_STROKE)
     {
       crankAngle += 360;
-      crankAngle = ignitionLimits(crankAngle);
-      checkPerToothTiming(crankAngle, (configPage4.triggerTeeth + toothCurrentCount));
+      currentTooth = configPage4.triggerTeeth + toothCurrentCount;
     }
-    else{ crankAngle = ignitionLimits(crankAngle); checkPerToothTiming(crankAngle, toothCurrentCount); }
+    else
+    {
+      currentTooth = toothCurrentCount;
+    }
+    crankAngle = ignitionLimits(crankAngle);
+    checkPerToothTiming(crankAngle, toothCurrentCount);
   }
 }
 

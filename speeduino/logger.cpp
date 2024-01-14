@@ -5,9 +5,9 @@
 #include "init.h"
 #include "maths.h"
 #include "utilities.h"
-#include BOARD_H 
+#include BOARD_H
 
-/** 
+/**
  * Returns a numbered byte-field (partial field in case of multi-byte fields) from "current status" structure in the format expected by TunerStudio
  * Notes on fields:
  * - Numbered field will be fields from @ref currentStatus, but not at all in the internal order of strct (e.g. field RPM value, number 14 will be
@@ -49,23 +49,23 @@ byte getTSLogEntry(uint16_t byteNum)
     case 23: statusValue = highByte(currentStatus.tpsDOT); break; //TPS DOT
     case 24: statusValue = currentStatus.advance; break;
     case 25: statusValue = currentStatus.TPS; break; // TPS (0% to 100%)
-    
-    case 26: 
+
+    case 26:
       if(currentStatus.loopsPerSecond > 60000U) { currentStatus.loopsPerSecond = 60000U;}
-      statusValue = lowByte(currentStatus.loopsPerSecond); 
+      statusValue = lowByte(currentStatus.loopsPerSecond);
       break;
-    case 27: 
+    case 27:
       if(currentStatus.loopsPerSecond > 60000U) { currentStatus.loopsPerSecond = 60000U;}
-      statusValue = highByte(currentStatus.loopsPerSecond); 
+      statusValue = highByte(currentStatus.loopsPerSecond);
       break;
-    
-    case 28: 
+
+    case 28:
       currentStatus.freeRAM = freeRam();
       statusValue = lowByte(currentStatus.freeRAM); //(byte)((currentStatus.loopsPerSecond >> 8) & 0xFF);
-      break; 
-    case 29: 
+      break;
+    case 29:
       currentStatus.freeRAM = freeRam();
-      statusValue = highByte(currentStatus.freeRAM); 
+      statusValue = highByte(currentStatus.freeRAM);
       break;
 
     case 30: statusValue = lowByte(currentStatus.boostTarget >> 1U); break; //Divide boost target by 2 to fit in a byte
@@ -180,7 +180,7 @@ byte getTSLogEntry(uint16_t byteNum)
   return statusValue;
 }
 
-/** 
+/**
  * Similar to the @ref getTSLogEntry function, however this returns a full, unadjusted (ie human readable) log entry value.
  * See logger.h for the field names and order
  * @param logIndex - The log index required. Note that this is NOT the byte number, but the index in the log
@@ -214,16 +214,16 @@ int16_t getReadableLogEntry(uint16_t logIndex)
     case 19: statusValue = currentStatus.tpsDOT; break; //TPS DOT
     case 20: statusValue = currentStatus.advance; break;
     case 21: statusValue = currentStatus.TPS; break; // TPS (0% to 100%)
-    
-    case 22: 
+
+    case 22:
       if(currentStatus.loopsPerSecond > 60000U) { currentStatus.loopsPerSecond = 60000U;}
-      statusValue = currentStatus.loopsPerSecond; 
+      statusValue = currentStatus.loopsPerSecond;
       break;
-    
-    case 23: 
+
+    case 23:
       currentStatus.freeRAM = freeRam();
       statusValue = currentStatus.freeRAM;
-      break; 
+      break;
 
     case 24: statusValue = currentStatus.boostTarget; break;
     case 25: statusValue = currentStatus.boostDuty; break;
@@ -253,7 +253,7 @@ int16_t getReadableLogEntry(uint16_t logIndex)
     case 48: statusValue = currentStatus.canin[13]; break;
     case 49: statusValue = currentStatus.canin[14]; break;
     case 50: statusValue = currentStatus.canin[15]; break;
-    
+
     case 51: statusValue = currentStatus.tpsADC; break;
     case 52: statusValue = getNextError(); break;
 
@@ -261,7 +261,7 @@ int16_t getReadableLogEntry(uint16_t logIndex)
     case 54: statusValue = currentStatus.PW2; break; //Pulsewidth 2 multiplied by 10 in ms. Have to convert from uS to mS.
     case 55: statusValue = currentStatus.PW3; break; //Pulsewidth 3 multiplied by 10 in ms. Have to convert from uS to mS.
     case 56: statusValue = currentStatus.PW4; break; //Pulsewidth 4 multiplied by 10 in ms. Have to convert from uS to mS.
-  
+
     case 57: statusValue = currentStatus.status3; break;
     case 58: statusValue = currentStatus.engineProtectStatus; break;
 
@@ -304,11 +304,11 @@ int16_t getReadableLogEntry(uint16_t logIndex)
   return statusValue;
 }
 
-/** 
+/**
  * An expansion to the @ref getReadableLogEntry function for systems that have an FPU. It will provide a floating point value for any parameter that this is appropriate for, otherwise will return the result of @ref getReadableLogEntry.
  * See logger.h for the field names and order
  * @param logIndex - The log index required. Note that this is NOT the byte number, but the index in the log
- * @return float value of the requested log entry. 
+ * @return float value of the requested log entry.
  */
 #if defined(FPU_MAX_SIZE) && FPU_MAX_SIZE >= 32 //cppcheck-suppress misra-c2012-20.9
 float getReadableFloatLogEntry(uint16_t logIndex)
@@ -435,11 +435,11 @@ uint8_t getLegacySecondarySerialLogEntry(uint16_t byteNum)
     case 85: statusValue = highByte(currentStatus.fuelLoad); break;
     case 86: statusValue = lowByte(currentStatus.ignLoad); break;
     case 87: statusValue = highByte(currentStatus.ignLoad); break;
-    case 88: statusValue = lowByte(currentStatus.injAngle); break; 
-    case 89: statusValue = highByte(currentStatus.injAngle); break; 
+    case 88: statusValue = lowByte(currentStatus.injAngle); break;
+    case 89: statusValue = highByte(currentStatus.injAngle); break;
     case 90: statusValue = currentStatus.idleLoad; break;
     case 91: statusValue = currentStatus.CLIdleTarget; break; //closed loop idle target
-    case 92: statusValue = (uint8_t)(currentStatus.mapDOT / 10); break; //rate of change of the map 
+    case 92: statusValue = (uint8_t)(currentStatus.mapDOT / 10); break; //rate of change of the map
     case 93: statusValue = (int8_t)currentStatus.vvt1Angle; break;
     case 94: statusValue = currentStatus.vvt1TargetAngle; break;
     case 95: statusValue = currentStatus.vvt1Duty; break;
@@ -449,7 +449,7 @@ uint8_t getLegacySecondarySerialLogEntry(uint16_t byteNum)
     case 99: statusValue = currentStatus.ASEValue; break; //Current ASE (%)
     case 100: statusValue = lowByte(currentStatus.vss); break; //speed reading from the speed sensor
     case 101: statusValue = highByte(currentStatus.vss); break;
-    case 102: statusValue = currentStatus.gear; break; 
+    case 102: statusValue = currentStatus.gear; break;
     case 103: statusValue = currentStatus.fuelPressure; break;
     case 104: statusValue = currentStatus.oilPressure; break;
     case 105: statusValue = currentStatus.wmiPW; break;
@@ -462,8 +462,8 @@ uint8_t getLegacySecondarySerialLogEntry(uint16_t byteNum)
     case 112: statusValue = currentStatus.fuelTempCorrection; break; //Fuel temperature Correction (%)
     case 113: statusValue = currentStatus.VE1; break; //VE 1 (%)
     case 114: statusValue = currentStatus.VE2; break; //VE 2 (%)
-    case 115: statusValue = currentStatus.advance1; break; //advance 1 
-    case 116: statusValue = currentStatus.advance2; break; //advance 2 
+    case 115: statusValue = currentStatus.advance1; break; //advance 1
+    case 116: statusValue = currentStatus.advance2; break; //advance 2
     case 117: statusValue = currentStatus.nitrous_status; break;
     case 118: statusValue = currentStatus.TS_SD_Status; break; //SD card status
     case 119: statusValue = lowByte(currentStatus.EMAP); break; //2 bytes for EMAP
@@ -475,10 +475,10 @@ uint8_t getLegacySecondarySerialLogEntry(uint16_t byteNum)
   return statusValue;
 }
 
-/** 
+/**
  * Searches the log 2 byte array to determine whether a given index is a regular single byte or a 2 byte field
  * Uses a boundless binary search for improved performance, but requires the fsIntIndex to remain in order
- * 
+ *
  * @param key - Index in the log array to check
  * @return True if the index is a 2 byte log field. False if it is a single byte
  */
@@ -491,9 +491,9 @@ bool is2ByteEntry(uint8_t key)
 
   unsigned int bot = 0U;
   unsigned int mid = _countof(fsIntIndex);
-  
+
   while (mid > 1U)
-  {  
+  {
     if (key >= pgm_read_byte( &fsIntIndex[bot + mid / 2U]) )
     {
       bot += mid++ / 2U;
@@ -518,9 +518,9 @@ void startToothLogger(void)
   if(VSS_USES_RPM2() != true)
   {
     detachInterrupt( digitalPinToInterrupt(pinTrigger2) );
-    attachInterrupt( digitalPinToInterrupt(pinTrigger2), loggerSecondaryISR, CHANGE );  
+    attachInterrupt( digitalPinToInterrupt(pinTrigger2), loggerSecondaryISR, CHANGE );
   }
-  
+
 }
 
 void stopToothLogger(void)
@@ -534,7 +534,7 @@ void stopToothLogger(void)
   if(VSS_USES_RPM2() != true)
   {
     detachInterrupt( digitalPinToInterrupt(pinTrigger2) );
-    attachInterrupt( digitalPinToInterrupt(pinTrigger2), triggerSecondaryHandler, secondaryTriggerEdge );  
+    attachInterrupt( digitalPinToInterrupt(pinTrigger2), triggerSecondaryHandler, secondaryTriggerEdge );
   }
 }
 
