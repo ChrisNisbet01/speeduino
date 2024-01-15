@@ -157,7 +157,7 @@ void airConControl(void)
       acAfterEngineStartDelay = 0;
       waitedAfterCranking = false;
     }
-    
+
     // --------------------------------------------------------------------
     // Determine the A/C lockouts based on the noted parameters
     // These functions set/clear the globl currentStatus.airConStatus bits.
@@ -165,7 +165,7 @@ void airConControl(void)
     checkAirConCoolantLockout();
     checkAirConTPSLockout();
     checkAirConRPMLockout();
-    
+
     // -----------------------------------------
     // Check the A/C Request Signal (A/C Button)
     // -----------------------------------------
@@ -217,7 +217,7 @@ bool READ_AIRCON_REQUEST(void)
     return false;
   }
   // Read the status of the A/C request pin (A/C button), taking into account the pin's polarity
-  bool acReqPinStatus = ( ((configPage15.airConReqPol)==1) ? 
+  bool acReqPinStatus = ( ((configPage15.airConReqPol)==1) ?
                              !!(*aircon_req_pin_port & aircon_req_pin_mask) :
                              !(*aircon_req_pin_port & aircon_req_pin_mask));
   BIT_WRITE(currentStatus.airConStatus, BIT_AIRCON_REQUEST, acReqPinStatus);
@@ -340,23 +340,23 @@ void fanControl(void)
     int offTemp = onTemp - configPage6.fanHyster;
     bool fanPermit = false;
 
-    
+
     if ( configPage2.fanWhenOff == true) { fanPermit = true; }
     else { fanPermit = BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN); }
 
     if ( (fanPermit == true) &&
-         ((currentStatus.coolant >= onTemp) || 
+         ((currentStatus.coolant >= onTemp) ||
            ((configPage15.airConTurnsFanOn) == 1 &&
            BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON) == true)) )
     {
       //Fan needs to be turned on - either by high coolant temp, or from an A/C request (to ensure there is airflow over the A/C radiator).
       if(BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) && (configPage2.fanWhenCranking == 0))
       {
-        //If the user has elected to disable the fan during cranking, make sure it's off 
+        //If the user has elected to disable the fan during cranking, make sure it's off
         FAN_OFF();
         BIT_CLEAR(currentStatus.status4, BIT_STATUS4_FAN);
       }
-      else 
+      else
       {
         FAN_ON();
         BIT_SET(currentStatus.status4, BIT_STATUS4_FAN);
@@ -364,7 +364,7 @@ void fanControl(void)
     }
     else if ( (currentStatus.coolant <= offTemp) || (!fanPermit) )
     {
-      //Fan needs to be turned off. 
+      //Fan needs to be turned off.
       FAN_OFF();
       BIT_CLEAR(currentStatus.status4, BIT_STATUS4_FAN);
     }
@@ -378,7 +378,7 @@ void fanControl(void)
       {
       if(BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) && (configPage2.fanWhenCranking == 0))
       {
-        currentStatus.fanDuty = 0; //If the user has elected to disable the fan during cranking, make sure it's off 
+        currentStatus.fanDuty = 0; //If the user has elected to disable the fan during cranking, make sure it's off
         BIT_CLEAR(currentStatus.status4, BIT_STATUS4_FAN);
         #if defined(PWM_FAN_AVAILABLE)//PWM fan not available on Arduino MEGA
           DISABLE_FAN_TIMER();
@@ -409,7 +409,7 @@ void fanControl(void)
     }
     else if (!fanPermit)
     {
-      currentStatus.fanDuty = 0; ////If the user has elected to disable the fan when engine is not running, make sure it's off 
+      currentStatus.fanDuty = 0; ////If the user has elected to disable the fan when engine is not running, make sure it's off
       BIT_CLEAR(currentStatus.status4, BIT_STATUS4_FAN);
     }
 
@@ -466,7 +466,7 @@ void initialiseAuxPWM(void)
 
   if(configPage10.n2o_enable > 0)
   {
-    //The pin modes are only set if the if n2o is enabled to prevent them conflicting with other outputs. 
+    //The pin modes are only set if the if n2o is enabled to prevent them conflicting with other outputs.
     if(configPage10.n2o_pin_polarity == 1) { pinMode(configPage10.n2o_arming_pin, INPUT_PULLUP); }
     else { pinMode(configPage10.n2o_arming_pin, INPUT); }
   }
@@ -511,7 +511,7 @@ void initialiseAuxPWM(void)
     vvtTimeHold = false;
     if (currentStatus.coolant >= (int)(configPage4.vvtMinClt - CALIBRATION_TEMPERATURE_OFFSET)) { vvtIsHot = true; } //Checks to see if coolant's already at operating temperature
   }
-  
+
   if( (configPage6.vvtEnabled == 0) && (configPage10.wmiEnabled >= 1) )
   {
     // config wmi pwm output to use vvt output
@@ -582,7 +582,7 @@ void boostByGear(void)
           break;
       }
     }
-    else if( configPage9.boostByGearEnabled == 2 ) 
+    else if( configPage9.boostByGearEnabled == 2 )
     {
       switch (currentStatus.gear)
       {
@@ -650,7 +650,7 @@ void boostByGear(void)
           break;
       }
     }
-    else if( configPage9.boostByGearEnabled == 2 ) 
+    else if( configPage9.boostByGearEnabled == 2 )
     {
       switch (currentStatus.gear)
       {
@@ -698,11 +698,11 @@ void boostControl(void)
     }
     else if (configPage4.boostType == CLOSED_LOOP_BOOST)
     {
-      if( (boostCounter & 7) == 1) 
-      { 
+      if( (boostCounter & 7) == 1)
+      {
         if ( (configPage9.boostByGearEnabled > 0) && (configPage2.vssMode > 1) ){ boostByGear(); }
         else{ currentStatus.boostTarget = get3DTableValue(&boostTable, (currentStatus.TPS * 2), currentStatus.RPM) << 1; } //Boost target table is in kpa and divided by 2
-      } 
+      }
       if(((configPage15.boostControlEnable == EN_BOOST_CONTROL_BARO) && (currentStatus.MAP >= currentStatus.baro)) || ((configPage15.boostControlEnable == EN_BOOST_CONTROL_FIXED) && (currentStatus.MAP >= configPage15.boostControlEnableThreshold))) //Only enables boost control above baro pressure or above user defined threshold (User defined level is usually set to boost with wastegate actuator only boost level)
       {
         //If flex fuel is enabled, there can be an adder to the boost target based on ethanol content
@@ -763,7 +763,7 @@ void boostControl(void)
     {
       ENABLE_BOOST_TIMER(); //Turn on the compare unit (ie turn on the interrupt) if boost duty is > 0
     }
-    
+
   }
   else { // Disable timer channel and zero the flex boost correction status
     DISABLE_BOOST_TIMER();
@@ -777,7 +777,7 @@ void vvtControl(void)
 {
   if( (configPage6.vvtEnabled == 1) && (currentStatus.coolant >= (int)(configPage4.vvtMinClt - CALIBRATION_TEMPERATURE_OFFSET)) && (BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN)))
   {
-    if(vvtTimeHold == false) 
+    if(vvtTimeHold == false)
     {
       vvtWarmTime = runSecsX10;
       vvtTimeHold = true;
@@ -786,7 +786,7 @@ void vvtControl(void)
     //Calculate the current cam angle for miata trigger
     if( configPage4.TrigPattern == 9 ) { currentStatus.vvt1Angle = getCamAngle_Miata9905(); }
 
-    if( (vvtIsHot == true) || ((runSecsX10 - vvtWarmTime) >= (configPage4.vvtDelay * VVT_TIME_DELAY_MULTIPLIER)) ) 
+    if( (vvtIsHot == true) || ((runSecsX10 - vvtWarmTime) >= (configPage4.vvtDelay * VVT_TIME_DELAY_MULTIPLIER)) )
     {
       vvtIsHot = true;
 
@@ -950,8 +950,8 @@ void vvtControl(void)
       }
     }
   }
-  else 
-  { 
+  else
+  {
     if (configPage10.wmiEnabled == 0)
     {
       // Disable timer channel
@@ -966,12 +966,12 @@ void vvtControl(void)
     vvt1_pwm_state = false;
     vvt1_max_pwm = false;
     vvtTimeHold = false;
-  } 
+  }
 }
 
 void nitrousControl(void)
 {
-  bool nitrousOn = false; //This tracks whether the control gets turned on at any point. 
+  bool nitrousOn = false; //This tracks whether the control gets turned on at any point.
   if(configPage10.n2o_enable > 0)
   {
     bool isArmed = READ_N2O_ARM_PIN();
@@ -980,7 +980,7 @@ void nitrousControl(void)
     //Perform the main checks to see if nitrous is ready
     if( (isArmed == true) && (currentStatus.coolant > (configPage10.n2o_minCLT - CALIBRATION_TEMPERATURE_OFFSET)) && (currentStatus.TPS > configPage10.n2o_minTPS) && (currentStatus.O2 < configPage10.n2o_maxAFR) && (currentStatus.MAP < (uint16_t)(configPage10.n2o_maxMAP * 2)) )
     {
-      //Config page values are divided by 100 to fit within a byte. Multiply them back out to real values. 
+      //Config page values are divided by 100 to fit within a byte. Multiply them back out to real values.
       uint16_t realStage1MinRPM = (uint16_t)configPage10.n2o_stage1_minRPM * 100;
       uint16_t realStage1MaxRPM = (uint16_t)configPage10.n2o_stage1_maxRPM * 100;
       uint16_t realStage2MinRPM = (uint16_t)configPage10.n2o_stage2_minRPM * 100;
@@ -1029,8 +1029,8 @@ void nitrousControl(void)
 void wmiControl(void)
 {
   int wmiPW = 0;
-  
-  // wmi can only work when vvt2 is disabled 
+
+  // wmi can only work when vvt2 is disabled
   if( (configPage10.vvt2Enabled == 0) && (configPage10.wmiEnabled >= 1) )
   {
     if( WMI_TANK_IS_EMPTY() )
@@ -1053,7 +1053,7 @@ void wmiControl(void)
           wmiPW = get3DTableValue(&wmiTable, currentStatus.MAP, currentStatus.RPM);
           break;
         case WMI_MODE_CLOSEDLOOP:
-          // Mapped closed loop - Output PWM follows injector duty cycle with 2D correction map applied (RPM vs MAP). Cell value contains correction value% [nom 100%] 
+          // Mapped closed loop - Output PWM follows injector duty cycle with 2D correction map applied (RPM vs MAP). Cell value contains correction value% [nom 100%]
           wmiPW = max(0, ((int)currentStatus.PW1 + configPage10.wmiOffset)) * get3DTableValue(&wmiTable, currentStatus.MAP, currentStatus.RPM) / 200;
           break;
         default:
@@ -1199,7 +1199,7 @@ void boostDisable(void)
       nextVVT = 1; //Next event is for PWM1
       if(vvt2_pwm_state == true){ SET_COMPARE(VVT_TIMER_COMPARE, VVT_TIMER_COUNTER + (vvt2_pwm_cur_value - vvt1_pwm_cur_value) ); }
       else
-      { 
+      {
         SET_COMPARE(VVT_TIMER_COMPARE, VVT_TIMER_COUNTER + (vvt_pwm_max_count - vvt1_pwm_cur_value) );
         nextVVT = 2; //Next event is for both PWM
       }
@@ -1220,7 +1220,7 @@ void boostDisable(void)
       nextVVT = 0; //Next event is for PWM0
       if(vvt1_pwm_state == true) { SET_COMPARE(VVT_TIMER_COMPARE, VVT_TIMER_COUNTER + (vvt1_pwm_cur_value - vvt2_pwm_cur_value) ); }
       else
-      { 
+      {
         SET_COMPARE(VVT_TIMER_COMPARE, VVT_TIMER_COUNTER + (vvt_pwm_max_count - vvt2_pwm_cur_value) );
         nextVVT = 2; //Next event is for both PWM
       }
@@ -1257,9 +1257,9 @@ void boostDisable(void)
 
 #if defined(PWM_FAN_AVAILABLE)
 //The interrupt to control the FAN PWM. Mega2560 doesn't have enough timers, so this is only for the ARM chip ones
-  void fanInterrupt(void)
+void fanInterrupt(void)
 {
-  if (fan_pwm_state == true)
+  if (fan_pwm_state)
   {
     FAN_OFF();
     FAN_TIMER_COMPARE = FAN_TIMER_COUNTER + (fan_pwm_max_count - fan_pwm_cur_value);

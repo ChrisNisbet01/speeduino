@@ -1211,7 +1211,13 @@ void receiveCalibration(byte tableID)
     //O2 calibration. Comes through as 1024 8-bit values of which we use every 32nd
     for (int x = 0; x < 1024; x++)
     {
-      while ( Serial.available() < 1 ) {}
+      while ( Serial.available() < 1 )
+      {
+        /*
+         * Do nothing.
+         * XXX - Will result in lockup if no characters are available.
+         */
+      }
       tempValue = Serial.read();
 
       if( (x % 32) == 0)
@@ -1227,7 +1233,13 @@ void receiveCalibration(byte tableID)
     //Temperature calibrations are sent as 32 16-bit values
     for (uint16_t x = 0; x < 32; x++)
     {
-      while ( Serial.available() < 2 ) {}
+      while ( Serial.available() < 2 )
+      {
+        /*
+         * Do nothing.
+         * XXX - Will result in lockup if no characters are available.
+         */
+      }
       tempBuffer[0] = Serial.read();
       tempBuffer[1] = Serial.read();
 
@@ -1237,8 +1249,10 @@ void receiveCalibration(byte tableID)
 
       //Apply the temp offset and check that it results in all values being positive
       tempValue = tempValue + OFFSET;
-      if (tempValue < 0) { tempValue = 0; }
-
+      if (tempValue < 0)
+      {
+        tempValue = 0;
+      }
 
       ((uint16_t*)pnt_TargetTable_values)[x] = tempValue; //Both temp tables have 16-bit values
       pnt_TargetTable_bins[x] = (x * 32U);
