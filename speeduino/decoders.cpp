@@ -298,13 +298,13 @@ static inline bool IsCranking(const statuses &status) {
   return (status.RPM < status.crankRPM) && (status.startRevolutions == 0U);
 }
 
-#if defined(UNIT_TEST)
-bool SetRevolutionTime(uint32_t revTime)
-#else
-static __attribute__((noinline)) bool SetRevolutionTime(uint32_t revTime)
+#if !defined(UNIT_TEST)
+static __attribute__((noinline))
 #endif
+bool SetRevolutionTime(uint32_t revTime)
 {
-  if (revTime!=revolutionTime) {
+  if (revTime != revolutionTime)
+  {
     revolutionTime = revTime;
     microsPerDegree = div360(revolutionTime << microsPerDegree_Shift);
     degreesPerMicro = (uint16_t)UDIV_ROUND_CLOSEST((UINT32_C(360) << degreesPerMicro_Shift), revolutionTime, uint32_t);
@@ -313,17 +313,18 @@ static __attribute__((noinline)) bool SetRevolutionTime(uint32_t revTime)
   return false;
 }
 
-static bool UpdateRevolutionTimeFromTeeth(bool isCamTeeth) {
+static bool UpdateRevolutionTimeFromTeeth(bool isCamTeeth)
+{
   noInterrupts();
   bool updatedRevTime = HasAnySync(currentStatus)
     && !IsCranking(currentStatus)
-    && (toothOneMinusOneTime!=UINT32_C(0))
-    && (toothOneTime>toothOneMinusOneTime)
+    && (toothOneMinusOneTime != UINT32_C(0))
+    && (toothOneTime > toothOneMinusOneTime)
     //The time in uS that one revolution would take at current speed (The time tooth 1 was last seen, minus the time it was seen prior to that)
     && SetRevolutionTime((toothOneTime - toothOneMinusOneTime) >> (isCamTeeth ? 1U : 0U));
 
   interrupts();
- return updatedRevTime;
+  return updatedRevTime;
 }
 
 static inline uint16_t clampRpm(uint16_t rpm) {
@@ -1471,21 +1472,36 @@ void triggerPri_4G63(void)
        currentStatus.startRevolutions++; //Counter
     }
 
-    if (currentStatus.hasSync == true)
+    if (currentStatus.hasSync)
     {
-      if ( BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) && configPage4.ignCranklock && (currentStatus.startRevolutions >= configPage4.StgCycles))
+      if (BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) && configPage4.ignCranklock && (currentStatus.startRevolutions >= configPage4.StgCycles))
       {
-        if(configPage2.nCylinders == 4)
+        if (configPage2.nCylinders == 4)
         {
           //This operates in forced wasted spark mode during cranking to align with crank teeth
-          if( (toothCurrentCount == 1) || (toothCurrentCount == 5) ) { twoCoilsEndCharge(ignition_id_1, ignition_id_3); }
-          else if( (toothCurrentCount == 3) || (toothCurrentCount == 7) ) { twoCoilsEndCharge(ignition_id_2, ignition_id_4); }
+          if ((toothCurrentCount == 1) || (toothCurrentCount == 5))
+          {
+            twoCoilsEndCharge(ignition_id_1, ignition_id_3);
+          }
+          else if ((toothCurrentCount == 3) || (toothCurrentCount == 7))
+          {
+            twoCoilsEndCharge(ignition_id_2, ignition_id_4);
+          }
         }
-        else if(configPage2.nCylinders == 6)
+        else if (configPage2.nCylinders == 6)
         {
-          if( (toothCurrentCount == 1) || (toothCurrentCount == 7) ) { singleCoilEndCharge(ignition_id_1); }
-          else if( (toothCurrentCount == 3) || (toothCurrentCount == 9) ) { singleCoilEndCharge(ignition_id_2); }
-          else if( (toothCurrentCount == 5) || (toothCurrentCount == 11) ) { singleCoilEndCharge(ignition_id_3); }
+          if ((toothCurrentCount == 1) || (toothCurrentCount == 7))
+          {
+            singleCoilEndCharge(ignition_id_1);
+          }
+          else if ((toothCurrentCount == 3) || (toothCurrentCount == 9))
+          {
+            singleCoilEndCharge(ignition_id_2);
+          }
+          else if ((toothCurrentCount == 5) || (toothCurrentCount == 11))
+          {
+            singleCoilEndCharge(ignition_id_3);
+          }
         }
       }
 

@@ -127,20 +127,8 @@ void jumpToBootloader();
     #define A15  PA5
   #endif
 #elif defined(ARDUINO_DISCO_F407VG)
+  // TODO: Assign the reserved pins.
   #define pinIsReserved(pin)  (false)
-
-  #ifndef PB11 //Hack for F4 BlackPills
-    #define PB11 PB10
-  #endif
-  //Hack to allow compilation on small STM boards
-  #ifndef A10
-    #define A10  PA0
-    #define A11  PA1
-    #define A12  PA2
-    #define A13  PA3
-    #define A14  PA4
-    #define A15  PA5
-  #endif
 #else
   #ifdef USE_SPI_EEPROM
     #define pinIsReserved(pin)  ( ((pin) == PA11) || ((pin) == PA12) || ((pin) == PB3) || ((pin) == PB4) || ((pin) == PB5) || ((pin) == USE_SPI_EEPROM) ) //Forbidden pins like USB

@@ -29,11 +29,12 @@ static bool done_init = false;
 
 void initMC33810(void)
 {
-  if (done_init == true)
+  if (done_init)
   {
     return;
   }
   done_init = true;
+
   //Set pin port/masks
   mc33810_1_pin_port = portOutputRegister(digitalPinToPort(pinMC33810_1_CS));
   mc33810_1_pin_mask = digitalPinToBitMask(pinMC33810_1_CS);
