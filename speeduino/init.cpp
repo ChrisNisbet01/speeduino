@@ -60,12 +60,13 @@ static void configure_ignition_coil_schedule(IgnitionSchedule &ignitionSchedule,
   ignitionSchedule.end.args[0] = ignition_id1;
 }
 
-static void configure_ignition_coil_schedule(IgnitionSchedule &ignitionSchedule, ignition_id_t ignition_id1, ignition_id_t ignition_id2)
+static void configure_ignition_coil_schedule(
+  IgnitionSchedule &ignitionSchedule, ignition_id_t ignition_id1, ignition_id_t ignition_id2)
 {
-  ignitionSchedule.start.pCallback = singleCoilBeginCharge;
+  ignitionSchedule.start.pCallback = twoCoilsBeginCharge;
   ignitionSchedule.start.args[0] = ignition_id1;
   ignitionSchedule.start.args[1] = ignition_id2;
-  ignitionSchedule.end.pCallback = singleCoilEndCharge;
+  ignitionSchedule.end.pCallback = twoCoilsEndCharge;
   ignitionSchedule.end.args[0] = ignition_id1;
   ignitionSchedule.end.args[1] = ignition_id2;
 }
