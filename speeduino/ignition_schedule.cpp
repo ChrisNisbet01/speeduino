@@ -119,13 +119,14 @@ void endTrailingCoilCharge1(uint8_t unused1, uint8_t unused2) //Sets ign3 (Trail
 {
   UNUSED(unused1);
   UNUSED(unused2);
-  singleCoilEndCharge(ignition_id_2); singleCoilBeginCharge(ignition_id_3);
+  singleCoilEndCharge(ignition_id_2);
+  singleCoilBeginCharge(ignition_id_3);
 }
 void endTrailingCoilCharge2(uint8_t unused1, uint8_t unused2) //sets ign3 (Trailing select) low
 {
   UNUSED(unused1);
   UNUSED(unused2);
-  singleCoilEndCharge(ignition_id_2); singleCoilEndCharge(ignition_id_3);
+  twoCoilsEndCharge(ignition_id_2, ignition_id_3);
 }
 
 static void ignition_control_update(OUTPUT_CONTROL_TYPE const control_method)
