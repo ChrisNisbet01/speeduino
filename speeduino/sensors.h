@@ -74,6 +74,6 @@ void readO2(void);
 void readBat(void);
 void readBaro(void);
 void readMAP(void);
-void instanteneousMAPReading(void);
+void instantaneousMAPReading(void);
 
 #endif // SENSORS_H
