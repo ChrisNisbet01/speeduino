@@ -439,13 +439,13 @@ void idleControl(void)
   {
     initialiseIdle(false);
   }
-  if ((currentStatus.RPM > 0) || (configPage6.iacPWMrun == true))
+  if (currentStatus.RPM > 0 || configPage6.iacPWMrun)
   {
     enableIdle();
   }
 
   //Check whether the idleUp is active
-  if (configPage2.idleUpEnabled == true)
+  if (configPage2.idleUpEnabled)
   {
     if (configPage2.idleUpPolarity == 0) //Normal mode (ground switched)
     {
@@ -456,9 +456,9 @@ void idleControl(void)
       currentStatus.idleUpActive = digitalRead(pinIdleUp);
     }
 
-    if (configPage2.idleUpOutputEnabled  == true)
+    if (configPage2.idleUpOutputEnabled)
     {
-      if (currentStatus.idleUpActive == true)
+      if (currentStatus.idleUpActive)
       {
         digitalWrite(pinIdleUpOutput, idleUpOutputHIGH);
         currentStatus.idleUpOutputActive = true;
@@ -508,7 +508,7 @@ void idleControl(void)
     }
     else if (!BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN))
     {
-      if (configPage6.iacPWMrun == true)
+      if (configPage6.iacPWMrun)
       {
         //Engine is not running or cranking, but the run before crank flag is set. Use the cranking table
         currentStatus.idleLoad = table2D_getValue(&iacCrankDutyTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET); //All temps are offset by 40 degrees
@@ -534,13 +534,14 @@ void idleControl(void)
         currentStatus.idleLoad = table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET); //All temps are offset by 40 degrees
       }
       // Add air conditioning idle-up - we only do this if the engine is running (A/C should never engage with engine off).
-      if (configPage15.airConIdleSteps > 0 && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON) == true)
+      if (configPage15.airConIdleSteps > 0
+          && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON))
       {
         currentStatus.idleLoad += configPage15.airConIdleSteps;
       }
     }
 
-    if (currentStatus.idleUpActive == true) //Add Idle Up amount if active
+    if (currentStatus.idleUpActive) //Add Idle Up amount if active
     {
       currentStatus.idleLoad += configPage2.idleUpAdder;
     }
@@ -565,9 +566,10 @@ void idleControl(void)
     }
     else if (!BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN))
     {
-      if (configPage6.iacPWMrun == true)
+      if (configPage6.iacPWMrun)
       {
-        //Engine is not running or cranking, but the run before crank flag is set. Use the cranking table
+        //Engine is not running or cranking, but the run before crank flag is set.
+        //Use the cranking table.
         currentStatus.idleLoad = table2D_getValue(&iacCrankDutyTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET); //All temps are offset by 40 degrees
         idle_pwm_target_value = percentage(currentStatus.idleLoad, idle_pwm_max_count);
       }
@@ -582,13 +584,14 @@ void idleControl(void)
 
       PID_computed = idlePID.Compute(true);
       long TEMP_idle_pwm_target_value;
-      if (PID_computed == true)
+      if (PID_computed)
       {
         TEMP_idle_pwm_target_value = idle_pid_target_value;
 
         // Add an offset to the duty cycle, outside of the closed loop. When tuned correctly, the extra load from
         // the air conditioning should exactly cancel this out and the PID loop will be relatively unaffected.
-        if (configPage15.airConIdleSteps > 0 && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON) == true)
+        if (configPage15.airConIdleSteps > 0
+            && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON))
         {
           // Add air conditioning idle-up
           // We are adding percentage steps, but the loop doesn't operate in percentage steps - it works in PWM count
@@ -600,7 +603,7 @@ void idleControl(void)
         }
 
         // Fixed this by putting it here, however I have not tested it. It used to be after the calculation of idle_pwm_target_value, meaning the percentage would update in currentStatus, but the idle would not actually increase.
-        if (currentStatus.idleUpActive == true)
+        if (currentStatus.idleUpActive)
         {
           // Add Idle Up amount if active
           // Again, we use configPage15.airConIdleSteps * idle_pwm_max_count / 100 because we are adding percentage steps, but the loop doesn't operate in percentage steps - it works in PWM count
@@ -631,7 +634,7 @@ void idleControl(void)
     }
     else if (!BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN))
     {
-      if (configPage6.iacPWMrun == true)
+      if (configPage6.iacPWMrun)
       {
         //Engine is not running or cranking, but the run before crank flag is set. Use the cranking table
         currentStatus.idleLoad = table2D_getValue(&iacCrankDutyTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET); //All temps are offset by 40 degrees
@@ -645,7 +648,8 @@ void idleControl(void)
 
       // Add an offset to the feed forward term. When tuned correctly, the extra load from the air conditioning
       // should exactly cancel this out and the PID loop will be relatively unaffected.
-      if (configPage15.airConIdleSteps > 0 && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON) == true)
+      if (configPage15.airConIdleSteps > 0
+          && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON))
       {
         // Add air conditioning idle-up
         // We are adding percentage steps, but the loop doesn't operate in percentage steps - it works in PWM count <<2 (PWM count * 4)
@@ -657,7 +661,7 @@ void idleControl(void)
       }
 
       // Fixed this by putting it here, however I have not tested it. It used to be after the calculation of idle_pwm_target_value, meaning the percentage would update in currentStatus, but the idle would not actually increase.
-      if (currentStatus.idleUpActive == true)
+      if (currentStatus.idleUpActive)
       {
         // Add Idle Up amount if active
         // Again, we are adding percentage steps, but the loop doesn't operate in percentage steps - it works in PWM count <<2 (PWM count * 4)
@@ -681,7 +685,7 @@ void idleControl(void)
 
       PID_computed = idlePID.Compute(true, FeedForwardTerm);
 
-      if (PID_computed == true)
+      if (PID_computed)
       {
         idle_pwm_target_value = idle_pid_target_value >> 2; //increased resolution
         currentStatus.idleLoad = ((unsigned long)(idle_pwm_target_value * 100UL) / idle_pwm_max_count);
@@ -693,14 +697,16 @@ void idleControl(void)
 
   case IAC_ALGORITHM_STEP_OL:    //Case 4 is open loop stepper control
     //First thing to check is whether there is currently a step going on and if so, whether it needs to be turned off
-    if ((checkForStepping() == false) && (isStepperHomed() == true)) //Check that homing is complete and that there's not currently a step already taking place. MUST BE IN THIS ORDER!
+    //Check that homing is complete and that there's not currently a step already taking place. MUST BE IN THIS ORDER!
+    if (!checkForStepping() && isStepperHomed())
     {
       //Check for cranking pulsewidth
-      if (!BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN)) //If ain't running it means off or cranking
+      //If ain't running it means off or cranking
+      if (!BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN))
       {
         //Currently cranking. Use the cranking table
         idleStepper.targetIdleStep = table2D_getValue(&iacCrankStepsTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) * 3; //All temps are offset by 40 degrees. Step counts are divided by 3 in TS. Multiply back out here
-        if (currentStatus.idleUpActive == true) //Add Idle Up amount if active
+        if (currentStatus.idleUpActive) //Add Idle Up amount if active
         {
           idleStepper.targetIdleStep += configPage2.idleUpAdder;
         }
@@ -735,13 +741,14 @@ void idleControl(void)
             //Standard running
             idleStepper.targetIdleStep = table2D_getValue(&iacStepTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) * 3; //All temps are offset by 40 degrees. Step counts are divided by 3 in TS. Multiply back out here
           }
-          if (currentStatus.idleUpActive == true) //Add Idle Up amount if active
+          if (currentStatus.idleUpActive) //Add Idle Up amount if active
           {
             idleStepper.targetIdleStep += configPage2.idleUpAdder;
           }
 
           // Add air conditioning idle-up - we only do this if the engine is running (A/C should never engage with engine off).
-          if (configPage15.airConIdleSteps > 0 && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON) == true)
+          if (configPage15.airConIdleSteps > 0
+              && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON))
           {
             idleStepper.targetIdleStep += configPage15.airConIdleSteps;
           }
@@ -780,13 +787,16 @@ void idleControl(void)
   case IAC_ALGORITHM_STEP_OLCL:  //Case 7 is closed+open loop stepper control
   case IAC_ALGORITHM_STEP_CL:    //Case 5 is closed loop stepper control
     //First thing to check is whether there is currently a step going on and if so, whether it needs to be turned off
-    if ((checkForStepping() == false) && (isStepperHomed() == true)) //Check that homing is complete and that there's not currently a step already taking place. MUST BE IN THIS ORDER!
+    //Check that homing is complete and that there's not currently a step already taking place.
+    //MUST BE IN THIS ORDER!
+    // FIXME - The comment on the line above and the code disagree.
+    if (!checkForStepping() && isStepperHomed())
     {
       if (!BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN)) //If ain't running it means off or cranking
       {
         //Currently cranking. Use the cranking table
         idleStepper.targetIdleStep = table2D_getValue(&iacCrankStepsTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) * 3; //All temps are offset by 40 degrees. Step counts are divided by 3 in TS. Multiply back out here
-        if (currentStatus.idleUpActive == true) //Add Idle Up amount if active
+        if (currentStatus.idleUpActive) //Add Idle Up amount if active
         {
           idleStepper.targetIdleStep += configPage2.idleUpAdder;
         }
@@ -853,13 +863,14 @@ void idleControl(void)
         idleStepper.targetIdleStep = idle_pid_target_value >> 2; //Increase resolution
 
         // Add air conditioning idle-up - we only do this if the engine is running (A/C should never engage with engine off).
-        if (configPage15.airConIdleSteps > 0 && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON) == true)
+        if (configPage15.airConIdleSteps > 0
+            && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON))
         {
           idleStepper.targetIdleStep += configPage15.airConIdleSteps;
         }
       }
 
-      if (currentStatus.idleUpActive == true) //Add Idle Up amount if active
+      if (currentStatus.idleUpActive) //Add Idle Up amount if active
       {
         idleStepper.targetIdleStep += configPage2.idleUpAdder;
       }
@@ -972,14 +983,14 @@ void disableIdle(void)
   else if ((configPage6.iacAlgorithm == IAC_ALGORITHM_STEP_OL) || (configPage6.iacAlgorithm == IAC_ALGORITHM_STEP_CL) || (configPage6.iacAlgorithm == IAC_ALGORITHM_STEP_OLCL))
   {
     //Only disable the stepper motor if homing is completed
-    if ((checkForStepping() == false) && (isStepperHomed() == true))
+    if (!checkForStepping() && isStepperHomed())
     {
       /* for open loop stepper we should just move to the cranking position when
          disabling idle, since the only time this function is called in this scenario
          is if the engine stops.
       */
       idleStepper.targetIdleStep = table2D_getValue(&iacCrankStepsTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) * 3; //All temps are offset by 40 degrees. Step counts are divided by 3 in TS. Multiply back out here
-      if (currentStatus.idleUpActive == true) //Add Idle Up amount if active?
+      if (currentStatus.idleUpActive) //Add Idle Up amount if active?
       {
         idleStepper.targetIdleStep += configPage2.idleUpAdder;
       }

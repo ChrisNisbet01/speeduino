@@ -574,7 +574,10 @@ bool correctionDFCO(void)
     if ( BIT_CHECK(currentStatus.status1, BIT_STATUS1_DFCO) == 1 )
     {
       DFCOValue = ( currentStatus.RPM > ( configPage4.dfcoRPM * 10) ) && ( currentStatus.TPS < configPage4.dfcoTPSThresh );
-      if ( DFCOValue == false) { dfcoDelay = 0; }
+      if (!DFCOValue)
+      {
+        dfcoDelay = 0;
+      }
     }
     else
     {
@@ -637,13 +640,19 @@ byte correctionAFRClosedLoop(void)
 {
   byte AFRValue = 100;
 
-  if( (configPage6.egoType > 0) || (configPage2.incorporateAFR == true) ) //afrTarget value lookup must be done if O2 sensor is enabled, and always if incorporateAFR is enabled
+  //afrTarget value lookup must be done if O2 sensor is enabled,
+  //and always if incorporateAFR is enabled
+  if (configPage6.egoType > 0 || configPage2.incorporateAFR)
   {
     currentStatus.afrTarget = currentStatus.O2; //Catch all in case the below doesn't run. This prevents the Include AFR option from doing crazy things if the AFR target conditions aren't met. This value is changed again below if all conditions are met.
 
     //Determine whether the Y axis of the AFR target table tshould be MAP (Speed-Density) or TPS (Alpha-N)
     //Note that this should only run after the sensor warmup delay when using Include AFR option, but on Incorporate AFR option it needs to be done at all times
-    if( (currentStatus.runSecs > configPage6.ego_sdelay) || (configPage2.incorporateAFR == true) ) { currentStatus.afrTarget = get3DTableValue(&afrTable, currentStatus.fuelLoad, currentStatus.RPM); } //Perform the target lookup
+    if (currentStatus.runSecs > configPage6.ego_sdelay || configPage2.incorporateAFR)
+    {
+      //Perform the target lookup
+      currentStatus.afrTarget = get3DTableValue(&afrTable, currentStatus.fuelLoad, currentStatus.RPM);
+    }
   }
 
   if((configPage6.egoType > 0) && (BIT_CHECK(currentStatus.status1, BIT_STATUS1_DFCO) != 1  ) ) //egoType of 0 means no O2 sensor. If DFCO is active do not run the ego controllers to prevent interator wind-up.
@@ -695,7 +704,10 @@ byte correctionAFRClosedLoop(void)
 
           bool PID_compute = egoPID.Compute();
           //currentStatus.egoCorrection = 100 + PID_output;
-          if(PID_compute == true) { AFRValue = 100 + PID_output; }
+          if (PID_compute)
+          {
+            AFRValue = 100 + PID_output;
+          }
 
         }
         else { AFRValue = 100; } // Occurs if the egoAlgorithm is set to 0 (No Correction)
@@ -948,9 +960,9 @@ int8_t correctionKnock(int8_t advance)
     //
     if(knockCounter > configPage10.knock_count)
     {
-      if(currentStatus.knockActive == true)
+      if (currentStatus.knockActive)
       {
-        //Knock retard is currently
+        //Knock retard is currently active.
       }
       else
       {
@@ -1000,7 +1012,7 @@ uint16_t correctionsDwell(uint16_t dwell)
   //**************************************************************************************************************************
   //Dwell error correction is a basic closed loop to keep the dwell time consistent even when adjusting its end time for the per tooth timing.
   //This is mostly of benefit to low resolution triggers at low rpm (<1500)
-  if( (configPage2.perToothIgn  == true) && (configPage4.dwellErrCorrect == 1) )
+  if (configPage2.perToothIgn && configPage4.dwellErrCorrect == 1)
   {
     int16_t error = tempDwell - currentStatus.actualDwell;
     if(tempDwell > INT16_MAX) { tempDwell = INT16_MAX; } //Prevent overflow when casting to signed int

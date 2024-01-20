@@ -249,7 +249,12 @@ void _setIgnitionScheduleRunning(IgnitionSchedule &schedule, unsigned long timeo
 
   noInterrupts();
   schedule.startCompare = schedule.counter + timeout_timer_compare; //As there is a tick every 4uS, there are timeout/4 ticks until the interrupt should be triggered ( >>2 divides by 4)
-  if(schedule.endScheduleSetByDecoder == false) { schedule.endCompare = schedule.startCompare + uS_TO_TIMER_COMPARE(duration); } //The .endCompare value is also set by the per tooth timing in decoders.ino. The check here is so that it's not getting overridden.
+  if (!schedule.endScheduleSetByDecoder)
+  {
+    //The .endCompare value is also set by the per tooth timing in decoders.cpp.
+    //The check here is so that it's not getting overridden.
+    schedule.endCompare = schedule.startCompare + uS_TO_TIMER_COMPARE(duration);
+  }
   SET_COMPARE(schedule.compare, schedule.startCompare);
   schedule.Status = PENDING; //Turn this schedule on
   interrupts();

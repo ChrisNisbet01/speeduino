@@ -141,7 +141,7 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
   if(tachoOutputFlag == READY)
   {
     //Check for half speed tacho
-    if( (configPage2.tachoDiv == 0) || (currentStatus.tachoAlt == true) )
+    if (configPage2.tachoDiv == 0 || currentStatus.tachoAlt)
     {
       TACHO_PULSE_LOW();
       //ms_counter is cast down to a byte as the tacho duration can only be in the range of 1-6, so no extra resolution above that is required
@@ -225,7 +225,13 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     if ( BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN) ) { runSecsX10++; }
     else { runSecsX10 = 0; }
 
-    if ( (currentStatus.injPrimed == false) && (seclx10 == configPage2.primingDelay) && (currentStatus.RPM == 0) ) { beginInjectorPriming(); currentStatus.injPrimed = true; }
+    if (!currentStatus.injPrimed
+        && seclx10 == configPage2.primingDelay
+        && currentStatus.RPM == 0)
+    {
+      beginInjectorPriming();
+      currentStatus.injPrimed = true;
+    }
     seclx10++;
   }
 
@@ -271,7 +277,7 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     }
 
     //Check whether fuel pump priming is complete
-    if(currentStatus.fpPrimed == false)
+    if (!currentStatus.fpPrimed)
     {
       //fpPrimeTime is the time that the pump priming started. This is 0 on startup, but can be changed if the unit has been running on USB power and then had the ignition turned on (Which starts the priming again)
       if( (currentStatus.secl - fpPrimeTime) >= configPage2.fpPrime)
@@ -287,7 +293,7 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     }
     //**************************************************************************************************************************************************
     //Set the flex reading (if enabled). The flexCounter is updated with every pulse from the sensor. If cleared once per second, we get a frequency reading
-    if(configPage2.flexEnabled == true)
+    if (configPage2.flexEnabled)
     {
       byte tempEthPct = 0;
       if(flexCounter < 50)
