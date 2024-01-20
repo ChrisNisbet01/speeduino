@@ -558,7 +558,7 @@ void legacySerialHandler(byte cmd, Stream &targetPort, SerialStatus &targetStatu
     case 'M':
       targetStatusFlag = SERIAL_COMMAND_INPROGRESS_LEGACY;
 
-      if(chunkPending == false)
+      if (!chunkPending)
       {
         //This means it's a new request
         //7 bytes required:

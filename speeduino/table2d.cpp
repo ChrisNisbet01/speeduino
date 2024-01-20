@@ -100,7 +100,7 @@ int table2D_getValue(struct table2D *fromTable, int X_in)
     }
   } //X_in same as last time
 
-  if (valueFound == false)
+  if (!valueFound)
   {
     int16_t m = X - xMinValue;
     int16_t n = xMaxValue - xMinValue;
@@ -111,7 +111,7 @@ int table2D_getValue(struct table2D *fromTable, int X_in)
     /* Float version (if m, yMax, yMin and n were float's)
        int yVal = (m * (yMax - yMin)) / n;
     */
-    
+
     //Non-Float version
     int16_t yVal = ( ((int32_t) m) * (yMax-yMin) ) / n;
     returnValue = yMin + yVal;
@@ -125,10 +125,10 @@ int table2D_getValue(struct table2D *fromTable, int X_in)
 
 /**
  * @brief Returns an axis (bin) value from the 2D table. This works regardless of whether that axis is bytes or int16_ts
- * 
- * @param fromTable 
- * @param X_in 
- * @return int16_t 
+ *
+ * @param fromTable
+ * @param X_in
+ * @return int16_t
  */
 int16_t table2D_getAxisValue(struct table2D *fromTable, byte X_in)
 {
@@ -137,17 +137,17 @@ int16_t table2D_getAxisValue(struct table2D *fromTable, byte X_in)
   if(fromTable->axisSize == SIZE_INT) { returnValue = ((int16_t*)fromTable->axisX)[X_in]; }
   else if(fromTable->axisSize == SIZE_BYTE) { returnValue = ((uint8_t*)fromTable->axisX)[X_in]; }
   else if(fromTable->axisSize == SIZE_SIGNED_BYTE) { returnValue = ((int8_t*)fromTable->axisX)[X_in]; }
-  
+
 
   return returnValue;
 }
 
 /**
  * @brief Returns an value from the 2D table given an index value. No interpolation is performed
- * 
- * @param fromTable 
- * @param X_index 
- * @return int16_t 
+ *
+ * @param fromTable
+ * @param X_index
+ * @return int16_t
  */
 int16_t table2D_getRawValue(struct table2D *fromTable, byte X_index)
 {

@@ -213,7 +213,7 @@ void airConControl(void)
 
 bool READ_AIRCON_REQUEST(void)
 {
-  if(acIsEnabled == false)
+  if (!acIsEnabled)
   {
     return false;
   }
@@ -781,7 +781,7 @@ void vvtControl(void)
 {
   if( (configPage6.vvtEnabled == 1) && (currentStatus.coolant >= (int)(configPage4.vvtMinClt - CALIBRATION_TEMPERATURE_OFFSET)) && (BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN)))
   {
-    if(vvtTimeHold == false)
+    if (!vvtTimeHold)
     {
       vvtWarmTime = runSecsX10;
       vvtTimeHold = true;
@@ -854,7 +854,10 @@ void vvtControl(void)
           //vvtPID.Compute2(currentStatus.vvt1TargetAngle, currentStatus.vvt1Angle, false);
           //vvt_pwm_target_value = percentage(40, vvt_pwm_max_count);
           //if (currentStatus.vvt1Angle > currentStatus.vvt1TargetAngle) { vvt_pwm_target_value = 0; }
-          if(PID_compute == true) { vvt1_pwm_value = halfPercentage(currentStatus.vvt1Duty, vvt_pwm_max_count); }
+          if (PID_compute)
+          {
+            vvt1_pwm_value = halfPercentage(currentStatus.vvt1Duty, vvt_pwm_max_count);
+          }
           BIT_CLEAR(currentStatus.status4, BIT_STATUS4_VVT1_ERROR);
         }
 
@@ -1023,7 +1026,7 @@ void nitrousControl(void)
     }
   }
 
-  if (nitrousOn == false)
+  if (!nitrousOn)
   {
     currentStatus.nitrous_status = NITROUS_OFF;
     BIT_CLEAR(currentStatus.status3, BIT_STATUS3_NITROUS);

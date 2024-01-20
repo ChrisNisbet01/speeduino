@@ -270,12 +270,15 @@ bool STM32_CAN::write(CAN_message_t &CAN_tx_msg, bool sendMB)
     to move the messages from ring buffer to empty TX mailboxes, so for that use case, there is this check */
     if(sendMB != true)
     {
-      if( addToRingBuffer(txRing, CAN_tx_msg) == false )
+      if (!addToRingBuffer(txRing, CAN_tx_msg))
       {
         ret = false; // no more room
       }
     }
-    else { ret = false; }
+    else
+    {
+      ret = false;
+    }
   }
   __HAL_CAN_ENABLE_IT(n_pCanHandle, CAN_IT_TX_MAILBOX_EMPTY);
   return ret;

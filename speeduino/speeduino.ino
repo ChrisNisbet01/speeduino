@@ -191,7 +191,10 @@ void loop(void)
       //This is a safety check. If for some reason the interrupts have got screwed up (Leading to 0rpm), this resets them.
       //It can possibly be run much less frequently.
       //This should only be run if the high speed logger are off because it will change the trigger interrupts back to defaults rather than the logger versions
-      if( (currentStatus.toothLogEnabled == false) && (currentStatus.compositeTriggerUsed == 0) ) { initialiseTriggers(); }
+      if (!currentStatus.toothLogEnabled && currentStatus.compositeTriggerUsed == 0)
+      {
+        initialiseTriggers();
+      }
 
       VVT1_PIN_LOW();
       VVT2_PIN_LOW();
@@ -512,7 +515,13 @@ void loop(void)
         pwLimit = pwLimit / currentStatus.nSquirts;
       }
       //Apply the pwLimit if staging is disabled and engine is not cranking
-      if( (!BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK)) && (configPage10.stagingEnabled == false) ) { if (currentStatus.PW1 > pwLimit) { currentStatus.PW1 = pwLimit; } }
+      if (!BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) && !configPage10.stagingEnabled)
+      {
+        if (currentStatus.PW1 > pwLimit)
+        {
+          currentStatus.PW1 = pwLimit;
+        }
+      }
 
       calculateStaging(pwLimit);
 
@@ -919,12 +928,19 @@ void loop(void)
               //Turn fuel and ignition channels on
 
               //Special case for non-sequential, 4-stroke where both fuel and ignition are cut. The ignition pulses should wait 1 cycle after the fuel channels are turned back on before firing again
-              if( (revolutionsToCut == 4) &&                          //4 stroke and non-sequential
-                  (BIT_CHECK(fuelChannelsOn, x) == false) &&          //Fuel on this channel is currently off, meaning it is the first revolution after a cut
-                  (configPage6.engineProtectType == PROTECT_CUT_BOTH) //Both fuel and ignition are cut
+              if (revolutionsToCut == 4 //4 stroke and non-sequential
+                  && !BIT_CHECK(fuelChannelsOn, x) //Fuel on this channel is currently off, meaning it is the first revolution after a cut
+                  && configPage6.engineProtectType == PROTECT_CUT_BOTH //Both fuel and ignition are cut
                 )
-              { BIT_SET(ignitionChannelsPending, x); } //Set this ignition channel as pending
-              else { BIT_SET(ignitionChannelsOn, x); } //Turn on this ignition channel
+              {
+                //Set this ignition channel as pending
+                BIT_SET(ignitionChannelsPending, x);
+              }
+              else
+              {
+                //Turn on this ignition channel
+                BIT_SET(ignitionChannelsOn, x);
+              }
 
 
               BIT_SET(fuelChannelsOn, x); //Turn on this fuel channel

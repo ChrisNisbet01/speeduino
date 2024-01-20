@@ -234,7 +234,7 @@ void checkProgrammableIO(void)
         }
       }
 
-      if ( (firstCheck == true) && (configPage13.outputDelay[y] < 255) )
+      if (firstCheck && configPage13.outputDelay[y] < 255)
       {
         if (ioDelay[y] >= configPage13.outputDelay[y])
         {
