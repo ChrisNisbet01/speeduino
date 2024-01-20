@@ -24,16 +24,16 @@ byte checkRevLimit(void)
   BIT_CLEAR(currentStatus.spark, BIT_SPARK_HRDLIM);
   BIT_CLEAR(currentStatus.engineProtectStatus, ENGINE_PROTECT_BIT_COOLANT);
 
-  if (configPage6.engineProtectType != PROTECT_CUT_OFF) 
+  if (configPage6.engineProtectType != PROTECT_CUT_OFF)
   {
     if(configPage9.hardRevMode == HARD_REV_FIXED)
     {
       currentLimitRPM = configPage4.HardRevLim;
       if ( (currentStatus.RPMdiv100 >= configPage4.HardRevLim) || ((softLimitTime > configPage4.SoftLimMax) && (currentStatus.RPMdiv100 >= configPage4.SoftRevLim)) )
-      { 
+      {
         BIT_SET(currentStatus.spark, BIT_SPARK_HRDLIM); //Legacy and likely to be removed at some point
         BIT_SET(currentStatus.engineProtectStatus, ENGINE_PROTECT_BIT_RPM);
-      } 
+      }
       else { BIT_CLEAR(currentStatus.spark, BIT_SPARK_HRDLIM); }
     }
     else if(configPage9.hardRevMode == HARD_REV_COOLANT )
@@ -44,7 +44,7 @@ byte checkRevLimit(void)
         BIT_SET(currentStatus.engineProtectStatus, ENGINE_PROTECT_BIT_COOLANT);
         BIT_SET(currentStatus.spark, BIT_SPARK_HRDLIM); //Legacy and likely to be removed at some point
         BIT_SET(currentStatus.engineProtectStatus, ENGINE_PROTECT_BIT_RPM);
-      } 
+      }
     }
   }
 
@@ -98,12 +98,12 @@ byte checkOilPressureLimit(void)
   bool alreadyActive = BIT_CHECK(currentStatus.engineProtectStatus, ENGINE_PROTECT_BIT_OIL);
   BIT_CLEAR(currentStatus.engineProtectStatus, ENGINE_PROTECT_BIT_OIL); //Will be set true below if required
 
-  if (configPage6.engineProtectType != PROTECT_CUT_OFF) 
+  if (configPage6.engineProtectType != PROTECT_CUT_OFF)
   {
-    if( (configPage10.oilPressureProtEnbl == true) && (configPage10.oilPressureEnable == true) )
+    if (configPage10.oilPressureProtEnbl && configPage10.oilPressureEnable)
     {
       byte oilLimit = table2D_getValue(&oilPressureProtectTable, currentStatus.RPMdiv100);
-      if(currentStatus.oilPressure < oilLimit)
+      if (currentStatus.oilPressure < oilLimit)
       {
         //Check if this is the first time we've been below the limit
         if(oilProtStartTime == 0) { oilProtStartTime = div100(millis()); }
@@ -114,7 +114,7 @@ byte checkOilPressureLimit(void)
           BIT_SET(currentStatus.engineProtectStatus, ENGINE_PROTECT_BIT_OIL);
           oilProtectActive = 1;
         }
-        
+
       }
       else { oilProtStartTime = 0; } //Reset the timer
     }
@@ -137,7 +137,7 @@ byte checkAFRLimit(void)
     First of all, check whether engine protection is enabled,
     thereafter check whether AFR protection is enabled and at last
     if wideband sensor is used.
-    
+
     After confirmation, the following conditions has to be met:
     - MAP above x kPa
     - RPM above x
@@ -183,26 +183,26 @@ byte checkAFRLimit(void)
     }
 
     /* Check if conditions above are fulfilled */
-    if(mapCondition && rpmCondition && tpsCondition && afrCondition) 
+    if(mapCondition && rpmCondition && tpsCondition && afrCondition)
     {
       /* All conditions fulfilled - start counter for 'protection delay' */
-      if(!afrProtectCountEnabled) 
+      if(!afrProtectCountEnabled)
       {
         afrProtectCountEnabled = true;
         afrProtectCount = millis();
       }
 
       /* Check if countdown has reached its target, if so then instruct to cut */
-      if(millis() >= (afrProtectCount + (configPage9.afrProtectCutTime * X100_MULTIPLIER))) 
+      if(millis() >= (afrProtectCount + (configPage9.afrProtectCutTime * X100_MULTIPLIER)))
       {
         checkAFRLimitActive = true;
         BIT_SET(currentStatus.engineProtectStatus, ENGINE_PROTECT_BIT_AFR);
       }
-    } 
-    else 
+    }
+    else
     {
       /* Conditions have presumably changed - deactivate and reset counter */
-      if(afrProtectCountEnabled) 
+      if(afrProtectCountEnabled)
       {
         afrProtectCountEnabled = false;
         afrProtectCount = 0;
@@ -210,7 +210,7 @@ byte checkAFRLimit(void)
     }
 
     /* Check if condition for reactivation is fulfilled */
-    if(checkAFRLimitActive && (currentStatus.TPS <= configPage9.afrProtectReactivationTPS)) 
+    if(checkAFRLimitActive && (currentStatus.TPS <= configPage9.afrProtectReactivationTPS))
     {
       checkAFRLimitActive = false;
       afrProtectCountEnabled = false;

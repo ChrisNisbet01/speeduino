@@ -136,7 +136,7 @@ void initialiseAirCon(void)
 
 void airConControl(void)
 {
-  if(acIsEnabled == true)
+  if(acIsEnabled)
   {
     // ------------------------------------------------------------------------------------------------------
     // Check that the engine has been running past the post-start delay period before enabling the compressor
@@ -169,17 +169,18 @@ void airConControl(void)
     // -----------------------------------------
     // Check the A/C Request Signal (A/C Button)
     // -----------------------------------------
-    if( READ_AIRCON_REQUEST() == true &&
-        waitedAfterCranking == true &&
-        BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TPS_LOCKOUT) == false &&
-        BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_RPM_LOCKOUT) == false &&
-        BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_CLT_LOCKOUT) == false )
+    if (READ_AIRCON_REQUEST()
+        && waitedAfterCranking
+        && !BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TPS_LOCKOUT)
+        && !BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_RPM_LOCKOUT)
+        && !BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_CLT_LOCKOUT)
+        )
     {
       // Set the BIT_AIRCON_TURNING_ON bit to notify the idle system to idle up & the cooling fan to start (if enabled)
       BIT_SET(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON);
 
       // Stand-alone fan operation
-      if(acStandAloneFanIsEnabled == true)
+      if (acStandAloneFanIsEnabled)
       {
         AIRCON_FAN_ON();
       }
@@ -199,7 +200,7 @@ void airConControl(void)
       BIT_CLEAR(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON);
 
       // Stand-alone fan operation
-      if(acStandAloneFanIsEnabled == true)
+      if (acStandAloneFanIsEnabled)
       {
         AIRCON_FAN_OFF();
       }
@@ -258,8 +259,8 @@ static inline void checkAirConTPSLockout(void)
     BIT_SET(currentStatus.airConStatus, BIT_AIRCON_TPS_LOCKOUT);
     acTPSLockoutDelay = 0;
   }
-  else if ( (BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TPS_LOCKOUT) == true) &&
-            (currentStatus.TPS <= configPage15.airConTPSCut) )
+  else if (BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TPS_LOCKOUT)
+           && currentStatus.TPS <= configPage15.airConTPSCut)
   {
     // No need for hysteresis as we have the stand-down delay period after the high TPS condition goes away.
     if (acTPSLockoutDelay >= configPage15.airConTPSCutTime)
@@ -338,19 +339,16 @@ void fanControl(void)
   {
     int onTemp = (int)configPage6.fanSP - CALIBRATION_TEMPERATURE_OFFSET;
     int offTemp = onTemp - configPage6.fanHyster;
-    bool fanPermit = false;
+    bool fanPermit = configPage2.fanWhenOff || BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN);
 
-
-    if ( configPage2.fanWhenOff == true) { fanPermit = true; }
-    else { fanPermit = BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN); }
-
-    if ( (fanPermit == true) &&
-         ((currentStatus.coolant >= onTemp) ||
-           ((configPage15.airConTurnsFanOn) == 1 &&
-           BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON) == true)) )
+    if (fanPermit
+        && (currentStatus.coolant >= onTemp
+            || (configPage15.airConTurnsFanOn == 1
+                && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON)))
+          )
     {
       //Fan needs to be turned on - either by high coolant temp, or from an A/C request (to ensure there is airflow over the A/C radiator).
-      if(BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) && (configPage2.fanWhenCranking == 0))
+      if(BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) && configPage2.fanWhenCranking == 0)
       {
         //If the user has elected to disable the fan during cranking, make sure it's off
         FAN_OFF();
@@ -371,10 +369,9 @@ void fanControl(void)
   }
   else if( configPage2.fanEnable == 2 )// PWM Fan control
   {
-    bool fanPermit = false;
-    if ( configPage2.fanWhenOff == true) { fanPermit = true; }
-    else { fanPermit = BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN); }
-    if (fanPermit == true)
+    bool const fanPermit = configPage2.fanWhenOff || BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN);
+
+    if (fanPermit)
       {
       if(BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) && (configPage2.fanWhenCranking == 0))
       {
@@ -387,8 +384,8 @@ void fanControl(void)
       else
       {
         byte tempFanDuty = table2D_getValue(&fanPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET); //In normal situation read PWM duty from the table
-        if((configPage15.airConTurnsFanOn) == 1 &&
-           BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON) == true)
+        if(configPage15.airConTurnsFanOn == 1
+           && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON))
         {
           // Clamp the fan duty to airConPwmFanMinDuty or above, to ensure there is airflow over the A/C radiator
           if(tempFanDuty < configPage15.airConPwmFanMinDuty)
@@ -407,7 +404,7 @@ void fanControl(void)
         #endif
       }
     }
-    else if (!fanPermit)
+    else
     {
       currentStatus.fanDuty = 0; ////If the user has elected to disable the fan when engine is not running, make sure it's off
       BIT_CLEAR(currentStatus.status4, BIT_STATUS4_FAN);
@@ -727,13 +724,20 @@ void boostControl(void)
           }
 
           bool PIDcomputed = boostPID.Compute(get3DTableValue(&boostTableLookupDuty, currentStatus.boostTarget, currentStatus.RPM) * 100/2); //Compute() returns false if the required interval has not yet passed.
-          if(currentStatus.boostDuty == 0) { DISABLE_BOOST_TIMER(); BOOST_PIN_LOW(); } //If boost duty is 0, shut everything down
+          if(currentStatus.boostDuty == 0)
+          {
+            //If boost duty is 0, shut everything down
+            DISABLE_BOOST_TIMER();
+            BOOST_PIN_LOW();
+          }
+          else if(PIDcomputed)
+          {
+            //Convert boost duty (Which is a % multiplied by 100) to a pwm count
+            boost_pwm_target_value = ((unsigned long)(currentStatus.boostDuty) * boost_pwm_max_count) / 10000;
+          }
           else
           {
-            if(PIDcomputed == true)
-            {
-              boost_pwm_target_value = ((unsigned long)(currentStatus.boostDuty) * boost_pwm_max_count) / 10000; //Convert boost duty (Which is a % multiplied by 100) to a pwm count
-            }
+            /* Do nothing. */
           }
         }
         else
@@ -786,11 +790,11 @@ void vvtControl(void)
     //Calculate the current cam angle for miata trigger
     if( configPage4.TrigPattern == 9 ) { currentStatus.vvt1Angle = getCamAngle_Miata9905(); }
 
-    if( (vvtIsHot == true) || ((runSecsX10 - vvtWarmTime) >= (configPage4.vvtDelay * VVT_TIME_DELAY_MULTIPLIER)) )
+    if (vvtIsHot || (runSecsX10 - vvtWarmTime) >= (configPage4.vvtDelay * VVT_TIME_DELAY_MULTIPLIER))
     {
       vvtIsHot = true;
 
-      if( (configPage6.vvtMode == VVT_MODE_OPEN_LOOP) || (configPage6.vvtMode == VVT_MODE_ONOFF) )
+      if(configPage6.vvtMode == VVT_MODE_OPEN_LOOP || configPage6.vvtMode == VVT_MODE_ONOFF)
       {
         //Lookup VVT duty based on either MAP or TPS
         if(configPage6.vvtLoadSource == VVT_LOAD_TPS) { currentStatus.vvt1Duty = get3DTableValue(&vvtTable, (currentStatus.TPS * 2), currentStatus.RPM); }
@@ -885,7 +889,10 @@ void vvtControl(void)
             vvt2_pid_current_angle = (long)currentStatus.vvt2Angle;
             //If not already at target angle, calculate new value from PID
             bool PID_compute = vvt2PID.Compute(true);
-            if(PID_compute == true) { vvt2_pwm_value = halfPercentage(currentStatus.vvt2Duty, vvt_pwm_max_count); }
+            if (PID_compute)
+            {
+              vvt2_pwm_value = halfPercentage(currentStatus.vvt2Duty, vvt_pwm_max_count);
+            }
             BIT_CLEAR(currentStatus.status4, BIT_STATUS4_VVT2_ERROR);
           }
         }
@@ -978,7 +985,11 @@ void nitrousControl(void)
     if (configPage10.n2o_pin_polarity == 1) { isArmed = !isArmed; } //If nitrous is active when pin is low, flip the reading (n2o_pin_polarity = 0 = active when High)
 
     //Perform the main checks to see if nitrous is ready
-    if( (isArmed == true) && (currentStatus.coolant > (configPage10.n2o_minCLT - CALIBRATION_TEMPERATURE_OFFSET)) && (currentStatus.TPS > configPage10.n2o_minTPS) && (currentStatus.O2 < configPage10.n2o_maxAFR) && (currentStatus.MAP < (uint16_t)(configPage10.n2o_maxMAP * 2)) )
+    if (isArmed
+        && currentStatus.coolant > (configPage10.n2o_minCLT - CALIBRATION_TEMPERATURE_OFFSET)
+        && currentStatus.TPS > configPage10.n2o_minTPS
+        && currentStatus.O2 < configPage10.n2o_maxAFR
+        && currentStatus.MAP < (uint16_t)(configPage10.n2o_maxMAP * 2))
     {
       //Config page values are divided by 100 to fit within a byte. Multiply them back out to real values.
       uint16_t realStage1MinRPM = (uint16_t)configPage10.n2o_stage1_minRPM * 100;
@@ -1113,7 +1124,7 @@ void boostDisable(void)
   void boostInterrupt(void) //Most ARM chips can simply call a function
 #endif
 {
-  if (boost_pwm_state == true)
+  if (boost_pwm_state)
   {
     #if defined(CORE_TEENSY41) //PIT TIMERS count down and have opposite effect on PWM
     BOOST_PIN_HIGH();
@@ -1143,9 +1154,9 @@ void boostDisable(void)
   void vvtInterrupt(void) //Most ARM chips can simply call a function
 #endif
 {
-  if ( ((vvt1_pwm_state == false) || (vvt1_max_pwm == true)) && ((vvt2_pwm_state == false) || (vvt2_max_pwm == true)) )
+  if ((!vvt1_pwm_state || vvt1_max_pwm) && (!vvt2_pwm_state || vvt2_max_pwm))
   {
-    if( (vvt1_pwm_value > 0) && (vvt1_max_pwm == false) ) //Don't toggle if at 0%
+    if (vvt1_pwm_value > 0 && !vvt1_max_pwm) //Don't toggle if at 0%
     {
       #if defined(CORE_TEENSY41)
       VVT1_PIN_OFF();
@@ -1154,7 +1165,7 @@ void boostDisable(void)
       #endif
       vvt1_pwm_state = true;
     }
-    if( (vvt2_pwm_value > 0) && (vvt2_max_pwm == false) ) //Don't toggle if at 0%
+    if (vvt2_pwm_value > 0 && !vvt2_max_pwm) //Don't toggle if at 0%
     {
       #if defined(CORE_TEENSY41)
       VVT2_PIN_OFF();
@@ -1164,7 +1175,7 @@ void boostDisable(void)
       vvt2_pwm_state = true;
     }
 
-    if( (vvt1_pwm_state == true) && ((vvt1_pwm_value <= vvt2_pwm_value) || (vvt2_pwm_state == false)) )
+    if (vvt1_pwm_state && (vvt1_pwm_value <= vvt2_pwm_value || !vvt2_pwm_state))
     {
       SET_COMPARE(VVT_TIMER_COMPARE, VVT_TIMER_COUNTER + vvt1_pwm_value);
       vvt1_pwm_cur_value = vvt1_pwm_value;
@@ -1172,14 +1183,18 @@ void boostDisable(void)
       if (vvt1_pwm_value == vvt2_pwm_value) { nextVVT = 2; } //Next event is for both PWM
       else { nextVVT = 0; } //Next event is for PWM0
     }
-    else if( vvt2_pwm_state == true )
+    else if (vvt2_pwm_state)
     {
       SET_COMPARE(VVT_TIMER_COMPARE, VVT_TIMER_COUNTER + vvt2_pwm_value);
       vvt1_pwm_cur_value = vvt1_pwm_value;
       vvt2_pwm_cur_value = vvt2_pwm_value;
       nextVVT = 1; //Next event is for PWM1
     }
-    else { SET_COMPARE(VVT_TIMER_COMPARE, VVT_TIMER_COUNTER + vvt_pwm_max_count); } //Shouldn't ever get here
+    else
+    {
+      //Shouldn't ever get here
+      SET_COMPARE(VVT_TIMER_COMPARE, VVT_TIMER_COUNTER + vvt_pwm_max_count);
+    }
   }
   else
   {
@@ -1197,10 +1212,13 @@ void boostDisable(void)
       }
       else { vvt1_max_pwm = true; }
       nextVVT = 1; //Next event is for PWM1
-      if(vvt2_pwm_state == true){ SET_COMPARE(VVT_TIMER_COMPARE, VVT_TIMER_COUNTER + (vvt2_pwm_cur_value - vvt1_pwm_cur_value) ); }
+      if (vvt2_pwm_state)
+      {
+        SET_COMPARE(VVT_TIMER_COMPARE, VVT_TIMER_COUNTER + (vvt2_pwm_cur_value - vvt1_pwm_cur_value));
+      }
       else
       {
-        SET_COMPARE(VVT_TIMER_COMPARE, VVT_TIMER_COUNTER + (vvt_pwm_max_count - vvt1_pwm_cur_value) );
+        SET_COMPARE(VVT_TIMER_COMPARE, VVT_TIMER_COUNTER + (vvt_pwm_max_count - vvt1_pwm_cur_value));
         nextVVT = 2; //Next event is for both PWM
       }
     }
@@ -1216,12 +1234,18 @@ void boostDisable(void)
         vvt2_pwm_state = false;
         vvt2_max_pwm = false;
       }
-      else { vvt2_max_pwm = true; }
-      nextVVT = 0; //Next event is for PWM0
-      if(vvt1_pwm_state == true) { SET_COMPARE(VVT_TIMER_COMPARE, VVT_TIMER_COUNTER + (vvt1_pwm_cur_value - vvt2_pwm_cur_value) ); }
       else
       {
-        SET_COMPARE(VVT_TIMER_COMPARE, VVT_TIMER_COUNTER + (vvt_pwm_max_count - vvt2_pwm_cur_value) );
+        vvt2_max_pwm = true;
+      }
+      nextVVT = 0; //Next event is for PWM0
+      if (vvt1_pwm_state)
+      {
+        SET_COMPARE(VVT_TIMER_COMPARE, VVT_TIMER_COUNTER + (vvt1_pwm_cur_value - vvt2_pwm_cur_value));
+      }
+      else
+      {
+        SET_COMPARE(VVT_TIMER_COMPARE, VVT_TIMER_COUNTER + (vvt_pwm_max_count - vvt2_pwm_cur_value));
         nextVVT = 2; //Next event is for both PWM
       }
     }

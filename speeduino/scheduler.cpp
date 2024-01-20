@@ -477,7 +477,7 @@ static inline __attribute__((always_inline)) void ignitionScheduleISR(IgnitionSc
     currentStatus.actualDwell = DWELL_SMOOTHED(currentStatus.actualDwell, micros() - schedule.startTime);
 
     //If there is a next schedule queued up, activate it
-    if(schedule.hasNextSchedule == true)
+    if (schedule.hasNextSchedule)
     {
       SET_COMPARE(schedule.compare, schedule.nextStartCompare);
       schedule.Status = PENDING;

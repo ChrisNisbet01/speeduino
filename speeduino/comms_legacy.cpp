@@ -327,8 +327,15 @@ void legacySerialCommand(void)
         Serial.read(); // First byte of the page identifier can be ignored. It's always 0
         Serial.read(); // First byte of the page identifier can be ignored. It's always 0
 
-        if(currentStatus.toothLogEnabled == true) { sendToothLog_legacy(0); } //Sends tooth log values as ints
-        else if (currentStatus.compositeTriggerUsed > 0) { sendCompositeLog_legacy(0); }
+        if (currentStatus.toothLogEnabled)
+        {
+          //Sends tooth log values as ints
+          sendToothLog_legacy(0);
+        }
+        else if (currentStatus.compositeTriggerUsed > 0)
+        {
+          sendCompositeLog_legacy(0);
+        }
         serialStatusFlag = SERIAL_INACTIVE;
       }
       break;
@@ -579,14 +586,17 @@ void legacySerialHandler(byte cmd, Stream &targetPort, SerialStatus &targetStatu
         }
       }
       //This CANNOT be an else of the above if statement as chunkPending gets set to true above
-      if(chunkPending == true)
+      if (chunkPending)
       {
-        while( (targetPort.available() > 0) && (chunkComplete < chunkSize) )
+        while (targetPort.available() > 0 && chunkComplete < chunkSize)
         {
           setPageValue(currentPage, (valueOffset + chunkComplete), targetPort.read());
           chunkComplete++;
         }
-        if(chunkComplete >= chunkSize) { targetStatusFlag = SERIAL_INACTIVE; chunkPending = false; }
+        if (chunkComplete >= chunkSize)
+        { targetStatusFlag = SERIAL_INACTIVE;
+        chunkPending = false;
+        }
       }
       break;
 
@@ -733,7 +743,7 @@ void sendValues(uint16_t offset, uint16_t packetLength, byte cmd, Stream &target
     }
 
     //Check whether the tx buffer still has space
-    if(bufferFull == true)
+    if(bufferFull)
     {
       //tx buffer is full. Store the current state so it can be resumed later
       logItemsTransmitted = offset + x + 1;

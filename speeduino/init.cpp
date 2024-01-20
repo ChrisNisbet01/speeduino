@@ -417,7 +417,7 @@ void initialiseAll(void)
     req_fuel_uS = req_fuel_init_uS;
     inj_opentime_uS = configPage2.injOpen * 100; //Injector open time. Comes through as ms*10 (Eg 15.5ms = 155).
 
-    if(configPage10.stagingEnabled == true)
+    if (configPage10.stagingEnabled)
     {
     uint32_t totalInjector = configPage10.stagedInjSizePri + configPage10.stagedInjSizeSec;
     /*
@@ -540,7 +540,7 @@ void initialiseAll(void)
         }
 
         //Check if injector staging is enabled
-        if(configPage10.stagingEnabled == true)
+        if (configPage10.stagingEnabled)
         {
           maxInjOutputs = 2;
           channel2InjDegrees = channel1InjDegrees;
@@ -578,7 +578,7 @@ void initialiseAll(void)
         }
 
         //Check if injector staging is enabled
-        if(configPage10.stagingEnabled == true)
+        if (configPage10.stagingEnabled)
         {
           maxInjOutputs = 4;
 
@@ -666,7 +666,7 @@ void initialiseAll(void)
         }
 
         //Check if injector staging is enabled
-        if(configPage10.stagingEnabled == true)
+        if (configPage10.stagingEnabled)
         {
           #if INJ_CHANNELS >= 6
             maxInjOutputs = 6;
@@ -755,7 +755,7 @@ void initialiseAll(void)
         }
 
         //Check if injector staging is enabled
-        if(configPage10.stagingEnabled == true)
+        if (configPage10.stagingEnabled)
         {
           maxInjOutputs = 4;
 
@@ -854,7 +854,10 @@ void initialiseAll(void)
     #endif
 
     #if INJ_CHANNELS >= 6
-          if(configPage10.stagingEnabled == true) { maxInjOutputs = 6; }
+          if (configPage10.stagingEnabled)
+          {
+            maxInjOutputs = 6;
+          }
     #endif
         break;
     case 6:
@@ -912,7 +915,7 @@ void initialiseAll(void)
           currentStatus.nSquirts = 1;
           req_fuel_uS = req_fuel_init_uS * 2;
         }
-        else if(configPage10.stagingEnabled == true) //Check if injector staging is enabled
+        else if (configPage10.stagingEnabled) //Check if injector staging is enabled
         {
           maxInjOutputs = 6;
 
@@ -3015,10 +3018,16 @@ void setPinMapping(byte boardID)
   pinMode(pinBoost, OUTPUT);
   pinMode(pinVVT_1, OUTPUT);
   pinMode(pinVVT_2, OUTPUT);
-  if(configPage4.ignBypassEnabled > 0) { pinMode(pinIgnBypass, OUTPUT); }
+  if(configPage4.ignBypassEnabled > 0)
+  {
+    pinMode(pinIgnBypass, OUTPUT);
+  }
 
   //This is a legacy mode option to revert the MAP reading behaviour to match what was in place prior to the 201905 firmware
-  if(configPage2.legacyMAP > 0) { digitalWrite(pinMAP, HIGH); }
+  if(configPage2.legacyMAP > 0)
+  {
+    digitalWrite(pinMAP, HIGH);
+  }
 
   ignition_pins_init();
 
@@ -3027,12 +3036,12 @@ void setPinMapping(byte boardID)
   bool const using_spi = ignitionOutputControl == OUTPUT_CONTROL_MC33810
       || injectorOutputControl == OUTPUT_CONTROL_MC33810;
 
-  if (using_spi == true)
+  if (using_spi)
   {
     bool const builtin_led_used_for_spi =
         LED_BUILTIN == SCK || LED_BUILTIN == MOSI || LED_BUILTIN != MISO;
 
-    if (builtin_led_used_for_spi == false)
+    if (!builtin_led_used_for_spi)
     {
         //This is required on as the LED pin can otherwise be reset to an input.
         pinMode(LED_BUILTIN, OUTPUT);
@@ -3084,8 +3093,15 @@ void setPinMapping(byte boardID)
   }
   if( (configPage6.launchEnabled > 0) && (!pinIsOutput(pinLaunch)) )
   {
-    if (configPage6.lnchPullRes == true) { pinMode(pinLaunch, INPUT_PULLUP); }
-    else { pinMode(pinLaunch, INPUT); } //If Launch Pull Resistor is not set make input float.
+    if (configPage6.lnchPullRes)
+    {
+      pinMode(pinLaunch, INPUT_PULLUP);
+    }
+    else
+    {
+      //If Launch Pull Resistor is not set make input float.
+      pinMode(pinLaunch, INPUT);
+    }
   }
   if( (configPage2.idleUpEnabled > 0) && (!pinIsOutput(pinIdleUp)) )
   {
@@ -3099,13 +3115,27 @@ void setPinMapping(byte boardID)
   }
   if( (configPage10.fuel2Mode == FUEL2_MODE_INPUT_SWITCH) && (!pinIsOutput(pinFuel2Input)) )
   {
-    if (configPage10.fuel2InputPullup == true) { pinMode(pinFuel2Input, INPUT_PULLUP); } //With pullup
-    else { pinMode(pinFuel2Input, INPUT); } //Normal input
+    if (configPage10.fuel2InputPullup)
+    {
+      //With pullup
+      pinMode(pinFuel2Input, INPUT_PULLUP);
+    }
+    else
+    {
+      //Normal input
+      pinMode(pinFuel2Input, INPUT);
+    }
   }
-  if( (configPage10.spark2Mode == SPARK2_MODE_INPUT_SWITCH) && (!pinIsOutput(pinSpark2Input)) )
+  if (configPage10.spark2Mode == SPARK2_MODE_INPUT_SWITCH && !pinIsOutput(pinSpark2Input))
   {
-    if (configPage10.spark2InputPullup == true) { pinMode(pinSpark2Input, INPUT_PULLUP); } //With pullup
-    else { pinMode(pinSpark2Input, INPUT); } //Normal input
+    if (configPage10.spark2InputPullup)
+    {
+      pinMode(pinSpark2Input, INPUT_PULLUP);
+    } //With pullup
+    else
+    {
+      pinMode(pinSpark2Input, INPUT);
+    } //Normal input
   }
   if( (configPage10.fuelPressureEnable > 0)  && (!pinIsOutput(pinFuelPressure)) )
   {
