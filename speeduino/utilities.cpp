@@ -29,13 +29,21 @@ For **analog pins**, it will translate them into the correct internal pin number
 * @param rawPin - High level pin number
 * @return Translated / usable pin number
 */
-byte pinTranslate(byte rawPin)
+byte pinTranslate(byte const rawPin)
 {
-  byte outputPin = rawPin;
-  if(rawPin > BOARD_MAX_DIGITAL_PINS) { outputPin = A8 + (outputPin - BOARD_MAX_DIGITAL_PINS - 1); }
+  byte outputPin;
+  if (rawPin > BOARD_MAX_DIGITAL_PINS)
+  {
+    outputPin = A8 + (outputPin - BOARD_MAX_DIGITAL_PINS - 1);
+  }
+  else
+  {
+    outputPin = rawPin;
+  }
 
   return outputPin;
 }
+
 /** Translate a pin number (0 - 22) to the relevant Ax (analog) pin reference.
 * This is required as some ARM chips do not have all analog pins in order (EG pin A15 != A14 + 1).
 * */
@@ -195,7 +203,7 @@ void checkProgrammableIO(void)
           }
           else { data = ProgrammableIOGetData(dataRequested); }
           data2 = configPage13.secondTarget[y];
-          
+
           if ( (configPage13.operation[y].secondCompType == COMPARATOR_EQUAL) && (data == data2) ) { secondCheck = true; }
           else if ( (configPage13.operation[y].secondCompType == COMPARATOR_NOT_EQUAL) && (data != data2) ) { secondCheck = true; }
           else if ( (configPage13.operation[y].secondCompType == COMPARATOR_GREATER) && (data > data2) ) { secondCheck = true; }
@@ -266,7 +274,7 @@ int16_t ProgrammableIOGetData(uint16_t index)
   {
     if(is2ByteEntry(index)) { result = word(getTSLogEntry(index+1), getTSLogEntry(index)); }
     else { result = getTSLogEntry(index); }
-    
+
     //Special cases for temperatures
     if( (index == 6) || (index == 7) ) { result -= CALIBRATION_TEMPERATURE_OFFSET; }
   }

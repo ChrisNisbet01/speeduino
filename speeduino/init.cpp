@@ -1302,6 +1302,71 @@ void initialiseAll(void)
     digitalWrite(LED_BUILTIN, HIGH);
 
 }
+
+static bool
+digital_pin_is_configured(byte const pin)
+{
+  bool const is_configured = pin != 0 && pin < BOARD_MAX_IO_PINS;
+
+  return is_configured;
+}
+
+static bool
+analog_pin_is_configured(byte const enable, byte const pin)
+{
+  return enable != 0 && pin < BOARD_MAX_IO_PINS;
+}
+
+static void
+translate_digital_pin_if_configured(byte const pin, byte &translated_pin)
+{
+  if (digital_pin_is_configured(pin))
+  {
+    translated_pin = pinTranslate(pin);
+  }
+}
+
+static void
+translate_analog_pin_if_configured(byte const enable, byte const pin, byte &translated_pin)
+{
+  if (analog_pin_is_configured(enable, pin))
+  {
+    translated_pin = pinTranslateAnalog(pin);
+  }
+}
+
+static void
+setup_selectable_io(void)
+{
+  translate_digital_pin_if_configured(configPage6.launchPin, pinLaunch);
+  translate_digital_pin_if_configured(configPage4.ignBypassPin, pinIgnBypass);
+  translate_digital_pin_if_configured(configPage2.tachoPin, pinTachOut);
+  translate_digital_pin_if_configured(configPage4.fuelPumpPin, pinFuelPump);
+  translate_digital_pin_if_configured(configPage6.fanPin, pinFan);
+  translate_digital_pin_if_configured(configPage6.boostPin, pinBoost);
+  translate_digital_pin_if_configured(configPage6.vvt1Pin, pinVVT_1);
+
+  translate_analog_pin_if_configured(configPage6.useExtBaro, configPage6.baroPin, pinBaro);
+  translate_analog_pin_if_configured(configPage6.useEMAP, configPage10.EMAPPin, pinEMAP);
+
+  translate_digital_pin_if_configured(configPage10.fuel2InputPin, pinFuel2Input);
+  translate_digital_pin_if_configured(configPage10.spark2InputPin, pinSpark2Input);
+  translate_digital_pin_if_configured(configPage2.vssPin, pinVSS);
+
+  translate_analog_pin_if_configured(configPage10.fuelPressureEnable, configPage10.fuelPressurePin, pinFuelPressure);
+  translate_analog_pin_if_configured(configPage10.oilPressureEnable, configPage10.oilPressurePin, pinOilPressure);
+
+  translate_digital_pin_if_configured(configPage10.wmiEmptyPin, pinWMIEmpty);
+  translate_digital_pin_if_configured(configPage10.wmiIndicatorPin, pinWMIIndicator);
+  translate_digital_pin_if_configured(configPage10.wmiEnabledPin, pinWMIEnabled);
+  translate_digital_pin_if_configured(configPage10.vvt2Pin, pinVVT_2);
+  if (configPage13.onboard_log_trigger_Epin != 0)
+  {
+    translate_digital_pin_if_configured(configPage13.onboard_log_tr5_Epin_pin, pinSDEnable);
+  }
+
+}
+
 /** Set board / microcontroller specific pin mappings / assignments.
  * The boardID is switch-case compared against raw boardID integers (not enum or defined label, and probably no need for that either)
  * which are originated from tuning SW (e.g. TS) set values and are available in reference/speeduino.ini (See pinLayout, note also that
@@ -2906,28 +2971,7 @@ void setPinMapping(byte boardID)
   }
 
   //Setup any devices that are using selectable pins
-
-  if ( (configPage6.launchPin != 0) && (configPage6.launchPin < BOARD_MAX_IO_PINS) ) { pinLaunch = pinTranslate(configPage6.launchPin); }
-  if ( (configPage4.ignBypassPin != 0) && (configPage4.ignBypassPin < BOARD_MAX_IO_PINS) ) { pinIgnBypass = pinTranslate(configPage4.ignBypassPin); }
-  if ( (configPage2.tachoPin != 0) && (configPage2.tachoPin < BOARD_MAX_IO_PINS) ) { pinTachOut = pinTranslate(configPage2.tachoPin); }
-  if ( (configPage4.fuelPumpPin != 0) && (configPage4.fuelPumpPin < BOARD_MAX_IO_PINS) ) { pinFuelPump = pinTranslate(configPage4.fuelPumpPin); }
-  if ( (configPage6.fanPin != 0) && (configPage6.fanPin < BOARD_MAX_IO_PINS) ) { pinFan = pinTranslate(configPage6.fanPin); }
-  if ( (configPage6.boostPin != 0) && (configPage6.boostPin < BOARD_MAX_IO_PINS) ) { pinBoost = pinTranslate(configPage6.boostPin); }
-  if ( (configPage6.vvt1Pin != 0) && (configPage6.vvt1Pin < BOARD_MAX_IO_PINS) ) { pinVVT_1 = pinTranslate(configPage6.vvt1Pin); }
-  if ( (configPage6.useExtBaro != 0) && (configPage6.baroPin < BOARD_MAX_IO_PINS) ) { pinBaro = pinTranslateAnalog(configPage6.baroPin); }
-  if ( (configPage6.useEMAP != 0) && (configPage10.EMAPPin < BOARD_MAX_IO_PINS) ) { pinEMAP = pinTranslateAnalog(configPage10.EMAPPin); }
-  if ( (configPage10.fuel2InputPin != 0) && (configPage10.fuel2InputPin < BOARD_MAX_IO_PINS) ) { pinFuel2Input = pinTranslate(configPage10.fuel2InputPin); }
-  if ( (configPage10.spark2InputPin != 0) && (configPage10.spark2InputPin < BOARD_MAX_IO_PINS) ) { pinSpark2Input = pinTranslate(configPage10.spark2InputPin); }
-  if ( (configPage2.vssPin != 0) && (configPage2.vssPin < BOARD_MAX_IO_PINS) ) { pinVSS = pinTranslate(configPage2.vssPin); }
-  if ( (configPage10.fuelPressureEnable) && (configPage10.fuelPressurePin < BOARD_MAX_IO_PINS) ) { pinFuelPressure = pinTranslateAnalog(configPage10.fuelPressurePin); }
-  if ( (configPage10.oilPressureEnable) && (configPage10.oilPressurePin < BOARD_MAX_IO_PINS) ) { pinOilPressure = pinTranslateAnalog(configPage10.oilPressurePin); }
-
-  if ( (configPage10.wmiEmptyPin != 0) && (configPage10.wmiEmptyPin < BOARD_MAX_IO_PINS) ) { pinWMIEmpty = pinTranslate(configPage10.wmiEmptyPin); }
-  if ( (configPage10.wmiIndicatorPin != 0) && (configPage10.wmiIndicatorPin < BOARD_MAX_IO_PINS) ) { pinWMIIndicator = pinTranslate(configPage10.wmiIndicatorPin); }
-  if ( (configPage10.wmiEnabledPin != 0) && (configPage10.wmiEnabledPin < BOARD_MAX_IO_PINS) ) { pinWMIEnabled = pinTranslate(configPage10.wmiEnabledPin); }
-  if ( (configPage10.vvt2Pin != 0) && (configPage10.vvt2Pin < BOARD_MAX_IO_PINS) ) { pinVVT_2 = pinTranslate(configPage10.vvt2Pin); }
-  if ( (configPage13.onboard_log_trigger_Epin != 0 ) && (configPage13.onboard_log_trigger_Epin != 0) && (configPage13.onboard_log_tr5_Epin_pin < BOARD_MAX_IO_PINS) ) { pinSDEnable = pinTranslate(configPage13.onboard_log_tr5_Epin_pin); }
-
+  setup_selectable_io();
 
   //Currently there's no default pin for Idle Up
 
