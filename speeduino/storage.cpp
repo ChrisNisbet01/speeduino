@@ -98,7 +98,7 @@ static inline write_location write_range(const byte *pStart, const byte *pEnd, w
   while ( location.can_write() && pStart!=pEnd)
   {
     location.update(*pStart);
-    ++pStart; 
+    ++pStart;
     ++location;
   }
   return location;
@@ -134,8 +134,8 @@ static inline write_location write(table_axis_iterator it, write_location locati
 
 static inline write_location writeTable(void *pTable, table_type_t key, write_location location)
 {
-  return write(y_rbegin(pTable, key), 
-                write(x_begin(pTable, key), 
+  return write(y_rbegin(pTable, key),
+                write(x_begin(pTable, key),
                   write(rows_begin(pTable, key), location)));
 }
 
@@ -152,7 +152,7 @@ and writes them to EEPROM as per the layout defined in storage.h.
 void writeConfig(uint8_t pageNum)
 {
 //The maximum number of write operations that will be performed in one go.
-//If we try to write to the EEPROM too fast (Eg Each write takes ~3ms on the AVR) then 
+//If we try to write to the EEPROM too fast (Eg Each write takes ~3ms on the AVR) then
 //the rest of the system can hang)
 #if defined(USE_SPI_EEPROM)
   //For use with common Winbond SPI EEPROMs Eg W25Q16JV
@@ -167,9 +167,9 @@ void writeConfig(uint8_t pageNum)
     //In order to prevent missed pulses during EEPROM writes on AVR, scale the
     //maximum write block size based on the RPM.
     //This calculation is based on EEPROM writes taking approximately 4ms per byte
-    //(Actual value is 3.8ms, so 4ms has some safety margin) 
+    //(Actual value is 3.8ms, so 4ms has some safety margin)
     if(currentStatus.RPM > 65) //Min RPM of 65 prevents overflow of uint8_t
-    { 
+    {
       EEPROM_MAX_WRITE_BLOCK = (uint8_t)(15000U / currentStatus.RPM);
       EEPROM_MAX_WRITE_BLOCK = max(EEPROM_MAX_WRITE_BLOCK, 1);
       EEPROM_MAX_WRITE_BLOCK = min(EEPROM_MAX_WRITE_BLOCK, 15); //Any higher than this will cause comms timeouts on AVR
@@ -290,14 +290,14 @@ void writeConfig(uint8_t pageNum)
       result = writeTable(&vvt2Table, decltype(vvt2Table)::type_key, result.changeWriteAddress(EEPROM_CONFIG12_MAP2));
       result = writeTable(&dwellTable, decltype(dwellTable)::type_key, result.changeWriteAddress(EEPROM_CONFIG12_MAP3));
       break;
-      
+
     case progOutsPage:
       /*---------------------------------------------------
       | Config page 13 (See storage.h for data layout)
       -----------------------------------------------------*/
       result = write_range((byte *)&configPage13, (byte *)&configPage13+sizeof(configPage13), result.changeWriteAddress(EEPROM_CONFIG13_START));
       break;
-    
+
     case ignMap2Page:
       /*---------------------------------------------------
       | Ignition table (See storage.h for data layout) - Page 1
@@ -379,7 +379,7 @@ static inline eeprom_address_t load(table_value_iterator it, eeprom_address_t ad
     address = load(*it, address);
     ++it;
   }
-  return address; 
+  return address;
 }
 
 static inline eeprom_address_t load(table_axis_iterator it, eeprom_address_t address)
@@ -391,14 +391,14 @@ static inline eeprom_address_t load(table_axis_iterator it, eeprom_address_t add
     ++address;
     ++it;
   }
-  return address;    
+  return address;
 }
 
 
 static inline eeprom_address_t loadTable(void *pTable, table_type_t key, eeprom_address_t address)
 {
   return load(y_rbegin(pTable, key),
-                load(x_begin(pTable, key), 
+                load(x_begin(pTable, key),
                   load(rows_begin(pTable, key), address)));
 }
 
@@ -411,7 +411,7 @@ void loadConfig(void)
 {
   loadTable(&fuelTable, decltype(fuelTable)::type_key, EEPROM_CONFIG1_MAP);
   load_range(EEPROM_CONFIG2_START, (byte *)&configPage2, (byte *)&configPage2+sizeof(configPage2));
-  
+
   //*********************************************************************************************************************************************************************************
   //IGNITION CONFIG PAGE (2)
 
@@ -472,7 +472,7 @@ void loadConfig(void)
   //*********************************************************************************************************************************************************************************
   //CONFIG PAGE (15) + boost duty lookup table (LUT)
   loadTable(&boostTableLookupDuty, decltype(boostTableLookupDuty)::type_key, EEPROM_CONFIG15_MAP);
-  load_range(EEPROM_CONFIG15_START, (byte *)&configPage15, (byte *)&configPage15+sizeof(configPage15));  
+  load_range(EEPROM_CONFIG15_START, (byte *)&configPage15, (byte *)&configPage15+sizeof(configPage15));
 
   //*********************************************************************************************************************************************************************************
 }
@@ -487,7 +487,7 @@ void loadCalibration(void)
 
   EEPROM.get(EEPROM_CALIBRATION_O2_BINS, o2Calibration_bins);
   EEPROM.get(EEPROM_CALIBRATION_O2_VALUES, o2Calibration_values);
-  
+
   EEPROM.get(EEPROM_CALIBRATION_IAT_BINS, iatCalibration_bins);
   EEPROM.get(EEPROM_CALIBRATION_IAT_VALUES, iatCalibration_values);
 
@@ -506,7 +506,7 @@ void writeCalibration(void)
 
   EEPROM.put(EEPROM_CALIBRATION_O2_BINS, o2Calibration_bins);
   EEPROM.put(EEPROM_CALIBRATION_O2_VALUES, o2Calibration_values);
-  
+
   EEPROM.put(EEPROM_CALIBRATION_IAT_BINS, iatCalibration_bins);
   EEPROM.put(EEPROM_CALIBRATION_IAT_VALUES, iatCalibration_values);
 
@@ -616,12 +616,18 @@ uint16_t getEEPROMSize(void)
 }
 
 // Utility functions.
-// By having these in this file, it prevents other files from calling EEPROM functions directly. This is useful due to differences in the EEPROM libraries on different devces
+// By having these in this file, it prevents other files from calling EEPROM
+// functions directly.
+// This is useful due to differences in the EEPROM libraries on different devces
+
 /// Read last stored barometer reading from EEPROM.
 byte readLastBaro(void) { return EEPROM.read(EEPROM_LAST_BARO); }
+
 /// Write last acquired arometer reading to EEPROM.
 void storeLastBaro(byte newValue) { EEPROM.update(EEPROM_LAST_BARO, newValue); }
+
 /// Read EEPROM current data format version (from offset EEPROM_DATA_VERSION).
 byte readEEPROMVersion(void) { return EEPROM.read(EEPROM_DATA_VERSION); }
+
 /// Store EEPROM current data format version (to offset EEPROM_DATA_VERSION).
 void storeEEPROMVersion(byte newVersion) { EEPROM.update(EEPROM_DATA_VERSION, newVersion); }

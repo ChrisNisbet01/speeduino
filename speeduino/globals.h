@@ -588,6 +588,7 @@ struct statuses {
   int16_t EMAP;  ///< EMAP ... (See @ref config6.useEMAP for EMAP enablement)
   uint16_t EMAPADC;
   byte baro;           ///< Barometric pressure is simply the initial MAP reading, taken before the engine is running. Alternatively, can be taken from an external sensor
+  uint32_t timestamp_baro_last_stored; /* Timestamp when barometric pressure was last stored to flash. */
   byte TPS;            /**< The current TPS reading (0% - 100%). Is the tpsADC value after the calibration is applied */
   byte tpsADC;         /**< byte (valued: 0-255) representation of the TPS. Downsampled from the original 10-bit (0-1023) reading, but before any calibration is applied */
   int16_t tpsDOT;      /**< TPS delta over time. Measures the % per second that the TPS is changing. Note that is signed value, because TPSdot can be also negative */
