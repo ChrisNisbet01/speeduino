@@ -397,10 +397,12 @@ void loop(void)
       } //For loop going through each channel
     } //aux channels are enabled
   } //4Hz timer
+
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) //Once per second)
   {
     BIT_CLEAR(TIMER_mask, BIT_TIMER_1HZ);
-    readBaro(currentStatus.initialisationComplete); //Infrequent baro readings are not an issue.
+    //Infrequent baro readings are not an issue.
+    readBaro(currentStatus.initialisationComplete);
 
     if ((configPage10.wmiEnabled > 0) && (configPage10.wmiIndicatorEnabled > 0))
     {

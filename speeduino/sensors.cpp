@@ -707,63 +707,87 @@ void readIAT(void)
   currentStatus.IAT = table2D_getValue(&iatCalibrationTable, currentStatus.iatADC) - CALIBRATION_TEMPERATURE_OFFSET;
 }
 
+static void try_reading_baro_using_MAP(void)
+{
+  /*
+  * If no dedicated baro sensor is available, attempt to get a reading from the MAP sensor.
+  * This can only be done if the engine is not running.
+  * 1. Verify that the engine is not running
+  * 2. Verify that the reading from the MAP sensor is within the possible physical limits
+  * 3. Ensure that the new reading is different from the previous reading.
+  * 4. Ensure that a suitable amount of time has passed since the reading was
+  *  last stored, to help reduce wear on the flash.
+  */
+
+  //Attempt to use the last known good baro reading from EEPROM as a starting point
+  byte const lastBaro = readLastBaro();
+  //Make sure it's not invalid (Possible on first run etc)
+  bool const last_baro_is_valid =
+    lastBaro >= BARO_MIN && lastBaro <= BARO_MAX;
+
+  currentStatus.baro = last_baro_is_valid ? lastBaro : 100;
+
+  uint32_t const current_micros = micros();
+  uint32_t const us_since_last_tooth_detected = current_micros - toothLastToothTime;
+  bool const engine_is_stopped =
+    currentStatus.RPM == 0 && us_since_last_tooth_detected >= MICROS_PER_SEC;
+
+  if (engine_is_stopped)
+  {
+    instantaneousMAPReading(currentStatus.initialisationComplete);
+    /*
+    * The highest sea-level pressure on Earth occurs in Siberia, where the
+    * Siberian High often attains a sea-level pressure above 105 kPa,
+    * with record highs close to 108.5 kPa.
+    * The lowest possible baro reading is based on an altitude of 3500m above sea level.
+    */
+    //Safety check to ensure the baro reading is within the physical limits
+    bool const barometric_pressure_within_physical_limits =
+      currentStatus.MAP >= BARO_MIN && currentStatus.MAP <= BARO_MAX;
+    uint32_t const micros_since_last_stored =
+      current_micros - currentStatus.timestamp_baro_last_stored;
+
+    if (barometric_pressure_within_physical_limits
+        && currentStatus.baro != currentStatus.MAP
+        && micros_since_last_stored >= MICROS_PER_SEC * 10)
+    {
+      currentStatus.baro = currentStatus.MAP;
+      storeLastBaro(currentStatus.baro);
+      currentStatus.timestamp_baro_last_stored = current_micros;
+    }
+  }
+}
+
+static void read_external_baro(bool const initialisationComplete)
+{
+  int tempReading;
+  // readings
+#if defined(ANALOG_ISR_MAP)
+  tempReading = AnChannel[pinBaro - A0];
+#else
+  tempReading = readAnalogTwice(pinBaro);
+#endif
+
+  if (!initialisationComplete)
+  {
+    /* First time through. Just assign the current reading to the output value. */
+    currentStatus.baroADC = tempReading;
+  }
+
+  // Very weak filter
+  currentStatus.baroADC = ADC_FILTER(tempReading, configPage4.ADCFILTER_BARO, currentStatus.baroADC);
+  currentStatus.baro = fastMap10Bit(currentStatus.baroADC, configPage2.baroMin, configPage2.baroMax);
+}
+
 void readBaro(bool const initialisationComplete)
 {
   if (configPage6.useExtBaro != 0)
   {
-    int tempReading;
-    // readings
-#if defined(ANALOG_ISR_MAP)
-    tempReading = AnChannel[pinBaro - A0];
-#else
-    tempReading = readAnalogTwice(pinBaro);
-#endif
-
-    if (!initialisationComplete)
-    {
-      /* First time through. Just assign the current reading to the output value. */
-      currentStatus.baroADC = tempReading;
-    }
-    // Very weak filter
-    currentStatus.baroADC = ADC_FILTER(tempReading, configPage4.ADCFILTER_BARO, currentStatus.baroADC);
-
-    currentStatus.baro = fastMap10Bit(currentStatus.baroADC, configPage2.baroMin, configPage2.baroMax); //Get the current MAP value
+    read_external_baro(initialisationComplete);
   }
   else
   {
-    /*
-    * If no dedicated baro sensor is available, attempt to get a reading from the MAP sensor. This can only be done if the engine is not running.
-    * 1. Verify that the engine is not running
-    * 2. Verify that the reading from the MAP sensor is within the possible physical limits
-    */
-
-    //Attempt to use the last known good baro reading from EEPROM as a starting point
-    byte lastBaro = readLastBaro();
-    if ((lastBaro >= BARO_MIN) && (lastBaro <= BARO_MAX)) //Make sure it's not invalid (Possible on first run etc)
-    {
-      currentStatus.baro = lastBaro;
-    } //last baro correction
-    else //Fall back position.
-    {
-      currentStatus.baro = 100;
-    }
-
-    //Verify the engine isn't running by confirming RPM is 0 and it has been at least 1 second since the last tooth was detected
-    unsigned long timeToLastTooth = (micros() - toothLastToothTime);
-    if ((currentStatus.RPM == 0) && (timeToLastTooth > MICROS_PER_SEC))
-    {
-      instantaneousMAPReading(currentStatus.initialisationComplete); //Get the current MAP value
-      /*
-      * The highest sea-level pressure on Earth occurs in Siberia, where the Siberian High often attains a sea-level pressure above 105 kPa;
-      * with record highs close to 108.5 kPa.
-      * The lowest possible baro reading is based on an altitude of 3500m above sea level.
-      */
-      if ((currentStatus.MAP >= BARO_MIN) && (currentStatus.MAP <= BARO_MAX)) //Safety check to ensure the baro reading is within the physical limits
-      {
-        currentStatus.baro = currentStatus.MAP;
-        storeLastBaro(currentStatus.baro);
-      }
-    }
+    try_reading_baro_using_MAP();
   }
 }
 

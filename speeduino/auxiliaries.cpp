@@ -700,7 +700,14 @@ void boostControl(void)
         if ( (configPage9.boostByGearEnabled > 0) && (configPage2.vssMode > 1) ){ boostByGear(); }
         else{ currentStatus.boostTarget = get3DTableValue(&boostTable, (currentStatus.TPS * 2), currentStatus.RPM) << 1; } //Boost target table is in kpa and divided by 2
       }
-      if(((configPage15.boostControlEnable == EN_BOOST_CONTROL_BARO) && (currentStatus.MAP >= currentStatus.baro)) || ((configPage15.boostControlEnable == EN_BOOST_CONTROL_FIXED) && (currentStatus.MAP >= configPage15.boostControlEnableThreshold))) //Only enables boost control above baro pressure or above user defined threshold (User defined level is usually set to boost with wastegate actuator only boost level)
+
+      //Only enables boost control above baro pressure or above user defined
+      //threshold (User defined level is usually set to boost with wastegate
+      //actuator only boost level)
+      if((configPage15.boostControlEnable == EN_BOOST_CONTROL_BARO
+          && currentStatus.MAP >= currentStatus.baro)
+         || (configPage15.boostControlEnable == EN_BOOST_CONTROL_FIXED
+             && currentStatus.MAP >= configPage15.boostControlEnableThreshold))
       {
         //If flex fuel is enabled, there can be an adder to the boost target based on ethanol content
         if( configPage2.flexEnabled == 1 )
