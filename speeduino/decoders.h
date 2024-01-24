@@ -10,7 +10,7 @@
 #else
   #define READ_PRI_TRIGGER() digitalRead(pinTrigger)
   #define READ_SEC_TRIGGER() digitalRead(pinTrigger2)
-  #define READ_THIRD_TRIGGER() digitalRead(pinTrigger3)  
+  #define READ_THIRD_TRIGGER() digitalRead(pinTrigger3)
 #endif
 
 #define DECODER_MISSING_TOOTH     0
@@ -42,7 +42,7 @@
 
 #define BIT_DECODER_2ND_DERIV           0 //The use of the 2nd derivative calculation is limited to certain decoders. This is set to either true or false in each decoders setup routine
 #define BIT_DECODER_IS_SEQUENTIAL       1 //Whether or not the decoder supports sequential operation
-#define BIT_DECODER_UNUSED1             2 
+#define BIT_DECODER_UNUSED1             2
 #define BIT_DECODER_HAS_SECONDARY       3 //Whether or not the decoder supports fixed cranking timing
 #define BIT_DECODER_HAS_FIXED_CRANKING  4
 #define BIT_DECODER_VALID_TRIGGER       5 //Is set true when the last trigger (Primary or secondary) was valid (ie passed filters)
@@ -57,7 +57,7 @@ extern volatile bool triggerToothAngleIsCorrect; //Whether or not the triggerToo
 extern bool secondDerivEnabled; //The use of the 2nd derivative calculation is limited to certain decoders. This is set to either true or false in each decoders setup routine
 extern bool decoderIsSequential; //Whether or not the decoder supports sequential operation
 extern bool decoderHasSecondary; //Whether or not the pattern uses a secondary input
-extern bool decoderHasFixedCrankingTiming; 
+extern bool decoderHasFixedCrankingTiming;
 */
 
 //This isn't to to filter out wrong pulses on triggers, but just to smooth out the cam angle reading for better closed loop VVT control.
@@ -98,21 +98,21 @@ uint16_t getRPM_GM7X(void);
 int getCrankAngle_GM7X(void);
 void triggerSetEndTeeth_GM7X(void);
 
-void triggerSetup_4G63(void);
+void triggerSetup_4G63(bool initialisationComplete);
 void triggerPri_4G63(void);
 void triggerSec_4G63(void);
 uint16_t getRPM_4G63(void);
 int getCrankAngle_4G63(void);
 void triggerSetEndTeeth_4G63(void);
 
-void triggerSetup_24X(void);
+void triggerSetup_24X(bool initialisationComplete);
 void triggerPri_24X(void);
 void triggerSec_24X(void);
 uint16_t getRPM_24X(void);
 int getCrankAngle_24X(void);
 void triggerSetEndTeeth_24X(void);
 
-void triggerSetup_Jeep2000(void);
+void triggerSetup_Jeep2000(bool initialisationComplete);
 void triggerPri_Jeep2000(void);
 void triggerSec_Jeep2000(void);
 uint16_t getRPM_Jeep2000(void);
@@ -133,7 +133,7 @@ uint16_t getRPM_HondaD17(void);
 int getCrankAngle_HondaD17(void);
 void triggerSetEndTeeth_HondaD17(void);
 
-void triggerSetup_Miata9905(void);
+void triggerSetup_Miata9905(bool initialisationComplete);
 void triggerPri_Miata9905(void);
 void triggerSec_Miata9905(void);
 uint16_t getRPM_Miata9905(void);
@@ -176,7 +176,7 @@ uint16_t getRPM_Daihatsu(void);
 int getCrankAngle_Daihatsu(void);
 void triggerSetEndTeeth_Daihatsu(void);
 
-void triggerSetup_Harley(void);
+void triggerSetup_Harley(bool initialisationComplete);
 void triggerPri_Harley(void);
 void triggerSec_Harley(void);
 uint16_t getRPM_Harley(void);
@@ -234,7 +234,7 @@ uint16_t getRPM_RoverMEMS(void);
 int getCrankAngle_RoverMEMS(void);
 void triggerSetEndTeeth_RoverMEMS(void);
 
-void triggerSetup_Vmax(void);
+void triggerSetup_Vmax(bool initialisationComplete);
 void triggerPri_Vmax(void);
 void triggerSec_Vmax(void);
 uint16_t getRPM_Vmax(void);
@@ -296,7 +296,7 @@ typedef uint16_t UQ1X15_t;
 constexpr uint8_t UQ1X15_Shift = 15U;
 
 /** @brief Degrees per uS in UQ1.15 fixed point.
- * 
+ *
  * Ranges from 8 (0.000246) at MIN_RPM to 3542 (0.108) at MAX_RPM
  */
 extern UQ1X15_t degreesPerMicro;

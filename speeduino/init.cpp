@@ -466,8 +466,8 @@ void initialiseAll(void)
     toothLastToothTime = 0;
 
     //Lookup the current MAP reading for barometric pressure
-    instantaneousMAPReading();
-    readBaro();
+    instantaneousMAPReading(currentStatus.initialisationComplete);
+    readBaro(currentStatus.initialisationComplete);
 
     noInterrupts();
     initialiseTriggers();
@@ -1295,7 +1295,10 @@ void initialiseAll(void)
       FUEL_PUMP_ON();
       currentStatus.fuelPumpOn = true;
     }
-    else { currentStatus.fpPrimed = true; } //If the user has set 0 for the pump priming, immediately mark the priming as being completed
+    else
+    {
+      currentStatus.fpPrimed = true;
+    } //If the user has set 0 for the pump priming, immediately mark the priming as being completed
 
     interrupts();
     readCLT(false); // Need to read coolant temp to make priming pulsewidth work correctly. The false here disables use of the filter
@@ -3374,7 +3377,7 @@ void initialiseTriggers(void)
       break;
 
     case DECODER_4G63:
-      triggerSetup_4G63();
+      triggerSetup_4G63(currentStatus.initialisationComplete);
       triggerHandler = triggerPri_4G63;
       triggerSecondaryHandler = triggerSec_4G63;
       getRPM = getRPM_4G63;
@@ -3389,7 +3392,7 @@ void initialiseTriggers(void)
       break;
 
     case DECODER_24X:
-      triggerSetup_24X();
+      triggerSetup_24X(currentStatus.initialisationComplete);
       triggerHandler = triggerPri_24X;
       triggerSecondaryHandler = triggerSec_24X;
       getRPM = getRPM_24X;
@@ -3405,7 +3408,7 @@ void initialiseTriggers(void)
       break;
 
     case DECODER_JEEP2000:
-      triggerSetup_Jeep2000();
+      triggerSetup_Jeep2000(!currentStatus.initialisationComplete);
       triggerHandler = triggerPri_Jeep2000;
       triggerSecondaryHandler = triggerSec_Jeep2000;
       getRPM = getRPM_Jeep2000;
@@ -3453,7 +3456,7 @@ void initialiseTriggers(void)
       break;
 
     case DECODER_MIATA_9905:
-      triggerSetup_Miata9905();
+      triggerSetup_Miata9905(currentStatus.initialisationComplete);
       triggerHandler = triggerPri_Miata9905;
       triggerSecondaryHandler = triggerSec_Miata9905;
       getRPM = getRPM_Miata9905;
@@ -3549,7 +3552,7 @@ void initialiseTriggers(void)
       break;
 
     case DECODER_HARLEY:
-      triggerSetup_Harley();
+      triggerSetup_Harley(currentStatus.initialisationComplete);
       triggerHandler = triggerPri_Harley;
       //triggerSecondaryHandler = triggerSec_Harley;
       getRPM = getRPM_Harley;
@@ -3690,7 +3693,7 @@ void initialiseTriggers(void)
       break;
 
     case DECODER_VMAX:
-      triggerSetup_Vmax();
+      triggerSetup_Vmax(currentStatus.initialisationComplete);
       triggerHandler = triggerPri_Vmax;
       getRPM = getRPM_Vmax;
       getCrankAngle = getCrankAngle_Vmax;

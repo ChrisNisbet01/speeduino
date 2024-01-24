@@ -72,8 +72,8 @@ void readCLT(bool useFilter=true); //Allows the option to override the use of th
 void readIAT(void);
 void readO2(void);
 void readBat(void);
-void readBaro(void);
+void readBaro(bool initialisationComplete);
 void readMAP(void);
-void instantaneousMAPReading(void);
+void instantaneousMAPReading(bool initialisationComplete);
 
 #endif // SENSORS_H
