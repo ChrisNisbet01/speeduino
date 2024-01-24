@@ -307,7 +307,7 @@ static uint32_t readAnalogTwice(byte const pin)
 }
 #endif
 
-void instantaneousMAPReading(void)
+void instantaneousMAPReading(bool const initialisationComplete)
 {
   //Update the calculation times and last value. These are used by the MAP based Accel enrich
   MAPlast = currentStatus.MAP;
@@ -332,7 +332,7 @@ void instantaneousMAPReading(void)
   }
 
   //During startup a call is made here to get the baro reading. In this case, we can't apply the ADC filter
-  if (!currentStatus.initialisationComplete)
+  if (!initialisationComplete)
   {
     /* First time through. Just assign the current reading to the output value. */
     currentStatus.mapADC = tempReading;
@@ -383,7 +383,7 @@ void readMAP(void)
   {
   case 0:
     //Instantaneous MAP readings
-    instantaneousMAPReading();
+    instantaneousMAPReading(currentStatus.initialisationComplete);
     break;
 
   case 1:
@@ -464,7 +464,7 @@ void readMAP(void)
         }
         else
         {
-          instantaneousMAPReading();
+          instantaneousMAPReading(currentStatus.initialisationComplete);
         }
 
         MAPcurRev = currentStatus.startRevolutions; //Reset the current rev count
@@ -475,7 +475,7 @@ void readMAP(void)
     }
     else
     {
-      instantaneousMAPReading();
+      instantaneousMAPReading(currentStatus.initialisationComplete);
       MAPrunningValue = currentStatus.mapADC; //Keep updating the MAPrunningValue to give it head start when switching to cycle average.
       if (configPage6.useEMAP)
       {
@@ -528,7 +528,7 @@ void readMAP(void)
     }
     else
     {
-      instantaneousMAPReading();
+      instantaneousMAPReading(currentStatus.initialisationComplete);
       MAPrunningValue = currentStatus.mapADC;  //Keep updating the MAPrunningValue to give it head start when switching to cycle minimum.
     }
     break;
@@ -577,7 +577,7 @@ void readMAP(void)
         }
         else
         {
-          instantaneousMAPReading();
+          instantaneousMAPReading(currentStatus.initialisationComplete);
         }
 
         MAPcurRev = ignitionCount; //Reset the current event count
@@ -587,7 +587,7 @@ void readMAP(void)
     }
     else
     {
-      instantaneousMAPReading();
+      instantaneousMAPReading(currentStatus.initialisationComplete);
       MAPrunningValue = currentStatus.mapADC; //Keep updating the MAPrunningValue to give it head start when switching to ignition event average.
       MAPcount = 1;
     }
@@ -595,7 +595,7 @@ void readMAP(void)
 
   default:
     //Instantaneous MAP readings (Just in case)
-    instantaneousMAPReading();
+    instantaneousMAPReading(currentStatus.initialisationComplete);
     break;
   }
 }
@@ -707,7 +707,7 @@ void readIAT(void)
   currentStatus.IAT = table2D_getValue(&iatCalibrationTable, currentStatus.iatADC) - CALIBRATION_TEMPERATURE_OFFSET;
 }
 
-void readBaro(void)
+void readBaro(bool const initialisationComplete)
 {
   if (configPage6.useExtBaro != 0)
   {
@@ -719,7 +719,7 @@ void readBaro(void)
     tempReading = readAnalogTwice(pinBaro);
 #endif
 
-    if (!currentStatus.initialisationComplete)
+    if (!initialisationComplete)
     {
       /* First time through. Just assign the current reading to the output value. */
       currentStatus.baroADC = tempReading;
@@ -752,7 +752,7 @@ void readBaro(void)
     unsigned long timeToLastTooth = (micros() - toothLastToothTime);
     if ((currentStatus.RPM == 0) && (timeToLastTooth > MICROS_PER_SEC))
     {
-      instantaneousMAPReading(); //Get the current MAP value
+      instantaneousMAPReading(currentStatus.initialisationComplete); //Get the current MAP value
       /*
       * The highest sea-level pressure on Earth occurs in Siberia, where the Siberian High often attains a sea-level pressure above 105 kPa;
       * with record highs close to 108.5 kPa.

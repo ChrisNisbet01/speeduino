@@ -863,7 +863,7 @@ void processSerialCommand(void)
 
     case 'T': //Send 256 tooth log entries to Tuner Studios tooth logger
       logItemsTransmitted = 0;
-      if (currentStatus.toothLogEnabled
+      if (currentStatus.toothLogEnabled)
       {
         //Sends tooth log values as ints
         sendToothLog();
