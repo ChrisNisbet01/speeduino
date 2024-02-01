@@ -5,8 +5,8 @@
 #include "globals.h"
 
 #ifdef USE_LIBDIVIDE
-// We use pre-computed constant parameters with libdivide where possible. 
-// Using predefined constants saves flash and RAM (.bss) versus calling the 
+// We use pre-computed constant parameters with libdivide where possible.
+// Using predefined constants saves flash and RAM (.bss) versus calling the
 // libdivide generator functions (E.g. libdivide_s32_gen)
 // 32-bit constants generated here: https://godbolt.org/z/vP8Kfejo9
 #include "src/libdivide/libdivide.h"
@@ -17,11 +17,11 @@ extern uint8_t random1to100(void);
 
 /**
  * @defgroup group-rounded-div Rounding integer division
- * 
+ *
  * @brief Integer division returns the quotient. I.e. rounds to zero. This
  * code will round the result to nearest integer. Rounding behavior is
  * controlled by #DIV_ROUND_BEHAVIOR
- * 
+ *
  * @{
  */
 
@@ -37,8 +37,8 @@ extern uint8_t random1to100(void);
 /** @brief Rounding behavior: always round up */
 #define DIV_ROUND_UP 1
 
-/** @brief Rounding behavior: round to nearest 
- * 
+/** @brief Rounding behavior: round to nearest
+ *
  * This rounds 0.5 away from zero. This is the same behavior
  * as the standard library round() function.
  */
@@ -51,7 +51,7 @@ extern uint8_t random1to100(void);
 /**
  * @brief Computes the denominator correction for rounding division
  * based on our rounding behavior.
- * 
+ *
  * @param d The divisor (an integer)
  * @param t The type of the result. E.g. uint16_t
  */
@@ -60,14 +60,14 @@ extern uint8_t random1to100(void);
 
 /**
  * @brief Rounded integer division
- * 
+ *
  * Integer division returns the quotient. I.e. rounds to zero. This
  * macro will round the result to nearest integer. Rounding behavior
  * is controlled by #DIV_ROUND_BEHAVIOR
- * 
+ *
  * @warning For performance reasons, this macro does not promote integers.
  * So it will overflow if n>MAX(t)-(d/2).
- * 
+ *
  * @param n The numerator (dividee) (an integer)
  * @param d The denominator (divider) (an integer)
  * @param t The type of the result. E.g. uint16_t
@@ -79,12 +79,12 @@ extern uint8_t random1to100(void);
 
 /**
  * @brief Rounded \em unsigned integer division
- * 
+ *
  * This is slighty faster than the signed version (DIV_ROUND_CLOSEST(n, d, t))
- * 
+ *
  * @warning For performance reasons, this macro does not promote integers.
  * So it will overflow if n>MAX(t)-(d/2).
- * 
+ *
  * @param n The numerator (dividee) (an \em unsigned integer)
  * @param d The denominator (divider) (an \em unsigned integer)
  * @param t The type of the result. E.g. uint16_t
@@ -93,12 +93,12 @@ extern uint8_t random1to100(void);
 
 /**
  * @brief Rounded arithmetic right shift
- * 
+ *
  * Right shifting throws away bits. When use for fixed point division, this
  * effecitvely rounds down (towards zero). To round-to-the-nearest-integer
- * when right-shifting by S, just add in 2 power S−1 (which is the 
+ * when right-shifting by S, just add in 2 power S-1 (which is the
  * fixed-point equivalent of 0.5) first
- * 
+ *
  * @param n The value to shift
  * @param s The shift distance in bits
  */
@@ -150,9 +150,9 @@ static inline int div100(int n) {
 }
 #else
 static inline int32_t div100(int32_t n) {
-#ifdef USE_LIBDIVIDE    
+#ifdef USE_LIBDIVIDE
     if (n<=INT16_MAX && n>=INT16_MIN) {
-        return div100((int16_t)n);            
+        return div100((int16_t)n);
     }
     return libdivide::libdivide_s32_do_raw(n + (DIV_ROUND_CORRECT(UINT16_C(100), uint32_t) * (n<0 ? -1 : 1)), 1374389535L, 5);
 #else
@@ -164,9 +164,9 @@ static inline int32_t div100(int32_t n) {
 
 /**
  * @brief Optimised integer division by 360
- * 
+ *
  * @param n The numerator (dividee) (an integer)
- * @return uint32_t 
+ * @return uint32_t
  */
 static inline uint32_t div360(uint32_t n) {
 #ifdef USE_LIBDIVIDE
@@ -178,10 +178,10 @@ static inline uint32_t div360(uint32_t n) {
 
 /**
  * @brief Integer based percentage calculation.
- * 
+ *
  * @param percent The percent to calculate ([0, 100])
  * @param value The value to operate on
- * @return uint32_t 
+ * @return uint32_t
  */
 static inline uint16_t percentage(uint8_t percent, uint16_t value) {
     return (uint16_t)div100((uint32_t)value * (uint32_t)percent);
@@ -189,14 +189,14 @@ static inline uint16_t percentage(uint8_t percent, uint16_t value) {
 
 /**
  * @brief Integer based half-percentage calculation.
- * 
+ *
  * @param percent The percent to calculate ([0, 100])
  * @param value The value to operate on
- * @return uint16_t 
+ * @return uint16_t
  */
 static inline uint16_t halfPercentage(uint8_t percent, uint16_t value) {
     uint32_t x200 = (uint32_t)percent * (uint32_t)value;
-#ifdef USE_LIBDIVIDE    
+#ifdef USE_LIBDIVIDE
     return (uint16_t)libdivide::libdivide_u32_do_raw(x200 + DIV_ROUND_CORRECT(UINT32_C(200), uint32_t), 2748779070L, 7);
 #else
     return (uint16_t)UDIV_ROUND_CLOSEST(x200, UINT16_C(200), uint32_t);
@@ -205,12 +205,12 @@ static inline uint16_t halfPercentage(uint8_t percent, uint16_t value) {
 
 /**
  * @brief Make one pass at correcting the value into the range [min, max)
- * 
+ *
  * @param min Minimum value (inclusive)
  * @param max Maximum value (exclusive)
  * @param value Value to nudge
- * @param nudgeAmount Amount to change value by 
- * @return int16_t 
+ * @param nudgeAmount Amount to change value by
+ * @return int16_t
  */
 static inline int16_t nudge(int16_t min, int16_t max, int16_t value, int16_t nudgeAmount)
 {
@@ -234,18 +234,18 @@ static inline bool udiv_is16bit_result(uint32_t dividend, uint16_t divisor) {
 #endif
 /**
  * @brief Optimised division: uint32_t/uint16_t => uint16_t
- * 
+ *
  * Optimised division of unsigned 32-bit by unsigned 16-bit when it is known
  * that the result fits into unsigned 16-bit.
- * 
+ *
  * ~60% quicker than raw 32/32 => 32 division on ATMega
- * 
+ *
  * @note Bad things will likely happen if the result doesn't fit into 16-bits.
  * @note Copied from https://stackoverflow.com/a/66593564
- * 
+ *
  * @param dividend The dividend (numerator)
  * @param divisor The divisor (denominator)
- * @return uint16_t 
+ * @return uint16_t
  */
 static inline uint16_t udiv_32_16 (uint32_t dividend, uint16_t divisor)
 {
@@ -273,8 +273,8 @@ static inline uint16_t udiv_32_16 (uint32_t dividend, uint16_t divisor)
         "2:\n\t"
         "    dec  " INDEX_REG "     ; bits--\n\t"
         "    brne 0b     ; until bits == 0"
-        : "=d" (dividend) 
-        : "d" (divisor) , "0" (dividend) 
+        : "=d" (dividend)
+        : "d" (divisor) , "0" (dividend)
         : INDEX_REG
     );
 
@@ -289,9 +289,9 @@ static inline uint16_t udiv_32_16 (uint32_t dividend, uint16_t divisor)
 
 
 /**
- * @brief Same as udiv_32_16(), except this will round to nearest integer 
+ * @brief Same as udiv_32_16(), except this will round to nearest integer
  * instead of truncating.
- * 
+ *
  * Minor performance drop compared to non-rounding version.
  **/
 static inline uint16_t udiv_32_16_closest(uint32_t dividend, uint16_t divisor)

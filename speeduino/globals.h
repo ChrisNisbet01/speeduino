@@ -269,8 +269,11 @@ typedef enum load_source_t {
 #define WMI_MODE_OPENLOOP 2
 #define WMI_MODE_CLOSEDLOOP 3
 
-#define HARD_CUT_FULL 0
-#define HARD_CUT_ROLLING 1
+typedef enum hard_cut_t
+{
+  HARD_CUT_FULL = 0,
+  HARD_CUT_ROLLING = 1,
+} hard_cut_t;
 
 #define EVEN_FIRE 0
 #define ODD_FIRE 1
@@ -278,7 +281,8 @@ typedef enum load_source_t {
 #define EGO_ALGORITHM_SIMPLE 0
 #define EGO_ALGORITHM_PID 2
 
-typedef enum staging_mode_t {
+typedef enum staging_mode_t
+{
   STAGING_MODE_TABLE = 0,
   STAGING_MODE_AUTO = 1,
 } staging_mode_t;
@@ -288,11 +292,14 @@ typedef enum staging_mode_t {
 #define NITROUS_STAGE2 2
 #define NITROUS_BOTH 3
 
-#define PROTECT_CUT_OFF 0
-#define PROTECT_CUT_IGN 1
-#define PROTECT_CUT_FUEL 2
-#define PROTECT_CUT_BOTH 3
-#define PROTECT_IO_ERROR 7
+typedef enum hard_cutoff_t
+{
+    PROTECT_CUT_OFF = 0,
+    PROTECT_CUT_IGN = 1,
+    PROTECT_CUT_FUEL = 2,
+    PROTECT_CUT_BOTH = 3,
+    PROTECT_IO_ERROR = 7,
+} hard_cutoff_t;
 
 #define AE_MODE_TPS 0
 #define AE_MODE_MAP 1

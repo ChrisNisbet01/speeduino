@@ -421,51 +421,56 @@ static __attribute__((noinline)) int crankingGetRPM(byte totalTeeth, bool isCamT
 }
 
 /**
-On decoders that are enabled for per tooth based timing adjustments, this function performs the timer compare changes on the schedules themselves
-For each ignition channel, a check is made whether we're at the relevant tooth and whether that ignition schedule is currently running
-Only if both these conditions are met will the schedule be updated with the latest timing information.
-If it's the correct tooth, but the schedule is not yet started, calculate and an end compare value (This situation occurs when both the start and end of the ignition pulse happen after the end tooth, but before the next tooth)
+On decoders that are enabled for per-tooth based timing adjustments,
+this function performs the timer compare changes on the schedules themselves
+For each ignition channel, a check is made whether we're at the relevant
+tooth and whether that ignition schedule is currently running
+Only if both these conditions are met will the schedule be updated with the
+latest timing information.
+If it's the correct tooth, but the schedule is not yet started, calculate an
+end compare value (This situation occurs when both the start and end of the
+ignition pulse happen after the end tooth, but before the next tooth)
 */
 static inline void checkPerToothTiming(int16_t crankAngle, uint16_t currentTooth)
 {
-  if ( (fixedCrankingOverride == 0) && (currentStatus.RPM > 0) )
+  if (fixedCrankingOverride == 0 && currentStatus.RPM > 0)
   {
-    if ( (currentTooth == ignition1EndTooth) )
+    if (currentTooth == ignition1EndTooth)
     {
       adjustCrankAngle(ignitionSchedule1, ignition1EndAngle, crankAngle);
     }
-    else if ( (currentTooth == ignition2EndTooth) )
+    else if (currentTooth == ignition2EndTooth)
     {
       adjustCrankAngle(ignitionSchedule2, ignition2EndAngle, crankAngle);
     }
-    else if ( (currentTooth == ignition3EndTooth) )
+    else if (currentTooth == ignition3EndTooth)
     {
       adjustCrankAngle(ignitionSchedule3, ignition3EndAngle, crankAngle);
     }
-    else if ( (currentTooth == ignition4EndTooth) )
+    else if (currentTooth == ignition4EndTooth)
     {
       adjustCrankAngle(ignitionSchedule4, ignition4EndAngle, crankAngle);
     }
 #if IGN_CHANNELS >= 5
-    else if ( (currentTooth == ignition5EndTooth) )
+    else if (currentTooth == ignition5EndTooth)
     {
       adjustCrankAngle(ignitionSchedule5, ignition5EndAngle, crankAngle);
     }
 #endif
 #if IGN_CHANNELS >= 6
-    else if ( (currentTooth == ignition6EndTooth) )
+    else if (currentTooth == ignition6EndTooth)
     {
       adjustCrankAngle(ignitionSchedule6, ignition6EndAngle, crankAngle);
     }
 #endif
 #if IGN_CHANNELS >= 7
-    else if ( (currentTooth == ignition7EndTooth) )
+    else if (currentTooth == ignition7EndTooth)
     {
       adjustCrankAngle(ignitionSchedule7, ignition7EndAngle, crankAngle);
     }
 #endif
 #if IGN_CHANNELS >= 8
-    else if ( (currentTooth == ignition8EndTooth) )
+    else if (currentTooth == ignition8EndTooth)
     {
       adjustCrankAngle(ignitionSchedule8, ignition8EndAngle, crankAngle);
     }
@@ -742,18 +747,25 @@ void triggerSec_missingTooth(void)
   } //Trigger filter
 }
 
-static inline void triggerRecordVVT1Angle (void)
+static inline void triggerRecordVVT1Angle(void)
 {
   //Record the VVT Angle
-  if( (configPage6.vvtEnabled > 0) && (revolutionOne == 1) )
+  if ((configPage6.vvtEnabled > 0) && (revolutionOne == 1))
   {
     int16_t curAngle;
     curAngle = getCrankAngle();
-    while(curAngle > 360) { curAngle -= 360; }
+    while (curAngle > 360)
+    {
+      curAngle -= 360;
+    }
     curAngle -= configPage4.triggerAngle; //Value at TDC
-    if( configPage6.vvtMode == VVT_MODE_CLOSED_LOOP ) { curAngle -= configPage10.vvtCL0DutyAng; }
+    if (configPage6.vvtMode == VVT_MODE_CLOSED_LOOP)
+    {
+      curAngle -= configPage10.vvtCL0DutyAng;
+    }
 
-    currentStatus.vvt1Angle = ANGLE_FILTER( (curAngle << 1), configPage4.ANGLEFILTER_VVT, currentStatus.vvt1Angle);
+    currentStatus.vvt1Angle =
+      ANGLE_FILTER((curAngle << 1), configPage4.ANGLEFILTER_VVT, currentStatus.vvt1Angle);
   }
 }
 
@@ -821,7 +833,11 @@ int getCrankAngle_missingTooth(void)
     tempToothLastToothTime = toothLastToothTime;
     interrupts();
 
-    int crankAngle = ((tempToothCurrentCount - 1) * triggerToothAngle) + configPage4.triggerAngle; //Number of teeth that have passed since tooth 1, multiplied by the angle each tooth represents, plus the angle that tooth 1 is ATDC. This gives accuracy only to the nearest tooth.
+    //Number of teeth that have passed since tooth 1, multiplied by the angle
+    //each tooth represents, plus the angle that tooth 1 is ATDC.
+    //This gives accuracy only to the nearest tooth.
+    int crankAngle = ((tempToothCurrentCount - 1) * triggerToothAngle)
+        + configPage4.triggerAngle;
 
     //Sequential check (simply sets whether we're on the first or 2nd revolution of the cycle)
     if (tempRevolutionOne && configPage4.TrigSpeed == CRANK_SPEED)
@@ -830,12 +846,21 @@ int getCrankAngle_missingTooth(void)
     }
 
     lastCrankAngleCalc = micros();
-    elapsedTime = (lastCrankAngleCalc - tempToothLastToothTime);
+    elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
     crankAngle += timeToAngleDegPerMicroSec(elapsedTime);
 
-    if (crankAngle >= 720) { crankAngle -= 720; }
-    else if (crankAngle > CRANK_ANGLE_MAX) { crankAngle -= CRANK_ANGLE_MAX; }
-    if (crankAngle < 0) { crankAngle += CRANK_ANGLE_MAX; }
+    if (crankAngle >= 720)
+    {
+      crankAngle -= 720;
+    }
+    else if (crankAngle > CRANK_ANGLE_MAX)
+    {
+      crankAngle -= CRANK_ANGLE_MAX;
+    }
+    if (crankAngle < 0)
+    {
+      crankAngle += CRANK_ANGLE_MAX;
+    }
 
     return crankAngle;
 }
@@ -951,9 +976,11 @@ void triggerPri_DualWheel(void)
         if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL && revolutionOne && configPage4.TrigSpeed == CRANK_SPEED)
         {
           crankAngle += 360;
-          checkPerToothTiming(crankAngle, (configPage4.triggerTeeth + toothCurrentCount));
+          checkPerToothTiming(crankAngle, configPage4.triggerTeeth + toothCurrentCount);
         }
-        else{ checkPerToothTiming(crankAngle, toothCurrentCount); }
+        else{
+          checkPerToothTiming(crankAngle, toothCurrentCount);
+        }
       }
    } //Trigger filter
 }
@@ -1161,8 +1188,14 @@ void triggerPri_BasicDistributor(void)
     {
       int16_t crankAngle = ( (toothCurrentCount-1) * triggerToothAngle ) + configPage4.triggerAngle;
       crankAngle = ignitionLimits((crankAngle));
-      if(toothCurrentCount > (triggerActualTeeth/2) ) { checkPerToothTiming(crankAngle, (toothCurrentCount - (triggerActualTeeth/2))); }
-      else { checkPerToothTiming(crankAngle, toothCurrentCount); }
+      if (toothCurrentCount > triggerActualTeeth / 2)
+      {
+        checkPerToothTiming(crankAngle, toothCurrentCount - triggerActualTeeth/2);
+      }
+      else
+      {
+        checkPerToothTiming(crankAngle, toothCurrentCount);
+      }
     }
 
     toothLastMinusOneToothTime = toothLastToothTime;
@@ -1545,41 +1578,52 @@ void triggerPri_4G63(void)
         }
       }
 
-      //Whilst this is an uneven tooth pattern, if the specific angle between the last 2 teeth is specified, 1st deriv prediction can be used
-      if( (configPage4.triggerFilter == 1) || (currentStatus.RPM < 1400) )
+      //Whilst this is an uneven tooth pattern, if the specific angle between the last 2 teeth is specified,
+      //1st deriv prediction can be used
+      if (configPage4.triggerFilter == 1 || currentStatus.RPM < 1400)
       {
         //Lite filter
-        if( (toothCurrentCount == 1) || (toothCurrentCount == 3) || (toothCurrentCount == 5) || (toothCurrentCount == 7) || (toothCurrentCount == 9) || (toothCurrentCount == 11) )
+        bool const current_tooth_is_odd = (toothCurrentCount & 1) != 0;
+        if (current_tooth_is_odd && toothCurrentCount < 12)
         {
           if(configPage2.nCylinders == 4)
-          {
+          {//Trigger filter is set to whatever time it took to do 70 degrees
+           //(Next trigger is 110 degrees away)
             triggerToothAngle = 70;
-            triggerFilterTime = curGap; //Trigger filter is set to whatever time it took to do 70 degrees (Next trigger is 110 degrees away)
+            triggerFilterTime = curGap;
           }
           else if(configPage2.nCylinders == 6)
           {
+            //Trigger filter is set to (70/4)=17.5=17 degrees
+            //(Next trigger is 50 degrees away).
             triggerToothAngle = 70;
-            triggerFilterTime = (curGap >> 2); //Trigger filter is set to (70/4)=17.5=17 degrees (Next trigger is 50 degrees away).
+            triggerFilterTime = (curGap >> 2);
           }
         }
         else
         {
           if(configPage2.nCylinders == 4)
           {
+            //Trigger filter is set to (110*3)/8=41.25=41 degrees
+            //(Next trigger is 70 degrees away).
             triggerToothAngle = 110;
-            triggerFilterTime = (curGap * 3) >> 3; //Trigger filter is set to (110*3)/8=41.25=41 degrees (Next trigger is 70 degrees away).
+            triggerFilterTime = (curGap * 3) >> 3;
           }
           else if(configPage2.nCylinders == 6)
           {
+            //Trigger filter is set to 25 degrees
+            //(Next trigger is 70 degrees away).
             triggerToothAngle = 50;
-            triggerFilterTime = curGap >> 1; //Trigger filter is set to 25 degrees (Next trigger is 70 degrees away).
+            triggerFilterTime = curGap >> 1;
           }
         }
       }
       else if(configPage4.triggerFilter == 2)
       {
+        bool const current_tooth_is_odd = (toothCurrentCount & 1) != 0;
+
         //Medium filter level
-        if( (toothCurrentCount == 1) || (toothCurrentCount == 3) || (toothCurrentCount == 5) || (toothCurrentCount == 7) || (toothCurrentCount == 9) || (toothCurrentCount == 11) )
+        if (current_tooth_is_odd && toothCurrentCount < 12)
         {
           triggerToothAngle = 70;
           if(configPage2.nCylinders == 4)
@@ -1607,8 +1651,10 @@ void triggerPri_4G63(void)
       }
       else if (configPage4.triggerFilter == 3)
       {
+        bool const current_tooth_is_odd = (toothCurrentCount & 1) != 0;
+
         //Aggressive filter level
-        if( (toothCurrentCount == 1) || (toothCurrentCount == 3) || (toothCurrentCount == 5) || (toothCurrentCount == 7) || (toothCurrentCount == 9) || (toothCurrentCount == 11) )
+        if (current_tooth_is_odd && toothCurrentCount < 12)
         {
           triggerToothAngle = 70;
           if(configPage2.nCylinders == 4)
@@ -1638,15 +1684,15 @@ void triggerPri_4G63(void)
       {
         //trigger filter is turned off.
         triggerFilterTime = 0;
-        if( (toothCurrentCount == 1) || (toothCurrentCount == 3) || (toothCurrentCount == 5) || (toothCurrentCount == 7) || (toothCurrentCount == 9) || (toothCurrentCount == 11) )
+        bool const current_tooth_is_odd = (toothCurrentCount & 1) != 0;
+
+        if (current_tooth_is_odd && toothCurrentCount < 12)
         {
-          if(configPage2.nCylinders == 4) { triggerToothAngle = 70; }
-          else  { triggerToothAngle = 70; }
+          triggerToothAngle = 70;
         }
         else
         {
-          if(configPage2.nCylinders == 4) { triggerToothAngle = 110; }
-          else  { triggerToothAngle = 50; }
+          triggerToothAngle = configPage2.nCylinders == 4 ? 110 : 50;
         }
       }
 

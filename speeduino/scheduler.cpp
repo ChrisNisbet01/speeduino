@@ -238,35 +238,47 @@ void _setFuelScheduleNext(FuelSchedule &schedule, unsigned long timeout, unsigne
   schedule.hasNextSchedule = true;
 }
 
-void _setIgnitionScheduleRunning(IgnitionSchedule &schedule, unsigned long timeout, unsigned long duration)
+void _setIgnitionScheduleRunning(
+  IgnitionSchedule &schedule, unsigned long timeout, unsigned long durationMicrosecs)
 {
-  schedule.duration = duration;
+  schedule.duration = durationMicrosecs;
 
   //Need to check that the timeout doesn't exceed the overflow
   COMPARE_TYPE timeout_timer_compare;
-  if (timeout > MAX_TIMER_PERIOD) { timeout_timer_compare = uS_TO_TIMER_COMPARE( (MAX_TIMER_PERIOD - 1) ); } // If the timeout is >4x (Each tick represents 4uS) the maximum allowed value of unsigned int (65535), the timer compare value will overflow when applied causing erratic behaviour such as erroneous sparking.
-  else { timeout_timer_compare = uS_TO_TIMER_COMPARE(timeout); } //Normal case
+  // If the timeout is >4x (Each tick represents 4uS) the maximum allowed
+  // value of unsigned int (65535), the timer compare value will overflow when
+  // applied causing erratic behaviour such as erroneous sparking.
+  if (timeout > MAX_TIMER_PERIOD)
+  {
+    timeout_timer_compare = uS_TO_TIMER_COMPARE(MAX_TIMER_PERIOD - 1);
+  }
+  else //Normal case
+  {
+    timeout_timer_compare = uS_TO_TIMER_COMPARE(timeout);
+  }
 
   noInterrupts();
-  schedule.startCompare = schedule.counter + timeout_timer_compare; //As there is a tick every 4uS, there are timeout/4 ticks until the interrupt should be triggered ( >>2 divides by 4)
+  schedule.startCompare = schedule.counter + timeout_timer_compare;
+
+  //The .endCompare value may be set by the per-tooth timing in decoders.cpp.
+  //The check here is to ensure that per-tooth control is not overridden.
   if (!schedule.endScheduleSetByDecoder)
   {
-    //The .endCompare value is also set by the per tooth timing in decoders.cpp.
-    //The check here is so that it's not getting overridden.
-    schedule.endCompare = schedule.startCompare + uS_TO_TIMER_COMPARE(duration);
+    schedule.endCompare = schedule.startCompare + uS_TO_TIMER_COMPARE(durationMicrosecs);
   }
+
   SET_COMPARE(schedule.compare, schedule.startCompare);
   schedule.Status = PENDING; //Turn this schedule on
   interrupts();
   schedule.pTimerEnable();
 }
 
-void _setIgnitionScheduleNext(IgnitionSchedule &schedule, unsigned long timeout, unsigned long duration)
+void _setIgnitionScheduleNext(IgnitionSchedule &schedule, unsigned long timeout, unsigned long durationMicrosecs)
 {
   //If the schedule is already running, we can set the next schedule so it is ready to go
   //This is required in cases of high rpm and high DC where there otherwise would not be enough time to set the schedule
   schedule.nextStartCompare = schedule.counter + uS_TO_TIMER_COMPARE(timeout);
-  schedule.nextEndCompare = schedule.nextStartCompare + uS_TO_TIMER_COMPARE(duration);
+  schedule.nextEndCompare = schedule.nextStartCompare + uS_TO_TIMER_COMPARE(durationMicrosecs);
   schedule.hasNextSchedule = true;
 }
 
@@ -274,7 +286,8 @@ void _setIgnitionScheduleNext(IgnitionSchedule &schedule, unsigned long timeout,
 void refreshIgnitionSchedule1(unsigned long timeToEnd)
 {
   if( (ignitionSchedule1.Status == RUNNING) && (timeToEnd < ignitionSchedule1.duration) )
-  //Must have the threshold check here otherwise it can cause a condition where the compare fires twice, once after the other, both for the end
+  //Must have the threshold check here otherwise it can cause a condition where the compare fires twice,
+  //once after the other, both for the end
   //if( (timeToEnd < ignitionSchedule1.duration) && (timeToEnd > IGNITION_REFRESH_THRESHOLD) )
   {
     noInterrupts();
@@ -291,35 +304,61 @@ void refreshIgnitionSchedule1(unsigned long timeToEnd)
 extern void beginInjectorPriming(void)
 {
   static unsigned long const priming_delay_us = 100;
-  unsigned long primingValue = table2D_getValue(&PrimingPulseTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET);
-  if( (primingValue > 0) && (currentStatus.TPS < configPage4.floodClear) )
+  unsigned long primingValue =
+    table2D_getValue(&PrimingPulseTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET);
+
+  if (primingValue > 0 && currentStatus.TPS < configPage4.floodClear)
   {
     // To achieve long enough priming pulses, the values in tuner studio are divided by 0.5 instead of 0.1,
     // so multiplier of 5 is required.
     // XXX - Should that be _multiplied_ by 0.5, which also means the value should be multiplied by 2?
     static unsigned config_multiplier = 5;
     primingValue = primingValue * priming_delay_us * config_multiplier;
-    if ( maxInjOutputs >= 1 ) { setFuelSchedule(fuelSchedule1, priming_delay_us, primingValue); }
+    if (maxInjOutputs >= 1)
+    {
+      setFuelSchedule(fuelSchedule1, priming_delay_us, primingValue);
+    }
 #if (INJ_CHANNELS >= 2)
-    if ( maxInjOutputs >= 2 ) { setFuelSchedule(fuelSchedule2, priming_delay_us, primingValue); }
+    if (maxInjOutputs >= 2)
+    {
+      setFuelSchedule(fuelSchedule2, priming_delay_us, primingValue);
+    }
 #endif
 #if (INJ_CHANNELS >= 3)
-    if ( maxInjOutputs >= 3 ) { setFuelSchedule(fuelSchedule3, priming_delay_us, primingValue); }
+    if (maxInjOutputs >= 3)
+    {
+      setFuelSchedule(fuelSchedule3, priming_delay_us, primingValue);
+    }
 #endif
 #if (INJ_CHANNELS >= 4)
-    if ( maxInjOutputs >= 4 ) { setFuelSchedule(fuelSchedule4, priming_delay_us, primingValue); }
+    if (maxInjOutputs >= 4)
+    {
+      setFuelSchedule(fuelSchedule4, priming_delay_us, primingValue);
+    }
 #endif
 #if (INJ_CHANNELS >= 5)
-    if ( maxInjOutputs >= 5 ) { setFuelSchedule(fuelSchedule5, priming_delay_us, primingValue); }
+    if (maxInjOutputs >= 5)
+    {
+      setFuelSchedule(fuelSchedule5, priming_delay_us, primingValue);
+    }
 #endif
 #if (INJ_CHANNELS >= 6)
-    if ( maxInjOutputs >= 6 ) { setFuelSchedule(fuelSchedule6, priming_delay_us, primingValue); }
+    if (maxInjOutputs >= 6)
+    {
+      setFuelSchedule(fuelSchedule6, priming_delay_us, primingValue);
+    }
 #endif
 #if (INJ_CHANNELS >= 7)
-    if ( maxInjOutputs >= 7) { setFuelSchedule(fuelSchedule7, priming_delay_us, primingValue); }
+    if (maxInjOutputs >= 7)
+    {
+      setFuelSchedule(fuelSchedule7, priming_delay_us, primingValue);
+    }
 #endif
 #if (INJ_CHANNELS >= 8)
-    if ( maxInjOutputs >= 8 ) { setFuelSchedule(fuelSchedule8, priming_delay_us, primingValue); }
+    if (maxInjOutputs >= 8)
+    {
+      setFuelSchedule(fuelSchedule8, priming_delay_us, primingValue);
+    }
 #endif
   }
 }

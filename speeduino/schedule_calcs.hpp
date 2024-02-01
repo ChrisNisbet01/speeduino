@@ -73,11 +73,14 @@ static inline void calculateIgnitionTrailingRotary(int dwellAngle, int rotarySpl
   if(*pStartAngle < 0) {*pStartAngle += CRANK_ANGLE_MAX_IGN;}
 }
 
-static inline uint32_t _calculateIgnitionTimeout(const IgnitionSchedule &schedule, int16_t startAngle, int16_t crankAngle) {
+static inline uint32_t
+_calculateIgnitionTimeout(const IgnitionSchedule &schedule, int16_t startAngle, int16_t crankAngle)
+{
   int16_t delta = startAngle - crankAngle;
-  if (delta<0)
+
+  if (delta < 0)
   {
-    if ((schedule.Status == RUNNING) && (delta>-CRANK_ANGLE_MAX_IGN))
+    if (schedule.Status == RUNNING && delta > -CRANK_ANGLE_MAX_IGN)
     {
       // Must be > 0
       delta += CRANK_ANGLE_MAX_IGN;
@@ -87,33 +90,60 @@ static inline uint32_t _calculateIgnitionTimeout(const IgnitionSchedule &schedul
       return 0;
     }
   }
+
   return angleToTimeMicroSecPerDegree(delta);
 }
 
 static inline uint16_t _adjustToIgnChannel(int angle, int channelInjDegrees) {
-  angle = angle - channelInjDegrees;
-  if( angle < 0) { return angle + CRANK_ANGLE_MAX_IGN; }
+  angle -= channelInjDegrees;
+  if (angle < 0)
+  {
+    return angle + CRANK_ANGLE_MAX_IGN;
+  }
+
   return angle;
 }
 
-static inline uint32_t calculateIgnitionTimeout(const IgnitionSchedule &schedule, int startAngle, int channelIgnDegrees, int crankAngle)
+static inline uint32_t
+calculateIgnitionTimeout(
+  const IgnitionSchedule &schedule, int startAngle, int channelIgnDegrees, int crankAngle)
 {
-  if (channelIgnDegrees==0) {
+  if (channelIgnDegrees == 0)
+  {
       return _calculateIgnitionTimeout(schedule, startAngle, crankAngle);
   }
-  return _calculateIgnitionTimeout(schedule, _adjustToIgnChannel(startAngle, channelIgnDegrees), _adjustToIgnChannel(crankAngle, channelIgnDegrees));
+  return _calculateIgnitionTimeout(
+    schedule,
+    _adjustToIgnChannel(startAngle, channelIgnDegrees),
+    _adjustToIgnChannel(crankAngle, channelIgnDegrees));
 }
 
 #define MIN_CYCLES_FOR_ENDCOMPARE 6
 
-inline void adjustCrankAngle(IgnitionSchedule &schedule, int endAngle, int crankAngle) {
-  if( (schedule.Status == RUNNING) )
+inline void adjustCrankAngle(IgnitionSchedule &schedule, int endAngle, int crankAngle)
+{
+  if (schedule.Status == RUNNING)
   {
-    SET_COMPARE(schedule.compare, schedule.counter + uS_TO_TIMER_COMPARE( angleToTimeMicroSecPerDegree( ignitionLimits( (endAngle - crankAngle) ) ) ) );
+    /*
+     * The ignition coil is currently charging. Assign the end time base up
+     * the number of degrees from the current crank angle to the desired
+     * end angle.
+     */
+    int const degreesToEndAngle = endAngle - crankAngle;
+    uint32_t const microsecsUntilEndAngle =
+      angleToTimeMicroSecPerDegree(ignitionLimits(endAngle - crankAngle));
+    COMPARE_TYPE const endCompare = schedule.counter + uS_TO_TIMER_COMPARE(microsecsUntilEndAngle);
+
+    SET_COMPARE(schedule.compare, endCompare);
   }
-  else if(currentStatus.startRevolutions > MIN_CYCLES_FOR_ENDCOMPARE)
+  else if (currentStatus.startRevolutions > MIN_CYCLES_FOR_ENDCOMPARE)
   {
-    schedule.endCompare = schedule.counter + uS_TO_TIMER_COMPARE( angleToTimeMicroSecPerDegree( ignitionLimits( (endAngle - crankAngle) ) ) );
+    int const degreesToEndAngle = endAngle - crankAngle;
+    uint32_t const microsecsUntilEndAngle =
+      angleToTimeMicroSecPerDegree(ignitionLimits(endAngle - crankAngle));
+    COMPARE_TYPE const endCompare = schedule.counter + uS_TO_TIMER_COMPARE(microsecsUntilEndAngle);
+
+    schedule.endCompare = endCompare;
     schedule.endScheduleSetByDecoder = true;
   }
   else
