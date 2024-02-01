@@ -1121,7 +1121,8 @@ void sendCompositeLog(void)
     //If the buffer is not yet full but TS has timed out, pad the rest of the buffer with 0s
     while(toothHistoryIndex < TOOTH_LOG_SIZE)
     {
-      toothHistory[toothHistoryIndex] = toothHistory[toothHistoryIndex-1]; //Composite logger needs a realistic time value to display correctly. Copy the last value
+      //Composite logger needs a realistic time value to display correctly. Copy the last value
+      toothHistory[toothHistoryIndex] = toothHistory[toothHistoryIndex-1];
       compositeLogHistory[toothHistoryIndex] = 0;
       toothHistoryIndex++;
     }
@@ -1144,7 +1145,8 @@ void sendCompositeLog(void)
   for (; logItemsTransmitted < TOOTH_LOG_SIZE; logItemsTransmitted++)
   {
     //Check whether the tx buffer still has space
-    if((uint16_t)Serial.availableForWrite() < sizeof(toothHistory[logItemsTransmitted])+sizeof(compositeLogHistory[logItemsTransmitted]))
+    if((uint16_t)Serial.availableForWrite()
+       < sizeof(toothHistory[logItemsTransmitted]) + sizeof(compositeLogHistory[logItemsTransmitted]))
     {
       //tx buffer is full. Store the current state so it can be resumed later
       serialStatusFlag = SERIAL_TRANSMIT_COMPOSITE_INPROGRESS;

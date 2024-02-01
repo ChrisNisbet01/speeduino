@@ -151,7 +151,8 @@ void loop(void)
   }
   else
   {
-    //We reach here if the time between teeth is too great. This VERY likely means the engine has stopped
+    //We reach here if the time between teeth is too great.
+    //This VERY likely means the engine has stopped.
     currentStatus.RPM = 0;
     currentStatus.RPMdiv100 = 0;
     currentStatus.PW1 = 0;
@@ -892,7 +893,7 @@ void loop(void)
       maxAllowedRPM = currentStatus.clutchEngagedRPM;
     }
 
-    if ((configPage2.hardCutType == HARD_CUT_FULL) && (currentStatus.RPM > maxAllowedRPM))
+    if (configPage2.hardCutType == HARD_CUT_FULL && currentStatus.RPM > maxAllowedRPM)
     {
       //Full hard cut turns outputs off completely.
       switch (configPage6.engineProtectType)
@@ -923,14 +924,20 @@ void loop(void)
         break;
       }
     } //Hard cut check
-    else if ((configPage2.hardCutType == HARD_CUT_ROLLING) && (currentStatus.RPM > (maxAllowedRPM + (configPage15.rollingProtRPMDelta[0] * 10)))) //Limit for rolling is the max allowed RPM minus the lowest value in the delta table (Delta values are negative!)
+    else if (configPage2.hardCutType == HARD_CUT_ROLLING
+             && currentStatus.RPM > (maxAllowedRPM + configPage15.rollingProtRPMDelta[0] * 10))
     {
+      //Limit for rolling is the max allowed RPM minus the lowest value in the
+      //delta table (Delta values are negative!)
       uint8_t revolutionsToCut = 1;
+
       if (configPage2.strokes == FOUR_STROKE) //4 stroke needs to cut for at least 2 revolutions
       {
         revolutionsToCut *= 2;
       }
-      if ((configPage4.sparkMode != IGN_MODE_SEQUENTIAL) || (configPage2.injLayout != INJ_SEQUENTIAL)) //4 stroke and non-sequential will cut for 4 revolutions minimum. This is to ensure no half fuel ignition cycles take place
+      //4 stroke and non-sequential will cut for 4 revolutions minimum.
+      //This is to ensure no half fuel ignition cycles take place
+      if (configPage4.sparkMode != IGN_MODE_SEQUENTIAL || configPage2.injLayout != INJ_SEQUENTIAL)
       {
         revolutionsToCut *= 2;
       }
@@ -939,7 +946,12 @@ void loop(void)
       {
         rollingCutLastRev = currentStatus.startRevolutions;
       }
-      if ((currentStatus.startRevolutions >= (rollingCutLastRev + revolutionsToCut)) || (currentStatus.RPM > maxAllowedRPM)) //If current RPM is over the max allowed RPM always cut, otherwise check if the required number of revolutions have passed since the last cut
+
+      //If current RPM is over the max allowed RPM always cut,
+      //otherwise check if the required number of revolutions have passed since
+      //the last cut
+      if (currentStatus.startRevolutions >= rollingCutLastRev + revolutionsToCut
+          || currentStatus.RPM > maxAllowedRPM)
       {
         uint8_t cutPercent = 0;
         int16_t rpmDelta = currentStatus.RPM - maxAllowedRPM;
@@ -952,10 +964,9 @@ void loop(void)
           cutPercent = table2D_getValue(&rollingCutTable, (rpmDelta / 10));
         }
 
-
         for (uint8_t x = 0; x < max(maxIgnOutputs, maxInjOutputs); x++)
         {
-          if ((cutPercent == 100) || (random1to100() < cutPercent))
+          if (cutPercent == 100 || random1to100() < cutPercent)
           {
             switch (configPage6.engineProtectType)
             {
@@ -1014,9 +1025,14 @@ void loop(void)
         rollingCutLastRev = currentStatus.startRevolutions;
       }
 
-      //Check whether there are any ignition channels that are waiting for injection pulses to occur before being turned back on. This can only occur when at least 2 revolutions have taken place since the fuel was turned back on
-      //Note that ignitionChannelsPending can only be >0 on 4 stroke, non-sequential fuel when protect type is Both
-      if ((ignitionChannelsPending > 0) && (currentStatus.startRevolutions >= (rollingCutLastRev + 2)))
+      //Check whether there are any ignition channels that are waiting for
+      //injection pulses to occur before being turned back on.
+      //This can only occur when at least 2 revolutions have taken place since
+      //the fuel was turned back on.
+      //Note that ignitionChannelsPending can only be >0 on 4 stroke,
+      //non-sequential fuel when protect type is Both.
+      if (ignitionChannelsPending > 0
+          && currentStatus.startRevolutions >= rollingCutLastRev + 2)
       {
         ignitionChannelsOn = fuelChannelsOn;
         ignitionChannelsPending = 0;
@@ -1034,125 +1050,128 @@ void loop(void)
       }
     }
 
-
 #if INJ_CHANNELS >= 1
-    if ((maxInjOutputs >= 1) && (currentStatus.PW1 >= inj_opentime_uS) && (BIT_CHECK(fuelChannelsOn, INJ1_CMD_BIT)))
+    if (maxInjOutputs >= 1
+        && currentStatus.PW1 >= inj_opentime_uS
+        && BIT_CHECK(fuelChannelsOn, INJ1_CMD_BIT))
     {
       uint32_t timeOut = calculateInjectorTimeout(fuelSchedule1, channel1InjDegrees, injector1StartAngle, crankAngle);
       if (timeOut > 0U)
       {
-        setFuelSchedule(fuelSchedule1,
-                        timeOut,
-                        (unsigned long)currentStatus.PW1
-                       );
+        setFuelSchedule(
+          fuelSchedule1, timeOut, (unsigned long)currentStatus.PW1);
       }
     }
 #endif
 
     /*-----------------------------------------------------------------------------------------
     | A Note on tempCrankAngle and tempStartAngle:
-    |   The use of tempCrankAngle/tempStartAngle is described below. It is then used in the same way for channels 2, 3 and 4+ on both injectors and ignition
-    |   Essentially, these 2 variables are used to realign the current crank angle and the desired start angle around 0 degrees for the given cylinder/output
-    |   Eg: If cylinder 2 TDC is 180 degrees after cylinder 1 (Eg a standard 4 cylinder engine), then tempCrankAngle is 180* less than the current crank angle and
-    |       tempStartAngle is the desired open time less 180*. Thus the cylinder is being treated relative to its own TDC, regardless of its offset
+    |   The use of tempCrankAngle/tempStartAngle is described below.
+    |   It is then used in the same way for channels 2, 3 and 4+ on both injectors and ignition
+    |   Essentially, these 2 variables are used to realign the current crank angle
+    |   and the desired start angle around 0 degrees for the given cylinder/output.
+    |   Eg: If cylinder 2 TDC is 180 degrees after cylinder 1 (Eg a standard 4 cylinder engine),
+    |   then tempCrankAngle is 180* less than the current crank angle and
+    |   tempStartAngle is the desired open time less 180*.
+    |   Thus the cylinder is being treated relative to its own TDC, regardless of its offset
     |
-    |   This is done to avoid problems with very short of very long times until tempStartAngle.
+    |   This is done to avoid problems with very short or very long times until tempStartAngle.
     |------------------------------------------------------------------------------------------
     */
 #if INJ_CHANNELS >= 2
-    if ((maxInjOutputs >= 2) && (currentStatus.PW2 >= inj_opentime_uS) && (BIT_CHECK(fuelChannelsOn, INJ2_CMD_BIT)))
+    if (maxInjOutputs >= 2
+        && currentStatus.PW2 >= inj_opentime_uS
+        && BIT_CHECK(fuelChannelsOn, INJ2_CMD_BIT))
     {
       uint32_t timeOut = calculateInjectorTimeout(fuelSchedule2, channel2InjDegrees, injector2StartAngle, crankAngle);
       if (timeOut > 0U)
       {
-        setFuelSchedule(fuelSchedule2,
-                        timeOut,
-                        (unsigned long)currentStatus.PW2
-                       );
+        setFuelSchedule(
+          fuelSchedule2, timeOut, (unsigned long)currentStatus.PW2);
       }
     }
 #endif
 
 #if INJ_CHANNELS >= 3
-    if ((maxInjOutputs >= 3) && (currentStatus.PW3 >= inj_opentime_uS) && (BIT_CHECK(fuelChannelsOn, INJ3_CMD_BIT)))
+    if (maxInjOutputs >= 3
+        && currentStatus.PW3 >= inj_opentime_uS
+        && BIT_CHECK(fuelChannelsOn, INJ3_CMD_BIT))
     {
       uint32_t timeOut = calculateInjectorTimeout(fuelSchedule3, channel3InjDegrees, injector3StartAngle, crankAngle);
       if (timeOut > 0U)
       {
-        setFuelSchedule(fuelSchedule3,
-                        timeOut,
-                        (unsigned long)currentStatus.PW3
-                       );
+        setFuelSchedule(
+          fuelSchedule3, timeOut, (unsigned long)currentStatus.PW3);
       }
     }
 #endif
 
 #if INJ_CHANNELS >= 4
-    if ((maxInjOutputs >= 4) && (currentStatus.PW4 >= inj_opentime_uS) && (BIT_CHECK(fuelChannelsOn, INJ4_CMD_BIT)))
+    if (maxInjOutputs >= 4
+        && currentStatus.PW4 >= inj_opentime_uS
+        && BIT_CHECK(fuelChannelsOn, INJ4_CMD_BIT))
     {
       uint32_t timeOut = calculateInjectorTimeout(fuelSchedule4, channel4InjDegrees, injector4StartAngle, crankAngle);
       if (timeOut > 0U)
       {
-        setFuelSchedule(fuelSchedule4,
-                        timeOut,
-                        (unsigned long)currentStatus.PW4
-                       );
+        setFuelSchedule(
+          fuelSchedule4, timeOut, (unsigned long)currentStatus.PW4);
       }
     }
 #endif
 
 #if INJ_CHANNELS >= 5
-    if ((maxInjOutputs >= 5) && (currentStatus.PW5 >= inj_opentime_uS) && (BIT_CHECK(fuelChannelsOn, INJ5_CMD_BIT)))
+    if (maxInjOutputs >= 5
+        && currentStatus.PW5 >= inj_opentime_uS
+        && BIT_CHECK(fuelChannelsOn, INJ5_CMD_BIT))
     {
       uint32_t timeOut = calculateInjectorTimeout(fuelSchedule5, channel5InjDegrees, injector5StartAngle, crankAngle);
       if (timeOut > 0U)
       {
-        setFuelSchedule(fuelSchedule5,
-                        timeOut,
-                        (unsigned long)currentStatus.PW5
-                       );
+        setFuelSchedule(
+          fuelSchedule5, timeOut, (unsigned long)currentStatus.PW5);
       }
     }
 #endif
 
 #if INJ_CHANNELS >= 6
-    if ((maxInjOutputs >= 6) && (currentStatus.PW6 >= inj_opentime_uS) && (BIT_CHECK(fuelChannelsOn, INJ6_CMD_BIT)))
+    if (maxInjOutputs >= 6
+        && currentStatus.PW6 >= inj_opentime_uS
+        && BIT_CHECK(fuelChannelsOn, INJ6_CMD_BIT))
     {
       uint32_t timeOut = calculateInjectorTimeout(fuelSchedule6, channel6InjDegrees, injector6StartAngle, crankAngle);
       if (timeOut > 0U)
       {
-        setFuelSchedule(fuelSchedule6,
-                        timeOut,
-                        (unsigned long)currentStatus.PW6
-                       );
+        setFuelSchedule(
+          fuelSchedule6, timeOut, (unsigned long)currentStatus.PW6);
       }
     }
 #endif
 
 #if INJ_CHANNELS >= 7
-    if ((maxInjOutputs >= 7) && (currentStatus.PW7 >= inj_opentime_uS) && (BIT_CHECK(fuelChannelsOn, INJ7_CMD_BIT)))
+    if (maxInjOutputs >= 7
+        && currentStatus.PW7 >= inj_opentime_uS
+        && BIT_CHECK(fuelChannelsOn, INJ7_CMD_BIT))
     {
       uint32_t timeOut = calculateInjectorTimeout(fuelSchedule7, channel7InjDegrees, injector7StartAngle, crankAngle);
       if (timeOut > 0U)
       {
-        setFuelSchedule(fuelSchedule7,
-                        timeOut,
-                        (unsigned long)currentStatus.PW7
-                       );
+        setFuelSchedule(
+          fuelSchedule7, timeOut, (unsigned long)currentStatus.PW7);
       }
     }
 #endif
 
 #if INJ_CHANNELS >= 8
-    if ((maxInjOutputs >= 8) && (currentStatus.PW8 >= inj_opentime_uS) && (BIT_CHECK(fuelChannelsOn, INJ8_CMD_BIT)))
+    if (maxInjOutputs >= 8
+        && currentStatus.PW8 >= inj_opentime_uS
+        && BIT_CHECK(fuelChannelsOn, INJ8_CMD_BIT))
     {
       uint32_t timeOut = calculateInjectorTimeout(fuelSchedule8, channel8InjDegrees, injector8StartAngle, crankAngle);
       if (timeOut > 0U)
       {
-        setFuelSchedule(fuelSchedule8,
-                        timeOut,
-                        (unsigned long)currentStatus.PW8
-                       );
+        setFuelSchedule(
+          fuelSchedule8, timeOut, (unsigned long)currentStatus.PW8);
       }
     }
 #endif
@@ -1202,16 +1221,20 @@ void loop(void)
       }
 
 #if IGN_CHANNELS >= 1
-      uint32_t timeOut = calculateIgnitionTimeout(ignitionSchedule1, ignition1StartAngle, channel1IgnDegrees, crankAngle);
-      if ((timeOut > 0U) && (BIT_CHECK(ignitionChannelsOn, IGN1_CMD_BIT)))
+      uint32_t timeOut =
+        calculateIgnitionTimeout(ignitionSchedule1, ignition1StartAngle, channel1IgnDegrees, crankAngle);
+      if (timeOut > 0U && BIT_CHECK(ignitionChannelsOn, IGN1_CMD_BIT))
       {
-        setIgnitionSchedule(ignitionSchedule1, timeOut,
-                            currentStatus.dwell + fixedCrankingOverride);
+        setIgnitionSchedule(
+          ignitionSchedule1, timeOut, currentStatus.dwell + fixedCrankingOverride);
       }
 #endif
 
 #if defined(USE_IGN_REFRESH)
-      if ((ignitionSchedule1.Status == RUNNING) && (ignition1EndAngle > crankAngle) && (configPage4.StgCycles == 0) && (configPage2.perToothIgn != true))
+      if (ignitionSchedule1.Status == RUNNING
+          && ignition1EndAngle > crankAngle
+          && configPage4.StgCycles == 0
+          && !configPage2.perToothIgn)
       {
         unsigned long uSToEnd = 0;
 
@@ -1225,11 +1248,11 @@ void loop(void)
         //*********
         if (ignition1EndAngle > crankAngle)
         {
-          uSToEnd = angleToTimeMicroSecPerDegree((ignition1EndAngle - crankAngle));
+          uSToEnd = angleToTimeMicroSecPerDegree(ignition1EndAngle - crankAngle);
         }
         else
         {
-          uSToEnd = angleToTimeMicroSecPerDegree((360 + ignition1EndAngle - crankAngle));
+          uSToEnd = angleToTimeMicroSecPerDegree(360 + ignition1EndAngle - crankAngle);
         }
         //*********
         //uSToEnd = ((ignition1EndAngle - crankAngle) * (toothLastToothTime - toothLastMinusOneToothTime)) / triggerToothAngle;
@@ -1242,12 +1265,13 @@ void loop(void)
 #if IGN_CHANNELS >= 2
       if (maxIgnOutputs >= 2)
       {
-        unsigned long ignition2StartTime = calculateIgnitionTimeout(ignitionSchedule2, ignition2StartAngle, channel2IgnDegrees, crankAngle);
+        unsigned long ignition2StartTime =
+          calculateIgnitionTimeout(ignitionSchedule2, ignition2StartAngle, channel2IgnDegrees, crankAngle);
 
-        if ((ignition2StartTime > 0) && (BIT_CHECK(ignitionChannelsOn, IGN2_CMD_BIT)))
+        if (ignition2StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN2_CMD_BIT))
         {
-          setIgnitionSchedule(ignitionSchedule2, ignition2StartTime,
-                              currentStatus.dwell + fixedCrankingOverride);
+          setIgnitionSchedule(
+            ignitionSchedule2, ignition2StartTime, currentStatus.dwell + fixedCrankingOverride);
         }
       }
 #endif
@@ -1255,12 +1279,13 @@ void loop(void)
 #if IGN_CHANNELS >= 3
       if (maxIgnOutputs >= 3)
       {
-        unsigned long ignition3StartTime = calculateIgnitionTimeout(ignitionSchedule3, ignition3StartAngle, channel3IgnDegrees, crankAngle);
+        unsigned long ignition3StartTime =
+          calculateIgnitionTimeout(ignitionSchedule3, ignition3StartAngle, channel3IgnDegrees, crankAngle);
 
-        if ((ignition3StartTime > 0) && (BIT_CHECK(ignitionChannelsOn, IGN3_CMD_BIT)))
+        if (ignition3StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN3_CMD_BIT))
         {
-          setIgnitionSchedule(ignitionSchedule3, ignition3StartTime,
-                              currentStatus.dwell + fixedCrankingOverride);
+          setIgnitionSchedule(
+            ignitionSchedule3, ignition3StartTime, currentStatus.dwell + fixedCrankingOverride);
         }
       }
 #endif
@@ -1268,12 +1293,13 @@ void loop(void)
 #if IGN_CHANNELS >= 4
       if (maxIgnOutputs >= 4)
       {
-        unsigned long ignition4StartTime = calculateIgnitionTimeout(ignitionSchedule4, ignition4StartAngle, channel4IgnDegrees, crankAngle);
+        unsigned long ignition4StartTime =
+          calculateIgnitionTimeout(ignitionSchedule4, ignition4StartAngle, channel4IgnDegrees, crankAngle);
 
-        if ((ignition4StartTime > 0) && (BIT_CHECK(ignitionChannelsOn, IGN4_CMD_BIT)))
+        if (ignition4StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN4_CMD_BIT))
         {
-          setIgnitionSchedule(ignitionSchedule4, ignition4StartTime,
-                              currentStatus.dwell + fixedCrankingOverride);
+          setIgnitionSchedule(
+            ignitionSchedule4, ignition4StartTime, currentStatus.dwell + fixedCrankingOverride);
         }
       }
 #endif
@@ -1283,10 +1309,10 @@ void loop(void)
       {
         unsigned long ignition5StartTime = calculateIgnitionTimeout(ignitionSchedule5, ignition5StartAngle, channel5IgnDegrees, crankAngle);
 
-        if ((ignition5StartTime > 0) && (BIT_CHECK(ignitionChannelsOn, IGN5_CMD_BIT)))
+        if (ignition5StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN5_CMD_BIT))
         {
-          setIgnitionSchedule(ignitionSchedule5, ignition5StartTime,
-                              currentStatus.dwell + fixedCrankingOverride);
+          setIgnitionSchedule(
+            ignitionSchedule5, ignition5StartTime, currentStatus.dwell + fixedCrankingOverride);
         }
       }
 #endif
@@ -1294,12 +1320,13 @@ void loop(void)
 #if IGN_CHANNELS >= 6
       if (maxIgnOutputs >= 6)
       {
-        unsigned long ignition6StartTime = calculateIgnitionTimeout(ignitionSchedule6, ignition6StartAngle, channel6IgnDegrees, crankAngle);
+        unsigned long ignition6StartTime =
+          calculateIgnitionTimeout(ignitionSchedule6, ignition6StartAngle, channel6IgnDegrees, crankAngle);
 
-        if ((ignition6StartTime > 0) && (BIT_CHECK(ignitionChannelsOn, IGN6_CMD_BIT)))
+        if (ignition6StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN6_CMD_BIT))
         {
-          setIgnitionSchedule(ignitionSchedule6, ignition6StartTime,
-                              currentStatus.dwell + fixedCrankingOverride);
+          setIgnitionSchedule(
+            ignitionSchedule6, ignition6StartTime, currentStatus.dwell + fixedCrankingOverride);
         }
       }
 #endif
@@ -1307,12 +1334,13 @@ void loop(void)
 #if IGN_CHANNELS >= 7
       if (maxIgnOutputs >= 7)
       {
-        unsigned long ignition7StartTime = calculateIgnitionTimeout(ignitionSchedule7, ignition7StartAngle, channel7IgnDegrees, crankAngle);
+        unsigned long ignition7StartTime =
+          calculateIgnitionTimeout(ignitionSchedule7, ignition7StartAngle, channel7IgnDegrees, crankAngle);
 
-        if ((ignition7StartTime > 0) && (BIT_CHECK(ignitionChannelsOn, IGN7_CMD_BIT)))
+        if (ignition7StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN7_CMD_BIT))
         {
-          setIgnitionSchedule(ignitionSchedule7, ignition7StartTime,
-                              currentStatus.dwell + fixedCrankingOverride);
+          setIgnitionSchedule(
+            ignitionSchedule7, ignition7StartTime, currentStatus.dwell + fixedCrankingOverride);
         }
       }
 #endif
@@ -1320,12 +1348,13 @@ void loop(void)
 #if IGN_CHANNELS >= 8
       if (maxIgnOutputs >= 8)
       {
-        unsigned long ignition8StartTime = calculateIgnitionTimeout(ignitionSchedule8, ignition8StartAngle, channel8IgnDegrees, crankAngle);
+        unsigned long ignition8StartTime =
+          calculateIgnitionTimeout(ignitionSchedule8, ignition8StartAngle, channel8IgnDegrees, crankAngle);
 
-        if ((ignition8StartTime > 0) && (BIT_CHECK(ignitionChannelsOn, IGN8_CMD_BIT)))
+        if (ignition8StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN8_CMD_BIT))
         {
-          setIgnitionSchedule(ignitionSchedule8, ignition8StartTime,
-                              currentStatus.dwell + fixedCrankingOverride);
+          setIgnitionSchedule(
+            ignitionSchedule8, ignition8StartTime, currentStatus.dwell + fixedCrankingOverride);
         }
       }
 #endif

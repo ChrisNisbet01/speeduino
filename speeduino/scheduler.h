@@ -154,13 +154,24 @@ struct IgnitionSchedule {
 void _setIgnitionScheduleRunning(IgnitionSchedule &schedule, unsigned long timeout, unsigned long duration);
 void _setIgnitionScheduleNext(IgnitionSchedule &schedule, unsigned long timeout, unsigned long duration);
 
-inline __attribute__((always_inline)) void setIgnitionSchedule(IgnitionSchedule &schedule, unsigned long timeout, unsigned long duration) {
-  if(schedule.Status != RUNNING) { //Check that we're not already part way through a schedule
-    _setIgnitionScheduleRunning(schedule, timeout, duration);
+inline __attribute__((always_inline))
+void setIgnitionSchedule(
+  IgnitionSchedule &schedule, unsigned long timeout, unsigned long durationMicrosecs)
+{
+  //Check that we're not already part way through a schedule.
+  if(schedule.Status != RUNNING)
+  {
+    _setIgnitionScheduleRunning(schedule, timeout, durationMicrosecs);
   }
-  // Check whether timeout exceeds the maximum future time. This can potentially occur on sequential setups when below ~115rpm
-  else if(timeout < MAX_TIMER_PERIOD){
-    _setIgnitionScheduleNext(schedule, timeout, duration);
+  // Check whether timeout exceeds the maximum future time. This can potentially
+  // occur on sequential setups when below ~115rpm.
+  else if(timeout < MAX_TIMER_PERIOD)
+  {
+    _setIgnitionScheduleNext(schedule, timeout, durationMicrosecs);
+  }
+  else
+  {
+    /* Do nothing. */
   }
 }
 

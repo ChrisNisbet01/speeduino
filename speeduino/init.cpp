@@ -497,7 +497,7 @@ void initialiseAll(void)
     CRANK_ANGLE_MAX_IGN = 360;
     CRANK_ANGLE_MAX_INJ = 360;
 
-    maxInjOutputs = 1; // Disable all injectors expect channel 1
+    maxInjOutputs = 1; // Disable all injectors except channel 1
 
     ignition1EndAngle = 0;
     ignition2EndAngle = 0;
@@ -696,7 +696,8 @@ void initialiseAll(void)
         {
           channel2IgnDegrees = 180;
 
-          if( (configPage4.sparkMode == IGN_MODE_SEQUENTIAL) && (configPage2.strokes == FOUR_STROKE) )
+          if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL
+              && configPage2.strokes == FOUR_STROKE)
           {
             channel3IgnDegrees = 360;
             channel4IgnDegrees = 540;
@@ -765,7 +766,8 @@ void initialiseAll(void)
         {
           maxInjOutputs = 4;
 
-          if( (configPage2.injLayout == INJ_SEQUENTIAL) || (configPage2.injLayout == INJ_SEMISEQUENTIAL) )
+          if (configPage2.injLayout == INJ_SEQUENTIAL
+              || configPage2.injLayout == INJ_SEMISEQUENTIAL)
           {
             //Staging with 4 cylinders semi/sequential requires 8 total channels
             #if INJ_CHANNELS >= 8
@@ -776,7 +778,8 @@ void initialiseAll(void)
               channel7InjDegrees = channel3InjDegrees;
               channel8InjDegrees = channel4InjDegrees;
             #else
-              //This is an invalid config as there are not enough outputs to support sequential + staging
+              //This is an invalid config as there are not enough outputs to
+              //support sequential + staging.
               //Put the staging output to the non-existent channel 5
               #if (INJ_CHANNELS >= 5)
               maxInjOutputs = 5;
@@ -874,7 +877,7 @@ void initialiseAll(void)
         maxInjOutputs = 3;
 
     #if IGN_CHANNELS >= 6
-        if( (configPage4.sparkMode == IGN_MODE_SEQUENTIAL))
+        if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL)
         {
         channel4IgnDegrees = 360;
         channel5IgnDegrees = 480;
@@ -885,7 +888,7 @@ void initialiseAll(void)
     #endif
 
         //For alternating injection, the squirt occurs at different times for each channel
-        if( (configPage2.injLayout == INJ_SEMISEQUENTIAL) || (configPage2.injLayout == INJ_PAIRED) )
+        if (configPage2.injLayout == INJ_SEMISEQUENTIAL || configPage2.injLayout == INJ_PAIRED)
         {
           channel1InjDegrees = 0;
           channel2InjDegrees = 120;
@@ -925,7 +928,7 @@ void initialiseAll(void)
         {
           maxInjOutputs = 6;
 
-          if( (configPage2.injLayout == INJ_SEQUENTIAL) || (configPage2.injLayout == INJ_SEMISEQUENTIAL) )
+          if (configPage2.injLayout == INJ_SEQUENTIAL || configPage2.injLayout == INJ_SEMISEQUENTIAL)
           {
             //Staging with 6 cylinders semi/sequential requires 7 total channels
             #if INJ_CHANNELS >= 7
@@ -973,7 +976,7 @@ void initialiseAll(void)
     #endif
 
         //For alternating injection, the squirt occurs at different times for each channel
-        if( (configPage2.injLayout == INJ_SEMISEQUENTIAL) || (configPage2.injLayout == INJ_PAIRED) )
+        if (configPage2.injLayout == INJ_SEMISEQUENTIAL || configPage2.injLayout == INJ_PAIRED)
         {
           channel1InjDegrees = 0;
           channel2InjDegrees = 90;
@@ -1018,7 +1021,7 @@ void initialiseAll(void)
     #endif
 
         break;
-    default: //Handle this better!!!
+    default: // TODO: Handle this better!!!
         channel1InjDegrees = 0;
         channel2InjDegrees = 180;
         break;

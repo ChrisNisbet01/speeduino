@@ -18,7 +18,7 @@ static void __attribute__((noinline)) assert_fuel_channel(bool enabled, uint16_t
   char msg[39];
 
   sprintf_P(msg, PSTR("channel%" PRIu8 ".InjChannelIsEnabled. Max:%" PRIu8), cmdBit+1, maxInjOutputs);
-  TEST_ASSERT_TRUE_MESSAGE(!enabled || (cmdBit+1)<=maxInjOutputs, msg);
+  TEST_ASSERT_TRUE_MESSAGE(!enabled || (cmdBit+1) <= maxInjOutputs, msg);
   sprintf_P(msg, PSTR("channe%" PRIu8 ".InjDegrees"), cmdBit+1);
   TEST_ASSERT_EQUAL_MESSAGE(angle, channelInjDegrees, msg);
   sprintf_P(msg, PSTR("inj%" PRIu8 ".StartFunction"), cmdBit+1);
@@ -55,7 +55,7 @@ static void __attribute__((noinline)) assert_fuel_schedules(uint16_t crankAngle,
 
 #if INJ_CHANNELS>=8
   assert_fuel_channel(enabled[7], angle[7], INJ8_CMD_BIT, channel8InjDegrees, fuelSchedule8.pStartFunction, fuelSchedule8.pEndFunction);
-#endif 
+#endif
 }
 
 static void cylinder1_stroke4_seq_nostage(void)
@@ -108,7 +108,7 @@ static void run_1_cylinder_4stroke_tests(void)
   configPage2.nCylinders = 1;
   configPage2.strokes = FOUR_STROKE;
   configPage2.engineType = EVEN_FIRE;
-  configPage2.reqFuel = reqFuel; 
+  configPage2.reqFuel = reqFuel;
   configPage2.divider = 1;
 
   RUN_TEST_P(cylinder1_stroke4_seq_nostage);
@@ -125,7 +125,7 @@ static void cylinder1_stroke2_seq_nostage(void)
   initialiseAll(); //Run the main initialise function
   const bool enabled[] = {true, false, false, false, false, false, false, false};
   const uint16_t angle[] = {0,0,0,0,0,0,0,0};
-  assert_fuel_schedules(360U, reqFuel * 100U, enabled, angle);  
+  assert_fuel_schedules(360U, reqFuel * 100U, enabled, angle);
 }
 
 static void cylinder1_stroke2_semiseq_nostage(void)
@@ -158,7 +158,7 @@ static void cylinder1_stroke2_semiseq_staged(void)
   initialiseAll(); //Run the main initialise function
   const bool enabled[] = {true, true, false, false, false, false, false, false};
   const uint16_t angle[] = {0,0,0,0,0,0,0,0};
-  assert_fuel_schedules(360U, reqFuel * 100U, enabled, angle);  
+  assert_fuel_schedules(360U, reqFuel * 100U, enabled, angle);
 }
 
 static void run_1_cylinder_2stroke_tests(void)
@@ -423,7 +423,7 @@ static void run_3_cylinder_2stroke_tests(void)
   configPage2.injTiming = true;
   configPage2.reqFuel = reqFuel;
   configPage2.divider = 1;
- 
+
   RUN_TEST_P(cylinder3_stroke2_seq_nostage);
   RUN_TEST_P(cylinder3_stroke2_semiseq_nostage);
   RUN_TEST_P(cylinder3_stroke2_seq_staged);
@@ -474,7 +474,7 @@ static void cylinder4_stroke4_seq_staged(void)
 #endif
 }
 
-static void cylinder4_stroke4_semiseq_staged(void)  
+static void cylinder4_stroke4_semiseq_staged(void)
 {
   configPage2.injLayout = INJ_PAIRED;
   configPage10.stagingEnabled = true;
@@ -497,7 +497,7 @@ void run_4_cylinder_4stroke_tests(void)
   RUN_TEST_P(cylinder4_stroke4_seq_nostage);
   RUN_TEST_P(cylinder4_stroke4_semiseq_nostage);
   RUN_TEST_P(cylinder4_stroke4_seq_staged);
-  RUN_TEST_P(cylinder4_stroke4_semiseq_staged);  
+  RUN_TEST_P(cylinder4_stroke4_semiseq_staged);
 }
 
 static void cylinder4_stroke2_seq_nostage(void)
@@ -563,7 +563,7 @@ void run_4_cylinder_2stroke_tests(void)
   RUN_TEST_P(cylinder4_stroke2_seq_nostage);
   RUN_TEST_P(cylinder4_stroke2_semiseq_nostage);
   RUN_TEST_P(cylinder4_stroke2_seq_staged);
-  RUN_TEST_P(cylinder4_stroke2_semiseq_staged);  
+  RUN_TEST_P(cylinder4_stroke2_semiseq_staged);
 }
 
 static void cylinder5_stroke4_seq_nostage(void)
@@ -609,7 +609,7 @@ static void cylinder5_stroke4_seq_staged(void)
 #endif
   }
 
-static void cylinder5_stroke4_semiseq_staged(void) 
+static void cylinder5_stroke4_semiseq_staged(void)
 {
   configPage2.injLayout = INJ_PAIRED;
   configPage10.stagingEnabled = true;
@@ -638,7 +638,7 @@ void run_5_cylinder_4stroke_tests(void)
   RUN_TEST_P(cylinder5_stroke4_seq_nostage);
   RUN_TEST_P(cylinder5_stroke4_semiseq_nostage);
   RUN_TEST_P(cylinder5_stroke4_seq_staged);
-  RUN_TEST_P(cylinder5_stroke4_semiseq_staged); 
+  RUN_TEST_P(cylinder5_stroke4_semiseq_staged);
 }
 
 static void cylinder6_stroke4_seq_nostage(void)
@@ -711,7 +711,7 @@ void run_6_cylinder_4stroke_tests(void)
   RUN_TEST_P(cylinder6_stroke4_seq_nostage);
   RUN_TEST_P(cylinder6_stroke4_semiseq_nostage);
   RUN_TEST_P(cylinder6_stroke4_seq_staged);
-  RUN_TEST_P(cylinder6_stroke4_semiseq_staged); 
+  RUN_TEST_P(cylinder6_stroke4_semiseq_staged);
 }
 
 static void cylinder8_stroke4_seq_nostage(void)
@@ -755,7 +755,7 @@ static void cylinder_1_NoinjTiming_paired(void) {
   initialiseAll(); //Run the main initialise function
 
   const bool enabled[] = {true, false, false, false, false, false, false, false};
-  assert_fuel_schedules(720U, reqFuel * 50U, enabled, zeroAngles);  
+  assert_fuel_schedules(720U, reqFuel * 50U, enabled, zeroAngles);
 }
 
 static void cylinder_2_NoinjTiming_paired(void) {
@@ -766,7 +766,7 @@ static void cylinder_2_NoinjTiming_paired(void) {
   initialiseAll(); //Run the main initialise function
 
   const bool enabled[] = {true, true, false, false, false, false, false, false};
-  assert_fuel_schedules(720U, reqFuel * 50U, enabled, zeroAngles);   
+  assert_fuel_schedules(720U, reqFuel * 50U, enabled, zeroAngles);
 }
 
 static void cylinder_3_NoinjTiming_paired(void) {
@@ -777,7 +777,7 @@ static void cylinder_3_NoinjTiming_paired(void) {
   initialiseAll(); //Run the main initialise function
 
   const bool enabled[] = {true, true, true, false, false, false, false, false};
-  assert_fuel_schedules(720U, reqFuel * 50U, enabled, zeroAngles);   
+  assert_fuel_schedules(720U, reqFuel * 50U, enabled, zeroAngles);
 }
 
 static void cylinder_4_NoinjTiming_paired(void) {
@@ -788,7 +788,7 @@ static void cylinder_4_NoinjTiming_paired(void) {
   initialiseAll(); //Run the main initialise function
 
   const bool enabled[] = {true, true, false, false, false, false, false, false};
-  assert_fuel_schedules(720U, reqFuel * 50U, enabled, zeroAngles);   
+  assert_fuel_schedules(720U, reqFuel * 50U, enabled, zeroAngles);
 }
 
 static void cylinder_5_NoinjTiming_paired(void) {
@@ -799,7 +799,7 @@ static void cylinder_5_NoinjTiming_paired(void) {
   initialiseAll(); //Run the main initialise function
 
   const bool enabled[] = {true, true, true, true, false, false, false, false};
-  assert_fuel_schedules(720U, reqFuel * 50U, enabled, zeroAngles);   
+  assert_fuel_schedules(720U, reqFuel * 50U, enabled, zeroAngles);
 }
 
 static void cylinder_6_NoinjTiming_paired(void) {
@@ -810,7 +810,7 @@ static void cylinder_6_NoinjTiming_paired(void) {
   initialiseAll(); //Run the main initialise function
 
   const bool enabled[] = {true, true, true, false, false, false, false, false};
-  assert_fuel_schedules(720U, reqFuel * 50U, enabled, zeroAngles);   
+  assert_fuel_schedules(720U, reqFuel * 50U, enabled, zeroAngles);
 }
 
 static void cylinder_8_NoinjTiming_paired(void) {
@@ -821,7 +821,7 @@ static void cylinder_8_NoinjTiming_paired(void) {
   initialiseAll(); //Run the main initialise function
 
   const bool enabled[] = {true, true, true, true, false, false, false, false};
-  assert_fuel_schedules(720U, reqFuel * 50U, enabled, zeroAngles);   
+  assert_fuel_schedules(720U, reqFuel * 50U, enabled, zeroAngles);
 }
 
 static void run_no_inj_timing_tests(void)
@@ -910,7 +910,7 @@ static void test_partial_sync(void)
   {
 	  const bool enabled[] = {true, true, false, false, false, false, false, false};
 	  const uint16_t angle[] = {0,180,360,540,0,0,0,0};
-    assert_fuel_schedules(360U, reqFuel * 50U, enabled, angle);    
+    assert_fuel_schedules(360U, reqFuel * 50U, enabled, angle);
   }
 
   changeHalfToFullSync();
