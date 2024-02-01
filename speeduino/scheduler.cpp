@@ -314,48 +314,48 @@ extern void beginInjectorPriming(void)
     // XXX - Should that be _multiplied_ by 0.5, which also means the value should be multiplied by 2?
     static unsigned config_multiplier = 5;
     primingValue = primingValue * priming_delay_us * config_multiplier;
-    if (maxInjOutputs >= 1)
+    if (max_injectors.maxOutputs >= 1)
     {
       setFuelSchedule(fuelSchedule1, priming_delay_us, primingValue);
     }
 #if (INJ_CHANNELS >= 2)
-    if (maxInjOutputs >= 2)
+    if (max_injectors.maxOutputs >= 2)
     {
       setFuelSchedule(fuelSchedule2, priming_delay_us, primingValue);
     }
 #endif
 #if (INJ_CHANNELS >= 3)
-    if (maxInjOutputs >= 3)
+    if (max_injectors.maxOutputs >= 3)
     {
       setFuelSchedule(fuelSchedule3, priming_delay_us, primingValue);
     }
 #endif
 #if (INJ_CHANNELS >= 4)
-    if (maxInjOutputs >= 4)
+    if (max_injectors.maxOutputs >= 4)
     {
       setFuelSchedule(fuelSchedule4, priming_delay_us, primingValue);
     }
 #endif
 #if (INJ_CHANNELS >= 5)
-    if (maxInjOutputs >= 5)
+    if (max_injectors.maxOutputs >= 5)
     {
       setFuelSchedule(fuelSchedule5, priming_delay_us, primingValue);
     }
 #endif
 #if (INJ_CHANNELS >= 6)
-    if (maxInjOutputs >= 6)
+    if (max_injectors.maxOutputs >= 6)
     {
       setFuelSchedule(fuelSchedule6, priming_delay_us, primingValue);
     }
 #endif
 #if (INJ_CHANNELS >= 7)
-    if (maxInjOutputs >= 7)
+    if (max_injectors.maxOutputs >= 7)
     {
       setFuelSchedule(fuelSchedule7, priming_delay_us, primingValue);
     }
 #endif
 #if (INJ_CHANNELS >= 8)
-    if (maxInjOutputs >= 8)
+    if (max_injectors.maxOutputs >= 8)
     {
       setFuelSchedule(fuelSchedule8, priming_delay_us, primingValue);
     }

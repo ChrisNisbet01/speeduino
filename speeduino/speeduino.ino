@@ -54,7 +54,6 @@ uint16_t inj_opentime_uS = 0;
 
 uint8_t ignitionChannelsOn; /**< The current state of the ignition system (on or off) */
 uint8_t ignitionChannelsPending = 0; /**< Any ignition channels that are pending injections before they are resumed */
-uint8_t fuelChannelsOn; /**< The current state of the fuel system (on or off) */
 uint32_t rollingCutLastRev = 0; /**< Tracks whether we're on the same or a different rev for the rolling cut */
 
 uint16_t staged_req_fuel_mult_pri = 0;
@@ -141,7 +140,13 @@ void loop(void)
 
   currentLoopTime = micros_safe();
   uint32_t timeToLastTooth = (currentLoopTime - toothLastToothTime);
-  if ((timeToLastTooth < MAX_STALL_TIME) || (toothLastToothTime > currentLoopTime)) //Check how long ago the last tooth was seen compared to now. If it was more than half a second ago then the engine is probably stopped. toothLastToothTime can be greater than currentLoopTime if a pulse occurs between getting the latest time and doing the comparison
+
+  //Check how long ago the last tooth was seen compared to now. If it was more
+  //than MAX_STALL_TIME ago then the engine is probably stopped.
+  //toothLastToothTime can be greater than currentLoopTime if a pulse occurs
+  //between getting the latest time and doing the comparison.
+  if (timeToLastTooth < MAX_STALL_TIME
+      || toothLastToothTime > currentLoopTime)
   {
     currentStatus.longRPM = getRPM(); //Long RPM is included here
     currentStatus.RPM = currentStatus.longRPM;
@@ -173,7 +178,8 @@ void loop(void)
     AFRnextCycle = 0;
     ignitionCount = 0;
     ignitionChannelsOn = 0;
-    fuelChannelsOn = 0;
+    max_injectors.setAllOff();
+
     if (currentStatus.fpPrimed)
     {
       //Turn off the fuel pump, but only if the priming is complete
@@ -901,7 +907,8 @@ void loop(void)
       case PROTECT_CUT_OFF:
         //Make sure all channels are turned on
         ignitionChannelsOn = 0xFF;
-        fuelChannelsOn = 0xFF;
+        max_injectors.setAllOn();
+
         currentStatus.engineProtectStatus = 0;
         break;
 
@@ -910,17 +917,17 @@ void loop(void)
         break;
 
       case PROTECT_CUT_FUEL:
-        fuelChannelsOn = 0;
+        max_injectors.setAllOff();
         break;
 
       case PROTECT_CUT_BOTH:
         ignitionChannelsOn = 0;
-        fuelChannelsOn = 0;
+        max_injectors.setAllOff();
         break;
 
       default:
         ignitionChannelsOn = 0;
-        fuelChannelsOn = 0;
+        max_injectors.setAllOff();
         break;
       }
     } //Hard cut check
@@ -964,7 +971,7 @@ void loop(void)
           cutPercent = table2D_getValue(&rollingCutTable, (rpmDelta / 10));
         }
 
-        for (uint8_t x = 0; x < max(maxIgnOutputs, maxInjOutputs); x++)
+        for (uint8_t x = 0; x < max(maxIgnOutputs, max_injectors.maxOutputs); x++)
         {
           if (cutPercent == 100 || random1to100() < cutPercent)
           {
@@ -973,7 +980,7 @@ void loop(void)
             case PROTECT_CUT_OFF:
               //Make sure all channels are turned on
               ignitionChannelsOn = 0xFF;
-              fuelChannelsOn = 0xFF;
+              max_injectors.setAllOn();
               break;
 
             case PROTECT_CUT_IGN:
@@ -982,20 +989,20 @@ void loop(void)
               break;
 
             case PROTECT_CUT_FUEL:
-              BIT_CLEAR(fuelChannelsOn, x); //Turn off this fuel channel
+              max_injectors.setOff(x + 1);
               disablePendingFuelSchedule(x);
               break;
 
             case PROTECT_CUT_BOTH:
               BIT_CLEAR(ignitionChannelsOn, x); //Turn off this ignition channel
-              BIT_CLEAR(fuelChannelsOn, x); //Turn off this fuel channel
+              max_injectors.setOff(x + 1);
               disablePendingFuelSchedule(x);
               disablePendingIgnSchedule(x);
               break;
 
             default:
               BIT_CLEAR(ignitionChannelsOn, x); //Turn off this ignition channel
-              BIT_CLEAR(fuelChannelsOn, x); //Turn off this fuel channel
+              max_injectors.setOff(x + 1);
               break;
             }
           }
@@ -1005,7 +1012,7 @@ void loop(void)
 
             //Special case for non-sequential, 4-stroke where both fuel and ignition are cut. The ignition pulses should wait 1 cycle after the fuel channels are turned back on before firing again
             if (revolutionsToCut == 4 //4 stroke and non-sequential
-                && !BIT_CHECK(fuelChannelsOn, x) //Fuel on this channel is currently off, meaning it is the first revolution after a cut
+                && !max_injectors.isOperational(x+1) //Fuel on this channel is currently off, meaning it is the first revolution after a cut
                 && configPage6.engineProtectType == PROTECT_CUT_BOTH //Both fuel and ignition are cut
                )
             {
@@ -1019,7 +1026,7 @@ void loop(void)
             }
 
 
-            BIT_SET(fuelChannelsOn, x); //Turn on this fuel channel
+            max_injectors.setOn(x + 1);
           }
         }
         rollingCutLastRev = currentStatus.startRevolutions;
@@ -1034,7 +1041,7 @@ void loop(void)
       if (ignitionChannelsPending > 0
           && currentStatus.startRevolutions >= rollingCutLastRev + 2)
       {
-        ignitionChannelsOn = fuelChannelsOn;
+        ignitionChannelsOn = max_injectors.channelsOnMask();
         ignitionChannelsPending = 0;
       }
     } //Rolling cut check
@@ -1046,16 +1053,15 @@ void loop(void)
       {
         //Enable the fuel and ignition, assuming staging revolutions are complete
         ignitionChannelsOn = 0xff;
-        fuelChannelsOn = 0xff;
+        max_injectors.setAllOn();
       }
     }
 
 #if INJ_CHANNELS >= 1
-    if (maxInjOutputs >= 1
-        && currentStatus.PW1 >= inj_opentime_uS
-        && BIT_CHECK(fuelChannelsOn, INJ1_CMD_BIT))
+    if (max_injectors.isOperational(1) && currentStatus.PW1 >= inj_opentime_uS)
     {
-      uint32_t timeOut = calculateInjectorTimeout(fuelSchedule1, channel1InjDegrees, injector1StartAngle, crankAngle);
+      uint32_t timeOut =
+        calculateInjectorTimeout(fuelSchedule1, channel1InjDegrees, injector1StartAngle, crankAngle);
       if (timeOut > 0U)
       {
         setFuelSchedule(
@@ -1079,11 +1085,10 @@ void loop(void)
     |------------------------------------------------------------------------------------------
     */
 #if INJ_CHANNELS >= 2
-    if (maxInjOutputs >= 2
-        && currentStatus.PW2 >= inj_opentime_uS
-        && BIT_CHECK(fuelChannelsOn, INJ2_CMD_BIT))
+    if (max_injectors.isOperational(2) && currentStatus.PW2 >= inj_opentime_uS)
     {
-      uint32_t timeOut = calculateInjectorTimeout(fuelSchedule2, channel2InjDegrees, injector2StartAngle, crankAngle);
+      uint32_t timeOut =
+        calculateInjectorTimeout(fuelSchedule2, channel2InjDegrees, injector2StartAngle, crankAngle);
       if (timeOut > 0U)
       {
         setFuelSchedule(
@@ -1093,11 +1098,10 @@ void loop(void)
 #endif
 
 #if INJ_CHANNELS >= 3
-    if (maxInjOutputs >= 3
-        && currentStatus.PW3 >= inj_opentime_uS
-        && BIT_CHECK(fuelChannelsOn, INJ3_CMD_BIT))
+    if (max_injectors.isOperational(3) && currentStatus.PW3 >= inj_opentime_uS)
     {
-      uint32_t timeOut = calculateInjectorTimeout(fuelSchedule3, channel3InjDegrees, injector3StartAngle, crankAngle);
+      uint32_t timeOut =
+        calculateInjectorTimeout(fuelSchedule3, channel3InjDegrees, injector3StartAngle, crankAngle);
       if (timeOut > 0U)
       {
         setFuelSchedule(
@@ -1107,11 +1111,10 @@ void loop(void)
 #endif
 
 #if INJ_CHANNELS >= 4
-    if (maxInjOutputs >= 4
-        && currentStatus.PW4 >= inj_opentime_uS
-        && BIT_CHECK(fuelChannelsOn, INJ4_CMD_BIT))
+    if (max_injectors.isOperational(4) && currentStatus.PW4 >= inj_opentime_uS)
     {
-      uint32_t timeOut = calculateInjectorTimeout(fuelSchedule4, channel4InjDegrees, injector4StartAngle, crankAngle);
+      uint32_t timeOut =
+        calculateInjectorTimeout(fuelSchedule4, channel4InjDegrees, injector4StartAngle, crankAngle);
       if (timeOut > 0U)
       {
         setFuelSchedule(
@@ -1121,11 +1124,10 @@ void loop(void)
 #endif
 
 #if INJ_CHANNELS >= 5
-    if (maxInjOutputs >= 5
-        && currentStatus.PW5 >= inj_opentime_uS
-        && BIT_CHECK(fuelChannelsOn, INJ5_CMD_BIT))
+    if (max_injectors.isOperational(5) && currentStatus.PW5 >= inj_opentime_uS)
     {
-      uint32_t timeOut = calculateInjectorTimeout(fuelSchedule5, channel5InjDegrees, injector5StartAngle, crankAngle);
+      uint32_t timeOut =
+        calculateInjectorTimeout(fuelSchedule5, channel5InjDegrees, injector5StartAngle, crankAngle);
       if (timeOut > 0U)
       {
         setFuelSchedule(
@@ -1135,11 +1137,10 @@ void loop(void)
 #endif
 
 #if INJ_CHANNELS >= 6
-    if (maxInjOutputs >= 6
-        && currentStatus.PW6 >= inj_opentime_uS
-        && BIT_CHECK(fuelChannelsOn, INJ6_CMD_BIT))
+    if (max_injectors.isOperational(6) && currentStatus.PW6 >= inj_opentime_uS)
     {
-      uint32_t timeOut = calculateInjectorTimeout(fuelSchedule6, channel6InjDegrees, injector6StartAngle, crankAngle);
+      uint32_t timeOut =
+        calculateInjectorTimeout(fuelSchedule6, channel6InjDegrees, injector6StartAngle, crankAngle);
       if (timeOut > 0U)
       {
         setFuelSchedule(
@@ -1149,11 +1150,10 @@ void loop(void)
 #endif
 
 #if INJ_CHANNELS >= 7
-    if (maxInjOutputs >= 7
-        && currentStatus.PW7 >= inj_opentime_uS
-        && BIT_CHECK(fuelChannelsOn, INJ7_CMD_BIT))
+    if (max_injectors.isOperational(7) && currentStatus.PW7 >= inj_opentime_uS)
     {
-      uint32_t timeOut = calculateInjectorTimeout(fuelSchedule7, channel7InjDegrees, injector7StartAngle, crankAngle);
+      uint32_t timeOut =
+        calculateInjectorTimeout(fuelSchedule7, channel7InjDegrees, injector7StartAngle, crankAngle);
       if (timeOut > 0U)
       {
         setFuelSchedule(
@@ -1163,11 +1163,10 @@ void loop(void)
 #endif
 
 #if INJ_CHANNELS >= 8
-    if (maxInjOutputs >= 8
-        && currentStatus.PW8 >= inj_opentime_uS
-        && BIT_CHECK(fuelChannelsOn, INJ8_CMD_BIT))
+    if (max_injectors.isOperational(8) && currentStatus.PW8 >= inj_opentime_uS)
     {
-      uint32_t timeOut = calculateInjectorTimeout(fuelSchedule8, channel8InjDegrees, injector8StartAngle, crankAngle);
+      uint32_t timeOut =
+        calculateInjectorTimeout(fuelSchedule8, channel8InjDegrees, injector8StartAngle, crankAngle);
       if (timeOut > 0U)
       {
         setFuelSchedule(
@@ -1832,7 +1831,7 @@ void calculateStaging(uint32_t pwLimit)
   }
   else
   {
-    if (maxInjOutputs >= 2)
+    if (max_injectors.maxOutputs >= 2)
     {
       currentStatus.PW2 = currentStatus.PW1;
     }
@@ -1840,7 +1839,7 @@ void calculateStaging(uint32_t pwLimit)
     {
       currentStatus.PW2 = 0;
     }
-    if (maxInjOutputs >= 3)
+    if (max_injectors.maxOutputs >= 3)
     {
       currentStatus.PW3 = currentStatus.PW1;
     }
@@ -1848,7 +1847,7 @@ void calculateStaging(uint32_t pwLimit)
     {
       currentStatus.PW3 = 0;
     }
-    if (maxInjOutputs >= 4)
+    if (max_injectors.maxOutputs >= 4)
     {
       currentStatus.PW4 = currentStatus.PW1;
     }
@@ -1856,7 +1855,7 @@ void calculateStaging(uint32_t pwLimit)
     {
       currentStatus.PW4 = 0;
     }
-    if (maxInjOutputs >= 5)
+    if (max_injectors.maxOutputs >= 5)
     {
       currentStatus.PW5 = currentStatus.PW1;
     }
@@ -1864,7 +1863,7 @@ void calculateStaging(uint32_t pwLimit)
     {
       currentStatus.PW5 = 0;
     }
-    if (maxInjOutputs >= 6)
+    if (max_injectors.maxOutputs >= 6)
     {
       currentStatus.PW6 = currentStatus.PW1;
     }
@@ -1872,7 +1871,7 @@ void calculateStaging(uint32_t pwLimit)
     {
       currentStatus.PW6 = 0;
     }
-    if (maxInjOutputs >= 7)
+    if (max_injectors.maxOutputs >= 7)
     {
       currentStatus.PW7 = currentStatus.PW1;
     }
@@ -1880,7 +1879,7 @@ void calculateStaging(uint32_t pwLimit)
     {
       currentStatus.PW7 = 0;
     }
-    if (maxInjOutputs >= 8)
+    if (max_injectors.maxOutputs >= 8)
     {
       currentStatus.PW8 = currentStatus.PW1;
     }

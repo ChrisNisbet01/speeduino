@@ -557,8 +557,59 @@ extern volatile byte HWTest_INJ_Pulsed; /**< Each bit in this variable represent
 extern volatile byte HWTest_IGN;        /**< Each bit in this variable represents one of the ignition channels and it's HW test status */
 extern volatile byte HWTest_IGN_Pulsed; /**< Each bit in this variable represents one of the ignition channels and it's 50% HW test status */
 extern byte maxIgnOutputs;              /**< Number of ignition outputs being used by the current tune configuration */
-extern byte maxInjOutputs;              /**< Number of injection outputs being used by the current tune configuration */
-extern byte resetControl;               ///< resetControl needs to be here (as global) because using the config page (4) directly can prevent burning the setting
+
+typedef struct max_injectors_st
+{
+public:
+  byte maxOutputs = 1; /**< Number of injection outputs being used by the current tune configuration */
+  byte channelsOn;
+
+  void setMaxInjectors(byte const maxOutputs)
+  {
+    this->maxOutputs = maxOutputs;
+    this->maxOutputMask = ((uint16_t)1 << maxOutputs) - 1;
+  }
+
+  void setAllOn(void)
+  {
+    channelsOn = maxOutputMask;
+  }
+
+  void setAllOff(void)
+  {
+    channelsOn = 0;
+  }
+
+  void setOn(byte inj)
+  {
+    BIT_SET(channelsOn, inj - 1);
+  }
+
+  void setOff(byte inj)
+  {
+    BIT_CLEAR(channelsOn, inj - 1);
+  }
+
+  bool isOperational(byte inj)
+  {
+    return ((1 << (inj - 1)) & maxOutputMask & channelsOn) != 0;
+  }
+
+  byte channelsOnMask(void)
+  {
+    return channelsOn;
+  }
+
+private:
+  byte maxOutputMask = 0x01;
+
+} max_injectors_st;
+
+extern max_injectors_st max_injectors;
+
+///< resetControl needs to be here (as global) because using the config page (4)
+///directly can prevent burning the setting
+extern byte resetControl;
 extern volatile byte TIMER_mask;
 extern volatile byte LOOP_TIMER;
 
