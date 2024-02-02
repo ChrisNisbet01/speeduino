@@ -79,138 +79,124 @@ static void reset(IgnitionSchedule &schedule)
 {
     schedule.Status = OFF;
     schedule.pTimerEnable();
+    schedule.start.pCallback = nullCallback;
+    schedule.end.pCallback = nullCallback;
 }
 
-void initialiseSchedulers()
+static void initialiseFuelSchedules(void)
 {
-    reset(fuelSchedule1);
-    reset(fuelSchedule2);
-    reset(fuelSchedule3);
-    reset(fuelSchedule4);
+  injectors_context.injectors[0].fuelSchedule = &fuelSchedule1;
+  injectors_context.injectors[1].fuelSchedule = &fuelSchedule2;
+  injectors_context.injectors[2].fuelSchedule = &fuelSchedule3;
+  injectors_context.injectors[3].fuelSchedule = &fuelSchedule4;
 #if INJ_CHANNELS >= 5
-    reset(fuelSchedule5);
+  injectors_context.injectors[4].fuelSchedule = &fuelSchedule5;
 #endif
 #if INJ_CHANNELS >= 6
-    reset(fuelSchedule6);
+  injectors_context.injectors[5].fuelSchedule = &fuelSchedule6;
 #endif
 #if INJ_CHANNELS >= 7
-    reset(fuelSchedule7);
+  injectors_context.injectors[6].fuelSchedule = &fuelSchedule7;
 #endif
 #if INJ_CHANNELS >= 8
-    reset(fuelSchedule8);
+  injectors_context.injectors[7].fuelSchedule = &fuelSchedule8;
 #endif
+}
 
-    reset(ignitionSchedule1);
-    reset(ignitionSchedule2);
-    reset(ignitionSchedule3);
-    reset(ignitionSchedule4);
-    reset(ignitionSchedule5);
+void initialiseSchedulers(void)
+{
+  initialiseFuelSchedules();
+  for (size_t i = 0; i < ARRAY_SIZE(injectors_context.injectors); i++)
+  {
+    reset(*injectors_context.injectors[i].fuelSchedule);
+  }
+
+  reset(ignitionSchedule1);
+  reset(ignitionSchedule2);
+  reset(ignitionSchedule3);
+  reset(ignitionSchedule4);
+  reset(ignitionSchedule5);
 #if (IGN_CHANNELS >= 5)
-    reset(ignitionSchedule5);
+  reset(ignitionSchedule5);
 #endif
 #if IGN_CHANNELS >= 6
-    reset(ignitionSchedule6);
+  reset(ignitionSchedule6);
 #endif
 #if IGN_CHANNELS >= 7
-    reset(ignitionSchedule7);
+  reset(ignitionSchedule7);
 #endif
 #if IGN_CHANNELS >= 8
-    reset(ignitionSchedule8);
-#endif
-
-  fuelSchedule1.start.pCallback = nullCallback;
-  fuelSchedule1.end.pCallback = nullCallback;
-  fuelSchedule2.start.pCallback = nullCallback;
-  fuelSchedule2.end.pCallback = nullCallback;
-  fuelSchedule3.start.pCallback = nullCallback;
-  fuelSchedule3.end.pCallback = nullCallback;
-  fuelSchedule4.start.pCallback = nullCallback;
-  fuelSchedule4.end.pCallback = nullCallback;
-#if (INJ_CHANNELS >= 5)
-  fuelSchedule5.start.pCallback = nullCallback;
-  fuelSchedule5.end.pCallback = nullCallback;
-#endif
-#if (INJ_CHANNELS >= 6)
-  fuelSchedule6.start.pCallback = nullCallback;
-  fuelSchedule6.end.pCallback = nullCallback;
-#endif
-#if (INJ_CHANNELS >= 7)
-  fuelSchedule7.start.pCallback = nullCallback;
-  fuelSchedule7.end.pCallback = nullCallback;
-#endif
-#if (INJ_CHANNELS >= 8)
-  fuelSchedule8.start.pCallback = nullCallback;
-  fuelSchedule8.end.pCallback = nullCallback;
+  reset(ignitionSchedule8);
 #endif
 
   ignitionSchedule1.start.pCallback = nullCallback;
   ignitionSchedule1.end.pCallback = nullCallback;
-  ignition1StartAngle=0;
-  ignition1EndAngle=0;
-  channel1IgnDegrees=0; /**< The number of crank degrees until cylinder 1 is at TDC (This is obviously 0 for virtually ALL engines, but there's some weird ones) */
+  ignition1StartAngle = 0;
+  ignition1EndAngle = 0;
+  channel1IgnDegrees = 0; /**< The number of crank degrees until cylinder 1 is at TDC (This is obviously 0 for virtually ALL engines, but there's some weird ones) */
 
   ignitionSchedule2.start.pCallback = nullCallback;
   ignitionSchedule2.end.pCallback = nullCallback;
-  ignition2StartAngle=0;
-  ignition2EndAngle=0;
-  channel2IgnDegrees=0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
+  ignition2StartAngle = 0;
+  ignition2EndAngle = 0;
+  channel2IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
 
   ignitionSchedule3.start.pCallback = nullCallback;
   ignitionSchedule3.end.pCallback = nullCallback;
-  ignition3StartAngle=0;
-  ignition3EndAngle=0;
-  channel3IgnDegrees=0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
+  ignition3StartAngle = 0;
+  ignition3EndAngle = 0;
+  channel3IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
 
   ignitionSchedule4.start.pCallback = nullCallback;
   ignitionSchedule4.end.pCallback = nullCallback;
-  ignition4StartAngle=0;
-  ignition4EndAngle=0;
-  channel4IgnDegrees=0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
+  ignition4StartAngle = 0;
+  ignition4EndAngle = 0;
+  channel4IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
 
 #if (IGN_CHANNELS >= 5)
   ignitionSchedule5.start.pCallback = nullCallback;
   ignitionSchedule5.end.pCallback = nullCallback;
-  ignition5StartAngle=0;
-  ignition5EndAngle=0;
-  channel5IgnDegrees=0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
+  ignition5StartAngle = 0;
+  ignition5EndAngle = 0;
+  channel5IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
 #endif
 #if (IGN_CHANNELS >= 6)
   ignitionSchedule6.start.pCallback = nullCallback;
   ignitionSchedule6.end.pCallback = nullCallback;
-  ignition6StartAngle=0;
-  ignition6EndAngle=0;
-  channel6IgnDegrees=0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
+  ignition6StartAngle = 0;
+  ignition6EndAngle = 0;
+  channel6IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
 #endif
 #if (IGN_CHANNELS >= 7)
   ignitionSchedule7.start.pCallback = nullCallback;
   ignitionSchedule7.end.pCallback = nullCallback;
-  ignition7StartAngle=0;
-  ignition7EndAngle=0;
-  channel7IgnDegrees=0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
+  ignition7StartAngle = 0;
+  ignition7EndAngle = 0;
+  channel7IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
 #endif
 #if (IGN_CHANNELS >= 8)
   ignitionSchedule8.start.pCallback = nullCallback;
   ignitionSchedule8.end.pCallback = nullCallback;
-  ignition8StartAngle=0;
-  ignition8EndAngle=0;
-  channel8IgnDegrees=0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
+  ignition8StartAngle = 0;
+  ignition8EndAngle = 0;
+  channel8IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
 #endif
 
-	channel1InjDegrees = 0; /**< The number of crank degrees until cylinder 1 is at TDC (This is obviously 0 for virtually ALL engines, but there's some weird ones) */
-	channel2InjDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
-	channel3InjDegrees = 0; /**< The number of crank degrees until cylinder 3 (and 5/6/7/8) is at TDC */
-	channel4InjDegrees = 0; /**< The number of crank degrees until cylinder 4 (and 5/6/7/8) is at TDC */
+  channel1InjDegrees = 0; /**< The number of crank degrees until cylinder 1 is at TDC (This is obviously 0 for virtually ALL engines, but there's some weird ones) */
+  channel2InjDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
+  channel3InjDegrees = 0; /**< The number of crank degrees until cylinder 3 (and 5/6/7/8) is at TDC */
+  channel4InjDegrees = 0; /**< The number of crank degrees until cylinder 4 (and 5/6/7/8) is at TDC */
 #if (INJ_CHANNELS >= 5)
-	channel5InjDegrees = 0; /**< The number of crank degrees until cylinder 5 is at TDC */
+  channel5InjDegrees = 0; /**< The number of crank degrees until cylinder 5 is at TDC */
 #endif
 #if (INJ_CHANNELS >= 6)
-	channel6InjDegrees = 0; /**< The number of crank degrees until cylinder 6 is at TDC */
+  channel6InjDegrees = 0; /**< The number of crank degrees until cylinder 6 is at TDC */
 #endif
 #if (INJ_CHANNELS >= 7)
-	channel7InjDegrees = 0; /**< The number of crank degrees until cylinder 7 is at TDC */
+  channel7InjDegrees = 0; /**< The number of crank degrees until cylinder 7 is at TDC */
 #endif
 #if (INJ_CHANNELS >= 8)
-	channel8InjDegrees = 0; /**< The number of crank degrees until cylinder 8 is at TDC */
+  channel8InjDegrees = 0; /**< The number of crank degrees until cylinder 8 is at TDC */
 #endif
 
 }
@@ -314,52 +300,12 @@ extern void beginInjectorPriming(void)
     // XXX - Should that be _multiplied_ by 0.5, which also means the value should be multiplied by 2?
     static unsigned config_multiplier = 5;
     primingValue = primingValue * priming_delay_us * config_multiplier;
-    if (max_injectors.maxOutputs >= 1)
+
+    for (size_t i = 0; i < injectors_context.maxOutputs; i++)
     {
-      setFuelSchedule(fuelSchedule1, priming_delay_us, primingValue);
+      setFuelSchedule(
+        *injectors_context.injectors[i].fuelSchedule, priming_delay_us, primingValue);
     }
-#if (INJ_CHANNELS >= 2)
-    if (max_injectors.maxOutputs >= 2)
-    {
-      setFuelSchedule(fuelSchedule2, priming_delay_us, primingValue);
-    }
-#endif
-#if (INJ_CHANNELS >= 3)
-    if (max_injectors.maxOutputs >= 3)
-    {
-      setFuelSchedule(fuelSchedule3, priming_delay_us, primingValue);
-    }
-#endif
-#if (INJ_CHANNELS >= 4)
-    if (max_injectors.maxOutputs >= 4)
-    {
-      setFuelSchedule(fuelSchedule4, priming_delay_us, primingValue);
-    }
-#endif
-#if (INJ_CHANNELS >= 5)
-    if (max_injectors.maxOutputs >= 5)
-    {
-      setFuelSchedule(fuelSchedule5, priming_delay_us, primingValue);
-    }
-#endif
-#if (INJ_CHANNELS >= 6)
-    if (max_injectors.maxOutputs >= 6)
-    {
-      setFuelSchedule(fuelSchedule6, priming_delay_us, primingValue);
-    }
-#endif
-#if (INJ_CHANNELS >= 7)
-    if (max_injectors.maxOutputs >= 7)
-    {
-      setFuelSchedule(fuelSchedule7, priming_delay_us, primingValue);
-    }
-#endif
-#if (INJ_CHANNELS >= 8)
-    if (max_injectors.maxOutputs >= 8)
-    {
-      setFuelSchedule(fuelSchedule8, priming_delay_us, primingValue);
-    }
-#endif
   }
 }
 
@@ -416,7 +362,7 @@ ISR(TIMER3_COMPA_vect) //cppcheck-suppress misra-c2012-8.2
 void fuelSchedule1Interrupt() //Most ARM chips can simply call a function
 #endif
   {
-    fuelScheduleISR(fuelSchedule1);
+    fuelScheduleISR(*injectors_context.injectors[0].fuelSchedule);
   }
 
 
@@ -426,7 +372,7 @@ ISR(TIMER3_COMPB_vect) //cppcheck-suppress misra-c2012-8.2
 void fuelSchedule2Interrupt() //Most ARM chips can simply call a function
 #endif
   {
-    fuelScheduleISR(fuelSchedule2);
+    fuelScheduleISR(*injectors_context.injectors[1].fuelSchedule);
   }
 
 
@@ -436,7 +382,7 @@ ISR(TIMER3_COMPC_vect) //cppcheck-suppress misra-c2012-8.2
 void fuelSchedule3Interrupt() //Most ARM chips can simply call a function
 #endif
   {
-    fuelScheduleISR(fuelSchedule3);
+    fuelScheduleISR(*injectors_context.injectors[2].fuelSchedule);
   }
 
 
@@ -446,7 +392,7 @@ ISR(TIMER4_COMPB_vect) //cppcheck-suppress misra-c2012-8.2
 void fuelSchedule4Interrupt() //Most ARM chips can simply call a function
 #endif
   {
-    fuelScheduleISR(fuelSchedule4);
+    fuelScheduleISR(*injectors_context.injectors[3].fuelSchedule);
   }
 
 #if INJ_CHANNELS >= 5
@@ -456,7 +402,7 @@ ISR(TIMER4_COMPC_vect) //cppcheck-suppress misra-c2012-8.2
 void fuelSchedule5Interrupt() //Most ARM chips can simply call a function
 #endif
   {
-    fuelScheduleISR(fuelSchedule5);
+    fuelScheduleISR(*injectors_context.injectors[4].fuelSchedule);
   }
 #endif
 
@@ -467,7 +413,7 @@ ISR(TIMER4_COMPA_vect) //cppcheck-suppress misra-c2012-8.2
 void fuelSchedule6Interrupt() //Most ARM chips can simply call a function
 #endif
   {
-    fuelScheduleISR(fuelSchedule6);
+    fuelScheduleISR(*injectors_context.injectors[5].fuelSchedule);
   }
 #endif
 
@@ -478,7 +424,7 @@ ISR(TIMER5_COMPC_vect) //cppcheck-suppress misra-c2012-8.2
 void fuelSchedule7Interrupt() //Most ARM chips can simply call a function
 #endif
   {
-    fuelScheduleISR(fuelSchedule7);
+    fuelScheduleISR(*injectors_context.injectors[6].fuelSchedule);
   }
 #endif
 
@@ -489,7 +435,7 @@ ISR(TIMER5_COMPB_vect) //cppcheck-suppress misra-c2012-8.2
 void fuelSchedule8Interrupt() //Most ARM chips can simply call a function
 #endif
   {
-    fuelScheduleISR(fuelSchedule8);
+    fuelScheduleISR(*injectors_context.injectors[7].fuelSchedule);
   }
 #endif
 
@@ -628,44 +574,19 @@ void ignitionSchedule8Interrupt(void) //Most ARM chips can simply call a functio
 
 void disablePendingFuelSchedule(byte channel)
 {
-  noInterrupts();
-  switch(channel)
+  if (channel < ARRAY_SIZE(injectors_context.injectors))
   {
-    case 0:
-      if(fuelSchedule1.Status == PENDING) { fuelSchedule1.Status = OFF; }
-      break;
-    case 1:
-      if(fuelSchedule2.Status == PENDING) { fuelSchedule2.Status = OFF; }
-      break;
-    case 2:
-      if(fuelSchedule3.Status == PENDING) { fuelSchedule3.Status = OFF; }
-      break;
-    case 3:
-      if(fuelSchedule4.Status == PENDING) { fuelSchedule4.Status = OFF; }
-      break;
-    case 4:
-#if (INJ_CHANNELS >= 5)
-      if(fuelSchedule5.Status == PENDING) { fuelSchedule5.Status = OFF; }
-#endif
-      break;
-    case 5:
-#if (INJ_CHANNELS >= 6)
-      if(fuelSchedule6.Status == PENDING) { fuelSchedule6.Status = OFF; }
-#endif
-      break;
-    case 6:
-#if (INJ_CHANNELS >= 7)
-      if(fuelSchedule7.Status == PENDING) { fuelSchedule7.Status = OFF; }
-#endif
-      break;
-    case 7:
-#if (INJ_CHANNELS >= 8)
-      if(fuelSchedule8.Status == PENDING) { fuelSchedule8.Status = OFF; }
-#endif
-      break;
+    noInterrupts();
+
+    if (injectors_context.injectors[channel].fuelSchedule->Status == PENDING)
+    {
+      injectors_context.injectors[channel].fuelSchedule->Status = OFF;
+    }
+
+    interrupts();
   }
-  interrupts();
 }
+
 void disablePendingIgnSchedule(byte channel)
 {
   noInterrupts();
