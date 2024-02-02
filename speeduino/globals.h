@@ -109,12 +109,18 @@
 //This can only be included after the above section
 #include BOARD_H  //Note that this is not a real file, it is defined in globals.h.
 
+#include "schedule_contexts.h"
+
 //Handy bitsetting macros
 #define BIT_SET(a, b) ((a) |= (1U << (b)))
 #define BIT_CLEAR(a, b) ((a) &= ~(1U << (b)))
 #define BIT_CHECK(var, pos) !!((var) & (1U << (pos)))
 #define BIT_TOGGLE(var, pos) ((var) ^= 1UL << (pos))
 #define BIT_WRITE(var, pos, bitvalue) ((bitvalue) ? BIT_SET((var), (pos)) : bitClear((var), (pos)))
+
+#if !defined(ARRAY_SIZE)
+#define ARRAY_SIZE(A) (sizeof(A)/sizeof(A[0]))
+#endif
 
 #define CRANK_ANGLE_MAX (max(CRANK_ANGLE_MAX_IGN, CRANK_ANGLE_MAX_INJ))
 
@@ -558,11 +564,41 @@ extern volatile byte HWTest_IGN;        /**< Each bit in this variable represent
 extern volatile byte HWTest_IGN_Pulsed; /**< Each bit in this variable represents one of the ignition channels and it's 50% HW test status */
 extern byte maxIgnOutputs;              /**< Number of ignition outputs being used by the current tune configuration */
 
-typedef struct max_injectors_st
+extern FuelSchedule fuelSchedule1;
+extern FuelSchedule fuelSchedule2;
+extern FuelSchedule fuelSchedule3;
+extern FuelSchedule fuelSchedule4;
+#if INJ_CHANNELS >= 5
+extern FuelSchedule fuelSchedule5;
+#endif
+#if INJ_CHANNELS >= 6
+extern FuelSchedule fuelSchedule6;
+#endif
+#if INJ_CHANNELS >= 7
+extern FuelSchedule fuelSchedule7;
+#endif
+#if INJ_CHANNELS >= 8
+extern FuelSchedule fuelSchedule8;
+#endif
+
+typedef struct injector_context_st
+{
+  FuelSchedule * fuelSchedule;
+  unsigned int PW;
+} injector_context_st;
+
+typedef struct injectors_context_st
 {
 public:
   byte maxOutputs = 1; /**< Number of injection outputs being used by the current tune configuration */
   byte channelsOn;
+
+  injector_context_st injectors[INJ_CHANNELS];
+
+  injector_context_st * getInjectorContext(byte inj)
+  {
+    return &injectors[inj];
+  }
 
   void setMaxInjectors(byte const maxOutputs)
   {
@@ -603,9 +639,9 @@ public:
 private:
   byte maxOutputMask = 0x01;
 
-} max_injectors_st;
+} injectors_context_st;
 
-extern max_injectors_st max_injectors;
+extern injectors_context_st injectors_context;
 
 ///< resetControl needs to be here (as global) because using the config page (4)
 ///directly can prevent burning the setting
@@ -694,14 +730,6 @@ struct statuses {
   volatile byte spark;              ///< Spark status/control indicator bits (launch control, boost cut, spark errors, See BIT_SPARK_* defines)
   volatile byte spark2;             ///< Spark 2 ... (See also @ref config10 spark2* members and BIT_SPARK2_* defines)
   uint8_t engine;                   ///< Engine status bits (See BIT_ENGINE_* defines on top of this file)
-  unsigned int PW1;                 ///< In uS
-  unsigned int PW2;                 ///< In uS
-  unsigned int PW3;                 ///< In uS
-  unsigned int PW4;                 ///< In uS
-  unsigned int PW5;                 ///< In uS
-  unsigned int PW6;                 ///< In uS
-  unsigned int PW7;                 ///< In uS
-  unsigned int PW8;                 ///< In uS
   volatile byte runSecs;            /**< Counter of seconds since cranking commenced (Maxes out at 255 to prevent overflow) */
   volatile byte secl;               /**< Counter incrementing once per second. Will overflow after 255 and begin again. This is used by TunerStudio to maintain comms sync */
   volatile uint32_t loopsPerSecond; /**< A performance indicator showing the number of main loops that are being executed each second */

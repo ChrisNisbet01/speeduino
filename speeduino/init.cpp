@@ -498,7 +498,7 @@ void initialiseAll(void)
     CRANK_ANGLE_MAX_INJ = 360;
 
     // Disable all injectors except channel 1
-    max_injectors.setMaxInjectors(1);
+    injectors_context.setMaxInjectors(1);
 
     ignition1EndAngle = 0;
     ignition2EndAngle = 0;
@@ -525,7 +525,7 @@ void initialiseAll(void)
         channel1IgnDegrees = 0;
         channel1InjDegrees = 0;
         maxIgnOutputs = 1;
-        max_injectors.setMaxInjectors(2);
+        injectors_context.setMaxInjectors(2);
 
         //Sequential ignition works identically on a 1 cylinder whether it's odd or even fire.
         if( (configPage4.sparkMode == IGN_MODE_SEQUENTIAL) && (configPage2.strokes == FOUR_STROKE) )
@@ -543,7 +543,7 @@ void initialiseAll(void)
         //Check if injector staging is enabled
         if (configPage10.stagingEnabled)
         {
-          max_injectors.setMaxInjectors(2);
+          injectors_context.setMaxInjectors(2);
 
           channel2InjDegrees = channel1InjDegrees;
         }
@@ -553,7 +553,7 @@ void initialiseAll(void)
         channel1IgnDegrees = 0;
         channel1InjDegrees = 0;
         maxIgnOutputs = 2;
-        max_injectors.setMaxInjectors(2);
+        injectors_context.setMaxInjectors(2);
         if (configPage2.engineType == EVEN_FIRE)
         {
           channel2IgnDegrees = 180;
@@ -594,7 +594,7 @@ void initialiseAll(void)
         //Check if injector staging is enabled
         if (configPage10.stagingEnabled)
         {
-          max_injectors.setMaxInjectors(4);
+          injectors_context.setMaxInjectors(4);
 
           channel3InjDegrees = channel1InjDegrees;
           channel4InjDegrees = channel2InjDegrees;
@@ -605,7 +605,7 @@ void initialiseAll(void)
     case 3:
         channel1IgnDegrees = 0;
         maxIgnOutputs = 3;
-        max_injectors.setMaxInjectors(3);
+        injectors_context.setMaxInjectors(3);
         if (configPage2.engineType == EVEN_FIRE )
         {
           //Sequential and Single channel modes both run over 720 crank degrees, but only on 4 stroke engines.
@@ -683,14 +683,14 @@ void initialiseAll(void)
         if (configPage10.stagingEnabled)
         {
           #if INJ_CHANNELS >= 6
-            max_injectors.setMaxInjectors(6);
+            injectors_context.setMaxInjectors(6);
 
             channel4InjDegrees = channel1InjDegrees;
             channel5InjDegrees = channel2InjDegrees;
             channel6InjDegrees = channel3InjDegrees;
           #else
             //Staged output is on channel 4
-            max_injectors.setMaxInjectors(4);
+            injectors_context.setMaxInjectors(4);
 
             channel4InjDegrees = channel1InjDegrees;
           #endif
@@ -700,7 +700,7 @@ void initialiseAll(void)
         channel1IgnDegrees = 0;
         channel1InjDegrees = 0;
         maxIgnOutputs = 2; //Default value for 4 cylinder, may be changed below
-        max_injectors.setMaxInjectors(2);
+        injectors_context.setMaxInjectors(2);
         if (configPage2.engineType == EVEN_FIRE )
         {
           channel2IgnDegrees = 180;
@@ -758,7 +758,7 @@ void initialiseAll(void)
           channel3InjDegrees = 360;
           channel4InjDegrees = 540;
 
-          max_injectors.setMaxInjectors(4);
+          injectors_context.setMaxInjectors(4);
 
           CRANK_ANGLE_MAX_INJ = 720;
           currentStatus.nSquirts = 1;
@@ -767,20 +767,20 @@ void initialiseAll(void)
         else
         {
           //Should never happen, but default values.
-          max_injectors.setMaxInjectors(2);
+          injectors_context.setMaxInjectors(2);
         }
 
         //Check if injector staging is enabled
         if (configPage10.stagingEnabled)
         {
-          max_injectors.setMaxInjectors(4);
+          injectors_context.setMaxInjectors(4);
 
           if (configPage2.injLayout == INJ_SEQUENTIAL
               || configPage2.injLayout == INJ_SEMISEQUENTIAL)
           {
             //Staging with 4 cylinders semi/sequential requires 8 total channels
             #if INJ_CHANNELS >= 8
-              max_injectors.setMaxInjectors(8);
+              injectors_context.setMaxInjectors(8);
 
               channel5InjDegrees = channel1InjDegrees;
               channel6InjDegrees = channel2InjDegrees;
@@ -791,7 +791,7 @@ void initialiseAll(void)
               //support sequential + staging.
               //Put the staging output to the non-existent channel 5
               #if (INJ_CHANNELS >= 5)
-              max_injectors.setMaxInjectors(5);
+              injectors_context.setMaxInjectors(5);
               channel5InjDegrees = channel1InjDegrees;
               #endif
             #endif
@@ -814,7 +814,7 @@ void initialiseAll(void)
 #endif
         maxIgnOutputs = 5; //Only 4 actual outputs, so that's all that can be cut
         //Is updated below to 5 if there are enough channels.
-        max_injectors.setMaxInjectors(4);
+        injectors_context.setMaxInjectors(4);
 
         if(configPage4.sparkMode == IGN_MODE_SEQUENTIAL)
         {
@@ -864,7 +864,7 @@ void initialiseAll(void)
           channel4InjDegrees = 432;
           channel5InjDegrees = 576;
 
-          max_injectors.setMaxInjectors(5);
+          injectors_context.setMaxInjectors(5);
 
           CRANK_ANGLE_MAX_INJ = 720;
           currentStatus.nSquirts = 1;
@@ -875,7 +875,7 @@ void initialiseAll(void)
     #if INJ_CHANNELS >= 6
           if (configPage10.stagingEnabled)
           {
-            max_injectors.setMaxInjectors(6);
+            injectors_context.setMaxInjectors(6);
           }
     #endif
         break;
@@ -884,7 +884,7 @@ void initialiseAll(void)
         channel2IgnDegrees = 120;
         channel3IgnDegrees = 240;
         maxIgnOutputs = 3;
-        max_injectors.setMaxInjectors(3);
+        injectors_context.setMaxInjectors(3);
 
     #if IGN_CHANNELS >= 6
         if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL)
@@ -928,7 +928,7 @@ void initialiseAll(void)
           channel5InjDegrees = 480;
           channel6InjDegrees = 600;
 
-          max_injectors.setMaxInjectors(6);
+          injectors_context.setMaxInjectors(6);
 
           CRANK_ANGLE_MAX_INJ = 720;
           currentStatus.nSquirts = 1;
@@ -936,13 +936,13 @@ void initialiseAll(void)
         }
         else if (configPage10.stagingEnabled) //Check if injector staging is enabled
         {
-          max_injectors.setMaxInjectors(6);
+          injectors_context.setMaxInjectors(6);
 
           if (configPage2.injLayout == INJ_SEQUENTIAL || configPage2.injLayout == INJ_SEMISEQUENTIAL)
           {
             //Staging with 6 cylinders semi/sequential requires 7 total channels
             #if INJ_CHANNELS >= 7
-              max_injectors.setMaxInjectors(7);
+              injectors_context.setMaxInjectors(7);
 
               channel5InjDegrees = channel1InjDegrees;
               channel6InjDegrees = channel2InjDegrees;
@@ -952,7 +952,7 @@ void initialiseAll(void)
               //This is an invalid config as there are not enough outputs to
               //support sequential + staging
               //No staging output will be active.
-              max_injectors.setMaxInjectors(6);
+              injectors_context.setMaxInjectors(6);
             #endif
           }
         }
@@ -964,7 +964,7 @@ void initialiseAll(void)
         channel3IgnDegrees = 180;
         channel4IgnDegrees = 270;
         maxIgnOutputs = 4;
-        max_injectors.setMaxInjectors(4);
+        injectors_context.setMaxInjectors(4);
 
 
         if (configPage4.sparkMode == IGN_MODE_SINGLE)
@@ -1023,7 +1023,7 @@ void initialiseAll(void)
           channel7InjDegrees = 540;
           channel8InjDegrees = 630;
 
-          max_injectors.setMaxInjectors(8);
+          injectors_context.setMaxInjectors(8);
 
           CRANK_ANGLE_MAX_INJ = 720;
           currentStatus.nSquirts = 1;
@@ -1052,81 +1052,114 @@ void initialiseAll(void)
     {
     case INJ_SEMISEQUENTIAL:
         //Semi-Sequential injection. Currently possible with 4, 6 and 8 cylinders. 5 cylinder is a special case
-        if( configPage2.nCylinders == 4 )
+      if (configPage2.nCylinders == 4)
+      {
+        if (configPage4.inj4cylPairing == INJ_PAIR_13_24)
         {
-          if(configPage4.inj4cylPairing == INJ_PAIR_13_24)
-          {
-            configure_injector_schedule(fuelSchedule1, injector_id_1, injector_id_3);
-            configure_injector_schedule(fuelSchedule2, injector_id_2, injector_id_4);
-          }
-          else
-          {
-            configure_injector_schedule(fuelSchedule1, injector_id_1, injector_id_4);
-            configure_injector_schedule(fuelSchedule2, injector_id_2, injector_id_3);
-          }
-        }
-        else if( configPage2.nCylinders == 5 ) //This is similar to the paired injection but uses five injector outputs instead of four
-        {
-          configure_injector_schedule(fuelSchedule1, injector_id_1);
-          configure_injector_schedule(fuelSchedule2, injector_id_2);
-          configure_injector_schedule(fuelSchedule3, injector_id_3, injector_id_5);
-          configure_injector_schedule(fuelSchedule4, injector_id_4);
-        }
-        else if( configPage2.nCylinders == 6 )
-        {
-          configure_injector_schedule(fuelSchedule1, injector_id_1, injector_id_4);
-          configure_injector_schedule(fuelSchedule2, injector_id_2, injector_id_5);
-          configure_injector_schedule(fuelSchedule3, injector_id_3, injector_id_6);
-        }
-        else if( configPage2.nCylinders == 8 )
-        {
-          configure_injector_schedule(fuelSchedule1, injector_id_1, injector_id_5);
-          configure_injector_schedule(fuelSchedule2, injector_id_2, injector_id_6);
-          configure_injector_schedule(fuelSchedule3, injector_id_3, injector_id_7);
-          configure_injector_schedule(fuelSchedule4, injector_id_4, injector_id_8);
+          configure_injector_schedule(
+            *injectors_context.injectors[0].fuelSchedule, injector_id_1, injector_id_3);
+          configure_injector_schedule(
+            *injectors_context.injectors[1].fuelSchedule, injector_id_2, injector_id_4);
         }
         else
         {
-          //Fall back to paired injection
-        configure_injector_schedule(fuelSchedule1, injector_id_1);
-        configure_injector_schedule(fuelSchedule2, injector_id_2);
-        configure_injector_schedule(fuelSchedule3, injector_id_3);
-        configure_injector_schedule(fuelSchedule4, injector_id_4);
-#if INJ_CHANNELS >= 5
-        configure_injector_schedule(fuelSchedule5, injector_id_5);
-#endif
+          configure_injector_schedule(
+            *injectors_context.injectors[0].fuelSchedule, injector_id_1, injector_id_4);
+          configure_injector_schedule(
+            *injectors_context.injectors[1].fuelSchedule, injector_id_2, injector_id_3);
         }
-        break;
+      }
+      else if (configPage2.nCylinders == 5) //This is similar to the paired injection but uses five injector outputs instead of four
+      {
+        configure_injector_schedule(
+          *injectors_context.injectors[0].fuelSchedule, injector_id_1);
+        configure_injector_schedule(
+          *injectors_context.injectors[1].fuelSchedule, injector_id_2);
+        configure_injector_schedule(
+          *injectors_context.injectors[2].fuelSchedule, injector_id_3, injector_id_5);
+        configure_injector_schedule(
+          *injectors_context.injectors[3].fuelSchedule, injector_id_4);
+      }
+      else if (configPage2.nCylinders == 6)
+      {
+        configure_injector_schedule(
+          *injectors_context.injectors[0].fuelSchedule, injector_id_1, injector_id_4);
+        configure_injector_schedule(
+          *injectors_context.injectors[1].fuelSchedule, injector_id_2, injector_id_5);
+        configure_injector_schedule(
+          *injectors_context.injectors[2].fuelSchedule, injector_id_3, injector_id_6);
+      }
+      else if (configPage2.nCylinders == 8)
+      {
+        configure_injector_schedule(
+          *injectors_context.injectors[0].fuelSchedule, injector_id_1, injector_id_5);
+        configure_injector_schedule(
+          *injectors_context.injectors[1].fuelSchedule, injector_id_2, injector_id_6);
+        configure_injector_schedule(
+          *injectors_context.injectors[2].fuelSchedule, injector_id_3, injector_id_7);
+        configure_injector_schedule(
+          *injectors_context.injectors[3].fuelSchedule, injector_id_4, injector_id_8);
+      }
+      else
+      {
+        //Fall back to paired injection
+        configure_injector_schedule(
+          *injectors_context.injectors[0].fuelSchedule, injector_id_1);
+        configure_injector_schedule(
+          *injectors_context.injectors[1].fuelSchedule, injector_id_2);
+        configure_injector_schedule(
+          *injectors_context.injectors[2].fuelSchedule, injector_id_3);
+        configure_injector_schedule(
+          *injectors_context.injectors[3].fuelSchedule, injector_id_4);
+#if INJ_CHANNELS >= 5
+        configure_injector_schedule(
+          *injectors_context.injectors[4].fuelSchedule, injector_id_5);
+#endif
+      }
+      break;
 
     case INJ_SEQUENTIAL:
         //Sequential injection
-        configure_injector_schedule(fuelSchedule1, injector_id_1);
-        configure_injector_schedule(fuelSchedule2, injector_id_2);
-        configure_injector_schedule(fuelSchedule3, injector_id_3);
-        configure_injector_schedule(fuelSchedule4, injector_id_4);
+        configure_injector_schedule(
+          *injectors_context.injectors[0].fuelSchedule, injector_id_1);
+        configure_injector_schedule(
+          *injectors_context.injectors[1].fuelSchedule, injector_id_2);
+        configure_injector_schedule(
+          *injectors_context.injectors[2].fuelSchedule, injector_id_3);
+        configure_injector_schedule(
+          *injectors_context.injectors[3].fuelSchedule, injector_id_4);
 #if INJ_CHANNELS >= 5
-        configure_injector_schedule(fuelSchedule5, injector_id_5);
+        configure_injector_schedule(
+          *injectors_context.injectors[4].fuelSchedule, injector_id_5);
 #endif
 #if INJ_CHANNELS >= 6
-        configure_injector_schedule(fuelSchedule6, injector_id_6);
+        configure_injector_schedule(
+          *injectors_context.injectors[5].fuelSchedule, injector_id_6);
 #endif
 #if INJ_CHANNELS >= 7
-        configure_injector_schedule(fuelSchedule7, injector_id_7);
+        configure_injector_schedule(
+          *injectors_context.injectors[6].fuelSchedule, injector_id_7);
 #endif
 #if INJ_CHANNELS >= 8
-        configure_injector_schedule(fuelSchedule8, injector_id_8);
+        configure_injector_schedule(
+          *injectors_context.injectors[7].fuelSchedule, injector_id_8);
 #endif
         break;
 
     case INJ_PAIRED:
     default:
         //Paired injection
-        configure_injector_schedule(fuelSchedule1, injector_id_1);
-        configure_injector_schedule(fuelSchedule2, injector_id_2);
-        configure_injector_schedule(fuelSchedule3, injector_id_3);
-        configure_injector_schedule(fuelSchedule4, injector_id_4);
+        configure_injector_schedule(
+          *injectors_context.injectors[0].fuelSchedule, injector_id_1);
+        configure_injector_schedule(
+          *injectors_context.injectors[1].fuelSchedule, injector_id_2);
+        configure_injector_schedule(
+          *injectors_context.injectors[2].fuelSchedule, injector_id_3);
+        configure_injector_schedule(
+          *injectors_context.injectors[3].fuelSchedule, injector_id_4);
 #if INJ_CHANNELS >= 5
-        configure_injector_schedule(fuelSchedule5, injector_id_5);
+        configure_injector_schedule(
+          *injectors_context.injectors[4].fuelSchedule, injector_id_5);
 #endif
         break;
 
@@ -3778,21 +3811,21 @@ void initialiseTriggers(void)
 }
 
 static inline bool isAnyFuelScheduleRunning(void) {
-  return fuelSchedule1.Status==RUNNING
-      || fuelSchedule2.Status==RUNNING
-      || fuelSchedule3.Status==RUNNING
-      || fuelSchedule4.Status==RUNNING
+  return injectors_context.injectors[0].fuelSchedule->Status == RUNNING
+      || injectors_context.injectors[1].fuelSchedule->Status == RUNNING
+      || injectors_context.injectors[2].fuelSchedule->Status == RUNNING
+      || injectors_context.injectors[3].fuelSchedule->Status == RUNNING
 #if INJ_CHANNELS >= 5
-      || fuelSchedule5.Status==RUNNING
+      || injectors_context.injectors[4].fuelSchedule->Status == RUNNING
 #endif
 #if INJ_CHANNELS >= 6
-      || fuelSchedule6.Status==RUNNING
+      || injectors_context.injectors[5].fuelSchedule->Status == RUNNING
 #endif
 #if INJ_CHANNELS >= 7
-      || fuelSchedule7.Status==RUNNING
+      || injectors_context.injectors[6].fuelSchedule->Status == RUNNING
 #endif
 #if INJ_CHANNELS >= 8
-      || fuelSchedule8.Status==RUNNING
+      || injectors_context.injectors[7].fuelSchedule->Status == RUNNING
 #endif
       ;
 }
@@ -3809,21 +3842,29 @@ void changeHalfToFullSync(void)
     CRANK_ANGLE_MAX_INJ = 720;
     req_fuel_uS = req_fuel_init_uS * 2;
 
-    configure_injector_schedule(fuelSchedule1, injector_id_1);
-    configure_injector_schedule(fuelSchedule2, injector_id_2);
-    configure_injector_schedule(fuelSchedule3, injector_id_3);
-    configure_injector_schedule(fuelSchedule4, injector_id_4);
+    configure_injector_schedule(
+      *injectors_context.injectors[0].fuelSchedule, injector_id_1);
+    configure_injector_schedule(
+      *injectors_context.injectors[1].fuelSchedule, injector_id_2);
+    configure_injector_schedule(
+      *injectors_context.injectors[2].fuelSchedule, injector_id_3);
+    configure_injector_schedule(
+      *injectors_context.injectors[3].fuelSchedule, injector_id_4);
 #if INJ_CHANNELS >= 5
-    configure_injector_schedule(fuelSchedule5, injector_id_5);
+    configure_injector_schedule(
+      *injectors_context.injectors[4].fuelSchedule, injector_id_5);
 #endif
 #if INJ_CHANNELS >= 6
-    configure_injector_schedule(fuelSchedule6, injector_id_6);
+    configure_injector_schedule(
+      *injectors_context.injectors[5].fuelSchedule, injector_id_6);
 #endif
 #if INJ_CHANNELS >= 7
-    configure_injector_schedule(fuelSchedule7, injector_id_7);
+    configure_injector_schedule(
+      *injectors_context.injectors[6].fuelSchedule, injector_id_7);
 #endif
 #if INJ_CHANNELS >= 8
-    configure_injector_schedule(fuelSchedule8, injector_id_8);
+    configure_injector_schedule(
+      *injectors_context.injectors[7].fuelSchedule, injector_id_8);
 #endif
 
     switch (configPage2.nCylinders)
@@ -3831,7 +3872,7 @@ void changeHalfToFullSync(void)
       case 4:
       case 6:
       case 8:
-        max_injectors.setMaxInjectors(configPage2.nCylinders);
+        injectors_context.setMaxInjectors(configPage2.nCylinders);
         break;
 
       default:
@@ -3888,30 +3929,41 @@ void changeFullToHalfSync(void)
       case 4:
         if(configPage4.inj4cylPairing == INJ_PAIR_13_24)
         {
-          configure_injector_schedule(fuelSchedule1, injector_id_1, injector_id_3);
-          configure_injector_schedule(fuelSchedule2, injector_id_2, injector_id_4);
+          configure_injector_schedule(
+            *injectors_context.injectors[0].fuelSchedule, injector_id_1, injector_id_3);
+          configure_injector_schedule(
+            *injectors_context.injectors[1].fuelSchedule, injector_id_2, injector_id_4);
         }
         else
         {
-          configure_injector_schedule(fuelSchedule1, injector_id_1, injector_id_4);
-          configure_injector_schedule(fuelSchedule2, injector_id_2, injector_id_3);
+          configure_injector_schedule(
+            *injectors_context.injectors[0].fuelSchedule, injector_id_1, injector_id_4);
+          configure_injector_schedule(
+            *injectors_context.injectors[1].fuelSchedule, injector_id_2, injector_id_3);
         }
-        max_injectors.setMaxInjectors(2);
+        injectors_context.setMaxInjectors(2);
         break;
 
       case 6:
-        configure_injector_schedule(fuelSchedule1, injector_id_1, injector_id_4);
-        configure_injector_schedule(fuelSchedule2, injector_id_2, injector_id_5);
-        configure_injector_schedule(fuelSchedule3, injector_id_3, injector_id_6);
-        max_injectors.setMaxInjectors(3);
+        configure_injector_schedule(
+          *injectors_context.injectors[0].fuelSchedule, injector_id_1, injector_id_4);
+        configure_injector_schedule(
+          *injectors_context.injectors[1].fuelSchedule, injector_id_2, injector_id_5);
+        configure_injector_schedule(
+          *injectors_context.injectors[2].fuelSchedule, injector_id_3, injector_id_6);
+        injectors_context.setMaxInjectors(3);
         break;
 
       case 8:
-        configure_injector_schedule(fuelSchedule1, injector_id_1, injector_id_5);
-        configure_injector_schedule(fuelSchedule2, injector_id_2, injector_id_6);
-        configure_injector_schedule(fuelSchedule3, injector_id_3, injector_id_7);
-        configure_injector_schedule(fuelSchedule4, injector_id_4, injector_id_8);
-        max_injectors.setMaxInjectors(4);
+        configure_injector_schedule(
+          *injectors_context.injectors[0].fuelSchedule, injector_id_1, injector_id_5);
+        configure_injector_schedule(
+          *injectors_context.injectors[1].fuelSchedule, injector_id_2, injector_id_6);
+        configure_injector_schedule(
+          *injectors_context.injectors[2].fuelSchedule, injector_id_3, injector_id_7);
+        configure_injector_schedule(
+          *injectors_context.injectors[3].fuelSchedule, injector_id_4, injector_id_8);
+        injectors_context.setMaxInjectors(4);
         break;
     }
   }

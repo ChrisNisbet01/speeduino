@@ -24,8 +24,8 @@ assert_fuel_channel(
 {
   char msg[39];
 
-  sprintf_P(msg, PSTR("channel%" PRIu8 ".InjChannelIsEnabled. Max:%" PRIu8), cmdBit + 1, max_injectors.maxOutputs);
-  TEST_ASSERT_TRUE_MESSAGE(!enabled || (cmdBit+1) <= max_injectors.maxOutputs, msg);
+  sprintf_P(msg, PSTR("channel%" PRIu8 ".InjChannelIsEnabled. Max:%" PRIu8), cmdBit + 1, injectors_context.maxOutputs);
+  TEST_ASSERT_TRUE_MESSAGE(!enabled || (cmdBit+1) <= injectors_context.maxOutputs, msg);
   sprintf_P(msg, PSTR("channe%" PRIu8 ".InjDegrees"), cmdBit + 1);
   TEST_ASSERT_EQUAL_MESSAGE(angle, channelInjDegrees, msg);
   sprintf_P(msg, PSTR("inj%" PRIu8 ".StartFunction"), cmdBit + 1);

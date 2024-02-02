@@ -131,7 +131,7 @@ inline void adjustCrankAngle(IgnitionSchedule &schedule, int endAngle, int crank
      */
     int const degreesToEndAngle = endAngle - crankAngle;
     uint32_t const microsecsUntilEndAngle =
-      angleToTimeMicroSecPerDegree(ignitionLimits(endAngle - crankAngle));
+      angleToTimeMicroSecPerDegree(ignitionLimits(degreesToEndAngle));
     COMPARE_TYPE const endCompare = schedule.counter + uS_TO_TIMER_COMPARE(microsecsUntilEndAngle);
 
     SET_COMPARE(schedule.compare, endCompare);
@@ -140,7 +140,7 @@ inline void adjustCrankAngle(IgnitionSchedule &schedule, int endAngle, int crank
   {
     int const degreesToEndAngle = endAngle - crankAngle;
     uint32_t const microsecsUntilEndAngle =
-      angleToTimeMicroSecPerDegree(ignitionLimits(endAngle - crankAngle));
+      angleToTimeMicroSecPerDegree(ignitionLimits(degreesToEndAngle));
     COMPARE_TYPE const endCompare = schedule.counter + uS_TO_TIMER_COMPARE(microsecsUntilEndAngle);
 
     schedule.endCompare = endCompare;

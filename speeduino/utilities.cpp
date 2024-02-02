@@ -34,7 +34,7 @@ byte pinTranslate(byte const rawPin)
   byte outputPin;
   if (rawPin > BOARD_MAX_DIGITAL_PINS)
   {
-    outputPin = A8 + (outputPin - BOARD_MAX_DIGITAL_PINS - 1);
+    outputPin = A8 + (rawPin - BOARD_MAX_DIGITAL_PINS - 1);
   }
   else
   {

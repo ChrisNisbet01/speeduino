@@ -143,7 +143,7 @@ volatile byte HWTest_IGN = 0; /**< Each bit in this variable represents one of t
 volatile byte HWTest_IGN_Pulsed = 0;
 byte maxIgnOutputs = 1; /**< Number of ignition outputs being used by the current tune configuration */
 
-max_injectors_st max_injectors;
+injectors_context_st injectors_context;
 
 //This needs to be here because using the config page directly can prevent burning the setting
 byte resetControl = RESET_CONTROL_DISABLED;
