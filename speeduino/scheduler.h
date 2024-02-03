@@ -141,6 +141,8 @@ typedef struct injector_context_st
 {
   FuelSchedule * fuelSchedule;
   unsigned int PW;
+  /* The number of crank degrees until the associated cylinder is at TDC */
+  int channelInjDegrees;
 
   void scheduleFuel(uint32_t const timeout)
   {
