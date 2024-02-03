@@ -1,7 +1,7 @@
 #include "injector_contexts.hpp"
 #include "injector_schedule.h"
 
-injectors_context_st injectors_context;
+injectors_context_st injectors;
 
 static void
 configure_injector_schedule(FuelSchedule &fuelSchedule, injector_id_t injector_id)

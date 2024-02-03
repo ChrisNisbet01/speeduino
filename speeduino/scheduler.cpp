@@ -86,21 +86,21 @@ static void reset(IgnitionSchedule &schedule)
 
 static void initialiseFuelSchedules(void)
 {
-  injectors_context.injector(injChannel1).fuelSchedule = &fuelSchedule1;
-  injectors_context.injector(injChannel2).fuelSchedule = &fuelSchedule2;
-  injectors_context.injector(injChannel3).fuelSchedule = &fuelSchedule3;
-  injectors_context.injector(injChannel4).fuelSchedule = &fuelSchedule4;
+  injectors.injector(injChannel1).fuelSchedule = &fuelSchedule1;
+  injectors.injector(injChannel2).fuelSchedule = &fuelSchedule2;
+  injectors.injector(injChannel3).fuelSchedule = &fuelSchedule3;
+  injectors.injector(injChannel4).fuelSchedule = &fuelSchedule4;
 #if INJ_CHANNELS >= 5
-  injectors_context.injector(injChannel5).fuelSchedule = &fuelSchedule5;
+  injectors.injector(injChannel5).fuelSchedule = &fuelSchedule5;
 #endif
 #if INJ_CHANNELS >= 6
-  injectors_context.injector(injChannel6).fuelSchedule = &fuelSchedule6;
+  injectors.injector(injChannel6).fuelSchedule = &fuelSchedule6;
 #endif
 #if INJ_CHANNELS >= 7
-  injectors_context.injector(injChannel7).fuelSchedule = &fuelSchedule7;
+  injectors.injector(injChannel7).fuelSchedule = &fuelSchedule7;
 #endif
 #if INJ_CHANNELS >= 8
-  injectors_context.injector(injChannel8).fuelSchedule = &fuelSchedule8;
+  injectors.injector(injChannel8).fuelSchedule = &fuelSchedule8;
 #endif
 }
 
@@ -109,7 +109,7 @@ void initialiseSchedulers(void)
   initialiseFuelSchedules();
   for (size_t i = injChannel1; i < injChannelCount; i++)
   {
-    reset(*injectors_context.injector((injectorChannelID_t)i).fuelSchedule);
+    reset(*injectors.injector((injectorChannelID_t)i).fuelSchedule);
   }
 
   reset(ignitionSchedule1);
@@ -185,7 +185,7 @@ void initialiseSchedulers(void)
 
   for (size_t i = 0; i < injChannelCount; i++)
   {
-    injectors_context.injector((injectorChannelID_t)i).channelInjDegrees = 0;
+    injectors.injector((injectorChannelID_t)i).channelInjDegrees = 0;
   }
 }
 
@@ -289,10 +289,10 @@ extern void beginInjectorPriming(void)
     static unsigned config_multiplier = 5;
     primingValue = primingValue * priming_delay_us * config_multiplier;
 
-    for (size_t i = 0; i < injectors_context.maxOutputs; i++)
+    for (size_t i = 0; i < injectors.maxOutputs; i++)
     {
       setFuelSchedule(
-        *injectors_context.injector((injectorChannelID_t)i).fuelSchedule, priming_delay_us, primingValue);
+        *injectors.injector((injectorChannelID_t)i).fuelSchedule, priming_delay_us, primingValue);
     }
   }
 }
@@ -350,7 +350,7 @@ ISR(TIMER3_COMPA_vect) //cppcheck-suppress misra-c2012-8.2
 void fuelSchedule1Interrupt() //Most ARM chips can simply call a function
 #endif
   {
-    fuelScheduleISR(*injectors_context.injector(injChannel1).fuelSchedule);
+    fuelScheduleISR(*injectors.injector(injChannel1).fuelSchedule);
   }
 
 
@@ -360,7 +360,7 @@ ISR(TIMER3_COMPB_vect) //cppcheck-suppress misra-c2012-8.2
 void fuelSchedule2Interrupt() //Most ARM chips can simply call a function
 #endif
   {
-    fuelScheduleISR(*injectors_context.injector(injChannel2).fuelSchedule);
+    fuelScheduleISR(*injectors.injector(injChannel2).fuelSchedule);
   }
 
 
@@ -370,7 +370,7 @@ ISR(TIMER3_COMPC_vect) //cppcheck-suppress misra-c2012-8.2
 void fuelSchedule3Interrupt() //Most ARM chips can simply call a function
 #endif
   {
-    fuelScheduleISR(*injectors_context.injector(injChannel3).fuelSchedule);
+    fuelScheduleISR(*injectors.injector(injChannel3).fuelSchedule);
   }
 
 
@@ -380,7 +380,7 @@ ISR(TIMER4_COMPB_vect) //cppcheck-suppress misra-c2012-8.2
 void fuelSchedule4Interrupt() //Most ARM chips can simply call a function
 #endif
   {
-    fuelScheduleISR(*injectors_context.injector(injChannel4).fuelSchedule);
+    fuelScheduleISR(*injectors.injector(injChannel4).fuelSchedule);
   }
 
 #if INJ_CHANNELS >= 5
@@ -390,7 +390,7 @@ ISR(TIMER4_COMPC_vect) //cppcheck-suppress misra-c2012-8.2
 void fuelSchedule5Interrupt() //Most ARM chips can simply call a function
 #endif
   {
-    fuelScheduleISR(*injectors_context.injector(injChannel5).fuelSchedule);
+    fuelScheduleISR(*injectors.injector(injChannel5).fuelSchedule);
   }
 #endif
 
@@ -401,7 +401,7 @@ ISR(TIMER4_COMPA_vect) //cppcheck-suppress misra-c2012-8.2
 void fuelSchedule6Interrupt() //Most ARM chips can simply call a function
 #endif
   {
-    fuelScheduleISR(*injectors_context.injector(injChannel6).fuelSchedule);
+    fuelScheduleISR(*injectors.injector(injChannel6).fuelSchedule);
   }
 #endif
 
@@ -412,7 +412,7 @@ ISR(TIMER5_COMPC_vect) //cppcheck-suppress misra-c2012-8.2
 void fuelSchedule7Interrupt() //Most ARM chips can simply call a function
 #endif
   {
-    fuelScheduleISR(*injectors_context.injector(injChannel7).fuelSchedule);
+    fuelScheduleISR(*injectors.injector(injChannel7).fuelSchedule);
   }
 #endif
 
@@ -423,7 +423,7 @@ ISR(TIMER5_COMPB_vect) //cppcheck-suppress misra-c2012-8.2
 void fuelSchedule8Interrupt() //Most ARM chips can simply call a function
 #endif
   {
-    fuelScheduleISR(*injectors_context.injector(injChannel8).fuelSchedule);
+    fuelScheduleISR(*injectors.injector(injChannel8).fuelSchedule);
   }
 #endif
 
@@ -567,7 +567,7 @@ void disablePendingFuelSchedule(byte channel)
     noInterrupts();
 
     injector_context_st &injector =
-      injectors_context.injector((injectorChannelID_t)channel);
+      injectors.injector((injectorChannelID_t)channel);
 
     if (injector.fuelSchedule->Status == PENDING)
     {

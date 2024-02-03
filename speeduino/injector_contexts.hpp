@@ -54,8 +54,6 @@ public:
   byte maxOutputs = 1; /**< Number of injection outputs being used by the current tune configuration */
   byte channelsOn;
 
-  injector_context_st injectors[injChannelCount];
-
   void setMaxInjectors(byte const maxOutputs);
 
   void applyFuelTrimToPW(injectorChannelID_t inj, trimTable3d * pTrimTable, int16_t fuelLoad, int16_t RPM);
@@ -88,9 +86,11 @@ public:
   }
 
 private:
+  injector_context_st injectors[injChannelCount];
+
   byte maxOutputMask = 0x01;
 
 } injectors_context_st;
 
-extern injectors_context_st injectors_context;
+extern injectors_context_st injectors;
 
