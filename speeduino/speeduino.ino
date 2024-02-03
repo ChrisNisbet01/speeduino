@@ -155,7 +155,7 @@ void loop(void)
     //This VERY likely means the engine has stopped.
     currentStatus.RPM = 0;
     currentStatus.RPMdiv100 = 0;
-    injectors_context.injectors[injChannel1].PW = 0;
+    injectors_context.injector(injChannel1).PW = 0;
     currentStatus.VE = 0;
     currentStatus.VE2 = 0;
     toothLastToothTime = 0;
@@ -493,7 +493,7 @@ void loop(void)
     //Calculate an injector pulsewidth from the VE
     currentStatus.corrections = correctionsFuel();
 
-    injectors_context.injectors[injChannel1].PW =
+    injectors_context.injector(injChannel1).PW =
       PW(req_fuel_uS, currentStatus.VE, currentStatus.MAP, currentStatus.corrections, inj_opentime_uS);
 
     //Manual adder for nitrous. These are not in correctionsFuel() because they are direct adders to the ms value, not % based
@@ -502,7 +502,7 @@ void loop(void)
       int16_t adderRange = (configPage10.n2o_stage1_maxRPM - configPage10.n2o_stage1_minRPM) * 100;
       int16_t adderPercent = ((currentStatus.RPM - (configPage10.n2o_stage1_minRPM * 100)) * 100) / adderRange; //The percentage of the way through the RPM range
       adderPercent = 100 - adderPercent; //Flip the percentage as we go from a higher adder to a lower adder as the RPMs rise
-      injectors_context.injectors[injChannel1].PW +=
+      injectors_context.injector(injChannel1).PW +=
         (configPage10.n2o_stage1_adderMax
          + percentage(adderPercent, (configPage10.n2o_stage1_adderMin - configPage10.n2o_stage1_adderMax))
          ) * 100; //Calculate the above percentage of the calculated ms value.
@@ -512,7 +512,7 @@ void loop(void)
       int16_t adderRange = (configPage10.n2o_stage2_maxRPM - configPage10.n2o_stage2_minRPM) * 100;
       int16_t adderPercent = ((currentStatus.RPM - (configPage10.n2o_stage2_minRPM * 100)) * 100) / adderRange; //The percentage of the way through the RPM range
       adderPercent = 100 - adderPercent; //Flip the percentage as we go from a higher adder to a lower adder as the RPMs rise
-      injectors_context.injectors[injChannel1].PW +=
+      injectors_context.injector(injChannel1).PW +=
         (configPage10.n2o_stage2_adderMax
          + percentage(adderPercent, (configPage10.n2o_stage2_adderMin - configPage10.n2o_stage2_adderMax))
          ) * 100; //Calculate the above percentage of the calculated ms value.
@@ -556,9 +556,9 @@ void loop(void)
     if (!BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK)
         && !configPage10.stagingEnabled)
     {
-      if (injectors_context.injectors[injChannel1].PW > pwLimit)
+      if (injectors_context.injector(injChannel1).PW > pwLimit)
       {
-        injectors_context.injectors[injChannel1].PW = pwLimit;
+        injectors_context.injector(injChannel1).PW = pwLimit;
       }
     }
 
@@ -570,7 +570,7 @@ void loop(void)
     currentStatus.injAngle = table2D_getValue(&injectorAngleTable, currentStatus.RPMdiv100);
 
     //How many crank degrees the calculated PW will take at the current speed
-    unsigned int PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[injChannel1].PW);
+    unsigned int PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injector(injChannel1).PW);
 
     injector1StartAngle =
       injectors_context.calculateInjectorStartAngle(injChannel1, PWdivTimerPerDegree, currentStatus.injAngle);
@@ -586,7 +586,7 @@ void loop(void)
       if (staging_is_required)
       {
         //Need to redo this for PW2 as it will be dramatically different to PW1 when staging.
-        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[injChannel2].PW);
+        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injector(injChannel2).PW);
         injector2StartAngle =
           injectors_context.calculateInjectorStartAngle(injChannel1, PWdivTimerPerDegree, currentStatus.injAngle);
       }
@@ -605,7 +605,7 @@ void loop(void)
       else if (staging_is_required)
       {
         //Need to redo this for PW3 as it will be dramatically different to PW1 when staging
-        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[injChannel3].PW);
+        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injector(injChannel3).PW);
         injector3StartAngle =
           injectors_context.calculateInjectorStartAngle(injChannel1, PWdivTimerPerDegree, currentStatus.injAngle);
         injector4StartAngle =
@@ -640,7 +640,7 @@ void loop(void)
         if (staging_is_required)
         {
           //Need to redo this for PW4 as it will be dramatically different to PW1 when staging
-          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[injChannel4].PW);
+          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injector(injChannel4).PW);
           injector4StartAngle =
             injectors_context.calculateInjectorStartAngle(injChannel1, PWdivTimerPerDegree, currentStatus.injAngle);
           injector5StartAngle =
@@ -653,7 +653,7 @@ void loop(void)
       else if (staging_is_required)
       {
         //Need to redo this for PW4 as it will be dramatically different to PW1 when staging
-        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[injChannel4].PW);
+        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injector(injChannel4).PW);
         injector4StartAngle =
           injectors_context.calculateInjectorStartAngle(injChannel1, PWdivTimerPerDegree, currentStatus.injAngle);
 #if INJ_CHANNELS >= 6
@@ -686,7 +686,7 @@ void loop(void)
         if (staging_is_required)
         {
           //Need to redo this for PW5 as it will be dramatically different to PW1 when staging
-          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[injChannel5].PW);
+          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injector(injChannel5).PW);
           injector5StartAngle =
             injectors_context.calculateInjectorStartAngle(injChannel1, PWdivTimerPerDegree, currentStatus.injAngle);
           injector6StartAngle =
@@ -709,7 +709,7 @@ void loop(void)
       else if (staging_is_required)
       {
         //Need to redo this for PW3 as it will be dramatically different to PW1 when staging
-        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[injChannel3].PW);
+        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injector(injChannel3).PW);
         injector3StartAngle =
           injectors_context.calculateInjectorStartAngle(injChannel1, PWdivTimerPerDegree, currentStatus.injAngle);
         injector4StartAngle =
@@ -741,7 +741,7 @@ void loop(void)
 #if INJ_CHANNELS >= 6
       if (staging_is_required)
       {
-        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[injChannel6].PW);
+        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injector(injChannel6).PW);
         injector6StartAngle =
           injectors_context.calculateInjectorStartAngle(injChannel6, PWdivTimerPerDegree, currentStatus.injAngle);
       }
@@ -786,11 +786,11 @@ void loop(void)
         if (staging_is_required)
         {
           //Need to redo this for staging PW as it will be dramatically different to PW1 when staging
-          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[injChannel7].PW);
+          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injector(injChannel7).PW);
           injector7StartAngle =
             injectors_context.calculateInjectorStartAngle(injChannel7, PWdivTimerPerDegree, currentStatus.injAngle);
 
-          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[injChannel8].PW);
+          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injector(injChannel8).PW);
           injector8StartAngle =
             injectors_context.calculateInjectorStartAngle(injChannel8, PWdivTimerPerDegree, currentStatus.injAngle);
         }
@@ -806,7 +806,7 @@ void loop(void)
         if (staging_is_required)
         {
           //Need to redo this for staging PW as it will be dramatically different to PW1 when staging
-          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[injChannel4].PW);
+          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injector(injChannel4).PW);
           injector4StartAngle =
             injectors_context.calculateInjectorStartAngle(injChannel1, PWdivTimerPerDegree, currentStatus.injAngle);
           injector5StartAngle =
@@ -866,7 +866,7 @@ void loop(void)
         if (staging_is_required)
         {
           //Need to redo this for PW5 as it will be dramatically different to PW1 when staging
-          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[injChannel5].PW);
+          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injector(injChannel5).PW);
           injector5StartAngle =
             injectors_context.calculateInjectorStartAngle(injChannel1, PWdivTimerPerDegree, currentStatus.injAngle);
           injector6StartAngle =
@@ -1641,58 +1641,58 @@ void calculateStaging(uint32_t pwLimit)
   //Final check is to ensure that DFCO isn't active, which would cause an overflow below (See #267)
   if (configPage10.stagingEnabled
       && (configPage2.nCylinders <= INJ_CHANNELS || configPage2.injType == INJ_TYPE_TBODY)
-      && injectors_context.injectors[injChannel1].PW > inj_opentime_uS)
+      && injectors_context.injector(injChannel1).PW > inj_opentime_uS)
   {
     //Scale the 'full' pulsewidth by each of the injector capacities
-    injectors_context.injectors[injChannel1].PW -= inj_opentime_uS; //Subtract the opening time from PW1 as it needs to be multiplied out again by the pri/sec req_fuel values below. It is added on again after that calculation.
-    uint32_t tempPW1 = div100((uint32_t)injectors_context.injectors[injChannel1].PW * staged_req_fuel_mult_pri);
+    injectors_context.injector(injChannel1).PW -= inj_opentime_uS; //Subtract the opening time from PW1 as it needs to be multiplied out again by the pri/sec req_fuel values below. It is added on again after that calculation.
+    uint32_t tempPW1 = div100((uint32_t)injectors_context.injector(injChannel1).PW * staged_req_fuel_mult_pri);
 
     switch ((staging_mode_t)configPage10.stagingMode)
     {
     case STAGING_MODE_TABLE:
     {
       //This is ONLY needed in in table mode. Auto mode only calculates the difference.
-      uint32_t tempPW3 = div100((uint32_t)injectors_context.injectors[injChannel1].PW * staged_req_fuel_mult_sec);
+      uint32_t tempPW3 = div100((uint32_t)injectors_context.injector(injChannel1).PW * staged_req_fuel_mult_sec);
 
       uint8_t stagingSplit = get3DTableValue(&stagingTable, currentStatus.fuelLoad, currentStatus.RPM);
-      injectors_context.injectors[injChannel1].PW = div100((100U - stagingSplit) * tempPW1);
-      injectors_context.injectors[injChannel1].PW += inj_opentime_uS;
+      injectors_context.injector(injChannel1).PW = div100((100U - stagingSplit) * tempPW1);
+      injectors_context.injector(injChannel1).PW += inj_opentime_uS;
 
       //PW2 is used temporarily to hold the secondary injector pulsewidth. It will be assigned to the correct channel below
       if (stagingSplit > 0)
       {
         BIT_SET(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE); //Set the staging active flag
-        injectors_context.injectors[injChannel2].PW = div100(stagingSplit * tempPW3);
-        injectors_context.injectors[injChannel2].PW += inj_opentime_uS;
+        injectors_context.injector(injChannel2).PW = div100(stagingSplit * tempPW3);
+        injectors_context.injector(injChannel2).PW += inj_opentime_uS;
       }
       else
       {
         BIT_CLEAR(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE); //Clear the staging active flag
-        injectors_context.injectors[injChannel2].PW = 0;
+        injectors_context.injector(injChannel2).PW = 0;
       }
       break;
     }
 
     case STAGING_MODE_AUTO:
     {
-      injectors_context.injectors[injChannel1].PW = tempPW1;
+      injectors_context.injector(injChannel1).PW = tempPW1;
       //If automatic mode, the primary injectors are used all the way up to their limit (Configured by the pulsewidth limit setting)
       //If they exceed their limit, the extra duty is passed to the secondaries
       if (tempPW1 > pwLimit)
       {
         BIT_SET(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE); //Set the staging active flag
         uint32_t extraPW = tempPW1 - pwLimit + inj_opentime_uS; //The open time must be added here AND below because tempPW1 does not include an open time. The addition of it here takes into account the fact that pwLlimit does not contain an allowance for an open time.
-        injectors_context.injectors[injChannel1].PW = pwLimit;
+        injectors_context.injector(injChannel1).PW = pwLimit;
          //Convert the 'left over' fuel amount from primary injector scaling to secondary
-        injectors_context.injectors[injChannel2].PW = udiv_32_16(extraPW * staged_req_fuel_mult_sec, staged_req_fuel_mult_pri);
-        injectors_context.injectors[injChannel2].PW += inj_opentime_uS;
+        injectors_context.injector(injChannel2).PW = udiv_32_16(extraPW * staged_req_fuel_mult_sec, staged_req_fuel_mult_pri);
+        injectors_context.injector(injChannel2).PW += inj_opentime_uS;
       }
       else
       {
         //If tempPW1 < pwLImit it means that the entire fuel load can be handled by the primaries and staging is inactive.
         //Secondary PW is simply set to 0
         BIT_CLEAR(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE); //Clear the staging active flag
-        injectors_context.injectors[injChannel2].PW = 0;
+        injectors_context.injector(injChannel2).PW = 0;
       }
       break;
     }
@@ -1710,24 +1710,24 @@ void calculateStaging(uint32_t pwLimit)
 
     case 2:
       //Primary pulsewidth on channels 1 and 2, secondary on channels 3 and 4
-      injectors_context.injectors[injChannel3].PW = injectors_context.injectors[injChannel2].PW;
-      injectors_context.injectors[injChannel4].PW = injectors_context.injectors[injChannel2].PW;
-      injectors_context.injectors[injChannel2].PW = injectors_context.injectors[injChannel1].PW;
+      injectors_context.injector(injChannel3).PW = injectors_context.injector(injChannel2).PW;
+      injectors_context.injector(injChannel4).PW = injectors_context.injector(injChannel2).PW;
+      injectors_context.injector(injChannel2).PW = injectors_context.injector(injChannel1).PW;
       break;
 
     case 3:
       //6 channels required for 'normal' 3 cylinder staging support
 #if INJ_CHANNELS >= 6
       //Primary pulsewidth on channels 1, 2 and 3, secondary on channels 4, 5 and 6
-      injectors_context.injectors[injChannel4].PW = injectors_context.injectors[injChannel2].PW;
-      injectors_context.injectors[injChannel5].PW = injectors_context.injectors[injChannel2].PW;
-      injectors_context.injectors[injChannel6].PW = injectors_context.injectors[injChannel2].PW;
+      injectors_context.injector(injChannel4).PW = injectors_context.injector(injChannel2).PW;
+      injectors_context.injector(injChannel5).PW = injectors_context.injector(injChannel2).PW;
+      injectors_context.injector(injChannel6).PW = injectors_context.injector(injChannel2).PW;
 #else
       //If there are not enough channels, then primary pulsewidth is on channels 1, 2 and 3, secondary on channel 4
-      injectors_context.injectors[injChannel4].PW = injectors_context.injectors[injChannel2].PW;
+      injectors_context.injector(injChannel4).PW = injectors_context.injector(injChannel2).PW;
 #endif
-      injectors_context.injectors[injChannel2].PW = injectors_context.injectors[injChannel1].PW;
-      injectors_context.injectors[injChannel3].PW = injectors_context.injectors[injChannel1].PW;
+      injectors_context.injector(injChannel2).PW = injectors_context.injector(injChannel1).PW;
+      injectors_context.injector(injChannel3).PW = injectors_context.injector(injChannel1).PW;
       break;
 
     case 4:
@@ -1735,25 +1735,25 @@ void calculateStaging(uint32_t pwLimit)
       {
         //Staging with 4 cylinders semi/sequential requires 8 total channels
 #if INJ_CHANNELS >= 8
-        injectors_context.injectors[injChannel5].PW = injectors_context.injectors[injChannel2].PW;
-        injectors_context.injectors[injChannel6].PW = injectors_context.injectors[injChannel2].PW;
-        injectors_context.injectors[injChannel7].PW = injectors_context.injectors[injChannel2].PW;
-        injectors_context.injectors[injChannel8].PW = injectors_context.injectors[injChannel2].PW;
+        injectors_context.injector(injChannel5).PW = injectors_context.injector(injChannel2).PW;
+        injectors_context.injector(injChannel6).PW = injectors_context.injector(injChannel2).PW;
+        injectors_context.injector(injChannel7).PW = injectors_context.injector(injChannel2).PW;
+        injectors_context.injector(injChannel8).PW = injectors_context.injector(injChannel2).PW;
 
-        injectors_context.injectors[injChannel2].PW = injectors_context.injectors[injChannel1].PW;
-        injectors_context.injectors[injChannel3].PW = injectors_context.injectors[injChannel1].PW;
-        injectors_context.injectors[injChannel4].PW = injectors_context.injectors[injChannel1].PW;
+        injectors_context.injector(injChannel2).PW = injectors_context.injector(injChannel1).PW;
+        injectors_context.injector(injChannel3).PW = injectors_context.injector(injChannel1).PW;
+        injectors_context.injector(injChannel4).PW = injectors_context.injector(injChannel1).PW;
 #else
         //This is an invalid config as there are not enough outputs to support sequential + staging
         //Put the staging output to the non-existent channel 5
-        injectors_context.injectors[injChannel5].PW = injectors_context.injectors[injChannel2].PW;
+        injectors_context.injector(injChannel5).PW = injectors_context.injector(injChannel2).PW;
 #endif
       }
       else
       {
-        injectors_context.injectors[injChannel4].PW = injectors_context.injectors[injChannel2].PW;
-        injectors_context.injectors[injChannel3].PW = injectors_context.injectors[injChannel2].PW;
-        injectors_context.injectors[injChannel2].PW = injectors_context.injectors[injChannel1].PW;
+        injectors_context.injector(injChannel4).PW = injectors_context.injector(injChannel2).PW;
+        injectors_context.injector(injChannel3).PW = injectors_context.injector(injChannel2).PW;
+        injectors_context.injector(injChannel2).PW = injectors_context.injector(injChannel1).PW;
       }
       break;
 
@@ -1762,16 +1762,16 @@ void calculateStaging(uint32_t pwLimit)
 #if INJ_CHANNELS >= 5
       if (configPage2.injLayout != INJ_SEQUENTIAL)
       {
-        injectors_context.injectors[injChannel6].PW = injectors_context.injectors[injChannel2].PW;
+        injectors_context.injector(injChannel6).PW = injectors_context.injector(injChannel2).PW;
       }
 #if INJ_CHANNELS >= 6
-      injectors_context.injectors[injChannel7].PW = injectors_context.injectors[injChannel2].PW;
+      injectors_context.injector(injChannel7).PW = injectors_context.injector(injChannel2).PW;
 #endif
 #endif
 
-      injectors_context.injectors[injChannel2].PW = injectors_context.injectors[injChannel1].PW;
-      injectors_context.injectors[injChannel3].PW = injectors_context.injectors[injChannel1].PW;
-      injectors_context.injectors[injChannel4].PW = injectors_context.injectors[injChannel1].PW;
+      injectors_context.injector(injChannel2).PW = injectors_context.injector(injChannel1).PW;
+      injectors_context.injector(injChannel3).PW = injectors_context.injector(injChannel1).PW;
+      injectors_context.injector(injChannel4).PW = injectors_context.injector(injChannel1).PW;
       break;
 
     case 6:
@@ -1779,25 +1779,25 @@ void calculateStaging(uint32_t pwLimit)
       //6 cylinder staging only if not sequential
       if (configPage2.injLayout != INJ_SEQUENTIAL)
       {
-        injectors_context.injectors[injChannel4].PW = injectors_context.injectors[injChannel2].PW;
-        injectors_context.injectors[injChannel5].PW = injectors_context.injectors[injChannel2].PW;
-        injectors_context.injectors[injChannel6].PW = injectors_context.injectors[injChannel2].PW;
+        injectors_context.injector(injChannel4).PW = injectors_context.injector(injChannel2).PW;
+        injectors_context.injector(injChannel5).PW = injectors_context.injector(injChannel2).PW;
+        injectors_context.injector(injChannel6).PW = injectors_context.injector(injChannel2).PW;
       }
 #if INJ_CHANNELS >= 8
       else
       {
         //If there are 8 channels, then the 6 cylinder sequential option is available by using channels 7 + 8 for staging
-        injectors_context.injectors[injChannel7].PW = injectors_context.injectors[injChannel2].PW;
-        injectors_context.injectors[injChannel8].PW = injectors_context.injectors[injChannel2].PW;
+        injectors_context.injector(injChannel7).PW = injectors_context.injector(injChannel2).PW;
+        injectors_context.injector(injChannel8).PW = injectors_context.injector(injChannel2).PW;
 
-        injectors_context.injectors[injChannel4].PW = injectors_context.injectors[injChannel1].PW;
-        injectors_context.injectors[injChannel5].PW = injectors_context.injectors[injChannel1].PW;
-        injectors_context.injectors[injChannel6].PW = injectors_context.injectors[injChannel1].PW;
+        injectors_context.injector(injChannel4).PW = injectors_context.injector(injChannel1).PW;
+        injectors_context.injector(injChannel5).PW = injectors_context.injector(injChannel1).PW;
+        injectors_context.injector(injChannel6).PW = injectors_context.injector(injChannel1).PW;
       }
 #endif
 #endif
-      injectors_context.injectors[injChannel2].PW = injectors_context.injectors[injChannel1].PW;
-      injectors_context.injectors[injChannel3].PW = injectors_context.injectors[injChannel1].PW;
+      injectors_context.injector(injChannel2).PW = injectors_context.injector(injChannel1).PW;
+      injectors_context.injector(injChannel3).PW = injectors_context.injector(injChannel1).PW;
       break;
 
     case 8:
@@ -1805,22 +1805,22 @@ void calculateStaging(uint32_t pwLimit)
       //8 cylinder staging only if not sequential
       if (configPage2.injLayout != INJ_SEQUENTIAL)
       {
-        injectors_context.injectors[injChannel5].PW = injectors_context.injectors[injChannel2].PW;
-        injectors_context.injectors[injChannel6].PW = injectors_context.injectors[injChannel2].PW;
-        injectors_context.injectors[injChannel7].PW = injectors_context.injectors[injChannel2].PW;
-        injectors_context.injectors[injChannel8].PW = injectors_context.injectors[injChannel2].PW;
+        injectors_context.injector(injChannel5).PW = injectors_context.injector(injChannel2).PW;
+        injectors_context.injector(injChannel6).PW = injectors_context.injector(injChannel2).PW;
+        injectors_context.injector(injChannel7).PW = injectors_context.injector(injChannel2).PW;
+        injectors_context.injector(injChannel8).PW = injectors_context.injector(injChannel2).PW;
       }
 #       endif
-      injectors_context.injectors[injChannel2].PW = injectors_context.injectors[injChannel1].PW;
-      injectors_context.injectors[injChannel3].PW = injectors_context.injectors[injChannel1].PW;
-      injectors_context.injectors[injChannel4].PW = injectors_context.injectors[injChannel1].PW;
+      injectors_context.injector(injChannel2).PW = injectors_context.injector(injChannel1).PW;
+      injectors_context.injector(injChannel3).PW = injectors_context.injector(injChannel1).PW;
+      injectors_context.injector(injChannel4).PW = injectors_context.injector(injChannel1).PW;
       break;
 
     default:
       //Assume 4 cylinder non-seq for default
-      injectors_context.injectors[injChannel4].PW = injectors_context.injectors[injChannel2].PW;
-      injectors_context.injectors[injChannel3].PW = injectors_context.injectors[injChannel2].PW;
-      injectors_context.injectors[injChannel2].PW = injectors_context.injectors[injChannel1].PW;
+      injectors_context.injector(injChannel4).PW = injectors_context.injector(injChannel2).PW;
+      injectors_context.injector(injChannel3).PW = injectors_context.injector(injChannel2).PW;
+      injectors_context.injector(injChannel2).PW = injectors_context.injector(injChannel1).PW;
       break;
     }
   }
@@ -1828,59 +1828,59 @@ void calculateStaging(uint32_t pwLimit)
   {
     if (injectors_context.maxOutputs >= 2)
     {
-      injectors_context.injectors[injChannel2].PW = injectors_context.injectors[injChannel1].PW;
+      injectors_context.injector(injChannel2).PW = injectors_context.injector(injChannel1).PW;
     }
     else
     {
-      injectors_context.injectors[injChannel2].PW = 0;
+      injectors_context.injector(injChannel2).PW = 0;
     }
     if (injectors_context.maxOutputs >= 3)
     {
-      injectors_context.injectors[injChannel3].PW = injectors_context.injectors[injChannel1].PW;
+      injectors_context.injector(injChannel3).PW = injectors_context.injector(injChannel1).PW;
     }
     else
     {
-      injectors_context.injectors[injChannel3].PW = 0;
+      injectors_context.injector(injChannel3).PW = 0;
     }
     if (injectors_context.maxOutputs >= 4)
     {
-      injectors_context.injectors[injChannel4].PW = injectors_context.injectors[injChannel1].PW;
+      injectors_context.injector(injChannel4).PW = injectors_context.injector(injChannel1).PW;
     }
     else
     {
-      injectors_context.injectors[injChannel4].PW = 0;
+      injectors_context.injector(injChannel4).PW = 0;
     }
     if (injectors_context.maxOutputs >= 5)
     {
-      injectors_context.injectors[injChannel5].PW = injectors_context.injectors[injChannel1].PW;
+      injectors_context.injector(injChannel5).PW = injectors_context.injector(injChannel1).PW;
     }
     else
     {
-      injectors_context.injectors[injChannel5].PW = 0;
+      injectors_context.injector(injChannel5).PW = 0;
     }
     if (injectors_context.maxOutputs >= 6)
     {
-      injectors_context.injectors[injChannel6].PW = injectors_context.injectors[injChannel1].PW;
+      injectors_context.injector(injChannel6).PW = injectors_context.injector(injChannel1).PW;
     }
     else
     {
-      injectors_context.injectors[injChannel6].PW = 0;
+      injectors_context.injector(injChannel6).PW = 0;
     }
     if (injectors_context.maxOutputs >= 7)
     {
-      injectors_context.injectors[injChannel7].PW = injectors_context.injectors[injChannel1].PW;
+      injectors_context.injector(injChannel7).PW = injectors_context.injector(injChannel1).PW;
     }
     else
     {
-      injectors_context.injectors[injChannel7].PW = 0;
+      injectors_context.injector(injChannel7).PW = 0;
     }
     if (injectors_context.maxOutputs >= 8)
     {
-      injectors_context.injectors[injChannel8].PW = injectors_context.injectors[injChannel1].PW;
+      injectors_context.injector(injChannel8).PW = injectors_context.injector(injChannel1).PW;
     }
     else
     {
-      injectors_context.injectors[injChannel8].PW = 0;
+      injectors_context.injector(injChannel8).PW = 0;
     }
 
     BIT_CLEAR(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE); //Clear the staging active flag
