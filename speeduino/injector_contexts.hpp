@@ -2,6 +2,7 @@
 
 #include "scheduler.h"
 #include "schedule_calcs.h"
+#include "injector_id.h"
 
 #include <stdint.h>
 
@@ -18,6 +19,12 @@ typedef struct injector_context_st
 
   uint16_t calculateInjectorStartAngle(uint16_t pwDegrees, uint16_t injAngle);
 
+  void configure_injector_schedule(injector_id_t injector_id);
+
+  void configure_injector_schedule(injector_id_t injector_id1, injector_id_t injector_id2);
+
+  void applyInjectorControl(uint16_t injOpenTime, uint16_t openAngle, int crankAngle);
+
 } injector_context_st;
 
 typedef struct injectors_context_st
@@ -27,8 +34,6 @@ public:
   byte channelsOn;
 
   injector_context_st injectors[INJ_CHANNELS];
-
-  injector_context_st * getInjectorContext(byte inj);
 
   void setMaxInjectors(byte const maxOutputs);
 
@@ -47,6 +52,14 @@ public:
   bool isOperational(byte inj);
 
   byte channelsOnMask(void);
+
+  void configure_injector_schedule(byte inj, injector_id_t injector_id);
+
+  void configure_injector_schedule(byte inj, injector_id_t injector_id1, injector_id_t injector_id2);
+
+  void configure_sequential_injector_schedules(size_t const count);
+
+  void applyInjectorControl(byte inj, uint16_t injOpenTime, uint16_t openAngle, int crankAngle);
 
 private:
   byte maxOutputMask = 0x01;
