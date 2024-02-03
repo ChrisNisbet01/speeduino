@@ -1,0 +1,78 @@
+#include "injector_contexts.hpp"
+
+injectors_context_st injectors_context;
+
+void injector_context_st::scheduleFuel(uint32_t const timeout)
+{
+  if (timeout > 0)
+  {
+    setFuelSchedule(*fuelSchedule, timeout, (unsigned long)PW);
+  }
+}
+
+void injector_context_st::applyFuelTrimToPW(trimTable3d * pTrimTable, int16_t fuelLoad, int16_t RPM)
+{
+  PW = ::applyFuelTrimToPW(pTrimTable, fuelLoad, RPM, PW);
+}
+
+uint16_t injector_context_st::calculateInjectorStartAngle(uint16_t pwDegrees, uint16_t injAngle)
+{
+  return ::calculateInjectorStartAngle(pwDegrees, channelInjDegrees, injAngle);
+}
+
+
+injector_context_st * injectors_context_st::getInjectorContext(byte inj)
+{
+  return &injectors[inj];
+}
+
+void injectors_context_st::setMaxInjectors(byte const maxOutputs)
+{
+  this->maxOutputs = maxOutputs;
+  this->maxOutputMask = ((uint16_t)1 << maxOutputs) - 1;
+}
+
+void injectors_context_st::applyFuelTrimToPW(byte inj, trimTable3d * pTrimTable, int16_t fuelLoad, int16_t RPM)
+{
+  injector_context_st &injector = injectors[inj];
+
+  injector.applyFuelTrimToPW(pTrimTable, fuelLoad, RPM);
+}
+
+uint16_t injectors_context_st::calculateInjectorStartAngle(byte inj, uint16_t pwDegrees, uint16_t injAngle)
+{
+  injector_context_st &injector = injectors[inj];
+
+  return injector.calculateInjectorStartAngle(pwDegrees, injAngle);
+}
+
+void injectors_context_st::setAllOn(void)
+{
+  channelsOn = maxOutputMask;
+}
+
+void injectors_context_st::setAllOff(void)
+{
+  channelsOn = 0;
+}
+
+void injectors_context_st::setOn(byte inj)
+{
+  BIT_SET(channelsOn, inj);
+}
+
+void injectors_context_st::setOff(byte inj)
+{
+  BIT_CLEAR(channelsOn, inj);
+}
+
+bool injectors_context_st::isOperational(byte inj)
+{
+  return ((1 << inj) & maxOutputMask & channelsOn) != 0;
+}
+
+byte injectors_context_st::channelsOnMask(void)
+{
+  return channelsOn;
+}
+

@@ -31,6 +31,7 @@
   #include "rtc_common.h"
 #endif
 #include "board_ids.h"
+#include "injector_contexts.hpp"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 
