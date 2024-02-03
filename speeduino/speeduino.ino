@@ -47,6 +47,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "schedule_calcs.h"
 #include "auxiliaries.h"
 #include "engine_load_calcs.h"
+#include "injector_contexts.hpp"
 
 
 uint16_t req_fuel_uS = 0; /**< The required fuel variable (As calculated by TunerStudio) in uS */
@@ -742,7 +743,7 @@ void loop(void)
       {
         PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[5].PW);
         injector6StartAngle =
-          injectors_context.calculateInjectorStartAngle(5 PWdivTimerPerDegree, currentStatus.injAngle);
+          injectors_context.calculateInjectorStartAngle(5, PWdivTimerPerDegree, currentStatus.injAngle);
       }
 #endif
 
