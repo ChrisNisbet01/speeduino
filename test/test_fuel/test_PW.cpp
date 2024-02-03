@@ -139,6 +139,6 @@ void test_PW_4Cyl_PW0(void)
   configPage10.stagingEnabled = false; //Staging must be off or channels 3 and 4 will be used
 
   loop();
-  TEST_ASSERT_EQUAL(0, injectors_context.injectors[2].PW);
-  TEST_ASSERT_EQUAL(0, injectors_context.injectors[3].PW);
+  TEST_ASSERT_EQUAL(0, injectors_context.injectors[injChannel3].PW);
+  TEST_ASSERT_EQUAL(0, injectors_context.injectors[injChannel4].PW);
 }

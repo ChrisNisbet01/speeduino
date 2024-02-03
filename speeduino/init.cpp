@@ -506,7 +506,7 @@ void initialiseAll(void)
     switch (configPage2.nCylinders) {
     case 1:
         channel1IgnDegrees = 0;
-        injectors_context.injectors[0].channelInjDegrees = 0;
+        injectors_context.injectors[injChannel1].channelInjDegrees = 0;
         maxIgnOutputs = 1;
         injectors_context.setMaxInjectors(2);
 
@@ -528,14 +528,14 @@ void initialiseAll(void)
         {
           injectors_context.setMaxInjectors(2);
 
-          injectors_context.injectors[1].channelInjDegrees =
-            injectors_context.injectors[0].channelInjDegrees;
+          injectors_context.injectors[injChannel2].channelInjDegrees =
+            injectors_context.injectors[injChannel1].channelInjDegrees;
         }
         break;
 
     case 2:
         channel1IgnDegrees = 0;
-        injectors_context.injectors[0].channelInjDegrees = 0;
+        injectors_context.injectors[injChannel1].channelInjDegrees = 0;
         maxIgnOutputs = 2;
         injectors_context.setMaxInjectors(2);
         if (configPage2.engineType == EVEN_FIRE)
@@ -562,17 +562,17 @@ void initialiseAll(void)
         //The below are true regardless of whether this is running sequential or not
         if (configPage2.engineType == EVEN_FIRE)
         {
-          injectors_context.injectors[1].channelInjDegrees = 180;
+          injectors_context.injectors[injChannel2].channelInjDegrees = 180;
         }
         else
         {
-          injectors_context.injectors[1].channelInjDegrees = configPage2.oddfire2;
+          injectors_context.injectors[injChannel2].channelInjDegrees = configPage2.oddfire2;
         }
         if (!configPage2.injTiming)
         {
           //For simultaneous, all squirts happen at the same time
-          injectors_context.injectors[0].channelInjDegrees = 0;
-          injectors_context.injectors[1].channelInjDegrees = 0;
+          injectors_context.injectors[injChannel1].channelInjDegrees = 0;
+          injectors_context.injectors[injChannel2].channelInjDegrees = 0;
         }
 
         //Check if injector staging is enabled
@@ -580,10 +580,10 @@ void initialiseAll(void)
         {
           injectors_context.setMaxInjectors(4);
 
-          injectors_context.injectors[2].channelInjDegrees =
-            injectors_context.injectors[0].channelInjDegrees;
-          injectors_context.injectors[3].channelInjDegrees =
-            injectors_context.injectors[1].channelInjDegrees;
+          injectors_context.injectors[injChannel3].channelInjDegrees =
+            injectors_context.injectors[injChannel1].channelInjDegrees;
+          injectors_context.injectors[injChannel4].channelInjDegrees =
+            injectors_context.injectors[injChannel2].channelInjDegrees;
         }
 
         break;
@@ -618,25 +618,25 @@ void initialiseAll(void)
         //For alternating injection, the squirt occurs at different times for each channel
         if( (configPage2.injLayout == INJ_SEMISEQUENTIAL) || (configPage2.injLayout == INJ_PAIRED) )
         {
-          injectors_context.injectors[0].channelInjDegrees = 0;
-          injectors_context.injectors[1].channelInjDegrees = 120;
-          injectors_context.injectors[2].channelInjDegrees = 240;
+          injectors_context.injectors[injChannel1].channelInjDegrees = 0;
+          injectors_context.injectors[injChannel2].channelInjDegrees = 120;
+          injectors_context.injectors[injChannel3].channelInjDegrees = 240;
 
           //Adjust the injection angles based on the number of squirts
           if (currentStatus.nSquirts > 2)
           {
-            injectors_context.injectors[1].channelInjDegrees =
-              (injectors_context.injectors[1].channelInjDegrees * 2) / currentStatus.nSquirts;
-            injectors_context.injectors[2].channelInjDegrees =
-              (injectors_context.injectors[2].channelInjDegrees * 2) / currentStatus.nSquirts;
+            injectors_context.injectors[injChannel2].channelInjDegrees =
+              (injectors_context.injectors[injChannel2].channelInjDegrees * 2) / currentStatus.nSquirts;
+            injectors_context.injectors[injChannel3].channelInjDegrees =
+              (injectors_context.injectors[injChannel3].channelInjDegrees * 2) / currentStatus.nSquirts;
           }
 
           if (!configPage2.injTiming)
           {
             //For simultaneous, all squirts happen at the same time
-            injectors_context.injectors[0].channelInjDegrees = 0;
-            injectors_context.injectors[1].channelInjDegrees = 0;
-            injectors_context.injectors[2].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel1].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel2].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel3].channelInjDegrees = 0;
           }
         }
         else if (configPage2.injLayout == INJ_SEQUENTIAL)
@@ -645,26 +645,26 @@ void initialiseAll(void)
 
           if(configPage2.strokes == TWO_STROKE)
           {
-            injectors_context.injectors[0].channelInjDegrees = 0;
-            injectors_context.injectors[1].channelInjDegrees = 120;
-            injectors_context.injectors[2].channelInjDegrees = 240;
+            injectors_context.injectors[injChannel1].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel2].channelInjDegrees = 120;
+            injectors_context.injectors[injChannel3].channelInjDegrees = 240;
             CRANK_ANGLE_MAX_INJ = 360;
           }
           else
           {
             req_fuel_uS = req_fuel_init_uS * 2;
-            injectors_context.injectors[0].channelInjDegrees = 0;
-            injectors_context.injectors[1].channelInjDegrees = 240;
-            injectors_context.injectors[2].channelInjDegrees = 480;
+            injectors_context.injectors[injChannel1].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel2].channelInjDegrees = 240;
+            injectors_context.injectors[injChannel3].channelInjDegrees = 480;
             CRANK_ANGLE_MAX_INJ = 720;
           }
         }
         else
         {
           //Should never happen, but default values
-          injectors_context.injectors[0].channelInjDegrees = 0;
-          injectors_context.injectors[1].channelInjDegrees = 120;
-          injectors_context.injectors[2].channelInjDegrees = 240;
+          injectors_context.injectors[injChannel1].channelInjDegrees = 0;
+          injectors_context.injectors[injChannel2].channelInjDegrees = 120;
+          injectors_context.injectors[injChannel3].channelInjDegrees = 240;
         }
 
         //Check if injector staging is enabled
@@ -673,23 +673,24 @@ void initialiseAll(void)
           #if INJ_CHANNELS >= 6
             injectors_context.setMaxInjectors(6);
 
-            injectors_context.injectors[3].channelInjDegrees =
-              injectors_context.injectors[0].channelInjDegrees;
-            injectors_context.injectors[4].channelInjDegrees =
-              injectors_context.injectors[1].channelInjDegrees;
-            injectors_context.injectors[5].channelInjDegrees =
-              injectors_context.injectors[2].channelInjDegrees;
+            injectors_context.injectors[injChannel4].channelInjDegrees =
+              injectors_context.injectors[injChannel1].channelInjDegrees;
+            injectors_context.injectors[injChannel5].channelInjDegrees =
+              injectors_context.injectors[injChannel1].channelInjDegrees;
+            injectors_context.injectors[injChannel6].channelInjDegrees =
+              injectors_context.injectors[injChannel1].channelInjDegrees;
           #else
             //Staged output is on channel 4
             injectors_context.setMaxInjectors(4);
 
-            injectors_context.injectors[3].channelInjDegrees = injectors_context.injectors[0].channelInjDegrees;
+            injectors_context.injectors[injChannel4].channelInjDegrees =
+              injectors_context.injectors[injChannel1].channelInjDegrees;
           #endif
         }
         break;
     case 4:
         channel1IgnDegrees = 0;
-        injectors_context.injectors[0].channelInjDegrees = 0;
+        injectors_context.injectors[injChannel1].channelInjDegrees = 0;
         maxIgnOutputs = 2; //Default value for 4 cylinder, may be changed below
         injectors_context.setMaxInjectors(2);
         if (configPage2.engineType == EVEN_FIRE )
@@ -728,19 +729,19 @@ void initialiseAll(void)
             || configPage2.injLayout == INJ_PAIRED
             || configPage2.strokes == TWO_STROKE)
         {
-          injectors_context.injectors[1].channelInjDegrees = 180;
+          injectors_context.injectors[injChannel2].channelInjDegrees = 180;
 
           if (!configPage2.injTiming)
           {
             //For simultaneous, all squirts happen at the same time
-            injectors_context.injectors[0].channelInjDegrees = 0;
-            injectors_context.injectors[1].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel1].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel2].channelInjDegrees = 0;
           }
           else if (currentStatus.nSquirts > 2)
           {
             //Adjust the injection angles based on the number of squirts
-            injectors_context.injectors[1].channelInjDegrees =
-              (injectors_context.injectors[1].channelInjDegrees * 2) / currentStatus.nSquirts;
+            injectors_context.injectors[injChannel2].channelInjDegrees =
+              (injectors_context.injectors[injChannel2].channelInjDegrees * 2) / currentStatus.nSquirts;
           }
           else
           {
@@ -749,9 +750,9 @@ void initialiseAll(void)
         }
         else if (configPage2.injLayout == INJ_SEQUENTIAL)
         {
-          injectors_context.injectors[1].channelInjDegrees = 180;
-          injectors_context.injectors[2].channelInjDegrees = 360;
-          injectors_context.injectors[3].channelInjDegrees = 540;
+          injectors_context.injectors[injChannel2].channelInjDegrees = 180;
+          injectors_context.injectors[injChannel3].channelInjDegrees = 360;
+          injectors_context.injectors[injChannel4].channelInjDegrees = 540;
 
           injectors_context.setMaxInjectors(4);
 
@@ -777,42 +778,42 @@ void initialiseAll(void)
             #if INJ_CHANNELS >= 8
               injectors_context.setMaxInjectors(8);
 
-              injectors_context.injectors[4].channelInjDegrees =
-                injectors_context.injectors[0].channelInjDegrees;
-              injectors_context.injectors[5].channelInjDegrees =
-                injectors_context.injectors[1].channelInjDegrees;
-              injectors_context.injectors[6].channelInjDegrees =
-                injectors_context.injectors[2].channelInjDegrees;
-              injectors_context.injectors[7].channelInjDegrees =
-                injectors_context.injectors[3].channelInjDegrees;
+              injectors_context.injectors[injChannel5].channelInjDegrees =
+                injectors_context.injectors[injChannel1].channelInjDegrees;
+              injectors_context.injectors[injChannel6].channelInjDegrees =
+                injectors_context.injectors[injChannel2].channelInjDegrees;
+              injectors_context.injectors[injChannel7].channelInjDegrees =
+                injectors_context.injectors[injChannel3].channelInjDegrees;
+              injectors_context.injectors[injChannel8].channelInjDegrees =
+                injectors_context.injectors[injChannel4].channelInjDegrees;
             #else
               //This is an invalid config as there are not enough outputs to
               //support sequential + staging.
               //Put the staging output to the non-existent channel 5
               #if (INJ_CHANNELS >= 5)
               injectors_context.setMaxInjectors(5);
-              injectors_context.injectors[4].channelInjDegrees =
-                injectors_context.injectors[0].channelInjDegrees;
+              injectors_context.injectors[injChannel5].channelInjDegrees =
+                injectors_context.injectors[injChannel1].channelInjDegrees;
               #endif
             #endif
           }
           else
           {
-            injectors_context.injectors[2].channelInjDegrees =
-              injectors_context.injectors[0].channelInjDegrees;
-            injectors_context.injectors[3].channelInjDegrees =
-              injectors_context.injectors[1].channelInjDegrees;
+            injectors_context.injectors[injChannel3].channelInjDegrees =
+              injectors_context.injectors[injChannel1].channelInjDegrees;
+            injectors_context.injectors[injChannel4].channelInjDegrees =
+              injectors_context.injectors[injChannel2].channelInjDegrees;
           }
         }
 
         break;
     case 5:
-        injectors_context.injectors[0].channelInjDegrees = 0;
-        injectors_context.injectors[1].channelInjDegrees = 72;
-        injectors_context.injectors[2].channelInjDegrees = 144;
-        injectors_context.injectors[3].channelInjDegrees = 216;
+        injectors_context.injectors[injChannel1].channelInjDegrees = 0;
+        injectors_context.injectors[injChannel2].channelInjDegrees = 72;
+        injectors_context.injectors[injChannel3].channelInjDegrees = 144;
+        injectors_context.injectors[injChannel4].channelInjDegrees = 216;
 #if (IGN_CHANNELS >= 5)
-        injectors_context.injectors[4].channelInjDegrees = 288;
+        injectors_context.injectors[injChannel5].channelInjDegrees = 288;
 #endif
         maxIgnOutputs = 5; //Only 4 actual outputs, so that's all that can be cut
         //Is updated below to 5 if there are enough channels.
@@ -838,22 +839,22 @@ void initialiseAll(void)
           if (!configPage2.injTiming)
           {
             //For simultaneous, all squirts happen at the same time
-            injectors_context.injectors[0].channelInjDegrees = 0;
-            injectors_context.injectors[1].channelInjDegrees = 0;
-            injectors_context.injectors[2].channelInjDegrees = 0;
-            injectors_context.injectors[3].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel1].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel2].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel3].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel4].channelInjDegrees = 0;
 #if (INJ_CHANNELS >= 5)
-            injectors_context.injectors[4].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel5].channelInjDegrees = 0;
 #endif
           }
           else
           {
-            injectors_context.injectors[0].channelInjDegrees = 0;
-            injectors_context.injectors[1].channelInjDegrees = 72;
-            injectors_context.injectors[2].channelInjDegrees = 144;
-            injectors_context.injectors[3].channelInjDegrees = 216;
+            injectors_context.injectors[injChannel1].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel2].channelInjDegrees = 72;
+            injectors_context.injectors[injChannel3].channelInjDegrees = 144;
+            injectors_context.injectors[injChannel4].channelInjDegrees = 216;
 #if (INJ_CHANNELS >= 5)
-            injectors_context.injectors[4].channelInjDegrees = 288;
+            injectors_context.injectors[injChannel5].channelInjDegrees = 288;
 #endif
 
             //Divide by currentStatus.nSquirts ?
@@ -862,11 +863,11 @@ void initialiseAll(void)
 #if INJ_CHANNELS >= 5
         else if (configPage2.injLayout == INJ_SEQUENTIAL)
         {
-          injectors_context.injectors[0].channelInjDegrees = 0;
-          injectors_context.injectors[1].channelInjDegrees = 144;
-          injectors_context.injectors[2].channelInjDegrees = 288;
-          injectors_context.injectors[3].channelInjDegrees = 432;
-          injectors_context.injectors[4].channelInjDegrees = 576;
+          injectors_context.injectors[injChannel1].channelInjDegrees = 0;
+          injectors_context.injectors[injChannel2].channelInjDegrees = 144;
+          injectors_context.injectors[injChannel3].channelInjDegrees = 288;
+          injectors_context.injectors[injChannel4].channelInjDegrees = 432;
+          injectors_context.injectors[injChannel5].channelInjDegrees = 576;
 
           injectors_context.setMaxInjectors(5);
 
@@ -904,35 +905,35 @@ void initialiseAll(void)
         //For alternating injection, the squirt occurs at different times for each channel
         if (configPage2.injLayout == INJ_SEMISEQUENTIAL || configPage2.injLayout == INJ_PAIRED)
         {
-          injectors_context.injectors[0].channelInjDegrees = 0;
-          injectors_context.injectors[1].channelInjDegrees = 120;
-          injectors_context.injectors[2].channelInjDegrees = 240;
+          injectors_context.injectors[injChannel1].channelInjDegrees = 0;
+          injectors_context.injectors[injChannel2].channelInjDegrees = 120;
+          injectors_context.injectors[injChannel3].channelInjDegrees = 240;
           if (!configPage2.injTiming)
           {
             //For simultaneous, all squirts happen at the same time
-            injectors_context.injectors[0].channelInjDegrees = 0;
-            injectors_context.injectors[1].channelInjDegrees = 0;
-            injectors_context.injectors[2].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel1].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel2].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel3].channelInjDegrees = 0;
           }
           else if (currentStatus.nSquirts > 2)
           {
             //Adjust the injection angles based on the number of squirts
-            injectors_context.injectors[1].channelInjDegrees =
-              (injectors_context.injectors[1].channelInjDegrees * 2) / currentStatus.nSquirts;
-            injectors_context.injectors[2].channelInjDegrees =
-              (injectors_context.injectors[2].channelInjDegrees * 2) / currentStatus.nSquirts;
+            injectors_context.injectors[injChannel2].channelInjDegrees =
+              (injectors_context.injectors[injChannel2].channelInjDegrees * 2) / currentStatus.nSquirts;
+            injectors_context.injectors[injChannel3].channelInjDegrees =
+              (injectors_context.injectors[injChannel3].channelInjDegrees * 2) / currentStatus.nSquirts;
           }
         }
 
 #if INJ_CHANNELS >= 6
         if (configPage2.injLayout == INJ_SEQUENTIAL)
         {
-          injectors_context.injectors[0].channelInjDegrees = 0;
-          injectors_context.injectors[1].channelInjDegrees = 120;
-          injectors_context.injectors[2].channelInjDegrees = 240;
-          injectors_context.injectors[3].channelInjDegrees = 360;
-          injectors_context.injectors[4].channelInjDegrees = 480;
-          injectors_context.injectors[5].channelInjDegrees = 600;
+          injectors_context.injectors[injChannel1].channelInjDegrees = 0;
+          injectors_context.injectors[injChannel2].channelInjDegrees = 120;
+          injectors_context.injectors[injChannel3].channelInjDegrees = 240;
+          injectors_context.injectors[injChannel4].channelInjDegrees = 360;
+          injectors_context.injectors[injChannel5].channelInjDegrees = 480;
+          injectors_context.injectors[injChannel6].channelInjDegrees = 600;
 
           injectors_context.setMaxInjectors(6);
 
@@ -947,19 +948,19 @@ void initialiseAll(void)
           if (configPage2.injLayout == INJ_SEMISEQUENTIAL)
           {
             //Staging with 6 cylinders semi/sequential requires 8 total channels.
-            injectors_context.injectors[3].channelInjDegrees =
-              injectors_context.injectors[0].channelInjDegrees;
-            injectors_context.injectors[4].channelInjDegrees =
-              injectors_context.injectors[1].channelInjDegrees;
-            injectors_context.injectors[5].channelInjDegrees =
-              injectors_context.injectors[2].channelInjDegrees;
+            injectors_context.injectors[injChannel4].channelInjDegrees =
+              injectors_context.injectors[injChannel1].channelInjDegrees;
+            injectors_context.injectors[injChannel5].channelInjDegrees =
+              injectors_context.injectors[injChannel2].channelInjDegrees;
+            injectors_context.injectors[injChannel6].channelInjDegrees =
+              injectors_context.injectors[injChannel3].channelInjDegrees;
 #if INJ_CHANNELS >= 8
               injectors_context.setMaxInjectors(8);
 
-              injectors_context.injectors[6].channelInjDegrees =
-                injectors_context.injectors[0].channelInjDegrees;
-              injectors_context.injectors[7].channelInjDegrees =
-                injectors_context.injectors[0].channelInjDegrees;
+              injectors_context.injectors[injChannel7].channelInjDegrees =
+                injectors_context.injectors[injChannel1].channelInjDegrees;
+              injectors_context.injectors[injChannel8].channelInjDegrees =
+                injectors_context.injectors[injChannel1].channelInjDegrees;
 #else
               //This is an invalid config as there are not enough outputs to
               //support sequential + staging
@@ -999,42 +1000,42 @@ void initialiseAll(void)
         //For alternating injection, the squirt occurs at different times for each channel
         if (configPage2.injLayout == INJ_SEMISEQUENTIAL || configPage2.injLayout == INJ_PAIRED)
         {
-          injectors_context.injectors[0].channelInjDegrees = 0;
-          injectors_context.injectors[1].channelInjDegrees = 90;
-          injectors_context.injectors[2].channelInjDegrees = 180;
-          injectors_context.injectors[3].channelInjDegrees = 270;
+          injectors_context.injectors[injChannel1].channelInjDegrees = 0;
+          injectors_context.injectors[injChannel2].channelInjDegrees = 90;
+          injectors_context.injectors[injChannel3].channelInjDegrees = 180;
+          injectors_context.injectors[injChannel4].channelInjDegrees = 270;
 
           if (!configPage2.injTiming)
           {
             //For simultaneous, all squirts happen at the same time
-            injectors_context.injectors[0].channelInjDegrees = 0;
-            injectors_context.injectors[1].channelInjDegrees = 0;
-            injectors_context.injectors[2].channelInjDegrees = 0;
-            injectors_context.injectors[3].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel1].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel2].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel3].channelInjDegrees = 0;
+            injectors_context.injectors[injChannel4].channelInjDegrees = 0;
           }
           else if (currentStatus.nSquirts > 2)
           {
             //Adjust the injection angles based on the number of squirts
-            injectors_context.injectors[1].channelInjDegrees =
-              (injectors_context.injectors[1].channelInjDegrees * 2) / currentStatus.nSquirts;
-            injectors_context.injectors[2].channelInjDegrees =
-              (injectors_context.injectors[2].channelInjDegrees * 2) / currentStatus.nSquirts;
-            injectors_context.injectors[3].channelInjDegrees =
-              (injectors_context.injectors[3].channelInjDegrees * 2) / currentStatus.nSquirts;
+            injectors_context.injectors[injChannel2].channelInjDegrees =
+              (injectors_context.injectors[injChannel2].channelInjDegrees * 2) / currentStatus.nSquirts;
+            injectors_context.injectors[injChannel3].channelInjDegrees =
+              (injectors_context.injectors[injChannel3].channelInjDegrees * 2) / currentStatus.nSquirts;
+            injectors_context.injectors[injChannel4].channelInjDegrees =
+              (injectors_context.injectors[injChannel4].channelInjDegrees * 2) / currentStatus.nSquirts;
           }
         }
 
 #if INJ_CHANNELS >= 8
         else if (configPage2.injLayout == INJ_SEQUENTIAL)
         {
-          injectors_context.injectors[0].channelInjDegrees = 0;
-          injectors_context.injectors[1].channelInjDegrees = 90;
-          injectors_context.injectors[2].channelInjDegrees = 180;
-          injectors_context.injectors[3].channelInjDegrees = 270;
-          injectors_context.injectors[4].channelInjDegrees = 360;
-          injectors_context.injectors[5].channelInjDegrees = 450;
-          injectors_context.injectors[6].channelInjDegrees = 540;
-          injectors_context.injectors[7].channelInjDegrees = 630;
+          injectors_context.injectors[injChannel1].channelInjDegrees = 0;
+          injectors_context.injectors[injChannel2].channelInjDegrees = 90;
+          injectors_context.injectors[injChannel3].channelInjDegrees = 180;
+          injectors_context.injectors[injChannel4].channelInjDegrees = 270;
+          injectors_context.injectors[injChannel5].channelInjDegrees = 360;
+          injectors_context.injectors[injChannel6].channelInjDegrees = 450;
+          injectors_context.injectors[injChannel7].channelInjDegrees = 540;
+          injectors_context.injectors[injChannel8].channelInjDegrees = 630;
 
           injectors_context.setMaxInjectors(8);
 
@@ -1046,8 +1047,8 @@ void initialiseAll(void)
 
         break;
     default: // TODO: Handle this better!!!
-        injectors_context.injectors[0].channelInjDegrees = 0;
-        injectors_context.injectors[1].channelInjDegrees = 180;
+        injectors_context.injectors[injChannel1].channelInjDegrees = 0;
+        injectors_context.injectors[injChannel2].channelInjDegrees = 180;
         break;
     }
 
@@ -1069,35 +1070,35 @@ void initialiseAll(void)
       {
         if (configPage4.inj4cylPairing == INJ_PAIR_13_24)
         {
-          injectors_context.configure_injector_schedule(0, injector_id_1, injector_id_3);
-          injectors_context.configure_injector_schedule(1, injector_id_2, injector_id_4);
+          injectors_context.configure_injector_schedule(injChannel1, injector_id_1, injector_id_3);
+          injectors_context.configure_injector_schedule(injChannel2, injector_id_2, injector_id_4);
         }
         else
         {
-          injectors_context.configure_injector_schedule(0, injector_id_1, injector_id_4);
-          injectors_context.configure_injector_schedule(1, injector_id_2, injector_id_3);
+          injectors_context.configure_injector_schedule(injChannel1, injector_id_1, injector_id_4);
+          injectors_context.configure_injector_schedule(injChannel2, injector_id_2, injector_id_3);
         }
       }
       else if (configPage2.nCylinders == 5)
       {
         //This is similar to the paired injection but uses five injector outputs instead of four.
-        injectors_context.configure_injector_schedule(0, injector_id_1);
-        injectors_context.configure_injector_schedule(1, injector_id_2);
-        injectors_context.configure_injector_schedule(2, injector_id_3, injector_id_5);
-        injectors_context.configure_injector_schedule(3, injector_id_4);
+        injectors_context.configure_injector_schedule(injChannel1, injector_id_1);
+        injectors_context.configure_injector_schedule(injChannel2, injector_id_2);
+        injectors_context.configure_injector_schedule(injChannel3, injector_id_3, injector_id_5);
+        injectors_context.configure_injector_schedule(injChannel4, injector_id_4);
       }
       else if (configPage2.nCylinders == 6)
       {
-        injectors_context.configure_injector_schedule(0, injector_id_1, injector_id_4);
-        injectors_context.configure_injector_schedule(1, injector_id_2, injector_id_5);
-        injectors_context.configure_injector_schedule(2, injector_id_3, injector_id_6);
+        injectors_context.configure_injector_schedule(injChannel1, injector_id_1, injector_id_4);
+        injectors_context.configure_injector_schedule(injChannel2, injector_id_2, injector_id_5);
+        injectors_context.configure_injector_schedule(injChannel3, injector_id_3, injector_id_6);
       }
       else if (configPage2.nCylinders == 8)
       {
-        injectors_context.configure_injector_schedule(0, injector_id_1, injector_id_5);
-        injectors_context.configure_injector_schedule(1, injector_id_2, injector_id_6);
-        injectors_context.configure_injector_schedule(2, injector_id_3, injector_id_7);
-        injectors_context.configure_injector_schedule(3, injector_id_4, injector_id_8);
+        injectors_context.configure_injector_schedule(injChannel1, injector_id_1, injector_id_5);
+        injectors_context.configure_injector_schedule(injChannel2, injector_id_2, injector_id_6);
+        injectors_context.configure_injector_schedule(injChannel3, injector_id_3, injector_id_7);
+        injectors_context.configure_injector_schedule(injChannel4, injector_id_4, injector_id_8);
       }
       else
       {
@@ -3767,7 +3768,7 @@ void initialiseTriggers(void)
 static inline bool isAnyFuelScheduleRunning(void) {
   bool anyRunning = false;
 
-  for (size_t i = 0; i < ARRAY_SIZE(injectors_context.injectors); i++)
+  for (size_t i = injChannel1; i < injChannelCount; i++)
   {
     if (injectors_context.injectors[i].fuelSchedule->Status == RUNNING)
     {
@@ -3793,7 +3794,7 @@ void changeHalfToFullSync(void)
     CRANK_ANGLE_MAX_INJ = 720;
     req_fuel_uS = req_fuel_init_uS * 2;
 
-    injectors_context.configure_sequential_injector_schedules(ARRAY_SIZE(injectors_context.injectors));
+    injectors_context.configure_sequential_injector_schedules(injChannelCount);
 
     switch (configPage2.nCylinders)
     {
@@ -3857,29 +3858,29 @@ void changeFullToHalfSync(void)
       case 4:
         if(configPage4.inj4cylPairing == INJ_PAIR_13_24)
         {
-          injectors_context.configure_injector_schedule(0, injector_id_1, injector_id_3);
-          injectors_context.configure_injector_schedule(1, injector_id_2, injector_id_4);
+          injectors_context.configure_injector_schedule(injChannel1, injector_id_1, injector_id_3);
+          injectors_context.configure_injector_schedule(injChannel2, injector_id_2, injector_id_4);
         }
         else
         {
-          injectors_context.configure_injector_schedule(0, injector_id_1, injector_id_4);
-          injectors_context.configure_injector_schedule(1, injector_id_2, injector_id_3);
+          injectors_context.configure_injector_schedule(injChannel1, injector_id_1, injector_id_4);
+          injectors_context.configure_injector_schedule(injChannel2, injector_id_2, injector_id_3);
         }
         injectors_context.setMaxInjectors(2);
         break;
 
       case 6:
-        injectors_context.configure_injector_schedule(0, injector_id_1, injector_id_4);
-        injectors_context.configure_injector_schedule(1, injector_id_2, injector_id_5);
-        injectors_context.configure_injector_schedule(2, injector_id_3, injector_id_6);
+        injectors_context.configure_injector_schedule(injChannel1, injector_id_1, injector_id_4);
+        injectors_context.configure_injector_schedule(injChannel2, injector_id_2, injector_id_5);
+        injectors_context.configure_injector_schedule(injChannel3, injector_id_3, injector_id_6);
         injectors_context.setMaxInjectors(3);
         break;
 
       case 8:
-        injectors_context.configure_injector_schedule(0, injector_id_1, injector_id_5);
-        injectors_context.configure_injector_schedule(1, injector_id_2, injector_id_6);
-        injectors_context.configure_injector_schedule(2, injector_id_3, injector_id_7);
-        injectors_context.configure_injector_schedule(3, injector_id_4, injector_id_8);
+        injectors_context.configure_injector_schedule(injChannel1, injector_id_1, injector_id_5);
+        injectors_context.configure_injector_schedule(injChannel2, injector_id_2, injector_id_6);
+        injectors_context.configure_injector_schedule(injChannel3, injector_id_3, injector_id_7);
+        injectors_context.configure_injector_schedule(injChannel4, injector_id_4, injector_id_8);
         injectors_context.setMaxInjectors(4);
         break;
     }
