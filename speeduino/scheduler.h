@@ -42,6 +42,7 @@ See page 136 of the processors datasheet: http://www.atmel.com/Images/doc2549.pd
 #define SCHEDULER_H
 
 #include "globals.h"
+#include "maths.h"
 
 #define USE_IGN_REFRESH
 #define IGNITION_REFRESH_THRESHOLD  30 //Time in uS that the refresh functions will check to ensure there is enough time before changing the end compare
@@ -137,6 +138,12 @@ inline __attribute__((always_inline)) void setFuelSchedule(FuelSchedule &schedul
   }
 }
 
+static inline uint16_t applyFuelTrimToPW(trimTable3d * pTrimTable, int16_t fuelLoad, int16_t RPM, uint16_t currentPW)
+{
+  uint8_t pw1percent = 100U + get3DTableValue(pTrimTable, fuelLoad, RPM) - OFFSET_FUELTRIM;
+  return percentage(pw1percent, currentPW);
+}
+
 typedef struct injector_context_st
 {
   FuelSchedule * fuelSchedule;
@@ -151,6 +158,12 @@ typedef struct injector_context_st
       setFuelSchedule(*fuelSchedule, timeout, (unsigned long)PW);
     }
   }
+
+  void applyFuelTrimToPW(trimTable3d * pTrimTable, int16_t fuelLoad, int16_t RPM)
+  {
+    PW = ::applyFuelTrimToPW(pTrimTable, fuelLoad, RPM, PW);
+  }
+
 } injector_context_st;
 
 typedef struct injectors_context_st
@@ -170,6 +183,13 @@ public:
   {
     this->maxOutputs = maxOutputs;
     this->maxOutputMask = ((uint16_t)1 << maxOutputs) - 1;
+  }
+
+  void applyFuelTrimToPW(byte inj, trimTable3d * pTrimTable, int16_t fuelLoad, int16_t RPM)
+  {
+    injector_context_st &injector = injectors[inj];
+
+    injector.applyFuelTrimToPW(pTrimTable, fuelLoad, RPM);
   }
 
   void setAllOn(void)
