@@ -82,6 +82,11 @@ public:
 
   void applyInjectorControl(injectorChannelID_t inj, uint16_t injOpenTime, uint16_t openAngle, int crankAngle);
 
+  injector_context_st& injector(injectorChannelID_t inj)
+  {
+    return injectors[inj];
+  }
+
 private:
   byte maxOutputMask = 0x01;
 
