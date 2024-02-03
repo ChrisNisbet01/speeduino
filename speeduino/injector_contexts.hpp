@@ -6,6 +6,27 @@
 
 #include <stdint.h>
 
+typedef enum
+{
+  injChannel1,
+  injChannel2,
+  injChannel3,
+  injChannel4,
+#if INJ_CHANNELS >= 5
+  injChannel5,
+#endif
+#if INJ_CHANNELS >= 6
+  injChannel6,
+#endif
+#if INJ_CHANNELS >= 7
+  injChannel7,
+#endif
+#if INJ_CHANNELS >= 8
+  injChannel8,
+#endif
+  injChannelCount,
+} injectorChannelID_t;
+
 typedef struct injector_context_st
 {
   FuelSchedule * fuelSchedule;
@@ -33,33 +54,33 @@ public:
   byte maxOutputs = 1; /**< Number of injection outputs being used by the current tune configuration */
   byte channelsOn;
 
-  injector_context_st injectors[INJ_CHANNELS];
+  injector_context_st injectors[injChannelCount];
 
   void setMaxInjectors(byte const maxOutputs);
 
-  void applyFuelTrimToPW(byte inj, trimTable3d * pTrimTable, int16_t fuelLoad, int16_t RPM);
+  void applyFuelTrimToPW(injectorChannelID_t inj, trimTable3d * pTrimTable, int16_t fuelLoad, int16_t RPM);
 
-  uint16_t calculateInjectorStartAngle(byte inj, uint16_t pwDegrees, uint16_t injAngle);
+  uint16_t calculateInjectorStartAngle(injectorChannelID_t inj, uint16_t pwDegrees, uint16_t injAngle);
 
   void setAllOn(void);
 
   void setAllOff(void);
 
-  void setOn(byte inj);
+  void setOn(injectorChannelID_t inj);
 
-  void setOff(byte inj);
+  void setOff(injectorChannelID_t inj);
 
-  bool isOperational(byte inj);
+  bool isOperational(injectorChannelID_t inj);
 
   byte channelsOnMask(void);
 
-  void configure_injector_schedule(byte inj, injector_id_t injector_id);
+  void configure_injector_schedule(injectorChannelID_t inj, injector_id_t injector_id);
 
-  void configure_injector_schedule(byte inj, injector_id_t injector_id1, injector_id_t injector_id2);
+  void configure_injector_schedule(injectorChannelID_t inj, injector_id_t injector_id1, injector_id_t injector_id2);
 
   void configure_sequential_injector_schedules(size_t const count);
 
-  void applyInjectorControl(byte inj, uint16_t injOpenTime, uint16_t openAngle, int crankAngle);
+  void applyInjectorControl(injectorChannelID_t inj, uint16_t injOpenTime, uint16_t openAngle, int crankAngle);
 
 private:
   byte maxOutputMask = 0x01;
