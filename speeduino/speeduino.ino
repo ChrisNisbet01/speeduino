@@ -1022,20 +1022,20 @@ void loop(void)
               break;
 
             case PROTECT_CUT_FUEL:
-              injectors_context.setOff(x + 1);
+              injectors_context.setOff(x);
               disablePendingFuelSchedule(x);
               break;
 
             case PROTECT_CUT_BOTH:
               BIT_CLEAR(ignitionChannelsOn, x); //Turn off this ignition channel
-              injectors_context.setOff(x + 1);
+              injectors_context.setOff(x);
               disablePendingFuelSchedule(x);
               disablePendingIgnSchedule(x);
               break;
 
             default:
               BIT_CLEAR(ignitionChannelsOn, x); //Turn off this ignition channel
-              injectors_context.setOff(x + 1);
+              injectors_context.setOff(x);
               break;
             }
           }
@@ -1045,7 +1045,7 @@ void loop(void)
 
             //Special case for non-sequential, 4-stroke where both fuel and ignition are cut. The ignition pulses should wait 1 cycle after the fuel channels are turned back on before firing again
             if (revolutionsToCut == 4 //4 stroke and non-sequential
-                && !injectors_context.isOperational(x + 1)
+                && !injectors_context.isOperational(x)
                 && configPage6.engineProtectType == PROTECT_CUT_BOTH //Both fuel and ignition are cut
                )
             {
@@ -1061,7 +1061,7 @@ void loop(void)
             }
 
 
-            injectors_context.setOn(x + 1);
+            injectors_context.setOn(x);
           }
         }
         rollingCutLastRev = currentStatus.startRevolutions;
@@ -1093,17 +1093,15 @@ void loop(void)
     }
 
 #if INJ_CHANNELS >= 1
-    if (injectors_context.isOperational(1)
-        && injectors_context.injectors[0].PW >= inj_opentime_uS)
+    injector_context_st * injector_context;
+
+    injector_context = injectors_context.getInjectorContext(0);
+    if (injectors_context.isOperational(0) && injector_context->PW >= inj_opentime_uS)
     {
-      uint32_t timeOut =
-        calculateInjectorTimeout(
-          *injectors_context.injectors[0].fuelSchedule, channel1InjDegrees, injector1StartAngle, crankAngle);
-      if (timeOut > 0U)
-      {
-        setFuelSchedule(
-          *injectors_context.injectors[0].fuelSchedule, timeOut, (unsigned long)injectors_context.injectors[0].PW);
-      }
+      uint32_t const timeOut = calculateInjectorTimeout(
+          *injector_context->fuelSchedule, channel1InjDegrees, injector1StartAngle, crankAngle);
+
+        injector_context->scheduleFuel(timeOut);
     }
 #endif
 
@@ -1122,107 +1120,86 @@ void loop(void)
     |------------------------------------------------------------------------------------------
     */
 #if INJ_CHANNELS >= 2
-    if (injectors_context.isOperational(2)
-        && injectors_context.injectors[1].PW >= inj_opentime_uS)
+    injector_context = injectors_context.getInjectorContext(1);
+
+    if (injectors_context.isOperational(1) && injector_context->PW >= inj_opentime_uS)
     {
-      uint32_t timeOut =
-        calculateInjectorTimeout(
-          *injectors_context.injectors[1].fuelSchedule, channel2InjDegrees, injector2StartAngle, crankAngle);
-      if (timeOut > 0U)
-      {
-        setFuelSchedule(
-          *injectors_context.injectors[1].fuelSchedule, timeOut, (unsigned long)injectors_context.injectors[1].PW);
-      }
+      uint32_t timeOut = calculateInjectorTimeout(
+          *injector_context->fuelSchedule, channel2InjDegrees, injector2StartAngle, crankAngle);
+
+      injector_context->scheduleFuel(timeOut);
     }
 #endif
 
 #if INJ_CHANNELS >= 3
-    if (injectors_context.isOperational(3)
-        && injectors_context.injectors[2].PW >= inj_opentime_uS)
+    injector_context = injectors_context.getInjectorContext(2);
+
+    if (injectors_context.isOperational(2) && injector_context->PW >= inj_opentime_uS)
     {
-      uint32_t timeOut =
-        calculateInjectorTimeout(
-          *injectors_context.injectors[2].fuelSchedule, channel3InjDegrees, injector3StartAngle, crankAngle);
-      if (timeOut > 0U)
-      {
-        setFuelSchedule(
-          *injectors_context.injectors[2].fuelSchedule, timeOut, (unsigned long)injectors_context.injectors[2].PW);
-      }
+      uint32_t timeOut = calculateInjectorTimeout(
+          *injector_context->fuelSchedule, channel3InjDegrees, injector3StartAngle, crankAngle);
+
+      injector_context->scheduleFuel(timeOut);
     }
 #endif
 
 #if INJ_CHANNELS >= 4
-    if (injectors_context.isOperational(4)
-        && injectors_context.injectors[3].PW >= inj_opentime_uS)
+    injector_context = injectors_context.getInjectorContext(3);
+
+    if (injectors_context.isOperational(3) && injector_context->PW >= inj_opentime_uS)
     {
-      uint32_t timeOut =
-        calculateInjectorTimeout(
-          *injectors_context.injectors[3].fuelSchedule, channel4InjDegrees, injector4StartAngle, crankAngle);
-      if (timeOut > 0U)
-      {
-        setFuelSchedule(
-          *injectors_context.injectors[3].fuelSchedule, timeOut, (unsigned long)injectors_context.injectors[3].PW);
-      }
+      uint32_t timeOut = calculateInjectorTimeout(
+          *injector_context->fuelSchedule, channel4InjDegrees, injector4StartAngle, crankAngle);
+
+      injector_context->scheduleFuel(timeOut);
     }
 #endif
 
 #if INJ_CHANNELS >= 5
-    if (injectors_context.isOperational(5)
-        && injectors_context.injectors[4].PW >= inj_opentime_uS)
+    injector_context = injectors_context.getInjectorContext(4);
+
+    if (injectors_context.isOperational(4) && injector_context->PW >= inj_opentime_uS)
     {
-      uint32_t timeOut =
-        calculateInjectorTimeout(
-          *injectors_context.injectors[4].fuelSchedule, channel5InjDegrees, injector5StartAngle, crankAngle);
-      if (timeOut > 0U)
-      {
-        setFuelSchedule(
-          *injectors_context.injectors[4].fuelSchedule, timeOut, (unsigned long)injectors_context.injectors[4].PW);
-      }
+      uint32_t timeOut = calculateInjectorTimeout(
+          *injector_context->fuelSchedule, channel5InjDegrees, injector5StartAngle, crankAngle);
+
+      injector_context->scheduleFuel(timeOut);
     }
 #endif
 
 #if INJ_CHANNELS >= 6
-    if (injectors_context.isOperational(6)
-        && injectors_context.injectors[5].PW >= inj_opentime_uS)
+    injector_context = injectors_context.getInjectorContext(5);
+
+    if (injectors_context.isOperational(5) && injector_context->PW >= inj_opentime_uS)
     {
-      uint32_t timeOut =
-        calculateInjectorTimeout(
-          *injectors_context.injectors[5].fuelSchedule, channel6InjDegrees, injector6StartAngle, crankAngle);
-      if (timeOut > 0U)
-      {
-        setFuelSchedule(
-          *injectors_context.injectors[5].fuelSchedule, timeOut, (unsigned long)injectors_context.injectors[5].PW);
-      }
+      uint32_t timeOut = calculateInjectorTimeout(
+          *injector_context->fuelSchedule, channel6InjDegrees, injector6StartAngle, crankAngle);
+
+      injector_context->scheduleFuel(timeOut);
     }
 #endif
 
 #if INJ_CHANNELS >= 7
-    if (injectors_context.isOperational(7)
-        && injectors_context.injectors[6].PW >= inj_opentime_uS)
+    injector_context = injectors_context.getInjectorContext(6);
+
+    if (injectors_context.isOperational(6) && injector_context->PW >= inj_opentime_uS)
     {
-      uint32_t timeOut =
-        calculateInjectorTimeout(
-          *injectors_context.injectors[6].fuelSchedule, channel7InjDegrees, injector7StartAngle, crankAngle);
-      if (timeOut > 0U)
-      {
-        setFuelSchedule(
-          *injectors_context.injectors[6].fuelSchedule, timeOut, (unsigned long)injectors_context.injectors[6].PW);
-      }
+      uint32_t timeOut = calculateInjectorTimeout(
+          *injector_context->fuelSchedule, channel7InjDegrees, injector7StartAngle, crankAngle);
+
+      injector_context->scheduleFuel(timeOut);
     }
 #endif
 
 #if INJ_CHANNELS >= 8
-    if (injectors_context.isOperational(8)
-        && injectors_context.injectors[7].PW >= inj_opentime_uS)
+    injector_context = injectors_context.getInjectorContext(7);
+
+    if (injectors_context.isOperational(7) && injector_context->PW >= inj_opentime_uS)
     {
-      uint32_t timeOut =
-        calculateInjectorTimeout(
-          *injectors_context.injectors[7].fuelSchedule, channel8InjDegrees, injector8StartAngle, crankAngle);
-      if (timeOut > 0U)
-      {
-        setFuelSchedule(
-          *injectors_context.injectors[7].fuelSchedule, timeOut, (unsigned long)injectors_context.injectors[7].PW);
-      }
+      uint32_t timeOut = calculateInjectorTimeout(
+          *injector_context->fuelSchedule, channel8InjDegrees, injector8StartAngle, crankAngle);
+
+      injector_context->scheduleFuel(timeOut);
     }
 #endif
 

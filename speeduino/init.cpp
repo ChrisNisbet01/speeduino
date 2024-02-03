@@ -3811,23 +3811,18 @@ void initialiseTriggers(void)
 }
 
 static inline bool isAnyFuelScheduleRunning(void) {
-  return injectors_context.injectors[0].fuelSchedule->Status == RUNNING
-      || injectors_context.injectors[1].fuelSchedule->Status == RUNNING
-      || injectors_context.injectors[2].fuelSchedule->Status == RUNNING
-      || injectors_context.injectors[3].fuelSchedule->Status == RUNNING
-#if INJ_CHANNELS >= 5
-      || injectors_context.injectors[4].fuelSchedule->Status == RUNNING
-#endif
-#if INJ_CHANNELS >= 6
-      || injectors_context.injectors[5].fuelSchedule->Status == RUNNING
-#endif
-#if INJ_CHANNELS >= 7
-      || injectors_context.injectors[6].fuelSchedule->Status == RUNNING
-#endif
-#if INJ_CHANNELS >= 8
-      || injectors_context.injectors[7].fuelSchedule->Status == RUNNING
-#endif
-      ;
+  bool anyRunning = false;
+
+  for (size_t i = 0; i < ARRAY_SIZE(injectors_context.injectors); i++)
+  {
+    if (injectors_context.injectors[i].fuelSchedule->Status == RUNNING)
+    {
+      anyRunning = true;
+      break;
+    }
+  }
+
+  return anyRunning;
 }
 
 /** Change injectors or/and ignition angles to 720deg.
@@ -3837,35 +3832,19 @@ void changeHalfToFullSync(void)
 {
   //Need to do another check for injLayout as this function can be called from ignition
   noInterrupts();
-  if (configPage2.injLayout == INJ_SEQUENTIAL && CRANK_ANGLE_MAX_INJ != 720 && !isAnyFuelScheduleRunning())
+  if (configPage2.injLayout == INJ_SEQUENTIAL
+      && CRANK_ANGLE_MAX_INJ != 720
+      && !isAnyFuelScheduleRunning())
   {
     CRANK_ANGLE_MAX_INJ = 720;
     req_fuel_uS = req_fuel_init_uS * 2;
 
-    configure_injector_schedule(
-      *injectors_context.injectors[0].fuelSchedule, injector_id_1);
-    configure_injector_schedule(
-      *injectors_context.injectors[1].fuelSchedule, injector_id_2);
-    configure_injector_schedule(
-      *injectors_context.injectors[2].fuelSchedule, injector_id_3);
-    configure_injector_schedule(
-      *injectors_context.injectors[3].fuelSchedule, injector_id_4);
-#if INJ_CHANNELS >= 5
-    configure_injector_schedule(
-      *injectors_context.injectors[4].fuelSchedule, injector_id_5);
-#endif
-#if INJ_CHANNELS >= 6
-    configure_injector_schedule(
-      *injectors_context.injectors[5].fuelSchedule, injector_id_6);
-#endif
-#if INJ_CHANNELS >= 7
-    configure_injector_schedule(
-      *injectors_context.injectors[6].fuelSchedule, injector_id_7);
-#endif
-#if INJ_CHANNELS >= 8
-    configure_injector_schedule(
-      *injectors_context.injectors[7].fuelSchedule, injector_id_8);
-#endif
+    for (size_t i = 0; i < ARRAY_SIZE(injectors_context.injectors); i++)
+    {
+      injector_context_st * const injector_context = injectors_context.getInjectorContext(i);
+
+      configure_injector_schedule(*injector_context->fuelSchedule, (injector_id_t)(injector_id_1 + i));
+    }
 
     switch (configPage2.nCylinders)
     {

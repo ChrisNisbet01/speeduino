@@ -581,68 +581,6 @@ extern FuelSchedule fuelSchedule7;
 extern FuelSchedule fuelSchedule8;
 #endif
 
-typedef struct injector_context_st
-{
-  FuelSchedule * fuelSchedule;
-  unsigned int PW;
-} injector_context_st;
-
-typedef struct injectors_context_st
-{
-public:
-  byte maxOutputs = 1; /**< Number of injection outputs being used by the current tune configuration */
-  byte channelsOn;
-
-  injector_context_st injectors[INJ_CHANNELS];
-
-  injector_context_st * getInjectorContext(byte inj)
-  {
-    return &injectors[inj];
-  }
-
-  void setMaxInjectors(byte const maxOutputs)
-  {
-    this->maxOutputs = maxOutputs;
-    this->maxOutputMask = ((uint16_t)1 << maxOutputs) - 1;
-  }
-
-  void setAllOn(void)
-  {
-    channelsOn = maxOutputMask;
-  }
-
-  void setAllOff(void)
-  {
-    channelsOn = 0;
-  }
-
-  void setOn(byte inj)
-  {
-    BIT_SET(channelsOn, inj - 1);
-  }
-
-  void setOff(byte inj)
-  {
-    BIT_CLEAR(channelsOn, inj - 1);
-  }
-
-  bool isOperational(byte inj)
-  {
-    return ((1 << (inj - 1)) & maxOutputMask & channelsOn) != 0;
-  }
-
-  byte channelsOnMask(void)
-  {
-    return channelsOn;
-  }
-
-private:
-  byte maxOutputMask = 0x01;
-
-} injectors_context_st;
-
-extern injectors_context_st injectors_context;
-
 ///< resetControl needs to be here (as global) because using the config page (4)
 ///directly can prevent burning the setting
 extern byte resetControl;
