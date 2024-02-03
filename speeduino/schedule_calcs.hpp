@@ -6,7 +6,8 @@
 #include "maths.h"
 #include "timers.h"
 
-static inline uint16_t calculateInjectorStartAngle(uint16_t pwDegrees, int16_t injChannelDegrees, uint16_t injAngle)
+static inline uint16_t
+calculateInjectorStartAngle(uint16_t pwDegrees, int16_t injChannelDegrees, uint16_t injAngle)
 {
   // 0<=injAngle<=720°
   // 0<=injChannelDegrees<=720°
@@ -16,22 +17,30 @@ static inline uint16_t calculateInjectorStartAngle(uint16_t pwDegrees, int16_t i
 
   uint16_t startAngle = (uint16_t)injAngle + (uint16_t)injChannelDegrees;
   // Avoid underflow
-  while (startAngle<pwDegrees) { startAngle = startAngle + (uint16_t)CRANK_ANGLE_MAX_INJ; }
+  while (startAngle < pwDegrees)
+  {
+    startAngle = startAngle + (uint16_t)CRANK_ANGLE_MAX_INJ;
+  }
   // Guarenteed to be >=0.
   startAngle = startAngle - pwDegrees;
   // Clamp to 0<=startAngle<=CRANK_ANGLE_MAX_INJ
-  while (startAngle>(uint16_t)CRANK_ANGLE_MAX_INJ) { startAngle = startAngle - (uint16_t)CRANK_ANGLE_MAX_INJ; }
+  while (startAngle > (uint16_t)CRANK_ANGLE_MAX_INJ)
+  {
+    startAngle = startAngle - (uint16_t)CRANK_ANGLE_MAX_INJ;
+  }
 
   return startAngle;
 }
 
-static inline uint32_t _calculateInjectorTimeout(const FuelSchedule &schedule, uint16_t openAngle, uint16_t crankAngle) {
+static inline uint32_t
+_calculateInjectorTimeout(const FuelSchedule &schedule, uint16_t openAngle, uint16_t crankAngle)
+{
   int16_t delta = openAngle - crankAngle;
-  if (delta<0)
+  if (delta < 0)
   {
-    if ((schedule.Status == RUNNING) && (delta>-CRANK_ANGLE_MAX_INJ))
+    if (schedule.Status == RUNNING && delta > -CRANK_ANGLE_MAX_INJ)
     {
-      // Guarenteed to be >0
+      // Guaranteed to be >0
       delta = delta + CRANK_ANGLE_MAX_INJ;
     }
     else
