@@ -583,7 +583,8 @@ void loop(void)
       //The only thing that needs to be done for single cylinder is to check for staging.
       if (configPage10.stagingEnabled && BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE))
       {
-        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[1].PW); //Need to redo this for PW2 as it will be dramatically different to PW1 when staging
+        //Need to redo this for PW2 as it will be dramatically different to PW1 when staging.
+        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[1].PW);
         //injector3StartAngle = calculateInjector3StartAngle(PWdivTimerPerDegree);
         injector2StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel1InjDegrees, currentStatus.injAngle);
       }
@@ -603,11 +604,14 @@ void loop(void)
       }
       else if (configPage10.stagingEnabled && BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE))
       {
-        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[2].PW); //Need to redo this for PW3 as it will be dramatically different to PW1 when staging
+        //Need to redo this for PW3 as it will be dramatically different to PW1 when staging
+        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[2].PW);
         injector3StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel1InjDegrees, currentStatus.injAngle);
         injector4StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel2InjDegrees, currentStatus.injAngle);
 
-        injector4StartAngle = injector3StartAngle + (CRANK_ANGLE_MAX_INJ / 2); //Phase this either 180 or 360 degrees out from inj3 (In reality this will always be 180 as you can't have sequential and staged currently)
+        //Phase this either 180 or 360 degrees out from inj3 (In reality this will
+        //always be 180 as you can't have sequential and staged currently)
+        injector4StartAngle = injector3StartAngle + (CRANK_ANGLE_MAX_INJ / 2);
         if (injector4StartAngle > (uint16_t)CRANK_ANGLE_MAX_INJ)
         {
           injector4StartAngle -= CRANK_ANGLE_MAX_INJ;
@@ -634,7 +638,8 @@ void loop(void)
 #if INJ_CHANNELS >= 6
         if (configPage10.stagingEnabled && BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE))
         {
-          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[3].PW); //Need to redo this for PW4 as it will be dramatically different to PW1 when staging
+          //Need to redo this for PW4 as it will be dramatically different to PW1 when staging
+          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[3].PW);
           injector4StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel1InjDegrees, currentStatus.injAngle);
           injector5StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel2InjDegrees, currentStatus.injAngle);
           injector6StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel3InjDegrees, currentStatus.injAngle);
@@ -643,7 +648,8 @@ void loop(void)
       }
       else if (configPage10.stagingEnabled && BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE))
       {
-        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[3].PW); //Need to redo this for PW3 as it will be dramatically different to PW1 when staging
+        //Need to redo this for PW3 as it will be dramatically different to PW1 when staging
+        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[3].PW);
         injector4StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel1InjDegrees, currentStatus.injAngle);
 #           if INJ_CHANNELS >= 6
         injector5StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel2InjDegrees, currentStatus.injAngle);
@@ -669,7 +675,8 @@ void loop(void)
 #           if INJ_CHANNELS >= 8
         if (configPage10.stagingEnabled && BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE))
         {
-          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[4].PW); //Need to redo this for PW5 as it will be dramatically different to PW1 when staging
+          //Need to redo this for PW5 as it will be dramatically different to PW1 when staging
+          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[4].PW);
           injector5StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel1InjDegrees, currentStatus.injAngle);
           injector6StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel2InjDegrees, currentStatus.injAngle);
           injector7StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel3InjDegrees, currentStatus.injAngle);
@@ -691,7 +698,8 @@ void loop(void)
       }
       else if (configPage10.stagingEnabled && BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE))
       {
-        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[2].PW); //Need to redo this for PW3 as it will be dramatically different to PW1 when staging
+        //Need to redo this for PW3 as it will be dramatically different to PW1 when staging
+        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[2].PW);
         injector3StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel1InjDegrees, currentStatus.injAngle);
         injector4StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel2InjDegrees, currentStatus.injAngle);
       }
@@ -730,7 +738,7 @@ void loop(void)
       injector3StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel3InjDegrees, currentStatus.injAngle);
 
 #         if INJ_CHANNELS >= 6
-      if ((configPage2.injLayout == INJ_SEQUENTIAL) && currentStatus.hasSync)
+      if (configPage2.injLayout == INJ_SEQUENTIAL && currentStatus.hasSync)
       {
         if (CRANK_ANGLE_MAX_INJ != 720)
         {
@@ -758,7 +766,7 @@ void loop(void)
         }
 
         //Staging is possible with sequential on 8 channel boards by using outputs 7 + 8 for the staged injectors
-#             if INJ_CHANNELS >= 8
+#if INJ_CHANNELS >= 8
         if (configPage10.stagingEnabled && BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE))
         {
           PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors_context.injectors[3].PW); //Need to redo this for staging PW as it will be dramatically different to PW1 when staging
@@ -766,7 +774,7 @@ void loop(void)
           injector5StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel2InjDegrees, currentStatus.injAngle);
           injector6StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel3InjDegrees, currentStatus.injAngle);
         }
-#             endif
+#endif
       }
       else
       {
@@ -792,8 +800,8 @@ void loop(void)
       injector3StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel3InjDegrees, currentStatus.injAngle);
       injector4StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel4InjDegrees, currentStatus.injAngle);
 
-#         if INJ_CHANNELS >= 8
-      if ((configPage2.injLayout == INJ_SEQUENTIAL) && currentStatus.hasSync)
+#if INJ_CHANNELS >= 8
+      if (configPage2.injLayout == INJ_SEQUENTIAL && currentStatus.hasSync)
       {
         if (CRANK_ANGLE_MAX_INJ != 720)
         {
@@ -842,7 +850,7 @@ void loop(void)
         }
       }
 
-#         endif
+#endif
       break;
 
       //Will hit the default case on 1 cylinder or >8 cylinders. Do nothing in these cases
@@ -854,25 +862,32 @@ void loop(void)
     //| BEGIN IGNITION CALCULATIONS
 
     //Set dwell
-    //Dwell is stored as ms * 10. ie Dwell of 4.3ms would be 43 in configPage4. This number therefore needs to be multiplied by 100 to get dwell in uS
+    //Dwell is stored as ms * 10. ie Dwell of 4.3ms would be 43 in configPage4.
+    //This number therefore needs to be multiplied by 100 to get dwell in uS
+    unsigned const dwell_multiplier = 100;
+
     if (BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK))
     {
-      currentStatus.dwell =  (configPage4.dwellCrank * 100); //use cranking dwell
+      //use cranking dwell
+      currentStatus.dwell =  (configPage4.dwellCrank * dwell_multiplier);
     }
     else
     {
       if (configPage2.useDwellMap)
       {
-        currentStatus.dwell = (get3DTableValue(&dwellTable, currentStatus.ignLoad, currentStatus.RPM) * 100); //use running dwell from map
+        //use running dwell from map
+        currentStatus.dwell = (get3DTableValue(&dwellTable, currentStatus.ignLoad, currentStatus.RPM) * dwell_multiplier);
       }
       else
       {
-        currentStatus.dwell =  (configPage4.dwellRun * 100); //use fixed running dwell
+        //use fixed running dwell
+        currentStatus.dwell =  (configPage4.dwellRun * dwell_multiplier);
       }
     }
     currentStatus.dwell = correctionsDwell(currentStatus.dwell);
 
-    int dwellAngle = timeToAngleDegPerMicroSec(currentStatus.dwell); //Convert the dwell time to dwell angle based on the current engine speed
+    //Convert the dwell time to dwell angle based on the current engine speed
+    int dwellAngle = timeToAngleDegPerMicroSec(currentStatus.dwell);
 
     calculateIgnitionAngles(dwellAngle);
 
@@ -891,27 +906,14 @@ void loop(void)
 
     //Determine the current crank angle
     int crankAngle = getCrankAngle();
-    while (crankAngle > CRANK_ANGLE_MAX_INJ) //Continue reducing the crank angle by the max injection amount until it's below the required limit. This will usually only run (at most) once, but in cases where there is sequential ignition and more than 2 squirts per cycle, it may run up to 4 times.
+    //Continue reducing the crank angle by the max injection amount until it's
+    //below the required limit. This will usually only run (at most) once, but
+    //in cases where there is sequential ignition and more than 2 squirts per
+    //cycle, it may run up to 4 times.
+    while (crankAngle > CRANK_ANGLE_MAX_INJ)
     {
       crankAngle = crankAngle - CRANK_ANGLE_MAX_INJ;
     }
-
-    // if(Serial && false)
-    // {
-    //   if(ignition1StartAngle > crankAngle)
-    //   {
-    //     noInterrupts();
-    //     Serial.print("Time2LastTooth:"); Serial.println(micros()-toothLastToothTime);
-    //     Serial.print("elapsedTime:"); Serial.println(elapsedTime);
-    //     Serial.print("CurAngle:"); Serial.println(crankAngle);
-    //     Serial.print("RPM:"); Serial.println(currentStatus.RPM);
-    //     Serial.print("Tooth:"); Serial.println(toothCurrentCount);
-    //     Serial.print("timePerDegree:"); Serial.println(timePerDegree);
-    //     Serial.print("IGN1Angle:"); Serial.println(ignition1StartAngle);
-    //     Serial.print("TimeToIGN1:"); Serial.println(angleToTime((ignition1StartAngle - crankAngle), CRANKMATH_METHOD_INTERVAL_REV));
-    //     interrupts();
-    //   }
-    // }
 
     //Check for any of the engine protections or rev limiters being turned on
     uint16_t maxAllowedRPM = checkRevLimit(); //The maximum RPM allowed by all the potential limiters (Engine protection, 2-step, flat shift etc). Divided by 100. `checkRevLimit()` returns the current maximum RPM allow (divided by 100) based on either the fixed hard limit or the current coolant temp
