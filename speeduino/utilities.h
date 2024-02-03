@@ -50,6 +50,15 @@ int16_t ProgrammableIOGetData(uint16_t index);
 #define PP_INC(x) PP_INC_I(x)
 #define PP_INC_I(x) PP_INC_ ## x
 
+#if !defined(MIN)
+#define MIN(a, b) \
+    do { \
+        const __typeof__(a) _a = (a); \
+        const __typeof__(b) _b = (b); \
+        (_a < _b) ? _a : _b; \
+    } while (0)
+#endif
+
 #define PP_INC_0 1
 #define PP_INC_1 2
 #define PP_INC_2 3
