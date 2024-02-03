@@ -35,36 +35,6 @@
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 
-static void configure_injector_schedule(FuelSchedule &fuelSchedule, injector_id_t injector_id)
-{
-  fuelSchedule.start.pCallback = openSingleInjector;
-  fuelSchedule.start.args[0] = injector_id;
-  fuelSchedule.end.pCallback = closeSingleInjector;
-  fuelSchedule.end.args[0] = injector_id;
-}
-
-static void configure_injector_schedule(FuelSchedule &fuelSchedule, injector_id_t injector_id1, injector_id_t injector_id2)
-{
-  fuelSchedule.start.pCallback = openTwoInjectors;
-  fuelSchedule.start.args[0] = injector_id1;
-  fuelSchedule.start.args[1] = injector_id2;
-  fuelSchedule.end.pCallback = closeTwoInjectors;
-  fuelSchedule.end.args[0] = injector_id1;
-  fuelSchedule.end.args[1] = injector_id2;
-}
-
-static void
-configure_sequential_injector_schedules(size_t const count)
-{
-  for (size_t i = 0; i < count; i++)
-  {
-    injector_context_st * const injector_context =
-      injectors_context.getInjectorContext(i);
-
-    configure_injector_schedule(*injector_context->fuelSchedule, (injector_id_t)(injector_id_1 + i));
-  }
-}
-
 static void configure_ignition_coil_schedule(IgnitionSchedule &ignitionSchedule, ignition_id_t ignition_id1)
 {
   ignitionSchedule.start.pCallback = singleCoilBeginCharge;
@@ -1099,67 +1069,52 @@ void initialiseAll(void)
       {
         if (configPage4.inj4cylPairing == INJ_PAIR_13_24)
         {
-          configure_injector_schedule(
-            *injectors_context.injectors[0].fuelSchedule, injector_id_1, injector_id_3);
-          configure_injector_schedule(
-            *injectors_context.injectors[1].fuelSchedule, injector_id_2, injector_id_4);
+          injectors_context.configure_injector_schedule(0, injector_id_1, injector_id_3);
+          injectors_context.configure_injector_schedule(1, injector_id_2, injector_id_4);
         }
         else
         {
-          configure_injector_schedule(
-            *injectors_context.injectors[0].fuelSchedule, injector_id_1, injector_id_4);
-          configure_injector_schedule(
-            *injectors_context.injectors[1].fuelSchedule, injector_id_2, injector_id_3);
+          injectors_context.configure_injector_schedule(0, injector_id_1, injector_id_4);
+          injectors_context.configure_injector_schedule(1, injector_id_2, injector_id_3);
         }
       }
       else if (configPage2.nCylinders == 5)
       {
         //This is similar to the paired injection but uses five injector outputs instead of four.
-        configure_injector_schedule(
-          *injectors_context.injectors[0].fuelSchedule, injector_id_1);
-        configure_injector_schedule(
-          *injectors_context.injectors[1].fuelSchedule, injector_id_2);
-        configure_injector_schedule(
-          *injectors_context.injectors[2].fuelSchedule, injector_id_3, injector_id_5);
-        configure_injector_schedule(
-          *injectors_context.injectors[3].fuelSchedule, injector_id_4);
+        injectors_context.configure_injector_schedule(0, injector_id_1);
+        injectors_context.configure_injector_schedule(1, injector_id_2);
+        injectors_context.configure_injector_schedule(2, injector_id_3, injector_id_5);
+        injectors_context.configure_injector_schedule(3, injector_id_4);
       }
       else if (configPage2.nCylinders == 6)
       {
-        configure_injector_schedule(
-          *injectors_context.injectors[0].fuelSchedule, injector_id_1, injector_id_4);
-        configure_injector_schedule(
-          *injectors_context.injectors[1].fuelSchedule, injector_id_2, injector_id_5);
-        configure_injector_schedule(
-          *injectors_context.injectors[2].fuelSchedule, injector_id_3, injector_id_6);
+        injectors_context.configure_injector_schedule(0, injector_id_1, injector_id_4);
+        injectors_context.configure_injector_schedule(1, injector_id_2, injector_id_5);
+        injectors_context.configure_injector_schedule(2, injector_id_3, injector_id_6);
       }
       else if (configPage2.nCylinders == 8)
       {
-        configure_injector_schedule(
-          *injectors_context.injectors[0].fuelSchedule, injector_id_1, injector_id_5);
-        configure_injector_schedule(
-          *injectors_context.injectors[1].fuelSchedule, injector_id_2, injector_id_6);
-        configure_injector_schedule(
-          *injectors_context.injectors[2].fuelSchedule, injector_id_3, injector_id_7);
-        configure_injector_schedule(
-          *injectors_context.injectors[3].fuelSchedule, injector_id_4, injector_id_8);
+        injectors_context.configure_injector_schedule(0, injector_id_1, injector_id_5);
+        injectors_context.configure_injector_schedule(1, injector_id_2, injector_id_6);
+        injectors_context.configure_injector_schedule(2, injector_id_3, injector_id_7);
+        injectors_context.configure_injector_schedule(3, injector_id_4, injector_id_8);
       }
       else
       {
         //Fall back to paired injection
-        configure_sequential_injector_schedules(MIN(ARRAY_SIZE(injectors_context.injectors), 5));
+        injectors_context.configure_sequential_injector_schedules(MIN(ARRAY_SIZE(injectors_context.injectors), 5));
       }
       break;
 
     case INJ_SEQUENTIAL:
       //Sequential injection
-      configure_sequential_injector_schedules(ARRAY_SIZE(injectors_context.injectors));
+      injectors_context.configure_sequential_injector_schedules(ARRAY_SIZE(injectors_context.injectors));
       break;
 
     case INJ_PAIRED:
     default:
       //Paired injection
-      configure_sequential_injector_schedules(MIN(ARRAY_SIZE(injectors_context.injectors), 5));
+      injectors_context.configure_sequential_injector_schedules(MIN(ARRAY_SIZE(injectors_context.injectors), 5));
       break;
 
     }
@@ -3838,7 +3793,7 @@ void changeHalfToFullSync(void)
     CRANK_ANGLE_MAX_INJ = 720;
     req_fuel_uS = req_fuel_init_uS * 2;
 
-    configure_sequential_injector_schedules(ARRAY_SIZE(injectors_context.injectors));
+    injectors_context.configure_sequential_injector_schedules(ARRAY_SIZE(injectors_context.injectors));
 
     switch (configPage2.nCylinders)
     {
@@ -3902,40 +3857,29 @@ void changeFullToHalfSync(void)
       case 4:
         if(configPage4.inj4cylPairing == INJ_PAIR_13_24)
         {
-          configure_injector_schedule(
-            *injectors_context.injectors[0].fuelSchedule, injector_id_1, injector_id_3);
-          configure_injector_schedule(
-            *injectors_context.injectors[1].fuelSchedule, injector_id_2, injector_id_4);
+          injectors_context.configure_injector_schedule(0, injector_id_1, injector_id_3);
+          injectors_context.configure_injector_schedule(1, injector_id_2, injector_id_4);
         }
         else
         {
-          configure_injector_schedule(
-            *injectors_context.injectors[0].fuelSchedule, injector_id_1, injector_id_4);
-          configure_injector_schedule(
-            *injectors_context.injectors[1].fuelSchedule, injector_id_2, injector_id_3);
+          injectors_context.configure_injector_schedule(0, injector_id_1, injector_id_4);
+          injectors_context.configure_injector_schedule(1, injector_id_2, injector_id_3);
         }
         injectors_context.setMaxInjectors(2);
         break;
 
       case 6:
-        configure_injector_schedule(
-          *injectors_context.injectors[0].fuelSchedule, injector_id_1, injector_id_4);
-        configure_injector_schedule(
-          *injectors_context.injectors[1].fuelSchedule, injector_id_2, injector_id_5);
-        configure_injector_schedule(
-          *injectors_context.injectors[2].fuelSchedule, injector_id_3, injector_id_6);
+        injectors_context.configure_injector_schedule(0, injector_id_1, injector_id_4);
+        injectors_context.configure_injector_schedule(1, injector_id_2, injector_id_5);
+        injectors_context.configure_injector_schedule(2, injector_id_3, injector_id_6);
         injectors_context.setMaxInjectors(3);
         break;
 
       case 8:
-        configure_injector_schedule(
-          *injectors_context.injectors[0].fuelSchedule, injector_id_1, injector_id_5);
-        configure_injector_schedule(
-          *injectors_context.injectors[1].fuelSchedule, injector_id_2, injector_id_6);
-        configure_injector_schedule(
-          *injectors_context.injectors[2].fuelSchedule, injector_id_3, injector_id_7);
-        configure_injector_schedule(
-          *injectors_context.injectors[3].fuelSchedule, injector_id_4, injector_id_8);
+        injectors_context.configure_injector_schedule(0, injector_id_1, injector_id_5);
+        injectors_context.configure_injector_schedule(1, injector_id_2, injector_id_6);
+        injectors_context.configure_injector_schedule(2, injector_id_3, injector_id_7);
+        injectors_context.configure_injector_schedule(3, injector_id_4, injector_id_8);
         injectors_context.setMaxInjectors(4);
         break;
     }

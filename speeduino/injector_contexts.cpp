@@ -1,6 +1,27 @@
 #include "injector_contexts.hpp"
+#include "injector_schedule.h"
 
 injectors_context_st injectors_context;
+
+static void
+configure_injector_schedule(FuelSchedule &fuelSchedule, injector_id_t injector_id)
+{
+  fuelSchedule.start.pCallback = openSingleInjector;
+  fuelSchedule.start.args[0] = injector_id;
+  fuelSchedule.end.pCallback = closeSingleInjector;
+  fuelSchedule.end.args[0] = injector_id;
+}
+
+static void
+configure_injector_schedule(FuelSchedule &fuelSchedule, injector_id_t injector_id1, injector_id_t injector_id2)
+{
+  fuelSchedule.start.pCallback = openTwoInjectors;
+  fuelSchedule.start.args[0] = injector_id1;
+  fuelSchedule.start.args[1] = injector_id2;
+  fuelSchedule.end.pCallback = closeTwoInjectors;
+  fuelSchedule.end.args[0] = injector_id1;
+  fuelSchedule.end.args[1] = injector_id2;
+}
 
 void injector_context_st::scheduleFuel(uint32_t const timeout)
 {
@@ -21,10 +42,27 @@ uint16_t injector_context_st::calculateInjectorStartAngle(uint16_t pwDegrees, ui
 }
 
 
-injector_context_st * injectors_context_st::getInjectorContext(byte inj)
+void injector_context_st::configure_injector_schedule(injector_id_t injector_id)
 {
-  return &injectors[inj];
+  ::configure_injector_schedule(*fuelSchedule, injector_id);
 }
+
+void injector_context_st::configure_injector_schedule(injector_id_t injector_id1, injector_id_t injector_id2)
+{
+  ::configure_injector_schedule(*fuelSchedule, injector_id1, injector_id2);
+}
+
+void injector_context_st::applyInjectorControl(uint16_t injOpenTime, uint16_t openAngle, int crankAngle)
+{
+  if (PW >= injOpenTime)
+  {
+    uint32_t const timeOut = calculateInjectorTimeout(
+        *fuelSchedule, channelInjDegrees, openAngle, crankAngle);
+
+    scheduleFuel(timeOut);
+  }
+}
+
 
 void injectors_context_st::setMaxInjectors(byte const maxOutputs)
 {
@@ -74,5 +112,40 @@ bool injectors_context_st::isOperational(byte inj)
 byte injectors_context_st::channelsOnMask(void)
 {
   return channelsOn;
+}
+
+void injectors_context_st::configure_injector_schedule(byte inj, injector_id_t injector_id)
+{
+  injector_context_st &injector = injectors[inj];
+
+  injector.configure_injector_schedule(injector_id);
+}
+
+void injectors_context_st::configure_injector_schedule(byte inj, injector_id_t injector_id1, injector_id_t injector_id2)
+{
+  injector_context_st &injector = injectors[inj];
+
+  injector.configure_injector_schedule(injector_id1, injector_id2);
+}
+
+void
+injectors_context_st::configure_sequential_injector_schedules(size_t const count)
+{
+  for (size_t i = 0; i < count; i++)
+  {
+    injector_context_st &injector = injectors[i];
+
+    injector.configure_injector_schedule((injector_id_t)(injector_id_1 + i));
+  }
+}
+
+void injectors_context_st::applyInjectorControl(byte inj, uint16_t injOpenTime, uint16_t openAngle, int crankAngle)
+{
+  injector_context_st &injector = injectors[inj];
+
+  if (isOperational(inj))
+  {
+    injector.applyInjectorControl(injOpenTime, openAngle, crankAngle);
+  }
 }
 
