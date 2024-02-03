@@ -164,6 +164,11 @@ typedef struct injector_context_st
     PW = ::applyFuelTrimToPW(pTrimTable, fuelLoad, RPM, PW);
   }
 
+  uint16_t calculateInjectorStartAngle(uint16_t pwDegrees, uint16_t injAngle)
+  {
+    return ::calculateInjectorStartAngle(pwDegrees, channelInjDegrees, injAngle);
+  }
+
 } injector_context_st;
 
 typedef struct injectors_context_st
@@ -190,6 +195,13 @@ public:
     injector_context_st &injector = injectors[inj];
 
     injector.applyFuelTrimToPW(pTrimTable, fuelLoad, RPM);
+  }
+
+  uint16_t calculateInjectorStartAngle(byte inj, uint16_t pwDegrees, uint16_t injAngle)
+  {
+    injector_context_st &injector = injectors[inj];
+
+    return injector.calculateInjectorStartAngle(pwDegrees, injAngle);
   }
 
   void setAllOn(void)
@@ -245,3 +257,4 @@ extern IgnitionSchedule ignitionSchedule8;
 #endif
 
 #endif // SCHEDULER_H
+
