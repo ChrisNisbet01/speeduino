@@ -2,6 +2,7 @@
  * Instantiation of various (table2D, table3D) tables, volatile (interrupt modified) variables, Injector (1...8) enablement flags, etc.
  */
 #include "globals.h"
+#include "scheduler.h"
 
 const char TSfirmwareVersion[] PROGMEM = "Speeduino";
 

@@ -137,6 +137,76 @@ inline __attribute__((always_inline)) void setFuelSchedule(FuelSchedule &schedul
   }
 }
 
+typedef struct injector_context_st
+{
+  FuelSchedule * fuelSchedule;
+  unsigned int PW;
+
+  void scheduleFuel(uint32_t const timeout)
+  {
+    if (timeout > 0)
+    {
+      setFuelSchedule(*fuelSchedule, timeout, (unsigned long)PW);
+    }
+  }
+} injector_context_st;
+
+typedef struct injectors_context_st
+{
+public:
+  byte maxOutputs = 1; /**< Number of injection outputs being used by the current tune configuration */
+  byte channelsOn;
+
+  injector_context_st injectors[INJ_CHANNELS];
+
+  injector_context_st * getInjectorContext(byte inj)
+  {
+    return &injectors[inj];
+  }
+
+  void setMaxInjectors(byte const maxOutputs)
+  {
+    this->maxOutputs = maxOutputs;
+    this->maxOutputMask = ((uint16_t)1 << maxOutputs) - 1;
+  }
+
+  void setAllOn(void)
+  {
+    channelsOn = maxOutputMask;
+  }
+
+  void setAllOff(void)
+  {
+    channelsOn = 0;
+  }
+
+  void setOn(byte inj)
+  {
+    BIT_SET(channelsOn, inj);
+  }
+
+  void setOff(byte inj)
+  {
+    BIT_CLEAR(channelsOn, inj);
+  }
+
+  bool isOperational(byte inj)
+  {
+    return ((1 << inj) & maxOutputMask & channelsOn) != 0;
+  }
+
+  byte channelsOnMask(void)
+  {
+    return channelsOn;
+  }
+
+private:
+  byte maxOutputMask = 0x01;
+
+} injectors_context_st;
+
+extern injectors_context_st injectors_context;
+
 extern IgnitionSchedule ignitionSchedule1;
 extern IgnitionSchedule ignitionSchedule2;
 extern IgnitionSchedule ignitionSchedule3;
