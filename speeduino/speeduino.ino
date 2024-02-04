@@ -566,7 +566,7 @@ void loop(void)
       }
     }
 
-    calculateStaging(injector_pulsewidth, pwLimit);
+    calculateInjectorStaging(injector_pulsewidth, pwLimit);
 
     //***********************************************************************************************
     //BEGIN INJECTION TIMING
@@ -1651,10 +1651,10 @@ typedef struct staged_PW_st
 } staged_PW_st;
 
 static struct staged_PW_st
-calculateStagedPulsewidths(unsigned int const desiredPW, uint32_t const pwLimit);
+calculateStagedInjectorPulsewidths(unsigned int const desiredPW, uint32_t const pwLimit);
 
 static struct staged_PW_st
-calculateStagedPulsewidths(unsigned int const desiredPW, uint32_t const pwLimit)
+calculateStagedInjectorPulsewidths(unsigned int const desiredPW, uint32_t const pwLimit)
 {
   //Exclude the opening time from primary pulsewidth as it needs to be
   //multiplied out again by the pri/sec req_fuel values below.
@@ -1734,10 +1734,10 @@ calculateStagedPulsewidths(unsigned int const desiredPW, uint32_t const pwLimit)
 }
 
 static void
-assignStagedPulsewidths(staged_PW_st const &staged_PW);
+assignStagedInjectorPulsewidths(staged_PW_st const &staged_PW);
 
 static void
-assignStagedPulsewidths(staged_PW_st const &staged_PW)
+assignStagedInjectorPulsewidths(staged_PW_st const &staged_PW)
 {
   //Allocate the primary and secondary pulse widths based on the fuel configuration
   switch (configPage2.nCylinders)
@@ -1870,7 +1870,7 @@ assignStagedPulsewidths(staged_PW_st const &staged_PW)
 }
 
 void
-calculateStaging(unsigned int const desiredPW, uint32_t const pwLimit)
+calculateInjectorStaging(unsigned int const desiredPW, uint32_t const pwLimit)
 {
   //Calculate staging pulsewidths if used
   //To run staged injection, the number of cylinders must be less than or equal
@@ -1884,9 +1884,9 @@ calculateStaging(unsigned int const desiredPW, uint32_t const pwLimit)
       && (configPage2.nCylinders <= INJ_CHANNELS || configPage2.injType == INJ_TYPE_TBODY)
       && injectors.injector(injChannel1).PW > inj_opentime_uS)
   {
-    staged_PW_st const staged_PW = calculateStagedPulsewidths(desiredPW, pwLimit);
+    staged_PW_st const staged_PW = calculateStagedInjectorPulsewidths(desiredPW, pwLimit);
 
-    assignStagedPulsewidths(staged_PW);
+    assignStagedInjectorPulsewidths(staged_PW);
   }
   else
   {
