@@ -1663,10 +1663,10 @@ calculateStagedPulsewidths(unsigned int const desiredPW, uint32_t const pwLimit)
     .primary_PW_us = desiredPW - inj_opentime_uS,
     .secondary_PW_us = 0,
   };
+  bool staging_is_active = false;
 
   //Scale the 'full' pulsewidth by each of the injector capacities
   uint32_t tempPW1 = div100((uint32_t)staged_PW.primary_PW_us * staged_req_fuel_mult_pri);
-  bool staging_is_active = false;
 
   switch ((staging_mode_t)configPage10.stagingMode)
   {
@@ -1674,15 +1674,16 @@ calculateStagedPulsewidths(unsigned int const desiredPW, uint32_t const pwLimit)
   {
     uint8_t const stagingSplit =
       get3DTableValue(&stagingTable, currentStatus.fuelLoad, currentStatus.RPM);
-    staged_PW.primary_PW_us = div100((100U - stagingSplit) * tempPW1);
 
     if (stagingSplit > 0)
     {
-      //This is ONLY needed in in table mode. Auto mode only calculates the difference.
+      //This is ONLY needed in in table mode.
+      //Auto mode only calculates the difference.
       uint32_t const tempPW3 =
         div100((uint32_t)staged_PW.primary_PW_us * staged_req_fuel_mult_sec);
 
       staging_is_active = true;
+      staged_PW.primary_PW_us = div100((100U - stagingSplit) * tempPW1);
       staged_PW.secondary_PW_us = div100(stagingSplit * tempPW3);
     }
     break;
@@ -1703,13 +1704,8 @@ calculateStagedPulsewidths(unsigned int const desiredPW, uint32_t const pwLimit)
       staged_PW.secondary_PW_us =
         udiv_32_16(extraPW * staged_req_fuel_mult_sec, staged_req_fuel_mult_pri);
     }
-    else
-    {
-      //If tempPW1 < pwLImit it means that the entire fuel load can be handled
-      //by the primaries and staging is inactive.
-      //Secondary PW is simply left at 0.
-      staged_PW.primary_PW_us = tempPW1;
-    }
+    //If tempPW1 <= pwLImit it means that the entire fuel load can be handled
+    //by the primaries and staging is inactive.
     break;
   }
 
