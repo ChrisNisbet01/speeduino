@@ -574,7 +574,8 @@ void loop(void)
     currentStatus.injAngle = table2D_getValue(&injectorAngleTable, currentStatus.RPMdiv100);
 
     //How many crank degrees the calculated PW will take at the current speed
-    unsigned int PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors.injector(injChannel1).PW);
+    unsigned int PWdivTimerPerDegree =
+      timeToAngleDegPerMicroSec(injectors.injector(injChannel1).PW, degreesPerMicro);
 
     injector1StartAngle =
       injectors.calculateInjectorStartAngle(injChannel1, PWdivTimerPerDegree, currentStatus.injAngle);
@@ -590,7 +591,8 @@ void loop(void)
       if (staging_is_required)
       {
         //Need to redo this for PW2 as it will be dramatically different to PW1 when staging.
-        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors.injector(injChannel2).PW);
+        PWdivTimerPerDegree =
+          timeToAngleDegPerMicroSec(injectors.injector(injChannel2).PW, degreesPerMicro);
         injector2StartAngle =
           injectors.calculateInjectorStartAngle(injChannel1, PWdivTimerPerDegree, currentStatus.injAngle);
       }
@@ -609,7 +611,8 @@ void loop(void)
       else if (staging_is_required)
       {
         //Need to redo this for PW3 as it will be dramatically different to PW1 when staging
-        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors.injector(injChannel3).PW);
+        PWdivTimerPerDegree =
+          timeToAngleDegPerMicroSec(injectors.injector(injChannel3).PW, degreesPerMicro);
         injector3StartAngle =
           injectors.calculateInjectorStartAngle(injChannel1, PWdivTimerPerDegree, currentStatus.injAngle);
         injector4StartAngle =
@@ -642,7 +645,8 @@ void loop(void)
         if (staging_is_required)
         {
           //Need to redo this for PW4 as it will be dramatically different to PW1 when staging
-          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors.injector(injChannel4).PW);
+          PWdivTimerPerDegree =
+            timeToAngleDegPerMicroSec(injectors.injector(injChannel4).PW, degreesPerMicro);
           injector4StartAngle =
             injectors.calculateInjectorStartAngle(injChannel1, PWdivTimerPerDegree, currentStatus.injAngle);
           injector5StartAngle =
@@ -655,7 +659,8 @@ void loop(void)
       else if (staging_is_required)
       {
         //Need to redo this for PW4 as it will be dramatically different to PW1 when staging
-        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors.injector(injChannel4).PW);
+        PWdivTimerPerDegree =
+          timeToAngleDegPerMicroSec(injectors.injector(injChannel4).PW, degreesPerMicro);
         injector4StartAngle =
           injectors.calculateInjectorStartAngle(injChannel1, PWdivTimerPerDegree, currentStatus.injAngle);
 #if INJ_CHANNELS >= 6
@@ -688,7 +693,8 @@ void loop(void)
         if (staging_is_required)
         {
           //Need to redo this for PW5 as it will be dramatically different to PW1 when staging
-          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors.injector(injChannel5).PW);
+          PWdivTimerPerDegree =
+            timeToAngleDegPerMicroSec(injectors.injector(injChannel5).PW, degreesPerMicro);
           injector5StartAngle =
             injectors.calculateInjectorStartAngle(injChannel1, PWdivTimerPerDegree, currentStatus.injAngle);
           injector6StartAngle =
@@ -711,7 +717,8 @@ void loop(void)
       else if (staging_is_required)
       {
         //Need to redo this for PW3 as it will be dramatically different to PW1 when staging
-        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors.injector(injChannel3).PW);
+        PWdivTimerPerDegree =
+          timeToAngleDegPerMicroSec(injectors.injector(injChannel3).PW, degreesPerMicro);
         injector3StartAngle =
           injectors.calculateInjectorStartAngle(injChannel1, PWdivTimerPerDegree, currentStatus.injAngle);
         injector4StartAngle =
@@ -743,7 +750,8 @@ void loop(void)
 #if INJ_CHANNELS >= 6
       if (staging_is_required)
       {
-        PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors.injector(injChannel6).PW);
+        PWdivTimerPerDegree =
+          timeToAngleDegPerMicroSec(injectors.injector(injChannel6).PW, degreesPerMicro);
         injector6StartAngle =
           injectors.calculateInjectorStartAngle(injChannel6, PWdivTimerPerDegree, currentStatus.injAngle);
       }
@@ -788,11 +796,13 @@ void loop(void)
         if (staging_is_required)
         {
           //Need to redo this for staging PW as it will be dramatically different to PW1 when staging
-          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors.injector(injChannel7).PW);
+          PWdivTimerPerDegree =
+            timeToAngleDegPerMicroSec(injectors.injector(injChannel7).PW, degreesPerMicro);
           injector7StartAngle =
             injectors.calculateInjectorStartAngle(injChannel7, PWdivTimerPerDegree, currentStatus.injAngle);
 
-          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors.injector(injChannel8).PW);
+          PWdivTimerPerDegree =
+            timeToAngleDegPerMicroSec(injectors.injector(injChannel8).PW, degreesPerMicro);
           injector8StartAngle =
             injectors.calculateInjectorStartAngle(injChannel8, PWdivTimerPerDegree, currentStatus.injAngle);
         }
@@ -808,7 +818,8 @@ void loop(void)
         if (staging_is_required)
         {
           //Need to redo this for staging PW as it will be dramatically different to PW1 when staging
-          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors.injector(injChannel4).PW);
+          PWdivTimerPerDegree =
+            timeToAngleDegPerMicroSec(injectors.injector(injChannel4).PW, degreesPerMicro);
           injector4StartAngle =
             injectors.calculateInjectorStartAngle(injChannel1, PWdivTimerPerDegree, currentStatus.injAngle);
           injector5StartAngle =
@@ -868,7 +879,8 @@ void loop(void)
         if (staging_is_required)
         {
           //Need to redo this for PW5 as it will be dramatically different to PW1 when staging
-          PWdivTimerPerDegree = timeToAngleDegPerMicroSec(injectors.injector(injChannel5).PW);
+          PWdivTimerPerDegree =
+            timeToAngleDegPerMicroSec(injectors.injector(injChannel5).PW, degreesPerMicro);
           injector5StartAngle =
             injectors.calculateInjectorStartAngle(injChannel1, PWdivTimerPerDegree, currentStatus.injAngle);
           injector6StartAngle =
@@ -917,7 +929,7 @@ void loop(void)
     currentStatus.dwell = correctionsDwell(currentStatus.dwell);
 
     //Convert the dwell time to dwell angle based on the current engine speed
-    int dwellAngle = timeToAngleDegPerMicroSec(currentStatus.dwell);
+    int dwellAngle = timeToAngleDegPerMicroSec(currentStatus.dwell, degreesPerMicro);
 
     calculateIgnitionAngles(dwellAngle);
 
@@ -1540,7 +1552,7 @@ void calculateIgnitionAngles(int dwellAngle)
     calculateIgnitionAngle(dwellAngle, channel2IgnDegrees, currentStatus.advance, &ignition2EndAngle, &ignition2StartAngle);
 
 #     if IGN_CHANNELS >= 4
-    if ((configPage4.sparkMode == IGN_MODE_SEQUENTIAL) && currentStatus.hasSync)
+    if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL && currentStatus.hasSync)
     {
       if (CRANK_ANGLE_MAX_IGN != 720)
       {
@@ -1587,7 +1599,7 @@ void calculateIgnitionAngles(int dwellAngle)
     calculateIgnitionAngle(dwellAngle, channel3IgnDegrees, currentStatus.advance, &ignition3EndAngle, &ignition3StartAngle);
 
 #     if IGN_CHANNELS >= 6
-    if ((configPage4.sparkMode == IGN_MODE_SEQUENTIAL) && currentStatus.hasSync)
+    if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL && currentStatus.hasSync)
     {
       if (CRANK_ANGLE_MAX_IGN != 720)
       {
@@ -1616,7 +1628,7 @@ void calculateIgnitionAngles(int dwellAngle)
     calculateIgnitionAngle(dwellAngle, channel4IgnDegrees, currentStatus.advance, &ignition4EndAngle, &ignition4StartAngle);
 
 #     if IGN_CHANNELS >= 8
-    if ((configPage4.sparkMode == IGN_MODE_SEQUENTIAL) && currentStatus.hasSync)
+    if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL && currentStatus.hasSync)
     {
       if (CRANK_ANGLE_MAX_IGN != 720)
       {
@@ -1638,7 +1650,7 @@ void calculateIgnitionAngles(int dwellAngle)
 #     endif
     break;
 
-    //Will hit the default case on >8 cylinders. Do nothing in these cases
+    //Will hit the default case on other cylinder counts. Do nothing in these cases.
   default:
     break;
   }

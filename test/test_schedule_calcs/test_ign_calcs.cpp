@@ -17,7 +17,7 @@ void setEngineSpeed(uint16_t rpm, int16_t max_crank) {
     SetRevolutionTime(UDIV_ROUND_CLOSEST(60UL*1000000UL, rpm, uint32_t));
     CRANK_ANGLE_MAX_IGN = max_crank;
     CRANK_ANGLE_MAX_INJ = max_crank;
-    dwellAngle = timeToAngleDegPerMicroSec(DWELL_TIME_MS*1000UL);
+    dwellAngle = timeToAngleDegPerMicroSec(DWELL_TIME_MS*1000UL, degreesPerMicro);
 }
 
 struct ign_test_parameters
@@ -44,11 +44,11 @@ void test_calc_ign_timeout(const ign_test_parameters &test_params)
     calculateIgnitionAngle(dwellAngle, test_params.channelAngle, test_params.advanceAngle, &endAngle, &startAngle);
     TEST_ASSERT_EQUAL_MESSAGE(test_params.expectedStartAngle, startAngle, "startAngle");
     TEST_ASSERT_EQUAL_MESSAGE(test_params.expectedEndAngle, endAngle, "endAngle");
-    
+
     sprintf_P(msg, PSTR("PENDING advanceAngle: %" PRIi8 ", channelAngle: %" PRIu16 ", crankAngle: %" PRIu16 ", endAngle: %" PRIi16), test_params.advanceAngle, test_params.channelAngle, test_params.crankAngle, endAngle);
     schedule.Status = PENDING;
     TEST_ASSERT_INT32_WITHIN_MESSAGE(1, test_params.pending, calculateIgnitionTimeout(schedule, startAngle, test_params.channelAngle,  test_params.crankAngle), msg);
-    
+
     sprintf_P(msg, PSTR("RUNNING advanceAngle: %" PRIi8 ", channelAngle: %" PRIu16 ", crankAngle: %" PRIu16 ", endAngle: %" PRIi16), test_params.advanceAngle, test_params.channelAngle, test_params.crankAngle, endAngle);
     schedule.Status = RUNNING;
     TEST_ASSERT_INT32_WITHIN_MESSAGE(1, test_params.running, calculateIgnitionTimeout(schedule, startAngle, test_params.channelAngle,  test_params.crankAngle), msg);
@@ -68,9 +68,9 @@ void test_calc_ign_timeout(const ign_test_parameters *pStart, const ign_test_par
 void test_calc_ign_timeout_360()
 {
     setEngineSpeed(4000, 360);
-    
-    TEST_ASSERT_EQUAL(15000, revolutionTime);    
-    TEST_ASSERT_EQUAL(786, degreesPerMicro);    
+
+    TEST_ASSERT_EQUAL(15000, revolutionTime);
+    TEST_ASSERT_EQUAL(786, degreesPerMicro);
     TEST_ASSERT_EQUAL(10667, microsPerDegree);
     TEST_ASSERT_EQUAL(96, dwellAngle);
 
@@ -606,7 +606,7 @@ void test_rotary_channel_calcs(void)
         TEST_ASSERT_EQUAL_MESSAGE(local[3], endAngle, "endAngle");
         TEST_ASSERT_EQUAL_MESSAGE(local[4], startAngle, "startAngle");
         ++pStart;
-    } 
+    }
 
 }
 

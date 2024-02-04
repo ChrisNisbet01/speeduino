@@ -32,10 +32,11 @@ uint32_t angleToTimeIntervalTooth(uint16_t angle) {
   }
 }
 
-uint16_t timeToAngleDegPerMicroSec(uint32_t time) {
-    uint32_t degFixed = time * (uint32_t)degreesPerMicro;
+uint16_t timeToAngleDegPerMicroSec(uint32_t time_us, uint32_t const degrees_per_us)
+{
+  uint32_t const degFixed = time_us * degrees_per_us;
 
-    return RSHIFT_ROUND(degFixed, degreesPerMicro_Shift);
+  return RSHIFT_ROUND(degFixed, degreesPerMicro_Shift);
 }
 
 
@@ -54,7 +55,7 @@ uint16_t timeToAngleIntervalTooth(uint32_t time)
     else {
       interrupts();
       //Safety check. This can occur if the last tooth seen was outside the normal pattern etc
-      return timeToAngleDegPerMicroSec(time);
+      return timeToAngleDegPerMicroSec(time, degreesPerMicro);
     }
 }
 
