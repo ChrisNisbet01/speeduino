@@ -1,4 +1,4 @@
-#include "injector_contexts.hpp"
+#include "injector_contexts.h"
 #include "injector_schedule.h"
 
 injectors_context_st injectors;

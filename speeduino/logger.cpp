@@ -6,7 +6,7 @@
 #include "maths.h"
 #include "utilities.h"
 #include BOARD_H
-#include "injector_contexts.hpp"
+#include "injector_contexts.h"
 
 /**
  * Returns a numbered byte-field (partial field in case of multi-byte fields) from "current status" structure in the format expected by TunerStudio
