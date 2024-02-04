@@ -20,7 +20,7 @@ void loop(void);
 uint16_t calculateTotalInjectorPW(int REQ_FUEL, byte VE, long MAP, uint16_t corrections, int injOpen);
 byte getVE1(void);
 byte getAdvance1(void);
-void calculateStaging(uint32_t);
+void calculateInjectorStaging(uint32_t);
 void calculateIgnitionAngles(int dwellAngle);
 void checkLaunchAndFlatShift();
 

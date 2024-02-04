@@ -46,7 +46,7 @@ void test_Staging_Off(void)
   configPage10.stagingEnabled = false;
 
   uint32_t pwLimit = 9000; //90% duty cycle at 6000rpm
-  calculateStaging(pwLimit);
+  calculateInjectorStaging(pwLimit);
   TEST_ASSERT_FALSE(BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE));
 }
 
@@ -63,7 +63,7 @@ void test_Staging_4cyl_Auto_Inactive(void)
 
 
   uint32_t pwLimit = 9000; //90% duty cycle at 6000rpm
-  calculateStaging(pwLimit);
+  calculateInjectorStaging(pwLimit);
   //PW 1 and 2 should be normal, 3 and 4 should be 0 as that testPW is below the pwLimit
   //PW1/2 should be (PW - openTime) * staged_req_fuel_mult_pri = (3000 - 1000) * 3.0 = 6000
   TEST_ASSERT_EQUAL(6000, injectors.injector(injChannel1).PW);
@@ -93,7 +93,7 @@ void test_Staging_4cyl_Table_Inactive(void)
 
 
   uint32_t pwLimit = 9000; //90% duty cycle at 6000rpm
-  calculateStaging(pwLimit);
+  calculateInjectorStaging(pwLimit);
   //PW 1 and 2 should be normal, 3 and 4 should be 0 as that testPW is below the pwLimit
   //PW1/2 should be (PW - openTime) * staged_req_fuel_mult_pri = (3000 - 1000) * 3.0 = 6000
   TEST_ASSERT_EQUAL(7000, injectors.injector(injChannel1).PW);
@@ -116,7 +116,7 @@ void test_Staging_4cyl_Auto_50pct(void)
 
 
   uint32_t pwLimit = 9000; //90% duty cycle at 6000rpm
-  calculateStaging(pwLimit);
+  calculateInjectorStaging(pwLimit);
   //PW 1 and 2 should be maxed out at the pwLimit, 3 and 4 should be based on their relative size
   TEST_ASSERT_EQUAL(pwLimit, injectors.injector(injChannel1).PW); //PW1/2 run at maximum available limit
   TEST_ASSERT_EQUAL(pwLimit, injectors.injector(injChannel2).PW);
@@ -138,7 +138,7 @@ void test_Staging_4cyl_Auto_33pct(void)
 
 
   uint32_t pwLimit = 9000; //90% duty cycle at 6000rpm
-  calculateStaging(pwLimit);
+  calculateInjectorStaging(pwLimit);
   //PW 1 and 2 should be maxed out at the pwLimit, 3 and 4 should be based on their relative size
   TEST_ASSERT_EQUAL(pwLimit, injectors.injector(injChannel1).PW); //PW1/2 run at maximum available limit
   TEST_ASSERT_EQUAL(pwLimit, injectors.injector(injChannel2).PW);
@@ -168,7 +168,7 @@ void test_Staging_4cyl_Table_50pct(void)
   currentStatus.RPM += 1;
   currentStatus.fuelLoad += 1;
 
-  calculateStaging(pwLimit);
+  calculateInjectorStaging(pwLimit);
 
   TEST_ASSERT_EQUAL(4000, injectors.injector(injChannel1).PW);
   TEST_ASSERT_EQUAL(4000, injectors.injector(injChannel2).PW);
