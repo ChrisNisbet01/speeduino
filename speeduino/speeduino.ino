@@ -1762,10 +1762,10 @@ void calculateStaging(uint32_t pwLimit)
 #if INJ_CHANNELS >= 5
       if (configPage2.injLayout != INJ_SEQUENTIAL)
       {
-        injectors.injector(injChannel6).PW = injectors.injector(injChannel2).PW;
+        injectors.injector(injChannel5).PW = injectors.injector(injChannel2).PW;
       }
 #if INJ_CHANNELS >= 6
-      injectors.injector(injChannel7).PW = injectors.injector(injChannel2).PW;
+      injectors.injector(injChannel6).PW = injectors.injector(injChannel2).PW;
 #endif
 #endif
 
