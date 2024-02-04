@@ -298,15 +298,14 @@ extern void beginInjectorPriming(void)
 }
 
 // Shared ISR function for all fuel timers.
-// This is completely inlined into the ISR - there is no function call
-// overhead.
-static inline __attribute__((always_inline))
-void fuelScheduleISR(FuelSchedule &schedule)
+static void fuelScheduleISR(FuelSchedule &schedule)
 {
   if (schedule.Status == PENDING) //Check to see if this schedule is turn on
   {
     schedule.start.pCallback(schedule.start.args[0], schedule.start.args[1]);
-    schedule.Status = RUNNING; //Set the status to be in progress (ie The start callback has been called, but not the end callback)
+    //Set the status to be in progress (ie The start callback has been called,
+    //but not the end callback)
+    schedule.Status = RUNNING;
     //Doing this here prevents a potential overflow on restarts
     SET_COMPARE(schedule.compare,
                 schedule.counter + uS_TO_TIMER_COMPARE(schedule.duration) );
@@ -331,7 +330,9 @@ void fuelScheduleISR(FuelSchedule &schedule)
   }
   else if (schedule.Status == OFF)
   {
-    schedule.pTimerDisable(); //Safety check. Turn off this output compare unit and return without performing any action
+    //Safety check. Turn off this output compare unit and return without
+    //performing any action
+    schedule.pTimerDisable();
   }
 }
 
