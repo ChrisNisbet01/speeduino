@@ -493,7 +493,7 @@ void loop(void)
     //Calculate an injector pulsewidth from the VE
     currentStatus.corrections = correctionsFuel();
 
-    injectors.injector(injChannel1).PW =
+    uint32_t injector_pulsewidth =
       calculateTotalInjectorPW(req_fuel_uS, currentStatus.VE, currentStatus.MAP, currentStatus.corrections, inj_opentime_uS);
 
     //Manual adder for nitrous. These are not in correctionsFuel() because they
@@ -505,17 +505,18 @@ void loop(void)
       int16_t adderPercent = ((currentStatus.RPM - (configPage10.n2o_stage1_minRPM * 100)) * 100) / adderRange;
 
       adderPercent = 100 - adderPercent; //Flip the percentage as we go from a higher adder to a lower adder as the RPMs rise
-      injectors.injector(injChannel1).PW +=
+      injector_pulsewidth +=
         (configPage10.n2o_stage1_adderMax
          + percentage(adderPercent, (configPage10.n2o_stage1_adderMin - configPage10.n2o_stage1_adderMax))
          ) * 100; //Calculate the above percentage of the calculated ms value.
     }
+
     if (currentStatus.nitrous_status == NITROUS_STAGE2 || currentStatus.nitrous_status == NITROUS_BOTH)
     {
       int16_t adderRange = (configPage10.n2o_stage2_maxRPM - configPage10.n2o_stage2_minRPM) * 100;
       int16_t adderPercent = ((currentStatus.RPM - (configPage10.n2o_stage2_minRPM * 100)) * 100) / adderRange; //The percentage of the way through the RPM range
       adderPercent = 100 - adderPercent; //Flip the percentage as we go from a higher adder to a lower adder as the RPMs rise
-      injectors.injector(injChannel1).PW +=
+      injector_pulsewidth +=
         (configPage10.n2o_stage2_adderMax
          + percentage(adderPercent, (configPage10.n2o_stage2_adderMin - configPage10.n2o_stage2_adderMax))
          ) * 100; //Calculate the above percentage of the calculated ms value.
@@ -559,13 +560,13 @@ void loop(void)
     if (!BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK)
         && !configPage10.stagingEnabled)
     {
-      if (injectors.injector(injChannel1).PW > pwLimit)
+      if (injector_pulsewidth > pwLimit)
       {
-        injectors.injector(injChannel1).PW = pwLimit;
+        injector_pulsewidth = pwLimit;
       }
     }
 
-    calculateStaging(injectors.injector(injChannel1).PW, pwLimit);
+    calculateStaging(injector_pulsewidth, pwLimit);
 
     //***********************************************************************************************
     //BEGIN INJECTION TIMING
