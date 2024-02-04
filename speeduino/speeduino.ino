@@ -494,20 +494,23 @@ void loop(void)
     currentStatus.corrections = correctionsFuel();
 
     injectors.injector(injChannel1).PW =
-      PW(req_fuel_uS, currentStatus.VE, currentStatus.MAP, currentStatus.corrections, inj_opentime_uS);
+      calculateTotalInjectorPW(req_fuel_uS, currentStatus.VE, currentStatus.MAP, currentStatus.corrections, inj_opentime_uS);
 
-    //Manual adder for nitrous. These are not in correctionsFuel() because they are direct adders to the ms value, not % based
-    if ((currentStatus.nitrous_status == NITROUS_STAGE1) || (currentStatus.nitrous_status == NITROUS_BOTH))
+    //Manual adder for nitrous. These are not in correctionsFuel() because they
+    //are direct adders to the ms value, not % based
+    if (currentStatus.nitrous_status == NITROUS_STAGE1 || currentStatus.nitrous_status == NITROUS_BOTH)
     {
       int16_t adderRange = (configPage10.n2o_stage1_maxRPM - configPage10.n2o_stage1_minRPM) * 100;
-      int16_t adderPercent = ((currentStatus.RPM - (configPage10.n2o_stage1_minRPM * 100)) * 100) / adderRange; //The percentage of the way through the RPM range
+      //The percentage of the way through the RPM range
+      int16_t adderPercent = ((currentStatus.RPM - (configPage10.n2o_stage1_minRPM * 100)) * 100) / adderRange;
+
       adderPercent = 100 - adderPercent; //Flip the percentage as we go from a higher adder to a lower adder as the RPMs rise
       injectors.injector(injChannel1).PW +=
         (configPage10.n2o_stage1_adderMax
          + percentage(adderPercent, (configPage10.n2o_stage1_adderMin - configPage10.n2o_stage1_adderMax))
          ) * 100; //Calculate the above percentage of the calculated ms value.
     }
-    if ((currentStatus.nitrous_status == NITROUS_STAGE2) || (currentStatus.nitrous_status == NITROUS_BOTH))
+    if (currentStatus.nitrous_status == NITROUS_STAGE2 || currentStatus.nitrous_status == NITROUS_BOTH)
     {
       int16_t adderRange = (configPage10.n2o_stage2_maxRPM - configPage10.n2o_stage2_minRPM) * 100;
       int16_t adderPercent = ((currentStatus.RPM - (configPage10.n2o_stage2_minRPM * 100)) * 100) / adderRange; //The percentage of the way through the RPM range
@@ -523,18 +526,18 @@ void loop(void)
     uint16_t injector3StartAngle = 0;
     uint16_t injector4StartAngle = 0;
 
-#     if INJ_CHANNELS >= 5
+#if INJ_CHANNELS >= 5
     uint16_t injector5StartAngle = 0;
-#     endif
-#     if INJ_CHANNELS >= 6
+#endif
+#if INJ_CHANNELS >= 6
     uint16_t injector6StartAngle = 0;
-#     endif
-#     if INJ_CHANNELS >= 7
+#endif
+#if INJ_CHANNELS >= 7
     uint16_t injector7StartAngle = 0;
-#     endif
-#     if INJ_CHANNELS >= 8
+#endif
+#if INJ_CHANNELS >= 8
     uint16_t injector8StartAngle = 0;
-#     endif
+#endif
 
     //Check that the duty cycle of the chosen pulsewidth isn't too high.
     //The pulsewidth limit is determined to be the duty cycle limit (Eg 85%)
@@ -1375,10 +1378,10 @@ void loop(void)
  * @param VE Lookup from the main fuel table. This can either have been MAP or TPS based, depending on the algorithm used
  * @param MAP In KPa, read from the sensor (This is used when performing a multiply of the map only. It is applicable in both Speed density and Alpha-N)
  * @param corrections Sum of Enrichment factors (Cold start, acceleration). This is a multiplication factor (Eg to add 10%, this should be 110)
- * @param injOpen Injector opening time. The time the injector take to open minus the time it takes to close (Both in uS)
+ * @param injOpen Injector opening time. The time the injector takes to open minus the time it takes to close (Both in uS)
  * @return uint16_t The injector pulse width in uS
  */
-uint16_t PW(int REQ_FUEL, byte VE, long MAP, uint16_t corrections, int injOpen)
+uint16_t calculateTotalInjectorPW(int REQ_FUEL, byte VE, long MAP, uint16_t corrections, int injOpen)
 {
   //Standard float version of the calculation
   //return (REQ_FUEL * (float)(VE/100.0) * (float)(MAP/100.0) * (float)(TPS/100.0) * (float)(corrections/100.0) + injOpen);
@@ -1389,7 +1392,8 @@ uint16_t PW(int REQ_FUEL, byte VE, long MAP, uint16_t corrections, int injOpen)
 
   //100% float free version, does sacrifice a little bit of accuracy, but not much.
 
-  //If corrections are huge, use less bitshift to avoid overflow. Sacrifices a bit more accuracy (basically only during very cold temp cranking)
+  //If corrections are huge, use less bitshift to avoid overflow.
+  //Sacrifices a bit more accuracy (basically only during very cold temp cranking)
   byte bitShift = 7;
   if (corrections > 511)
   {
@@ -1413,7 +1417,9 @@ uint16_t PW(int REQ_FUEL, byte VE, long MAP, uint16_t corrections, int injOpen)
     iMAP = ((unsigned int)MAP << 7) / currentStatus.baro;
   }
 
-  if (configPage2.includeAFR && configPage6.egoType == EGO_TYPE_WIDE && currentStatus.runSecs > configPage6.ego_sdelay)
+  if (configPage2.includeAFR
+      && configPage6.egoType == EGO_TYPE_WIDE
+      && currentStatus.runSecs > configPage6.ego_sdelay)
   {
     //Include AFR (vs target) if enabled
     iAFR = ((unsigned int)currentStatus.O2 << 7) / currentStatus.afrTarget;
@@ -1427,7 +1433,8 @@ uint16_t PW(int REQ_FUEL, byte VE, long MAP, uint16_t corrections, int injOpen)
   //iCorrections = divu100((corrections << bitShift));
 
 
-  uint32_t intermediate = ((uint32_t)REQ_FUEL * (uint32_t)iVE) >> 7; //Need to use an intermediate value to avoid overflowing the long
+  //Need to use an intermediate value to avoid overflowing the long
+  uint32_t intermediate = ((uint32_t)REQ_FUEL * (uint32_t)iVE) >> 7;
   if (configPage2.multiplyMAP > 0)
   {
     intermediate = (intermediate * (uint32_t)iMAP) >> 7;
@@ -1448,7 +1455,8 @@ uint16_t PW(int REQ_FUEL, byte VE, long MAP, uint16_t corrections, int injOpen)
   intermediate = (intermediate * (uint32_t)iCorrections) >> bitShift;
   if (intermediate != 0)
   {
-    //If intermediate is not 0, we need to add the opening time (0 typically indicates that one of the full fuel cuts is active)
+    //If intermediate is not 0, we need to add the opening time
+    //(0 typically indicates that one of the full fuel cuts is active)
     intermediate += injOpen; //Add the injector opening time
     //AE calculation only when ACC is active.
     if (BIT_CHECK(currentStatus.engine, BIT_ENGINE_ACC))
@@ -1460,12 +1468,15 @@ uint16_t PW(int REQ_FUEL, byte VE, long MAP, uint16_t corrections, int injOpen)
       }
     }
 
-    if (intermediate > 65535)
+    //Make sure this won't overflow when we convert to uInt.
+    //This means the maximum pulsewidth possible is 65.535mS
+    if (intermediate > UINT16_MAX)
     {
-      intermediate = 65535;  //Make sure this won't overflow when we convert to uInt. This means the maximum pulsewidth possible is 65.535mS
+      intermediate = UINT16_MAX;
     }
   }
-  return (unsigned int)(intermediate);
+
+  return intermediate;
 }
 
 /** Lookup the current VE value from the primary 3D fuel map.
@@ -1637,14 +1648,23 @@ void calculateIgnitionAngles(int dwellAngle)
 void calculateStaging(uint32_t pwLimit)
 {
   //Calculate staging pulsewidths if used
-  //To run staged injection, the number of cylinders must be less than or equal to the injector channels (ie Assuming you're running paired injection, you need at least as many injector channels as you have cylinders, half for the primaries and half for the secondaries)
-  //Final check is to ensure that DFCO isn't active, which would cause an overflow below (See #267)
+  //To run staged injection, the number of cylinders must be less than or equal
+  //to the injector channels (ie Assuming you're running paired injection,
+  //you need at least as many injector channels as you have cylinders, half for
+  //the primaries and half for the secondaries)
+
+  //Final check is to ensure that DFCO isn't active, which would cause an
+  //overflow below (See #267)
   if (configPage10.stagingEnabled
       && (configPage2.nCylinders <= INJ_CHANNELS || configPage2.injType == INJ_TYPE_TBODY)
       && injectors.injector(injChannel1).PW > inj_opentime_uS)
   {
     //Scale the 'full' pulsewidth by each of the injector capacities
-    injectors.injector(injChannel1).PW -= inj_opentime_uS; //Subtract the opening time from PW1 as it needs to be multiplied out again by the pri/sec req_fuel values below. It is added on again after that calculation.
+
+    //Subtract the opening time from PW1 as it needs to be multiplied out again
+    //by the pri/sec req_fuel values below.
+    //It is added on again after that calculation.
+    injectors.injector(injChannel1).PW -= inj_opentime_uS;
     uint32_t tempPW1 = div100((uint32_t)injectors.injector(injChannel1).PW * staged_req_fuel_mult_pri);
 
     switch ((staging_mode_t)configPage10.stagingMode)
@@ -1658,7 +1678,8 @@ void calculateStaging(uint32_t pwLimit)
       injectors.injector(injChannel1).PW = div100((100U - stagingSplit) * tempPW1);
       injectors.injector(injChannel1).PW += inj_opentime_uS;
 
-      //PW2 is used temporarily to hold the secondary injector pulsewidth. It will be assigned to the correct channel below
+      //PW2 is used temporarily to hold the secondary injector pulsewidth.
+      //It will be assigned to the correct channel below
       if (stagingSplit > 0)
       {
         BIT_SET(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE); //Set the staging active flag
@@ -1676,12 +1697,16 @@ void calculateStaging(uint32_t pwLimit)
     case STAGING_MODE_AUTO:
     {
       injectors.injector(injChannel1).PW = tempPW1;
-      //If automatic mode, the primary injectors are used all the way up to their limit (Configured by the pulsewidth limit setting)
+      //If automatic mode, the primary injectors are used all the way up to their limit
+      //(Configured by the pulsewidth limit setting)
       //If they exceed their limit, the extra duty is passed to the secondaries
       if (tempPW1 > pwLimit)
       {
         BIT_SET(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE); //Set the staging active flag
-        uint32_t extraPW = tempPW1 - pwLimit + inj_opentime_uS; //The open time must be added here AND below because tempPW1 does not include an open time. The addition of it here takes into account the fact that pwLlimit does not contain an allowance for an open time.
+        //The open time must be added here AND below because tempPW1 does not
+        //include an open time. The addition of it here takes into account the
+        //fact that pwLlimit does not contain an allowance for an open time.
+        uint32_t extraPW = tempPW1 - pwLimit + inj_opentime_uS;
         injectors.injector(injChannel1).PW = pwLimit;
          //Convert the 'left over' fuel amount from primary injector scaling to secondary
         injectors.injector(injChannel2).PW = udiv_32_16(extraPW * staged_req_fuel_mult_sec, staged_req_fuel_mult_pri);
@@ -1689,9 +1714,12 @@ void calculateStaging(uint32_t pwLimit)
       }
       else
       {
-        //If tempPW1 < pwLImit it means that the entire fuel load can be handled by the primaries and staging is inactive.
-        //Secondary PW is simply set to 0
+        //If tempPW1 < pwLImit it means that the entire fuel load can be handled
+        //by the primaries and staging is inactive.
+        //Secondary PW is simply set to 0 and add back the injector opening time to
+        // the primary PW.
         BIT_CLEAR(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE); //Clear the staging active flag
+        injectors.injector(injChannel1).PW += inj_opentime_uS;
         injectors.injector(injChannel2).PW = 0;
       }
       break;
@@ -1743,7 +1771,7 @@ void calculateStaging(uint32_t pwLimit)
         injectors.injector(injChannel2).PW = injectors.injector(injChannel1).PW;
         injectors.injector(injChannel3).PW = injectors.injector(injChannel1).PW;
         injectors.injector(injChannel4).PW = injectors.injector(injChannel1).PW;
-#else
+#elif INJ_CHANNELS >= 5
         //This is an invalid config as there are not enough outputs to support sequential + staging
         //Put the staging output to the non-existent channel 5
         injectors.injector(injChannel5).PW = injectors.injector(injChannel2).PW;
@@ -1786,7 +1814,8 @@ void calculateStaging(uint32_t pwLimit)
 #if INJ_CHANNELS >= 8
       else
       {
-        //If there are 8 channels, then the 6 cylinder sequential option is available by using channels 7 + 8 for staging
+        //If there are 8 channels, then the 6 cylinder sequential option is
+        //available by using channels 7 + 8 for staging
         injectors.injector(injChannel7).PW = injectors.injector(injChannel2).PW;
         injectors.injector(injChannel8).PW = injectors.injector(injChannel2).PW;
 
@@ -1801,7 +1830,7 @@ void calculateStaging(uint32_t pwLimit)
       break;
 
     case 8:
-#       if INJ_CHANNELS >= 8
+#if INJ_CHANNELS >= 8
       //8 cylinder staging only if not sequential
       if (configPage2.injLayout != INJ_SEQUENTIAL)
       {
@@ -1810,7 +1839,7 @@ void calculateStaging(uint32_t pwLimit)
         injectors.injector(injChannel7).PW = injectors.injector(injChannel2).PW;
         injectors.injector(injChannel8).PW = injectors.injector(injChannel2).PW;
       }
-#       endif
+#endif
       injectors.injector(injChannel2).PW = injectors.injector(injChannel1).PW;
       injectors.injector(injChannel3).PW = injectors.injector(injChannel1).PW;
       injectors.injector(injChannel4).PW = injectors.injector(injChannel1).PW;
@@ -1826,65 +1855,15 @@ void calculateStaging(uint32_t pwLimit)
   }
   else
   {
-    if (injectors.maxOutputs >= 2)
+    for (size_t i = injChannel2; i < injChannelCount; i++)
     {
-      injectors.injector(injChannel2).PW = injectors.injector(injChannel1).PW;
-    }
-    else
-    {
-      injectors.injector(injChannel2).PW = 0;
-    }
-    if (injectors.maxOutputs >= 3)
-    {
-      injectors.injector(injChannel3).PW = injectors.injector(injChannel1).PW;
-    }
-    else
-    {
-      injectors.injector(injChannel3).PW = 0;
-    }
-    if (injectors.maxOutputs >= 4)
-    {
-      injectors.injector(injChannel4).PW = injectors.injector(injChannel1).PW;
-    }
-    else
-    {
-      injectors.injector(injChannel4).PW = 0;
-    }
-    if (injectors.maxOutputs >= 5)
-    {
-      injectors.injector(injChannel5).PW = injectors.injector(injChannel1).PW;
-    }
-    else
-    {
-      injectors.injector(injChannel5).PW = 0;
-    }
-    if (injectors.maxOutputs >= 6)
-    {
-      injectors.injector(injChannel6).PW = injectors.injector(injChannel1).PW;
-    }
-    else
-    {
-      injectors.injector(injChannel6).PW = 0;
-    }
-    if (injectors.maxOutputs >= 7)
-    {
-      injectors.injector(injChannel7).PW = injectors.injector(injChannel1).PW;
-    }
-    else
-    {
-      injectors.injector(injChannel7).PW = 0;
-    }
-    if (injectors.maxOutputs >= 8)
-    {
-      injectors.injector(injChannel8).PW = injectors.injector(injChannel1).PW;
-    }
-    else
-    {
-      injectors.injector(injChannel8).PW = 0;
+      unsigned int const PW =
+        (i < injectors.maxOutputs) ? injectors.injector(injChannel1).PW : 0;
+
+      injectors.injector((injectorChannelID_t)i).PW = PW;
     }
 
     BIT_CLEAR(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE); //Clear the staging active flag
-
   }
 
 }

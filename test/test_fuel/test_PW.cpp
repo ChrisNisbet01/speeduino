@@ -40,7 +40,7 @@ void test_PW_No_Multiply()
   configPage2.incorporateAFR = 0;
   configPage2.aeApplyMode = 0;
 
-  uint16_t result = PW(REQ_FUEL, VE, MAP, corrections, injOpen);
+  uint16_t result = calculateTotalInjectorPW(REQ_FUEL, VE, MAP, corrections, injOpen);
   TEST_ASSERT_UINT16_WITHIN(PW_ALLOWED_ERROR, 2557, result);
 }
 
@@ -54,7 +54,7 @@ void test_PW_MAP_Multiply()
   configPage2.incorporateAFR = 0;
   configPage2.aeApplyMode = 0;
 
-  uint16_t result = PW(REQ_FUEL, VE, MAP, corrections, injOpen);
+  uint16_t result = calculateTotalInjectorPW(REQ_FUEL, VE, MAP, corrections, injOpen);
   TEST_ASSERT_UINT16_WITHIN(PW_ALLOWED_ERROR, 2400, result);
 }
 
@@ -68,7 +68,7 @@ void test_PW_MAP_Multiply_Compatibility()
   configPage2.incorporateAFR = 0;
   configPage2.aeApplyMode = 0;
 
-  uint16_t result = PW(REQ_FUEL, VE, MAP, corrections, injOpen);
+  uint16_t result = calculateTotalInjectorPW(REQ_FUEL, VE, MAP, corrections, injOpen);
   TEST_ASSERT_UINT16_WITHIN(PW_ALLOWED_ERROR, 2449, result);
 }
 
@@ -87,7 +87,7 @@ void test_PW_AFR_Multiply()
   currentStatus.afrTarget = 147;
 
 
-  uint16_t result = PW(REQ_FUEL, VE, MAP, corrections, injOpen);
+  uint16_t result = calculateTotalInjectorPW(REQ_FUEL, VE, MAP, corrections, injOpen);
   TEST_ASSERT_UINT16_WITHIN(PW_ALLOWED_ERROR, 2588, result);
 }
 
@@ -109,7 +109,7 @@ void test_PW_Large_Correction()
   configPage2.incorporateAFR = 0;
   configPage2.aeApplyMode = 0;
 
-  uint16_t result = PW(REQ_FUEL, VE, MAP, corrections, injOpen);
+  uint16_t result = calculateTotalInjectorPW(REQ_FUEL, VE, MAP, corrections, injOpen);
   TEST_ASSERT_UINT16_WITHIN(PW_ALLOWED_ERROR, 9268, result);
 }
 
@@ -124,7 +124,7 @@ void test_PW_Very_Large_Correction()
   configPage2.incorporateAFR = 0;
   configPage2.aeApplyMode = 0;
 
-  uint16_t result = PW(REQ_FUEL, VE, MAP, corrections, injOpen);
+  uint16_t result = calculateTotalInjectorPW(REQ_FUEL, VE, MAP, corrections, injOpen);
   TEST_ASSERT_UINT16_WITHIN(PW_ALLOWED_ERROR+30, 21670, result); //Additional allowed error here
 }
 
