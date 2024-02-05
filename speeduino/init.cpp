@@ -82,10 +82,11 @@ void initialiseAll(void)
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, LOW);
 
-    #if defined(CORE_STM32)
-    configPage9.intcan_available = 1;   // device has internal canbus
+#if defined(CORE_STM32)
+    // device has internal canbus
+    configPage9.intcan_available = 1;
     //STM32 can not currently enabled
-    #endif
+#endif
 
     /*
     ***********************************************************************************************************
@@ -1155,74 +1156,75 @@ void initialiseAll(void)
         break;
 
     case IGN_MODE_WASTEDCOP:
-        //Wasted COP mode. Note, most of the boards can only run this for 4-cyl only.
-        if( configPage2.nCylinders <= 3)
-        {
-          //1-3 cylinder wasted COP is the same as regular wasted mode
-          configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
-          configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2);
-          configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3);
-        }
-        else if( configPage2.nCylinders == 4 )
-        {
-          //Wasted COP mode for 4 cylinders. Ignition channels 1&3 and 2&4 are paired together
-          configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1, ignition_id_3);
-          configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2, ignition_id_4);
+      //Wasted COP mode. Note, most of the boards can only run this for 4-cyl only.
+      if( configPage2.nCylinders <= 3)
+      {
+        //1-3 cylinder wasted COP is the same as regular wasted mode
+        configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
+        configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2);
+        configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3);
+      }
+      else if( configPage2.nCylinders == 4 )
+      {
+        //Wasted COP mode for 4 cylinders. Ignition channels 1&3 and 2&4 are paired together
+        configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1, ignition_id_3);
+        configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2, ignition_id_4);
 
-          ignitionSchedule3.start.pCallback = nullCallback;
-          ignitionSchedule3.end.pCallback = nullCallback;
-          ignitionSchedule4.start.pCallback = nullCallback;
-          ignitionSchedule4.end.pCallback = nullCallback;
-        }
-        else if( configPage2.nCylinders == 6 )
-        {
-          //Wasted COP mode for 6 cylinders. Ignition channels 1&4, 2&5 and 3&6 are paired together
-          configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1, ignition_id_4);
-          configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2, ignition_id_5);
-          configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3, ignition_id_6);
+        ignitionSchedule3.start.pCallback = nullCallback;
+        ignitionSchedule3.end.pCallback = nullCallback;
+        ignitionSchedule4.start.pCallback = nullCallback;
+        ignitionSchedule4.end.pCallback = nullCallback;
+      }
+      else if( configPage2.nCylinders == 6 )
+      {
+        //Wasted COP mode for 6 cylinders. Ignition channels 1&4, 2&5 and 3&6 are paired together
+        configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1, ignition_id_4);
+        configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2, ignition_id_5);
+        configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3, ignition_id_6);
 
-          ignitionSchedule4.start.pCallback = nullCallback;
-          ignitionSchedule4.end.pCallback = nullCallback;
-          ignitionSchedule5.start.pCallback = nullCallback;
-          ignitionSchedule5.end.pCallback = nullCallback;
+        ignitionSchedule4.start.pCallback = nullCallback;
+        ignitionSchedule4.end.pCallback = nullCallback;
+        ignitionSchedule5.start.pCallback = nullCallback;
+        ignitionSchedule5.end.pCallback = nullCallback;
 #if IGN_CHANNELS >= 6
-          ignitionSchedule6.start.pCallback = nullCallback;
-          ignitionSchedule6.end.pCallback = nullCallback;
+        ignitionSchedule6.start.pCallback = nullCallback;
+        ignitionSchedule6.end.pCallback = nullCallback;
 #endif
-        }
-        else if( configPage2.nCylinders == 8 )
-        {
-          //Wasted COP mode for 8 cylinders. Ignition channels 1&5, 2&6, 3&7 and 4&8 are paired together
-          configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1, ignition_id_5);
-          configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2, ignition_id_6);
-          configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3, ignition_id_7);
-          configure_ignition_coil_schedule(ignitionSchedule4, ignition_id_4, ignition_id_8);
+      }
+      else if( configPage2.nCylinders == 8 )
+      {
+        //Wasted COP mode for 8 cylinders. Ignition channels 1&5, 2&6, 3&7 and 4&8 are paired together
+        configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1, ignition_id_5);
+        configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2, ignition_id_6);
+        configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3, ignition_id_7);
+        configure_ignition_coil_schedule(ignitionSchedule4, ignition_id_4, ignition_id_8);
 
-          ignitionSchedule5.start.pCallback = nullCallback;
-          ignitionSchedule5.end.pCallback = nullCallback;
+        ignitionSchedule5.start.pCallback = nullCallback;
+        ignitionSchedule5.end.pCallback = nullCallback;
 #if IGN_CHANNELS >= 6
-          ignitionSchedule6.start.pCallback = nullCallback;
-          ignitionSchedule6.end.pCallback = nullCallback;
+        ignitionSchedule6.start.pCallback = nullCallback;
+        ignitionSchedule6.end.pCallback = nullCallback;
 #endif
 #if IGN_CHANNELS >= 7
-          ignitionSchedule7.start.pCallback = nullCallback;
-          ignitionSchedule7.end.pCallback = nullCallback;
+        ignitionSchedule7.start.pCallback = nullCallback;
+        ignitionSchedule7.end.pCallback = nullCallback;
 #endif
 #if IGN_CHANNELS >= 8
-          ignitionSchedule8.start.pCallback = nullCallback;
-          ignitionSchedule8.end.pCallback = nullCallback;
+        ignitionSchedule8.start.pCallback = nullCallback;
+        ignitionSchedule8.end.pCallback = nullCallback;
 #endif
-        }
-        else
-        {
-          //If the person has inadvertently selected this when running more than 4 cylinders or other than 6 cylinders, just use standard Wasted spark mode
-          configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
-          configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2);
-          configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3);
-          configure_ignition_coil_schedule(ignitionSchedule4, ignition_id_4);
-          configure_ignition_coil_schedule(ignitionSchedule5, ignition_id_5);
-        }
-        break;
+      }
+      else
+      {
+        //If the person has inadvertently selected this when running more than
+        //4 cylinders or other than 6 cylinders, just use standard Wasted spark mode
+        configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
+        configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2);
+        configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3);
+        configure_ignition_coil_schedule(ignitionSchedule4, ignition_id_4);
+        configure_ignition_coil_schedule(ignitionSchedule5, ignition_id_5);
+      }
+      break;
 
     case IGN_MODE_SEQUENTIAL:
       configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
@@ -1239,49 +1241,52 @@ void initialiseAll(void)
 #if IGN_CHANNELS >= 8
       configure_ignition_coil_schedule(ignitionSchedule8, ignition_id_8);
 #endif
-        break;
+      break;
 
     case IGN_MODE_ROTARY:
-        if(configPage10.rotaryType == ROTARY_IGN_FC)
-        {
-          //Ignition channel 1 is a wasted spark signal for leading signal on both rotors
-          configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
-          configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_1);
+      if(configPage10.rotaryType == ROTARY_IGN_FC)
+      {
+        //Ignition channel 1 is a wasted spark signal for leading signal on both rotors
+        configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
+        configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_1);
 
-          ignitionSchedule3.start.pCallback = beginTrailingCoilCharge;
-          ignitionSchedule3.end.pCallback = endTrailingCoilCharge1;
-          ignitionSchedule4.start.pCallback = beginTrailingCoilCharge;
-          ignitionSchedule4.end.pCallback = endTrailingCoilCharge2;
-        }
-        else if(configPage10.rotaryType == ROTARY_IGN_FD)
-        {
-          //Ignition channel 1 is a wasted spark signal for leading signal on both rotors
-          configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
-          configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_1);
+        ignitionSchedule3.start.pCallback = beginTrailingCoilCharge;
+        ignitionSchedule3.end.pCallback = endTrailingCoilCharge1;
+        ignitionSchedule4.start.pCallback = beginTrailingCoilCharge;
+        ignitionSchedule4.end.pCallback = endTrailingCoilCharge2;
+      }
+      else if(configPage10.rotaryType == ROTARY_IGN_FD)
+      {
+        //Ignition channel 1 is a wasted spark signal for leading signal on both rotors
+        configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
+        configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_1);
 
-          //Trailing coils have their own channel each
-          //IGN2 = front rotor trailing spark
-          configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_2);
-          //IGN3 = rear rotor trailing spark
-          configure_ignition_coil_schedule(ignitionSchedule4, ignition_id_3);
+        //Trailing coils have their own channel each
+        //IGN2 = front rotor trailing spark
+        configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_2);
+        //IGN3 = rear rotor trailing spark
+        configure_ignition_coil_schedule(ignitionSchedule4, ignition_id_3);
 
-          //IGN4 not used
-        }
-        else if(configPage10.rotaryType == ROTARY_IGN_RX8)
-        {
-          //RX8 outputs are simply 1 coil and 1 output per plug
+        //IGN4 not used
+      }
+      else if(configPage10.rotaryType == ROTARY_IGN_RX8)
+      {
+        //RX8 outputs are simply 1 coil and 1 output per plug
 
-          //IGN1 is front rotor, leading spark
-          configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
-          //IGN2 is rear rotor, leading spark
-          configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2);
-          //IGN3 = front rotor trailing spark
-          configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3);
-          //IGN4 = rear rotor trailing spark
-          configure_ignition_coil_schedule(ignitionSchedule4, ignition_id_4);
-        }
-        else { } //No action for other RX ignition modes (Future expansion / MISRA compliant).
-        break;
+        //IGN1 is front rotor, leading spark
+        configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
+        //IGN2 is rear rotor, leading spark
+        configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2);
+        //IGN3 = front rotor trailing spark
+        configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3);
+        //IGN4 = rear rotor trailing spark
+        configure_ignition_coil_schedule(ignitionSchedule4, ignition_id_4);
+      }
+      else
+      {
+         //No action for other RX ignition modes (Future expansion / MISRA compliant).
+      }
+      break;
 
     default:
       //Wasted spark (Shouldn't ever happen anyway)
@@ -1294,7 +1299,7 @@ void initialiseAll(void)
     }
 
     //Begin priming the fuel pump. This is turned off in the low resolution, 1s interrupt in timers.ino
-    //First check that the priming time is not 0
+    //First check that the priming time is not 0.
     if(configPage2.fpPrime > 0)
     {
       FUEL_PUMP_ON();
@@ -1302,22 +1307,28 @@ void initialiseAll(void)
     }
     else
     {
+      //If the user has set 0 for the pump priming, immediately mark the priming
+      //as being completed.
       currentStatus.fpPrimed = true;
-    } //If the user has set 0 for the pump priming, immediately mark the priming as being completed
+    }
 
     interrupts();
-    readCLT(false); // Need to read coolant temp to make priming pulsewidth work correctly. The false here disables use of the filter
+
+    // Need to read coolant temp to make priming pulsewidth work correctly.
+    // The false here disables use of the filter
+    readCLT(false);
     readTPS(false); // Need to read tps to detect flood clear state
 
     /* tacho sweep function. */
-    //tachoStatus.tachoSweepEnabled = (configPage2.useTachoSweep > 0);
-    /* SweepMax is stored as a byte, RPM/100. divide by 60 to convert min to sec (net 5/3).  Multiply by ignition pulses per rev.
-       tachoSweepIncr is also the number of tach pulses per second */
+    /*
+     * SweepMax is stored as a byte, RPM/100. divide by 60 to convert min to sec
+     * (net 5/3).  Multiply by ignition pulses per rev.
+     * tachoSweepIncr is also the number of tach pulses per second
+     */
     tachoSweepIncr = configPage2.tachoSweepMaxRPM * maxIgnOutputs * 5 / 3;
 
     currentStatus.initialisationComplete = true;
     digitalWrite(LED_BUILTIN, HIGH);
-
 }
 
 static bool

@@ -1313,7 +1313,8 @@ void loop(void)
 #if IGN_CHANNELS >= 5
       if (maxIgnOutputs >= 5)
       {
-        unsigned long ignition5StartTime = calculateIgnitionTimeout(ignitionSchedule5, ignition5StartAngle, channel5IgnDegrees, crankAngle);
+        unsigned long ignition5StartTime =
+          calculateIgnitionTimeout(ignitionSchedule5, ignition5StartAngle, channel5IgnDegrees, crankAngle);
 
         if (ignition5StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN5_CMD_BIT))
         {

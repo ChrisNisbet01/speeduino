@@ -1,7 +1,7 @@
 /*
 Speeduino - Simple engine management for the Arduino Mega 2560 platform
 Copyright (C) Josh Stewart
-A full copy of the license may be found in the projects root directory
+A full copy of the license may be found in the project's root directory
 */
 /** @file
  * Injector and Ignition (on/off) scheduling (functions).
@@ -30,6 +30,7 @@ A full copy of the license may be found in the projects root directory
 #include "timers.h"
 #include "schedule_calcs.h"
 #include "injector_contexts.h"
+#include "ignition_contexts.h"
 
 #define DWELL_SMOOTHED_ALPHA 30
 #define DWELL_SMOOTHED(current_dwell, input) ((((long)(input) * (256 - DWELL_SMOOTHED_ALPHA) + ((long)(current_dwell) * DWELL_SMOOTHED_ALPHA))) >> 8)
@@ -74,6 +75,8 @@ static void reset(FuelSchedule &schedule)
 {
     schedule.Status = OFF;
     schedule.pTimerEnable();
+    schedule.start.pCallback = nullCallback;
+    schedule.end.pCallback = nullCallback;
 }
 
 static void reset(IgnitionSchedule &schedule)
@@ -104,80 +107,71 @@ static void initialiseFuelSchedules(void)
 #endif
 }
 
+static void initialiseIgnitionSchedules(void)
+{
+  ignitions.ignition(ignChannel1).ignitionSchedule = &ignitionSchedule1;
+  ignitions.ignition(ignChannel2).ignitionSchedule = &ignitionSchedule2;
+  ignitions.ignition(ignChannel3).ignitionSchedule = &ignitionSchedule3;
+  ignitions.ignition(ignChannel4).ignitionSchedule = &ignitionSchedule4;
+  ignitions.ignition(ignChannel5).ignitionSchedule = &ignitionSchedule5;
+#if INJ_CHANNELS >= 6
+  ignitions.ignition(ignChannel6).ignitionSchedule = &ignitionSchedule6;
+#endif
+#if INJ_CHANNELS >= 7
+  ignitions.ignition(ignChannel7).ignitionSchedule = &ignitionSchedule7;
+#endif
+#if INJ_CHANNELS >= 8
+  ignitions.ignition(ignChannel8).ignitionSchedule = &ignitionSchedule8;
+#endif
+}
+
 void initialiseSchedulers(void)
 {
   initialiseFuelSchedules();
+  initialiseIgnitionSchedules();
+
   for (size_t i = injChannel1; i < injChannelCount; i++)
   {
     reset(*injectors.injector((injectorChannelID_t)i).fuelSchedule);
   }
 
-  reset(ignitionSchedule1);
-  reset(ignitionSchedule2);
-  reset(ignitionSchedule3);
-  reset(ignitionSchedule4);
-  reset(ignitionSchedule5);
-#if (IGN_CHANNELS >= 5)
-  reset(ignitionSchedule5);
-#endif
-#if IGN_CHANNELS >= 6
-  reset(ignitionSchedule6);
-#endif
-#if IGN_CHANNELS >= 7
-  reset(ignitionSchedule7);
-#endif
-#if IGN_CHANNELS >= 8
-  reset(ignitionSchedule8);
-#endif
+  for (size_t i = injChannel1; i < ignChannelCount; i++)
+  {
+    reset(*ignitions.ignition((ignitionChannelID_t)i).ignitionSchedule);
+  }
 
-  ignitionSchedule1.start.pCallback = nullCallback;
-  ignitionSchedule1.end.pCallback = nullCallback;
   ignition1StartAngle = 0;
   ignition1EndAngle = 0;
   channel1IgnDegrees = 0; /**< The number of crank degrees until cylinder 1 is at TDC (This is obviously 0 for virtually ALL engines, but there's some weird ones) */
 
-  ignitionSchedule2.start.pCallback = nullCallback;
-  ignitionSchedule2.end.pCallback = nullCallback;
   ignition2StartAngle = 0;
   ignition2EndAngle = 0;
   channel2IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
 
-  ignitionSchedule3.start.pCallback = nullCallback;
-  ignitionSchedule3.end.pCallback = nullCallback;
   ignition3StartAngle = 0;
   ignition3EndAngle = 0;
   channel3IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
 
-  ignitionSchedule4.start.pCallback = nullCallback;
-  ignitionSchedule4.end.pCallback = nullCallback;
   ignition4StartAngle = 0;
   ignition4EndAngle = 0;
   channel4IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
 
 #if (IGN_CHANNELS >= 5)
-  ignitionSchedule5.start.pCallback = nullCallback;
-  ignitionSchedule5.end.pCallback = nullCallback;
   ignition5StartAngle = 0;
   ignition5EndAngle = 0;
   channel5IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
 #endif
 #if (IGN_CHANNELS >= 6)
-  ignitionSchedule6.start.pCallback = nullCallback;
-  ignitionSchedule6.end.pCallback = nullCallback;
   ignition6StartAngle = 0;
   ignition6EndAngle = 0;
   channel6IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
 #endif
 #if (IGN_CHANNELS >= 7)
-  ignitionSchedule7.start.pCallback = nullCallback;
-  ignitionSchedule7.end.pCallback = nullCallback;
   ignition7StartAngle = 0;
   ignition7EndAngle = 0;
   channel7IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
 #endif
 #if (IGN_CHANNELS >= 8)
-  ignitionSchedule8.start.pCallback = nullCallback;
-  ignitionSchedule8.end.pCallback = nullCallback;
   ignition8StartAngle = 0;
   ignition8EndAngle = 0;
   channel8IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
@@ -581,39 +575,18 @@ void disablePendingFuelSchedule(byte channel)
 
 void disablePendingIgnSchedule(byte channel)
 {
-  noInterrupts();
-  switch(channel)
+  if (channel < ignChannelCount)
   {
-    case 0:
-      if(ignitionSchedule1.Status == PENDING) { ignitionSchedule1.Status = OFF; }
-      break;
-    case 1:
-      if(ignitionSchedule2.Status == PENDING) { ignitionSchedule2.Status = OFF; }
-      break;
-    case 2:
-      if(ignitionSchedule3.Status == PENDING) { ignitionSchedule3.Status = OFF; }
-      break;
-    case 3:
-      if(ignitionSchedule4.Status == PENDING) { ignitionSchedule4.Status = OFF; }
-      break;
-    case 4:
-      if(ignitionSchedule5.Status == PENDING) { ignitionSchedule5.Status = OFF; }
-      break;
-#if IGN_CHANNELS >= 6
-    case 6:
-      if(ignitionSchedule6.Status == PENDING) { ignitionSchedule6.Status = OFF; }
-      break;
-#endif
-#if IGN_CHANNELS >= 7
-    case 7:
-      if(ignitionSchedule7.Status == PENDING) { ignitionSchedule7.Status = OFF; }
-      break;
-#endif
-#if IGN_CHANNELS >= 8
-    case 8:
-      if(ignitionSchedule8.Status == PENDING) { ignitionSchedule8.Status = OFF; }
-      break;
-#endif
+    noInterrupts();
+
+    ignition_context_st &ignition =
+      ignitions.ignition((ignitionChannelID_t)channel);
+
+    if(ignition.ignitionSchedule->Status == PENDING)
+    {
+      ignition.ignitionSchedule->Status = OFF;
+    }
+
+    interrupts();
   }
-  interrupts();
 }
