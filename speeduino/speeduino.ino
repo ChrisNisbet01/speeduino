@@ -1219,19 +1219,19 @@ void loop(void)
         crankAngle -= CRANK_ANGLE_MAX_IGN;
       }
 
+      ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+
 #if IGN_CHANNELS >= 1
-      uint32_t timeOut =
-        ignitions.ignition(ignChannel1).calculateIgnitionTimeout(crankAngle);
+      uint32_t const timeOut = ignition1.calculateIgnitionTimeout(crankAngle);
       if (timeOut > 0U && BIT_CHECK(ignitionChannelsOn, IGN1_CMD_BIT))
       {
-        setIgnitionSchedule(
-          ignitionSchedule1, timeOut, currentStatus.dwell + fixedCrankingOverride);
+        ignition1.setIgnitionSchedule(timeOut, currentStatus.dwell + fixedCrankingOverride);
       }
 #endif
 
 #if defined(USE_IGN_REFRESH)
-      if (ignitionSchedule1.Status == RUNNING
-          && ignition1EndAngle > crankAngle
+      if (ignition1.ignitionSchedule->Status == RUNNING
+          && ignition1.endAngle > crankAngle
           && configPage4.StgCycles == 0
           && !configPage2.perToothIgn)
       {
@@ -1245,16 +1245,16 @@ void loop(void)
 
         //ONLY ONE OF THE BELOW SHOULD BE USED (PROBABLY THE FIRST):
         //*********
-        if (ignition1EndAngle > crankAngle)
+        if (ignition1.endAngle > crankAngle)
         {
-          uSToEnd = angleToTimeMicroSecPerDegree(ignition1EndAngle - crankAngle);
+          uSToEnd = angleToTimeMicroSecPerDegree(ignition1.endAngle - crankAngle);
         }
         else
         {
-          uSToEnd = angleToTimeMicroSecPerDegree(360 + ignition1EndAngle - crankAngle);
+          uSToEnd = angleToTimeMicroSecPerDegree(360 + ignition1.endAngle - crankAngle);
         }
         //*********
-        //uSToEnd = ((ignition1EndAngle - crankAngle) * (toothLastToothTime - toothLastMinusOneToothTime)) / triggerToothAngle;
+        //uSToEnd = ((ignition1.endAngle - crankAngle) * (toothLastToothTime - toothLastMinusOneToothTime)) / triggerToothAngle;
         //*********
 
         refreshIgnitionSchedule1(uSToEnd + fixedCrankingOverride);
@@ -1264,13 +1264,13 @@ void loop(void)
 #if IGN_CHANNELS >= 2
       if (maxIgnOutputs >= 2)
       {
+        ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
         unsigned long ignition2StartTime =
-          ignitions.ignition(ignChannel2).calculateIgnitionTimeout(crankAngle);
+          ignition2.calculateIgnitionTimeout(crankAngle);
 
         if (ignition2StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN2_CMD_BIT))
         {
-          setIgnitionSchedule(
-            ignitionSchedule2, ignition2StartTime, currentStatus.dwell + fixedCrankingOverride);
+          ignition2.setIgnitionSchedule(ignition2StartTime, currentStatus.dwell + fixedCrankingOverride);
         }
       }
 #endif
@@ -1278,13 +1278,13 @@ void loop(void)
 #if IGN_CHANNELS >= 3
       if (maxIgnOutputs >= 3)
       {
+        ignition_context_st &ignition3 = ignitions.ignition(ignChannel3);
         unsigned long ignition3StartTime =
-          ignitions.ignition(ignChannel3).calculateIgnitionTimeout(crankAngle);
+          ignition3.calculateIgnitionTimeout(crankAngle);
 
         if (ignition3StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN3_CMD_BIT))
         {
-          setIgnitionSchedule(
-            ignitionSchedule3, ignition3StartTime, currentStatus.dwell + fixedCrankingOverride);
+          ignition3.setIgnitionSchedule(ignition3StartTime, currentStatus.dwell + fixedCrankingOverride);
         }
       }
 #endif
@@ -1292,13 +1292,13 @@ void loop(void)
 #if IGN_CHANNELS >= 4
       if (maxIgnOutputs >= 4)
       {
+        ignition_context_st &ignition4 = ignitions.ignition(ignChannel4);
         unsigned long ignition4StartTime =
-          ignitions.ignition(ignChannel4).calculateIgnitionTimeout(crankAngle);
+          ignition4.calculateIgnitionTimeout(crankAngle);
 
         if (ignition4StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN4_CMD_BIT))
         {
-          setIgnitionSchedule(
-            ignitionSchedule4, ignition4StartTime, currentStatus.dwell + fixedCrankingOverride);
+          ignition4.setIgnitionSchedule(ignition4StartTime, currentStatus.dwell + fixedCrankingOverride);
         }
       }
 #endif
@@ -1306,13 +1306,13 @@ void loop(void)
 #if IGN_CHANNELS >= 5
       if (maxIgnOutputs >= 5)
       {
+        ignition_context_st &ignition5 = ignitions.ignition(ignChannel5);
         unsigned long ignition5StartTime =
-          ignitions.ignition(ignChannel5).calculateIgnitionTimeout(crankAngle);
+          ignition5.calculateIgnitionTimeout(crankAngle);
 
         if (ignition5StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN5_CMD_BIT))
         {
-          setIgnitionSchedule(
-            ignitionSchedule5, ignition5StartTime, currentStatus.dwell + fixedCrankingOverride);
+          ignition5.setIgnitionSchedule(ignition5StartTime, currentStatus.dwell + fixedCrankingOverride);
         }
       }
 #endif
@@ -1320,13 +1320,13 @@ void loop(void)
 #if IGN_CHANNELS >= 6
       if (maxIgnOutputs >= 6)
       {
+        ignition_context_st &ignition6 = ignitions.ignition(ignChannel6);
         unsigned long ignition6StartTime =
-          ignitions.ignition(ignChannel6).calculateIgnitionTimeout(crankAngle);
+          ignition6.calculateIgnitionTimeout(crankAngle);
 
         if (ignition6StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN6_CMD_BIT))
         {
-          setIgnitionSchedule(
-            ignitionSchedule6, ignition6StartTime, currentStatus.dwell + fixedCrankingOverride);
+          ignition6.setIgnitionSchedule(ignition6StartTime, currentStatus.dwell + fixedCrankingOverride);
         }
       }
 #endif
@@ -1334,13 +1334,13 @@ void loop(void)
 #if IGN_CHANNELS >= 7
       if (maxIgnOutputs >= 7)
       {
+        ignition_context_st &ignition7 = ignitions.ignition(ignChannel7);
         unsigned long ignition7StartTime =
-          ignitions.ignition(ignChannel7).calculateIgnitionTimeout(crankAngle);
+          ignition7.calculateIgnitionTimeout(crankAngle);
 
         if (ignition7StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN7_CMD_BIT))
         {
-          setIgnitionSchedule(
-            ignitionSchedule7, ignition7StartTime, currentStatus.dwell + fixedCrankingOverride);
+          ignition7.setIgnitionSchedule(ignition7StartTime, currentStatus.dwell + fixedCrankingOverride);
         }
       }
 #endif
@@ -1348,20 +1348,21 @@ void loop(void)
 #if IGN_CHANNELS >= 8
       if (maxIgnOutputs >= 8)
       {
+        ignition_context_st &ignition8 = ignitions.ignition(ignChannel8);
         unsigned long ignition8StartTime =
-          ignitions.ignition(ignChannel8).calculateIgnitionTimeout(crankAngle);
+          ignition8.calculateIgnitionTimeout(crankAngle);
 
         if (ignition8StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN8_CMD_BIT))
         {
-          setIgnitionSchedule(
-            ignitionSchedule8, ignition8StartTime, currentStatus.dwell + fixedCrankingOverride);
+          ignition8.setIgnitionSchedule(ignition8StartTime, currentStatus.dwell + fixedCrankingOverride);
         }
       }
 #endif
 
     } //Ignition schedules on
 
-    if ((!BIT_CHECK(currentStatus.status3, BIT_STATUS3_RESET_PREVENT)) && (resetControl == RESET_CONTROL_PREVENT_WHEN_RUNNING))
+    if (!BIT_CHECK(currentStatus.status3, BIT_STATUS3_RESET_PREVENT)
+        && resetControl == RESET_CONTROL_PREVENT_WHEN_RUNNING)
     {
       //Reset prevention is supposed to be on while the engine is running but isn't. Fix that.
       digitalWrite(pinResetControl, HIGH);

@@ -50,6 +50,8 @@ public:
 
   uint32_t calculateIgnitionTimeout(int crankAngle);
 
+  void setIgnitionSchedule(unsigned long timeout, unsigned long durationMicrosecs);
+
 } ignition_context_st;
 
 

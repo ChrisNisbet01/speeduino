@@ -38,6 +38,12 @@ calculateIgnitionTimeout(int crankAngle)
   return ::calculateIgnitionTimeout(*ignitionSchedule, startAngle, ignDegrees, crankAngle);
 }
 
+void ignition_context_st::
+setIgnitionSchedule(unsigned long const timeout, unsigned long const durationMicrosecs)
+{
+  ::setIgnitionSchedule(*ignitionSchedule, timeout, durationMicrosecs);
+}
+
 
 /* Ignitions context methods. */
 void ignition_contexts_st::adjustCrankAngle(int16_t const crankAngle, uint16_t const currentTooth)

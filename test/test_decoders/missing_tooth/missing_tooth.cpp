@@ -33,13 +33,15 @@ void test_missingtooth_newIgn_36_1_trig0_1()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=0
+    ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition1EndAngle = 360 - 10; //Set 10 degrees advance
+    ignition1.endAngle = 360 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = 0; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(34, ignition1EndTooth);
+    TEST_ASSERT_EQUAL(34, ignition1.endTooth);
 }
 
 void test_missingtooth_newIgn_36_1_trig90_1()
@@ -48,13 +50,15 @@ void test_missingtooth_newIgn_36_1_trig90_1()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=90
+    ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition1EndAngle = 360 - 10; //Set 10 degrees advance
+    ignition1.endAngle = 360 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = 90; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(25, ignition1EndTooth);
+    TEST_ASSERT_EQUAL(25, ignition1.endTooth);
 }
 
 void test_missingtooth_newIgn_36_1_trig180_1()
@@ -63,13 +67,15 @@ void test_missingtooth_newIgn_36_1_trig180_1()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=180
+    ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition1EndAngle = 360 - 10; //Set 10 degrees advance
+    ignition1.endAngle = 360 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = 180; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(16, ignition1EndTooth);
+    TEST_ASSERT_EQUAL(16, ignition1.endTooth);
 }
 
 void test_missingtooth_newIgn_36_1_trig270_1()
@@ -78,13 +84,15 @@ void test_missingtooth_newIgn_36_1_trig270_1()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=270
+    ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition1EndAngle = 360 - 10; //Set 10 degrees advance
+    ignition1.endAngle = 360 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = 270; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(7, ignition1EndTooth);
+    TEST_ASSERT_EQUAL(7, ignition1.endTooth);
 }
 
 void test_missingtooth_newIgn_36_1_trig360_1()
@@ -93,13 +101,15 @@ void test_missingtooth_newIgn_36_1_trig360_1()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=360
+    ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition1EndAngle = 360 - 10; //Set 10 degrees advance
+    ignition1.endAngle = 360 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = 360; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(34, ignition1EndTooth);
+    TEST_ASSERT_EQUAL(34, ignition1.endTooth);
 }
 
 void test_missingtooth_newIgn_36_1_trigNeg90_1()
@@ -108,13 +118,15 @@ void test_missingtooth_newIgn_36_1_trigNeg90_1()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=-90
+    ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition1EndAngle = 360 - 10; //Set 10 degrees advance
+    ignition1.endAngle = 360 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = -90; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(7, ignition1EndTooth);
+    TEST_ASSERT_EQUAL(7, ignition1.endTooth);
 }
 
 void test_missingtooth_newIgn_36_1_trigNeg180_1()
@@ -123,13 +135,15 @@ void test_missingtooth_newIgn_36_1_trigNeg180_1()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=-180
+    ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition1EndAngle = 360 - 10; //Set 10 degrees advance
+    ignition1.endAngle = 360 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = -180; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(16, ignition1EndTooth);
+    TEST_ASSERT_EQUAL(16, ignition1.endTooth);
 }
 
 void test_missingtooth_newIgn_36_1_trigNeg270_1()
@@ -138,13 +152,15 @@ void test_missingtooth_newIgn_36_1_trigNeg270_1()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=-270
+    ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition1EndAngle = 360 - 10; //Set 10 degrees advance
+    ignition1.endAngle = 360 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = -270; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(25, ignition1EndTooth);
+    TEST_ASSERT_EQUAL(25, ignition1.endTooth);
 }
 
 void test_missingtooth_newIgn_36_1_trigNeg360_1()
@@ -153,13 +169,15 @@ void test_missingtooth_newIgn_36_1_trigNeg360_1()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=-360
+    ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition1EndAngle = 360 - 10; //Set 10 degrees advance
+    ignition1.endAngle = 360 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = -360; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(34, ignition1EndTooth);
+    TEST_ASSERT_EQUAL(34, ignition1.endTooth);
 }
 
 // ******* CHannel 2 *******
@@ -169,13 +187,15 @@ void test_missingtooth_newIgn_36_1_trig0_2()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=0
+    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition2EndAngle = 180 - 10; //Set 10 degrees advance
+    ignition2.endAngle = 180 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = 0; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(16, ignition2EndTooth);
+    TEST_ASSERT_EQUAL(16, ignition2.endTooth);
 }
 
 void test_missingtooth_newIgn_36_1_trig90_2()
@@ -184,13 +204,15 @@ void test_missingtooth_newIgn_36_1_trig90_2()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=90
+    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition2EndAngle = 180 - 10; //Set 10 degrees advance
+    ignition2.endAngle = 180 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = 90; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(7, ignition2EndTooth);
+    TEST_ASSERT_EQUAL(7, ignition2.endTooth);
 }
 
 void test_missingtooth_newIgn_36_1_trig180_2()
@@ -199,13 +221,15 @@ void test_missingtooth_newIgn_36_1_trig180_2()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=180
+    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition2EndAngle = 180 - 10; //Set 10 degrees advance
+    ignition2.endAngle = 180 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = 180; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(34, ignition2EndTooth);
+    TEST_ASSERT_EQUAL(34, ignition2.endTooth);
 }
 
 void test_missingtooth_newIgn_36_1_trig270_2()
@@ -214,13 +238,15 @@ void test_missingtooth_newIgn_36_1_trig270_2()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=270
+    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition2EndAngle = 180 - 10; //Set 10 degrees advance
+    ignition2.endAngle = 180 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = 270; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(25, ignition2EndTooth);
+    TEST_ASSERT_EQUAL(25, ignition2.endTooth);
 }
 
 void test_missingtooth_newIgn_36_1_trig360_2()
@@ -229,13 +255,15 @@ void test_missingtooth_newIgn_36_1_trig360_2()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=360
+    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition2EndAngle = 180 - 10; //Set 10 degrees advance
+    ignition2.endAngle = 180 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = 360; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(16, ignition2EndTooth);
+    TEST_ASSERT_EQUAL(16, ignition2.endTooth);
 }
 
 void test_missingtooth_newIgn_36_1_trigNeg90_2()
@@ -244,13 +272,15 @@ void test_missingtooth_newIgn_36_1_trigNeg90_2()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=-90
+    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition2EndAngle = 180 - 10; //Set 10 degrees advance
+    ignition2.endAngle = 180 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = -90; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(25, ignition2EndTooth);
+    TEST_ASSERT_EQUAL(25, ignition2.endTooth);
 }
 
 void test_missingtooth_newIgn_36_1_trigNeg180_2()
@@ -259,13 +289,15 @@ void test_missingtooth_newIgn_36_1_trigNeg180_2()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=-180
+    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition2EndAngle = 180 - 10; //Set 10 degrees advance
+    ignition2.endAngle = 180 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = -180; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(34, ignition2EndTooth);
+    TEST_ASSERT_EQUAL(34, ignition2.endTooth);
 }
 
 void test_missingtooth_newIgn_36_1_trigNeg270_2()
@@ -274,13 +306,15 @@ void test_missingtooth_newIgn_36_1_trigNeg270_2()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=-270
+    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition2EndAngle = 180 - 10; //Set 10 degrees advance
+    ignition2.endAngle = 180 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = -270; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(7, ignition2EndTooth);
+    TEST_ASSERT_EQUAL(7, ignition2.endTooth);
 }
 
 void test_missingtooth_newIgn_36_1_trigNeg360_2()
@@ -289,13 +323,15 @@ void test_missingtooth_newIgn_36_1_trigNeg360_2()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=-360
+    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition2EndAngle = 180 - 10; //Set 10 degrees advance
+    ignition2.endAngle = 180 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = -360; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(16, ignition2EndTooth);
+    TEST_ASSERT_EQUAL(16, ignition2.endTooth);
 }
 
 void test_missingtooth_newIgn_60_2_trig0_2()
@@ -304,13 +340,15 @@ void test_missingtooth_newIgn_60_2_trig0_2()
     //Trigger: 60-2
     //Advance: 10
     //triggerAngle=300
+    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+
     test_setup_60_2();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition2EndAngle = 180 - 10; //Set 10 degrees advance
+    ignition2.endAngle = 180 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = 0; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(57, ignition2EndTooth);
+    TEST_ASSERT_EQUAL(57, ignition2.endTooth);
 }
 
 void test_missingtooth_newIgn_60_2_trig181_2()
@@ -319,13 +357,15 @@ void test_missingtooth_newIgn_60_2_trig181_2()
     //Trigger: 60-2
     //Advance: 10
     //triggerAngle=300
+    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+
     test_setup_60_2();
     configPage4.sparkMode = IGN_MODE_WASTED;
-    ignition2EndAngle = 180 - 10; //Set 10 degrees advance
+    ignition2.endAngle = 180 - 10; //Set 10 degrees advance
     configPage4.triggerAngle = 181; //No trigger offset
-    
+
     triggerSetEndTeeth_missingTooth();
-    TEST_ASSERT_EQUAL(58, ignition2EndTooth);
+    TEST_ASSERT_EQUAL(58, ignition2.endTooth);
 }
 
 
