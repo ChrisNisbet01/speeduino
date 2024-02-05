@@ -113,7 +113,9 @@ static void initialiseIgnitionSchedules(void)
   ignitions.ignition(ignChannel2).ignitionSchedule = &ignitionSchedule2;
   ignitions.ignition(ignChannel3).ignitionSchedule = &ignitionSchedule3;
   ignitions.ignition(ignChannel4).ignitionSchedule = &ignitionSchedule4;
+#if INJ_CHANNELS >= 5
   ignitions.ignition(ignChannel5).ignitionSchedule = &ignitionSchedule5;
+#endif
 #if INJ_CHANNELS >= 6
   ignitions.ignition(ignChannel6).ignitionSchedule = &ignitionSchedule6;
 #endif
@@ -137,45 +139,11 @@ void initialiseSchedulers(void)
 
   for (size_t i = injChannel1; i < ignChannelCount; i++)
   {
-    reset(*ignitions.ignition((ignitionChannelID_t)i).ignitionSchedule);
+    ignition_context_st &ignition = ignitions.ignition((ignitionChannelID_t)i);
+
+    reset(*ignition.ignitionSchedule);
+    ignition.reset();
   }
-
-  ignition1StartAngle = 0;
-  ignition1EndAngle = 0;
-  channel1IgnDegrees = 0; /**< The number of crank degrees until cylinder 1 is at TDC (This is obviously 0 for virtually ALL engines, but there's some weird ones) */
-
-  ignition2StartAngle = 0;
-  ignition2EndAngle = 0;
-  channel2IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
-
-  ignition3StartAngle = 0;
-  ignition3EndAngle = 0;
-  channel3IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
-
-  ignition4StartAngle = 0;
-  ignition4EndAngle = 0;
-  channel4IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
-
-#if (IGN_CHANNELS >= 5)
-  ignition5StartAngle = 0;
-  ignition5EndAngle = 0;
-  channel5IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
-#endif
-#if (IGN_CHANNELS >= 6)
-  ignition6StartAngle = 0;
-  ignition6EndAngle = 0;
-  channel6IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
-#endif
-#if (IGN_CHANNELS >= 7)
-  ignition7StartAngle = 0;
-  ignition7EndAngle = 0;
-  channel7IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
-#endif
-#if (IGN_CHANNELS >= 8)
-  ignition8StartAngle = 0;
-  ignition8EndAngle = 0;
-  channel8IgnDegrees = 0; /**< The number of crank degrees until cylinder 2 (and 5/6/7/8) is at TDC */
-#endif
 
   for (size_t i = 0; i < injChannelCount; i++)
   {
@@ -253,14 +221,15 @@ void _setIgnitionScheduleNext(IgnitionSchedule &schedule, unsigned long timeout,
 
 void refreshIgnitionSchedule1(unsigned long timeToEnd)
 {
-  if( (ignitionSchedule1.Status == RUNNING) && (timeToEnd < ignitionSchedule1.duration) )
-  //Must have the threshold check here otherwise it can cause a condition where the compare fires twice,
-  //once after the other, both for the end
-  //if( (timeToEnd < ignitionSchedule1.duration) && (timeToEnd > IGNITION_REFRESH_THRESHOLD) )
+  //Must have the threshold check here otherwise it can cause a condition where
+  //the compare fires twice, once after the other, both for the end
+  if (ignitionSchedule1.Status == RUNNING && timeToEnd < ignitionSchedule1.duration)
   {
     noInterrupts();
+
     ignitionSchedule1.endCompare = IGN1_COUNTER + uS_TO_TIMER_COMPARE(timeToEnd);
     SET_COMPARE(IGN1_COMPARE, ignitionSchedule1.endCompare);
+
     interrupts();
   }
 }
@@ -423,9 +392,7 @@ void fuelSchedule8Interrupt() //Most ARM chips can simply call a function
 #endif
 
 // Shared ISR function for all ignition timers.
-// This is completely inlined into the ISR - there is no function call
-// overhead.
-static inline __attribute__((always_inline)) void ignitionScheduleISR(IgnitionSchedule &schedule)
+static void ignitionScheduleISR(IgnitionSchedule &schedule)
 {
   if (schedule.Status == PENDING) //Check to see if this schedule is turn on
   {
