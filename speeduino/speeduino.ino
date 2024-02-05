@@ -1588,9 +1588,9 @@ void calculateIgnitionAngles(int dwellAngle)
     calculateIgnitionAngle(dwellAngle, channel2IgnDegrees, currentStatus.advance, &ignition2EndAngle, &ignition2StartAngle);
     calculateIgnitionAngle(dwellAngle, channel3IgnDegrees, currentStatus.advance, &ignition3EndAngle, &ignition3StartAngle);
     calculateIgnitionAngle(dwellAngle, channel4IgnDegrees, currentStatus.advance, &ignition4EndAngle, &ignition4StartAngle);
-#     if (IGN_CHANNELS >= 5)
+#if (IGN_CHANNELS >= 5)
     calculateIgnitionAngle(dwellAngle, channel5IgnDegrees, currentStatus.advance, &ignition5EndAngle, &ignition5StartAngle);
-#     endif
+#endif
     break;
 
     //6 cylinders
@@ -1599,7 +1599,7 @@ void calculateIgnitionAngles(int dwellAngle)
     calculateIgnitionAngle(dwellAngle, channel2IgnDegrees, currentStatus.advance, &ignition2EndAngle, &ignition2StartAngle);
     calculateIgnitionAngle(dwellAngle, channel3IgnDegrees, currentStatus.advance, &ignition3EndAngle, &ignition3StartAngle);
 
-#     if IGN_CHANNELS >= 6
+#if IGN_CHANNELS >= 6
     if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL && currentStatus.hasSync)
     {
       if (CRANK_ANGLE_MAX_IGN != 720)
@@ -1618,7 +1618,7 @@ void calculateIgnitionAngles(int dwellAngle)
         changeFullToHalfSync();
       }
     }
-#     endif
+#endif
     break;
 
     //8 cylinders
@@ -1628,7 +1628,7 @@ void calculateIgnitionAngles(int dwellAngle)
     calculateIgnitionAngle(dwellAngle, channel3IgnDegrees, currentStatus.advance, &ignition3EndAngle, &ignition3StartAngle);
     calculateIgnitionAngle(dwellAngle, channel4IgnDegrees, currentStatus.advance, &ignition4EndAngle, &ignition4StartAngle);
 
-#     if IGN_CHANNELS >= 8
+#if IGN_CHANNELS >= 8
     if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL && currentStatus.hasSync)
     {
       if (CRANK_ANGLE_MAX_IGN != 720)
@@ -1648,11 +1648,11 @@ void calculateIgnitionAngles(int dwellAngle)
         changeFullToHalfSync();
       }
     }
-#     endif
+#endif
     break;
 
-    //Will hit the default case on other cylinder counts. Do nothing in these cases.
   default:
+    //Will hit the default case on other cylinder counts. Do nothing in these cases.
     break;
   }
 }
