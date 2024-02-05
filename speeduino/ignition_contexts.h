@@ -28,7 +28,7 @@ public:
   IgnitionSchedule * ignitionSchedule;
   int endAngle;
   int startAngle;
-  uint16_t endTooth;
+  uint16_t endTooth = 0;
   /* The number of crank degrees until the cylinder is at TDC.
    * (This is obviously 0 for cylinder 0 for virtually ALL engines,
    * but there's some weird ones).
