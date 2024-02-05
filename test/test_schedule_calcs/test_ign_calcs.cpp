@@ -601,7 +601,6 @@ void test_rotary_channel_calcs(void)
     while (pStart!=pEnd)
     {
         memcpy_P(local, pStart, sizeof(local));
-        ignition2EndAngle = local[0];
         calculateIgnitionTrailingRotary(local[1], local[2], local[0], &endAngle, &startAngle);
         TEST_ASSERT_EQUAL_MESSAGE(local[3], endAngle, "endAngle");
         TEST_ASSERT_EQUAL_MESSAGE(local[4], startAngle, "startAngle");
