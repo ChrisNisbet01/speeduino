@@ -32,6 +32,7 @@
 #endif
 #include "board_ids.h"
 #include "injector_contexts.h"
+#include "ignition_contexts.h"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 
@@ -487,29 +488,14 @@ void initialiseAll(void)
     // Disable all injectors except channel 1
     injectors.setMaxInjectors(1);
 
-    ignition1EndAngle = 0;
-    ignition2EndAngle = 0;
-    ignition3EndAngle = 0;
-    ignition4EndAngle = 0;
-#if IGN_CHANNELS >= 5
-    ignition5EndAngle = 0;
-#endif
-#if IGN_CHANNELS >= 6
-    ignition6EndAngle = 0;
-#endif
-#if IGN_CHANNELS >= 7
-    ignition7EndAngle = 0;
-#endif
-#if IGN_CHANNELS >= 8
-    ignition8EndAngle = 0;
-#endif
+    ignitions.resetEndAngle();
 
     if(configPage2.strokes == FOUR_STROKE) { CRANK_ANGLE_MAX_INJ = 720 / currentStatus.nSquirts; }
     else { CRANK_ANGLE_MAX_INJ = 360 / currentStatus.nSquirts; }
 
     switch (configPage2.nCylinders) {
     case 1:
-        channel1IgnDegrees = 0;
+        ignitions.ignition(ignChannel1).ignDegrees = 0;
         injectors.injector(injChannel1).channelInjDegrees = 0;
         maxIgnOutputs = 1;
         injectors.setMaxInjectors(2);
@@ -538,17 +524,17 @@ void initialiseAll(void)
         break;
 
     case 2:
-        channel1IgnDegrees = 0;
+        ignitions.ignition(ignChannel1).ignDegrees = 0;
         injectors.injector(injChannel1).channelInjDegrees = 0;
         maxIgnOutputs = 2;
         injectors.setMaxInjectors(2);
         if (configPage2.engineType == EVEN_FIRE)
         {
-          channel2IgnDegrees = 180;
+          ignitions.ignition(ignChannel2).ignDegrees = 180;
         }
         else
         {
-          channel2IgnDegrees = configPage2.oddfire2;
+          ignitions.ignition(ignChannel2).ignDegrees = configPage2.oddfire2;
         }
 
         //Sequential ignition works identically on a 2 cylinder whether it's odd or even fire (With the default being a 180 degree second cylinder).
@@ -593,7 +579,7 @@ void initialiseAll(void)
         break;
 
     case 3:
-        channel1IgnDegrees = 0;
+        ignitions.ignition(ignChannel1).ignDegrees = 0;
         maxIgnOutputs = 3;
         injectors.setMaxInjectors(3);
         if (configPage2.engineType == EVEN_FIRE )
@@ -602,21 +588,21 @@ void initialiseAll(void)
           if ((configPage4.sparkMode == IGN_MODE_SEQUENTIAL || configPage4.sparkMode == IGN_MODE_SINGLE)
               && configPage2.strokes == FOUR_STROKE)
           {
-            channel2IgnDegrees = 240;
-            channel3IgnDegrees = 480;
+            ignitions.ignition(ignChannel2).ignDegrees = 240;
+            ignitions.ignition(ignChannel3).ignDegrees = 480;
 
             CRANK_ANGLE_MAX_IGN = 720;
           }
           else
           {
-            channel2IgnDegrees = 120;
-            channel3IgnDegrees = 240;
+            ignitions.ignition(ignChannel2).ignDegrees = 120;
+            ignitions.ignition(ignChannel3).ignDegrees = 240;
           }
         }
         else
         {
-          channel2IgnDegrees = configPage2.oddfire2;
-          channel3IgnDegrees = configPage2.oddfire3;
+          ignitions.ignition(ignChannel2).ignDegrees = configPage2.oddfire2;
+          ignitions.ignition(ignChannel3).ignDegrees = configPage2.oddfire3;
         }
 
         //For alternating injection, the squirt occurs at different times for each channel
@@ -693,19 +679,19 @@ void initialiseAll(void)
         }
         break;
     case 4:
-        channel1IgnDegrees = 0;
+        ignitions.ignition(ignChannel1).ignDegrees = 0;
         injectors.injector(injChannel1).channelInjDegrees = 0;
         maxIgnOutputs = 2; //Default value for 4 cylinder, may be changed below
         injectors.setMaxInjectors(2);
         if (configPage2.engineType == EVEN_FIRE )
         {
-          channel2IgnDegrees = 180;
+          ignitions.ignition(ignChannel2).ignDegrees = 180;
 
           if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL
               && configPage2.strokes == FOUR_STROKE)
           {
-            channel3IgnDegrees = 360;
-            channel4IgnDegrees = 540;
+            ignitions.ignition(ignChannel3).ignDegrees = 360;
+            ignitions.ignition(ignChannel4).ignDegrees = 540;
 
             CRANK_ANGLE_MAX_IGN = 720;
             maxIgnOutputs = 4;
@@ -713,8 +699,8 @@ void initialiseAll(void)
           if(configPage4.sparkMode == IGN_MODE_ROTARY)
           {
             //Rotary uses the ign 3 and 4 schedules for the trailing spark. They are offset from the ign 1 and 2 channels respectively and so use the same degrees as them
-            channel3IgnDegrees = 0;
-            channel4IgnDegrees = 180;
+            ignitions.ignition(ignChannel3).ignDegrees = 0;
+            ignitions.ignition(ignChannel4).ignDegrees = 180;
             maxIgnOutputs = 4;
 
             configPage4.IgInv = GOING_LOW; //Force Going Low ignition mode (Going high is never used for rotary)
@@ -722,9 +708,9 @@ void initialiseAll(void)
         }
         else
         {
-          channel2IgnDegrees = configPage2.oddfire2;
-          channel3IgnDegrees = configPage2.oddfire3;
-          channel4IgnDegrees = configPage2.oddfire4;
+          ignitions.ignition(ignChannel2).ignDegrees = configPage2.oddfire2;
+          ignitions.ignition(ignChannel3).ignDegrees = configPage2.oddfire3;
+          ignitions.ignition(ignChannel4).ignDegrees = configPage2.oddfire4;
           maxIgnOutputs = 4;
         }
 
@@ -825,11 +811,11 @@ void initialiseAll(void)
 
         if(configPage4.sparkMode == IGN_MODE_SEQUENTIAL)
         {
-          channel2IgnDegrees = 144;
-          channel3IgnDegrees = 288;
-          channel4IgnDegrees = 432;
+          ignitions.ignition(ignChannel2).ignDegrees = 144;
+          ignitions.ignition(ignChannel3).ignDegrees = 288;
+          ignitions.ignition(ignChannel4).ignDegrees = 432;
 #if (IGN_CHANNELS >= 5)
-          channel5IgnDegrees = 576;
+          ignitions.ignition(ignChannel5).ignDegrees = 576;
 #endif
 
           CRANK_ANGLE_MAX_IGN = 720;
@@ -889,18 +875,18 @@ void initialiseAll(void)
 #endif
         break;
     case 6:
-        channel1IgnDegrees = 0;
-        channel2IgnDegrees = 120;
-        channel3IgnDegrees = 240;
+        ignitions.ignition(ignChannel1).ignDegrees = 0;
+        ignitions.ignition(ignChannel2).ignDegrees = 120;
+        ignitions.ignition(ignChannel3).ignDegrees = 240;
         maxIgnOutputs = 3;
         injectors.setMaxInjectors(3);
 
     #if IGN_CHANNELS >= 6
         if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL)
         {
-        channel4IgnDegrees = 360;
-        channel5IgnDegrees = 480;
-        channel6IgnDegrees = 600;
+        ignitions.ignition(ignChannel4).ignDegrees = 360;
+        ignitions.ignition(ignChannel5).ignDegrees = 480;
+        ignitions.ignition(ignChannel6).ignDegrees = 600;
         CRANK_ANGLE_MAX_IGN = 720;
         maxIgnOutputs = 6;
         }
@@ -975,10 +961,10 @@ void initialiseAll(void)
 #endif
         break;
     case 8:
-        channel1IgnDegrees = 0;
-        channel2IgnDegrees = 90;
-        channel3IgnDegrees = 180;
-        channel4IgnDegrees = 270;
+        ignitions.ignition(ignChannel1).ignDegrees = 0;
+        ignitions.ignition(ignChannel2).ignDegrees = 90;
+        ignitions.ignition(ignChannel3).ignDegrees = 180;
+        ignitions.ignition(ignChannel4).ignDegrees = 270;
         maxIgnOutputs = 4;
         injectors.setMaxInjectors(4);
 
@@ -992,10 +978,10 @@ void initialiseAll(void)
 #if IGN_CHANNELS >= 8
         if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL)
         {
-        channel5IgnDegrees = 360;
-        channel6IgnDegrees = 450;
-        channel7IgnDegrees = 540;
-        channel8IgnDegrees = 630;
+        ignitions.ignition(ignChannel5).ignDegrees = 360;
+        ignitions.ignition(ignChannel6).ignDegrees = 450;
+        ignitions.ignition(ignChannel7).ignDegrees = 540;
+        ignitions.ignition(ignChannel8).ignDegrees = 630;
         maxIgnOutputs = 8;
         CRANK_ANGLE_MAX_IGN = 720;
         }

@@ -43,6 +43,7 @@ A full copy of the license may be found in the projects root directory
 #include "crankMaths.h"
 #include "timers.h"
 #include "schedule_calcs.h"
+#include "ignition_contexts.h"
 
 void nullTriggerHandler (void){return;} //initialisation function for triggerhandlers, does exactly nothing
 uint16_t nullGetRPM(void){return 0;} //initialisation function for getRpm, returns safe value of 0
@@ -435,46 +436,7 @@ static inline void checkPerToothTiming(int16_t crankAngle, uint16_t currentTooth
 {
   if (fixedCrankingOverride == 0 && currentStatus.RPM > 0)
   {
-    if (currentTooth == ignition1EndTooth)
-    {
-      adjustCrankAngle(ignitionSchedule1, ignition1EndAngle, crankAngle);
-    }
-    else if (currentTooth == ignition2EndTooth)
-    {
-      adjustCrankAngle(ignitionSchedule2, ignition2EndAngle, crankAngle);
-    }
-    else if (currentTooth == ignition3EndTooth)
-    {
-      adjustCrankAngle(ignitionSchedule3, ignition3EndAngle, crankAngle);
-    }
-    else if (currentTooth == ignition4EndTooth)
-    {
-      adjustCrankAngle(ignitionSchedule4, ignition4EndAngle, crankAngle);
-    }
-#if IGN_CHANNELS >= 5
-    else if (currentTooth == ignition5EndTooth)
-    {
-      adjustCrankAngle(ignitionSchedule5, ignition5EndAngle, crankAngle);
-    }
-#endif
-#if IGN_CHANNELS >= 6
-    else if (currentTooth == ignition6EndTooth)
-    {
-      adjustCrankAngle(ignitionSchedule6, ignition6EndAngle, crankAngle);
-    }
-#endif
-#if IGN_CHANNELS >= 7
-    else if (currentTooth == ignition7EndTooth)
-    {
-      adjustCrankAngle(ignitionSchedule7, ignition7EndAngle, crankAngle);
-    }
-#endif
-#if IGN_CHANNELS >= 8
-    else if (currentTooth == ignition8EndTooth)
-    {
-      adjustCrankAngle(ignitionSchedule8, ignition8EndAngle, crankAngle);
-    }
-#endif
+    ignitions.adjustCrankAngle(crankAngle, currentTooth);
   }
 }
 /** @} */

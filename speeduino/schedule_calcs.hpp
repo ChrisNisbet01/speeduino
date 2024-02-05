@@ -149,12 +149,13 @@ calculateIgnitionTimeout(
 
 #define MIN_CYCLES_FOR_ENDCOMPARE 6
 
-inline void adjustCrankAngle(IgnitionSchedule &schedule, int endAngle, int crankAngle)
+inline void
+adjustCrankAngle(IgnitionSchedule &schedule, int endAngle, int crankAngle)
 {
   if (schedule.Status == RUNNING)
   {
     /*
-     * The ignition coil is currently charging. Assign the end time base up
+     * The ignition coil is currently charging. Assign the end time base upon
      * the number of degrees from the current crank angle to the desired
      * end angle.
      */

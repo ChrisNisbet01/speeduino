@@ -30,22 +30,14 @@ static void assert_ignition_schedules(uint16_t crankAngle, uint16_t expectedOutp
   strcpy_P(msg, PSTR("maxIgnOutputs"));
   TEST_ASSERT_EQUAL_UINT16_MESSAGE(expectedOutputs, maxIgnOutputs, msg);
 
-  assert_ignition_channel(angle[0], 0, channel1IgnDegrees, ignitionSchedule1.pStartCallback, ignitionSchedule1.pEndCallback);
-  assert_ignition_channel(angle[1], 1, channel2IgnDegrees, ignitionSchedule2.pStartCallback, ignitionSchedule2.pEndCallback);
-  assert_ignition_channel(angle[2], 2, channel3IgnDegrees, ignitionSchedule3.pStartCallback, ignitionSchedule3.pEndCallback);
-  assert_ignition_channel(angle[3], 3, channel4IgnDegrees, ignitionSchedule4.pStartCallback, ignitionSchedule4.pEndCallback);
-#if IGN_CHANNELS>=5
-  assert_ignition_channel(angle[4], 4, channel5IgnDegrees, ignitionSchedule5.pStartCallback, ignitionSchedule5.pEndCallback);
-#endif
-#if IGN_CHANNELS>=6
-  assert_ignition_channel(angle[5], 5, channel6IgnDegrees, ignitionSchedule6.pStartCallback, ignitionSchedule6.pEndCallback);
-#endif
-#if IGN_CHANNELS>=7
-  assert_ignition_channel(angle[6], 6, channel7IgnDegrees, ignitionSchedule7.pStartCallback, ignitionSchedule7.pEndCallback);
-#endif
-#if IGN_CHANNELS>=8
-  assert_ignition_channel(angle[7], 7, channel8IgnDegrees, ignitionSchedule8.pStartCallback, ignitionSchedule8.pEndCallback);
-#endif 
+  for (size_t i = ignChannel1; i < ignChannelCount; i++)
+  {
+    ignition_context_st &ignition = ignitions.ignition((ignitionChannelID_t)i);
+
+    assert_ignition_channel(angle[1], 1,
+                            ignition.ignDegrees,
+                            ignition.ignitionSchedule->pStartCallback, ignition.ignitionSchedule->pEndCallback);
+  }
 }
 
 static void cylinder1_stroke4_seq_even(void)
@@ -64,7 +56,7 @@ static void cylinder1_stroke4_wasted_even(void)
   initialiseAll(); //Run the main initialise function
   const uint16_t angle[] = {0,0,0,0,0,0,0,0};
   assert_ignition_schedules(360U, 1U, angle);
-}  
+}
 
 static void cylinder1_stroke4_seq_odd(void)
 {
@@ -102,7 +94,7 @@ static void cylinder2_stroke4_wasted_even(void)
   initialiseAll(); //Run the main initialise function
   const uint16_t angle[] = {0,180,0,0,0,0,0,0};
   assert_ignition_schedules(360U, 2U, angle);
-}  
+}
 
 static void cylinder2_stroke4_seq_odd(void)
 {
@@ -144,7 +136,7 @@ static void cylinder3_stroke4_wasted_even(void)
   initialiseAll(); //Run the main initialise function
   const uint16_t angle[] = {0,120,240,0,0,0,0,0};
   assert_ignition_schedules(360U, 3U, angle);
-}  
+}
 
 static void cylinder3_stroke4_wasted_odd(void)
 {
@@ -156,7 +148,7 @@ static void cylinder3_stroke4_wasted_odd(void)
   initialiseAll(); //Run the main initialise function
   const uint16_t angle[] = {0,13,111,0,0,0,0,0};
   assert_ignition_schedules(360U, 3U, angle);
-}  
+}
 
 static void run_3_cylinder_4stroke_tests(void)
 {
@@ -190,7 +182,7 @@ static void cylinder4_stroke4_wasted_even(void)
   initialiseAll(); //Run the main initialise function
   const uint16_t angle[] = {0,180,0,0,0,0,0,0};
   assert_ignition_schedules(360U, 2U, angle);
-}  
+}
 
 static void cylinder4_stroke4_seq_odd(void)
 {
@@ -232,7 +224,7 @@ static void cylinder5_stroke4_wasted_even(void)
   initialiseAll(); //Run the main initialise function
   const uint16_t angle[] = {0,72,144,216,288,0,0,0};
   assert_ignition_schedules(360U, 5U, angle);
-}  
+}
 
 static void run_5_cylinder_4stroke_tests(void)
 {
@@ -265,7 +257,7 @@ static void cylinder6_stroke4_wasted_even(void)
   initialiseAll(); //Run the main initialise function
   const uint16_t angle[] = {0,120,240,0,0,0,0,0};
   assert_ignition_schedules(360U, 3U, angle);
-} 
+}
 
 static void run_6_cylinder_4stroke_tests(void)
 {
@@ -274,7 +266,7 @@ static void run_6_cylinder_4stroke_tests(void)
   configPage2.strokes = FOUR_STROKE;
 
   RUN_TEST_P(cylinder6_stroke4_seq_even);
-  RUN_TEST_P(cylinder6_stroke4_wasted_even); 
+  RUN_TEST_P(cylinder6_stroke4_wasted_even);
 }
 
 
@@ -299,7 +291,7 @@ static void cylinder8_stroke4_wasted_even(void)
   initialiseAll(); //Run the main initialise function
   const uint16_t angle[] = {0,90,180,270,0,0,0,0};
   assert_ignition_schedules(360U, 4U, angle);
-}  
+}
 
 static void run_8_cylinder_4stroke_tests(void)
 {
