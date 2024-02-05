@@ -66,15 +66,34 @@ static inline uint32_t calculateInjectorTimeout(const FuelSchedule &schedule, in
   return _calculateInjectorTimeout(schedule, _adjustToInjChannel(openAngle, channelInjDegrees), _adjustToInjChannel(crankAngle, channelInjDegrees));
 }
 
-static inline void calculateIgnitionAngle(const int dwellAngle, const uint16_t channelIgnDegrees, int8_t advance, int *pEndAngle, int *pStartAngle)
+static inline void
+calculateIgnitionAngle(
+  const int dwellAngle,
+  const uint16_t channelIgnDegrees,
+  int8_t advance,
+  int * pEndAngle,
+  int * pStartAngle)
 {
-  *pEndAngle = (int16_t)(channelIgnDegrees==0U ? (uint16_t)CRANK_ANGLE_MAX_IGN : channelIgnDegrees) - (int16_t)advance;
-  if(*pEndAngle > CRANK_ANGLE_MAX_IGN) {*pEndAngle -= CRANK_ANGLE_MAX_IGN;}
+  *pEndAngle = (int16_t)(channelIgnDegrees == 0U ? (uint16_t)CRANK_ANGLE_MAX_IGN : channelIgnDegrees) - (int16_t)advance;
+  if (*pEndAngle > CRANK_ANGLE_MAX_IGN)
+  {
+    *pEndAngle -= CRANK_ANGLE_MAX_IGN;
+  }
+
   *pStartAngle = *pEndAngle - dwellAngle;
-  if(*pStartAngle < 0) {*pStartAngle += CRANK_ANGLE_MAX_IGN;}
+  if (*pStartAngle < 0)
+  {
+    *pStartAngle += CRANK_ANGLE_MAX_IGN;
+  }
 }
 
-static inline void calculateIgnitionTrailingRotary(int dwellAngle, int rotarySplitDegrees, int leadIgnitionAngle, int *pEndAngle, int *pStartAngle)
+static inline void
+calculateIgnitionTrailingRotary(
+  int dwellAngle,
+  int rotarySplitDegrees,
+  int leadIgnitionAngle,
+  int *pEndAngle,
+  int *pStartAngle)
 {
   *pEndAngle = leadIgnitionAngle + rotarySplitDegrees;
   *pStartAngle = *pEndAngle - dwellAngle;
@@ -103,7 +122,8 @@ _calculateIgnitionTimeout(const IgnitionSchedule &schedule, int16_t startAngle, 
   return angleToTimeMicroSecPerDegree(delta);
 }
 
-static inline uint16_t _adjustToIgnChannel(int angle, int channelInjDegrees) {
+static inline uint16_t _adjustToIgnChannel(int angle, int channelInjDegrees)
+{
   angle -= channelInjDegrees;
   if (angle < 0)
   {
