@@ -16,9 +16,9 @@ static void assert_ignition_channel(uint16_t angle, uint8_t channel, int channel
   sprintf_P(msg, PSTR("channe%" PRIu8 "1InjDegrees"), channel+1);
   TEST_ASSERT_EQUAL_MESSAGE(angle, channelInjDegrees, msg);
   sprintf_P(msg, PSTR("ign%" PRIu8 "StartFunction"), channel+1);
-  TEST_ASSERT_TRUE_MESSAGE(channel>=maxIgnOutputs || (startFunction!=nullCallback), msg);
+  TEST_ASSERT_TRUE_MESSAGE(channel>=ignitions.maxOutputs || startFunction != nullCallback, msg);
   sprintf_P(msg, PSTR("ign%" PRIu8 "EndFunction"), channel+1);
-  TEST_ASSERT_TRUE_MESSAGE(channel>=maxIgnOutputs || (endFunction!=nullCallback), msg);
+  TEST_ASSERT_TRUE_MESSAGE(channel>=ignitions.maxOutputs || endFunction != nullCallback, msg);
 }
 
 static void assert_ignition_schedules(uint16_t crankAngle, uint16_t expectedOutputs, const uint16_t angle[])
@@ -28,7 +28,7 @@ static void assert_ignition_schedules(uint16_t crankAngle, uint16_t expectedOutp
   strcpy_P(msg, PSTR("CRANK_ANGLE_MAX_IGN"));
   TEST_ASSERT_EQUAL_INT16_MESSAGE(crankAngle, CRANK_ANGLE_MAX_IGN, msg);
   strcpy_P(msg, PSTR("maxIgnOutputs"));
-  TEST_ASSERT_EQUAL_UINT16_MESSAGE(expectedOutputs, maxIgnOutputs, msg);
+  TEST_ASSERT_EQUAL_UINT16_MESSAGE(expectedOutputs, ignitions.maxOutputs, msg);
 
   for (size_t i = ignChannel1; i < ignChannelCount; i++)
   {

@@ -54,8 +54,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 uint16_t req_fuel_uS = 0; /**< The required fuel variable (As calculated by TunerStudio) in uS */
 uint16_t inj_opentime_uS = 0;
 
-uint8_t ignitionChannelsOn; /**< The current state of the ignition system (on or off) */
-uint8_t ignitionChannelsPending = 0; /**< Any ignition channels that are pending injections before they are resumed */
 uint32_t rollingCutLastRev = 0; /**< Tracks whether we're on the same or a different rev for the rolling cut */
 
 uint16_t staged_req_fuel_mult_pri = 0;
@@ -173,7 +171,8 @@ void loop(void)
     currentStatus.rpmDOT = 0;
     AFRnextCycle = 0;
     ignitionCount = 0;
-    ignitionChannelsOn = 0;
+
+    ignitions.setAllOff();
     injectors.setAllOff();
 
     if (currentStatus.fpPrimed)
@@ -984,14 +983,14 @@ void loop(void)
       {
       case PROTECT_CUT_OFF:
         //Make sure all channels are turned on
-        ignitionChannelsOn = 0xFF;
+        ignitions.setAllOn();
         injectors.setAllOn();
 
         currentStatus.engineProtectStatus = 0;
         break;
 
       case PROTECT_CUT_IGN:
-        ignitionChannelsOn = 0;
+        ignitions.setAllOff();
         break;
 
       case PROTECT_CUT_FUEL:
@@ -999,12 +998,8 @@ void loop(void)
         break;
 
       case PROTECT_CUT_BOTH:
-        ignitionChannelsOn = 0;
-        injectors.setAllOff();
-        break;
-
       default:
-        ignitionChannelsOn = 0;
+        ignitions.setAllOff();
         injectors.setAllOff();
         break;
       }
@@ -1049,7 +1044,7 @@ void loop(void)
           cutPercent = table2D_getValue(&rollingCutTable, (rpmDelta / 10));
         }
 
-        for (uint8_t x = 0; x < max(maxIgnOutputs, injectors.maxOutputs); x++)
+        for (uint8_t x = 0; x < max(ignitions.maxOutputs, injectors.maxOutputs); x++)
         {
           if (cutPercent == 100 || random1to100() < cutPercent)
           {
@@ -1057,12 +1052,12 @@ void loop(void)
             {
             case PROTECT_CUT_OFF:
               //Make sure all channels are turned on
-              ignitionChannelsOn = 0xFF;
+              ignitions.setAllOn();
               injectors.setAllOn();
               break;
 
             case PROTECT_CUT_IGN:
-              BIT_CLEAR(ignitionChannelsOn, x); //Turn off this ignition channel
+              ignitions.setOff((ignitionChannelID_t)x);
               disablePendingIgnSchedule(x);
               break;
 
@@ -1072,15 +1067,11 @@ void loop(void)
               break;
 
             case PROTECT_CUT_BOTH:
-              BIT_CLEAR(ignitionChannelsOn, x); //Turn off this ignition channel
+            default:
+              ignitions.setOff((ignitionChannelID_t)x);
               injectors.setOff((injectorChannelID_t)x);
               disablePendingFuelSchedule(x);
               disablePendingIgnSchedule(x);
-              break;
-
-            default:
-              BIT_CLEAR(ignitionChannelsOn, x); //Turn off this ignition channel
-              injectors.setOff((injectorChannelID_t)x);
               break;
             }
           }
@@ -1097,14 +1088,13 @@ void loop(void)
               //Fuel on this channel is currently off, meaning it is the first
               //revolution after a cut
               //Set this ignition channel as pending
-              BIT_SET(ignitionChannelsPending, x);
+              BIT_SET(ignitions.channelsPending, x);
             }
             else
             {
               //Turn on this ignition channel
-              BIT_SET(ignitionChannelsOn, x);
+              ignitions.setOn((ignitionChannelID_t)x);
             }
-
 
             injectors.setOn((injectorChannelID_t)x);
           }
@@ -1116,13 +1106,13 @@ void loop(void)
       //injection pulses to occur before being turned back on.
       //This can only occur when at least 2 revolutions have taken place since
       //the fuel was turned back on.
-      //Note that ignitionChannelsPending can only be >0 on 4 stroke,
+      //Note that ignitions.channelsPending can only be >0 on 4 stroke,
       //non-sequential fuel when protect type is Both.
-      if (ignitionChannelsPending > 0
+      if (ignitions.channelsPending > 0
           && currentStatus.startRevolutions >= rollingCutLastRev + 2)
       {
-        ignitionChannelsOn = injectors.channelsOnMask();
-        ignitionChannelsPending = 0;
+        ignitions.setChannelsOnMask(injectors.channelsOnMask());
+        ignitions.channelsPending = 0;
       }
     } //Rolling cut check
     else
@@ -1132,7 +1122,7 @@ void loop(void)
       if (currentStatus.startRevolutions >= configPage4.StgCycles)
       {
         //Enable the fuel and ignition, assuming staging revolutions are complete
-        ignitionChannelsOn = 0xff;
+        ignitions.setAllOn();
         injectors.setAllOn();
       }
     }
@@ -1209,7 +1199,7 @@ void loop(void)
       fixedCrankingOverride = 0;
     }
 
-    if (ignitionChannelsOn > 0)
+    if (ignitions.channelsOn != 0)
     {
       //Refresh the current crank angle info
       //ignition1StartAngle = 335;
@@ -1222,11 +1212,7 @@ void loop(void)
       ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
 
 #if IGN_CHANNELS >= 1
-      uint32_t const timeOut = ignition1.calculateIgnitionTimeout(crankAngle);
-      if (timeOut > 0U && BIT_CHECK(ignitionChannelsOn, IGN1_CMD_BIT))
-      {
-        ignition1.setIgnitionSchedule(timeOut, currentStatus.dwell + fixedCrankingOverride);
-      }
+      ignitions.applyIgnitionControl(ignChannel1, crankAngle);
 #endif
 
 #if defined(USE_IGN_REFRESH)
@@ -1262,101 +1248,31 @@ void loop(void)
 # endif
 
 #if IGN_CHANNELS >= 2
-      if (maxIgnOutputs >= 2)
-      {
-        ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
-        unsigned long ignition2StartTime =
-          ignition2.calculateIgnitionTimeout(crankAngle);
-
-        if (ignition2StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN2_CMD_BIT))
-        {
-          ignition2.setIgnitionSchedule(ignition2StartTime, currentStatus.dwell + fixedCrankingOverride);
-        }
-      }
+      ignitions.applyIgnitionControl(ignChannel2, crankAngle);
 #endif
 
 #if IGN_CHANNELS >= 3
-      if (maxIgnOutputs >= 3)
-      {
-        ignition_context_st &ignition3 = ignitions.ignition(ignChannel3);
-        unsigned long ignition3StartTime =
-          ignition3.calculateIgnitionTimeout(crankAngle);
-
-        if (ignition3StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN3_CMD_BIT))
-        {
-          ignition3.setIgnitionSchedule(ignition3StartTime, currentStatus.dwell + fixedCrankingOverride);
-        }
-      }
+      ignitions.applyIgnitionControl(ignChannel3, crankAngle);
 #endif
 
 #if IGN_CHANNELS >= 4
-      if (maxIgnOutputs >= 4)
-      {
-        ignition_context_st &ignition4 = ignitions.ignition(ignChannel4);
-        unsigned long ignition4StartTime =
-          ignition4.calculateIgnitionTimeout(crankAngle);
-
-        if (ignition4StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN4_CMD_BIT))
-        {
-          ignition4.setIgnitionSchedule(ignition4StartTime, currentStatus.dwell + fixedCrankingOverride);
-        }
-      }
+      ignitions.applyIgnitionControl(ignChannel4, crankAngle);
 #endif
 
 #if IGN_CHANNELS >= 5
-      if (maxIgnOutputs >= 5)
-      {
-        ignition_context_st &ignition5 = ignitions.ignition(ignChannel5);
-        unsigned long ignition5StartTime =
-          ignition5.calculateIgnitionTimeout(crankAngle);
-
-        if (ignition5StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN5_CMD_BIT))
-        {
-          ignition5.setIgnitionSchedule(ignition5StartTime, currentStatus.dwell + fixedCrankingOverride);
-        }
-      }
+      ignitions.applyIgnitionControl(ignChannel5, crankAngle);
 #endif
 
 #if IGN_CHANNELS >= 6
-      if (maxIgnOutputs >= 6)
-      {
-        ignition_context_st &ignition6 = ignitions.ignition(ignChannel6);
-        unsigned long ignition6StartTime =
-          ignition6.calculateIgnitionTimeout(crankAngle);
-
-        if (ignition6StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN6_CMD_BIT))
-        {
-          ignition6.setIgnitionSchedule(ignition6StartTime, currentStatus.dwell + fixedCrankingOverride);
-        }
-      }
+      ignitions.applyIgnitionControl(ignChannel6, crankAngle);
 #endif
 
 #if IGN_CHANNELS >= 7
-      if (maxIgnOutputs >= 7)
-      {
-        ignition_context_st &ignition7 = ignitions.ignition(ignChannel7);
-        unsigned long ignition7StartTime =
-          ignition7.calculateIgnitionTimeout(crankAngle);
-
-        if (ignition7StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN7_CMD_BIT))
-        {
-          ignition7.setIgnitionSchedule(ignition7StartTime, currentStatus.dwell + fixedCrankingOverride);
-        }
-      }
+      ignitions.applyIgnitionControl(ignChannel7, crankAngle);
 #endif
 
 #if IGN_CHANNELS >= 8
-      if (maxIgnOutputs >= 8)
-      {
-        ignition_context_st &ignition8 = ignitions.ignition(ignChannel8);
-        unsigned long ignition8StartTime =
-          ignition8.calculateIgnitionTimeout(crankAngle);
-
-        if (ignition8StartTime > 0 && BIT_CHECK(ignitionChannelsOn, IGN8_CMD_BIT))
-        {
-          ignition8.setIgnitionSchedule(ignition8StartTime, currentStatus.dwell + fixedCrankingOverride);
-        }
-      }
+      ignitions.applyIgnitionControl(ignChannel8, crankAngle);
 #endif
 
     } //Ignition schedules on

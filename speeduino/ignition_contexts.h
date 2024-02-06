@@ -58,6 +58,9 @@ public:
 typedef struct ignition_contexts_st
 {
 public:
+  byte maxOutputs = 1; /**< Number of ignition outputs being used by the current tune configuration */
+  uint8_t channelsOn;
+  uint8_t channelsPending;
 
   ignition_context_st& ignition(ignitionChannelID_t ign)
   {
@@ -70,9 +73,28 @@ public:
 
   void resetEndAngle(void);
 
+  void setMaxIgnitions(byte const maxOutputs);
+
+  void setAllOn(void);
+
+  void setAllOff(void);
+
+  void setOn(ignitionChannelID_t inj);
+
+  void setOff(ignitionChannelID_t inj);
+
+  bool isOperational(ignitionChannelID_t inj);
+
+  byte channelsOnMask(void);
+
+  void setChannelsOnMask(uint8_t mask);
+
+  void applyIgnitionControl(ignitionChannelID_t ign, int crankAngle);
+
 private:
   ignition_context_st ignitions[ignChannelCount];
 
+  byte maxOutputMask = 0x01;
 } ignition_contexts_st;
 
 extern ignition_contexts_st ignitions;

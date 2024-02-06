@@ -89,7 +89,6 @@ private:
   injector_context_st injectors[injChannelCount];
 
   byte maxOutputMask = 0x01;
-
 } injectors_context_st;
 
 extern injectors_context_st injectors;
