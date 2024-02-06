@@ -1285,7 +1285,8 @@ void loop(void)
       BIT_SET(currentStatus.status3, BIT_STATUS3_RESET_PREVENT);
     }
   } //Has sync and RPM
-  else if ((BIT_CHECK(currentStatus.status3, BIT_STATUS3_RESET_PREVENT) > 0) && (resetControl == RESET_CONTROL_PREVENT_WHEN_RUNNING))
+  else if (BIT_CHECK(currentStatus.status3, BIT_STATUS3_RESET_PREVENT)
+           && resetControl == RESET_CONTROL_PREVENT_WHEN_RUNNING)
   {
     digitalWrite(pinResetControl, LOW);
     BIT_CLEAR(currentStatus.status3, BIT_STATUS3_RESET_PREVENT);
@@ -1849,7 +1850,11 @@ void checkLaunchAndFlatShift(void)
       currentStatus.clutchTrigger = !digitalRead(pinLaunch);
     }
   }
-  if (currentStatus.clutchTrigger && (currentStatus.previousClutchTrigger != currentStatus.clutchTrigger)) //Check whether the clutch has been engaged or disengaged and store the current RPM if so
+
+  //Check whether the clutch has been engaged or disengaged and store the
+  //current RPM if so.
+  if (currentStatus.clutchTrigger
+      && currentStatus.previousClutchTrigger != currentStatus.clutchTrigger)
   {
     currentStatus.clutchEngagedRPM = currentStatus.RPM;
   }
@@ -1859,13 +1864,17 @@ void checkLaunchAndFlatShift(void)
   BIT_CLEAR(currentStatus.spark, BIT_SPARK_HLAUNCH);
   currentStatus.flatShiftingHard = false;
 
-  if (configPage6.launchEnabled && currentStatus.clutchTrigger && (currentStatus.clutchEngagedRPM < ((unsigned int)(configPage6.flatSArm) * 100)) && (currentStatus.TPS >= configPage10.lnchCtrlTPS))
+  if (configPage6.launchEnabled
+      && currentStatus.clutchTrigger
+      && currentStatus.clutchEngagedRPM < (unsigned int)configPage6.flatSArm * 100
+      && currentStatus.TPS >= configPage10.lnchCtrlTPS)
   {
     //Check whether RPM is above the launch limit
-    uint16_t launchRPMLimit = (configPage6.lnchHardLim * 100);
-    if ((configPage2.hardCutType == HARD_CUT_ROLLING)) //Add the rolling cut delta if enabled (Delta is a negative value)
+    uint16_t launchRPMLimit = configPage6.lnchHardLim * 100;
+    //Add the rolling cut delta if enabled (Delta is a negative value)
+    if (configPage2.hardCutType == HARD_CUT_ROLLING)
     {
-      launchRPMLimit += (configPage15.rollingProtRPMDelta[0] * 10);
+      launchRPMLimit += configPage15.rollingProtRPMDelta[0] * 10;
     }
 
     if (currentStatus.RPM > launchRPMLimit)
@@ -1878,12 +1887,16 @@ void checkLaunchAndFlatShift(void)
   else
   {
     //If launch is not active, check whether flat shift should be active
-    if (configPage6.flatSEnable && currentStatus.clutchTrigger && (currentStatus.clutchEngagedRPM >= ((unsigned int)(configPage6.flatSArm * 100))))
+    if (configPage6.flatSEnable
+        && currentStatus.clutchTrigger
+        && currentStatus.clutchEngagedRPM >= (unsigned int)configPage6.flatSArm * 100)
     {
       uint16_t flatRPMLimit = currentStatus.clutchEngagedRPM;
-      if ((configPage2.hardCutType == HARD_CUT_ROLLING)) //Add the rolling cut delta if enabled (Delta is a negative value)
+
+      //Add the rolling cut delta if enabled (Delta is a negative value)
+      if (configPage2.hardCutType == HARD_CUT_ROLLING)
       {
-        flatRPMLimit += (configPage15.rollingProtRPMDelta[0] * 10);
+        flatRPMLimit += configPage15.rollingProtRPMDelta[0] * 10;
       }
 
       if (currentStatus.RPM > flatRPMLimit)
@@ -1894,3 +1907,4 @@ void checkLaunchAndFlatShift(void)
     }
   }
 }
+
