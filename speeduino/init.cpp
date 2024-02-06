@@ -496,8 +496,8 @@ void initialiseAll(void)
     switch (configPage2.nCylinders) {
     case 1:
         ignitions.ignition(ignChannel1).ignDegrees = 0;
+        ignitions.setMaxIgnitions(1);
         injectors.injector(injChannel1).channelInjDegrees = 0;
-        maxIgnOutputs = 1;
         injectors.setMaxInjectors(2);
 
         //Sequential ignition works identically on a 1 cylinder whether it's odd or even fire.
@@ -525,8 +525,8 @@ void initialiseAll(void)
 
     case 2:
         ignitions.ignition(ignChannel1).ignDegrees = 0;
+        ignitions.setMaxIgnitions(2);
         injectors.injector(injChannel1).channelInjDegrees = 0;
-        maxIgnOutputs = 2;
         injectors.setMaxInjectors(2);
         if (configPage2.engineType == EVEN_FIRE)
         {
@@ -580,7 +580,7 @@ void initialiseAll(void)
 
     case 3:
         ignitions.ignition(ignChannel1).ignDegrees = 0;
-        maxIgnOutputs = 3;
+        ignitions.setMaxIgnitions(3);
         injectors.setMaxInjectors(3);
         if (configPage2.engineType == EVEN_FIRE )
         {
@@ -680,10 +680,11 @@ void initialiseAll(void)
         break;
     case 4:
         ignitions.ignition(ignChannel1).ignDegrees = 0;
+        ignitions.setMaxIgnitions(2);
         injectors.injector(injChannel1).channelInjDegrees = 0;
-        maxIgnOutputs = 2; //Default value for 4 cylinder, may be changed below
         injectors.setMaxInjectors(2);
-        if (configPage2.engineType == EVEN_FIRE )
+
+        if (configPage2.engineType == EVEN_FIRE)
         {
           ignitions.ignition(ignChannel2).ignDegrees = 180;
 
@@ -694,14 +695,14 @@ void initialiseAll(void)
             ignitions.ignition(ignChannel4).ignDegrees = 540;
 
             CRANK_ANGLE_MAX_IGN = 720;
-            maxIgnOutputs = 4;
+            ignitions.setMaxIgnitions(4);
           }
           if(configPage4.sparkMode == IGN_MODE_ROTARY)
           {
             //Rotary uses the ign 3 and 4 schedules for the trailing spark. They are offset from the ign 1 and 2 channels respectively and so use the same degrees as them
             ignitions.ignition(ignChannel3).ignDegrees = 0;
             ignitions.ignition(ignChannel4).ignDegrees = 180;
-            maxIgnOutputs = 4;
+            ignitions.setMaxIgnitions(4);
 
             configPage4.IgInv = GOING_LOW; //Force Going Low ignition mode (Going high is never used for rotary)
           }
@@ -711,7 +712,7 @@ void initialiseAll(void)
           ignitions.ignition(ignChannel2).ignDegrees = configPage2.oddfire2;
           ignitions.ignition(ignChannel3).ignDegrees = configPage2.oddfire3;
           ignitions.ignition(ignChannel4).ignDegrees = configPage2.oddfire4;
-          maxIgnOutputs = 4;
+          ignitions.setMaxIgnitions(4);
         }
 
         //For alternating injection, the squirt occurs at different times for each channel
@@ -805,7 +806,7 @@ void initialiseAll(void)
 #if (IGN_CHANNELS >= 5)
         injectors.injector(injChannel5).channelInjDegrees = 288;
 #endif
-        maxIgnOutputs = 5; //Only 4 actual outputs, so that's all that can be cut
+        ignitions.setMaxIgnitions(5);
         //Is updated below to 5 if there are enough channels.
         injectors.setMaxInjectors(4);
 
@@ -878,19 +879,19 @@ void initialiseAll(void)
         ignitions.ignition(ignChannel1).ignDegrees = 0;
         ignitions.ignition(ignChannel2).ignDegrees = 120;
         ignitions.ignition(ignChannel3).ignDegrees = 240;
-        maxIgnOutputs = 3;
+        ignitions.setMaxIgnitions(3);
         injectors.setMaxInjectors(3);
 
-    #if IGN_CHANNELS >= 6
+#if IGN_CHANNELS >= 6
         if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL)
         {
         ignitions.ignition(ignChannel4).ignDegrees = 360;
         ignitions.ignition(ignChannel5).ignDegrees = 480;
         ignitions.ignition(ignChannel6).ignDegrees = 600;
         CRANK_ANGLE_MAX_IGN = 720;
-        maxIgnOutputs = 6;
+        ignitions.setMaxIgnitions(6);
         }
-    #endif
+#endif
 
         //For alternating injection, the squirt occurs at different times for each channel
         if (configPage2.injLayout == INJ_SEMISEQUENTIAL || configPage2.injLayout == INJ_PAIRED)
@@ -965,13 +966,13 @@ void initialiseAll(void)
         ignitions.ignition(ignChannel2).ignDegrees = 90;
         ignitions.ignition(ignChannel3).ignDegrees = 180;
         ignitions.ignition(ignChannel4).ignDegrees = 270;
-        maxIgnOutputs = 4;
+        ignitions.setMaxIgnitions(4);
         injectors.setMaxInjectors(4);
 
 
         if (configPage4.sparkMode == IGN_MODE_SINGLE)
         {
-          maxIgnOutputs = 4;
+          ignitions.setMaxIgnitions(4);
           CRANK_ANGLE_MAX_IGN = 360;
         }
 
@@ -982,7 +983,7 @@ void initialiseAll(void)
         ignitions.ignition(ignChannel6).ignDegrees = 450;
         ignitions.ignition(ignChannel7).ignDegrees = 540;
         ignitions.ignition(ignChannel8).ignDegrees = 630;
-        maxIgnOutputs = 8;
+        ignitions.setMaxIgnitions(8);
         CRANK_ANGLE_MAX_IGN = 720;
         }
 #endif
@@ -1311,7 +1312,7 @@ void initialiseAll(void)
      * (net 5/3).  Multiply by ignition pulses per rev.
      * tachoSweepIncr is also the number of tach pulses per second
      */
-    tachoSweepIncr = configPage2.tachoSweepMaxRPM * maxIgnOutputs * 5 / 3;
+    tachoSweepIncr = configPage2.tachoSweepMaxRPM * ignitions.maxOutputs * 5 / 3;
 
     currentStatus.initialisationComplete = true;
     digitalWrite(LED_BUILTIN, HIGH);
@@ -3815,7 +3816,8 @@ void changeHalfToFullSync(void)
   if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL && CRANK_ANGLE_MAX_IGN != 720)
   {
     CRANK_ANGLE_MAX_IGN = 720;
-    maxIgnOutputs = configPage2.nCylinders;
+    ignitions.setMaxIgnitions(configPage2.nCylinders);
+
     switch (configPage2.nCylinders)
     {
     case 4:
@@ -3889,7 +3891,8 @@ void changeFullToHalfSync(void)
   if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL && CRANK_ANGLE_MAX_IGN != 360)
   {
     CRANK_ANGLE_MAX_IGN = 360;
-    maxIgnOutputs = configPage2.nCylinders / 2;
+    ignitions.setMaxIgnitions(configPage2.nCylinders / 2);
+
     switch (configPage2.nCylinders)
     {
       case 4:

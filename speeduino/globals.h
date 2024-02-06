@@ -562,7 +562,6 @@ extern volatile byte HWTest_INJ;        /**< Each bit in this variable represent
 extern volatile byte HWTest_INJ_Pulsed; /**< Each bit in this variable represents one of the injector channels and it's 50% HW test status */
 extern volatile byte HWTest_IGN;        /**< Each bit in this variable represents one of the ignition channels and it's HW test status */
 extern volatile byte HWTest_IGN_Pulsed; /**< Each bit in this variable represents one of the ignition channels and it's 50% HW test status */
-extern byte maxIgnOutputs;              /**< Number of ignition outputs being used by the current tune configuration */
 
 extern FuelSchedule fuelSchedule1;
 extern FuelSchedule fuelSchedule2;

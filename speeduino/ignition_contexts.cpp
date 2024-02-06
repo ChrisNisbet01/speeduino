@@ -75,5 +75,61 @@ void ignition_contexts_st::resetEndAngle(void)
   }
 }
 
+void ignition_contexts_st::setMaxIgnitions(byte const maxOutputs)
+{
+  this->maxOutputs = maxOutputs;
+  this->maxOutputMask = ((uint16_t)1 << maxOutputs) - 1;
+}
+
+void ignition_contexts_st::setAllOn(void)
+{
+  channelsOn = maxOutputMask;
+}
+
+void ignition_contexts_st::setAllOff(void)
+{
+  channelsOn = 0;
+}
+
+void ignition_contexts_st::setOn(ignitionChannelID_t ign)
+{
+  BIT_SET(channelsOn, ign);
+}
+
+void ignition_contexts_st::setOff(ignitionChannelID_t ign)
+{
+  BIT_CLEAR(channelsOn, ign);
+}
+
+bool ignition_contexts_st::isOperational(ignitionChannelID_t ign)
+{
+  return ((1 << ign) & maxOutputMask & channelsOn) != 0;
+}
+
+byte ignition_contexts_st::channelsOnMask(void)
+{
+  return channelsOn;
+}
+
+void ignition_contexts_st::setChannelsOnMask(uint8_t const mask)
+{
+  channelsOn = mask;
+}
+
+void ignition_contexts_st::
+applyIgnitionControl(ignitionChannelID_t const ign, int const crankAngle)
+{
+  if (isOperational(ign))
+  {
+    ignition_context_st &ignition = ignitions[ign];
+    uint32_t const timeOut = ignition.calculateIgnitionTimeout(crankAngle);
+
+    if (timeOut > 0U)
+    {
+      ignition.setIgnitionSchedule(timeOut, currentStatus.dwell + fixedCrankingOverride);
+    }
+  }
+}
+
 ignition_contexts_st ignitions;
 

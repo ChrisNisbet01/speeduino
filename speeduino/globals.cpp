@@ -3,6 +3,7 @@
  */
 #include "globals.h"
 #include "scheduler.h"
+#include "ignition_contexts.h"
 
 const char TSfirmwareVersion[] PROGMEM = "Speeduino";
 
@@ -142,7 +143,6 @@ volatile byte HWTest_INJ = 0; /**< Each bit in this variable represents one of t
 volatile byte HWTest_INJ_Pulsed = 0; /**< Each bit in this variable represents one of the injector channels and it's pulsed HW test status */
 volatile byte HWTest_IGN = 0; /**< Each bit in this variable represents one of the ignition channels and it's HW test status */
 volatile byte HWTest_IGN_Pulsed = 0;
-byte maxIgnOutputs = 1; /**< Number of ignition outputs being used by the current tune configuration */
 
 
 //This needs to be here because using the config page directly can prevent burning the setting
@@ -288,14 +288,14 @@ bool pinIsOutput(byte pin)
     used = true;
   }
   //Ignition?
-  if ((pin == pinCoil1)
-  || ((pin == pinCoil2) && (maxIgnOutputs > 1))
-  || ((pin == pinCoil3) && (maxIgnOutputs > 2))
-  || ((pin == pinCoil4) && (maxIgnOutputs > 3))
-  || ((pin == pinCoil5) && (maxIgnOutputs > 4))
-  || ((pin == pinCoil6) && (maxIgnOutputs > 5))
-  || ((pin == pinCoil7) && (maxIgnOutputs > 6))
-  || ((pin == pinCoil8) && (maxIgnOutputs > 7)))
+  if (pin == pinCoil1
+  || (pin == pinCoil2 && ignitions.maxOutputs > 1)
+  || (pin == pinCoil3 && ignitions.maxOutputs > 2)
+  || (pin == pinCoil4 && ignitions.maxOutputs > 3)
+  || (pin == pinCoil5 && ignitions.maxOutputs > 4)
+  || (pin == pinCoil6 && ignitions.maxOutputs > 5)
+  || (pin == pinCoil7 && ignitions.maxOutputs > 6)
+  || (pin == pinCoil8 && ignitions.maxOutputs > 7))
   {
     used = true;
   }
