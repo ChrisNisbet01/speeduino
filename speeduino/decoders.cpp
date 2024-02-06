@@ -691,7 +691,7 @@ void triggerPri_missingTooth(void)
       currentTooth = toothCurrentCount;
     }
     crankAngle = ignitionLimits(crankAngle);
-    checkPerToothTiming(crankAngle, toothCurrentCount);
+    checkPerToothTiming(crankAngle, currentTooth);
   }
 }
 
@@ -5972,13 +5972,8 @@ static void calcEndTeeth_Renix_ignition(ignition_context_st &ignition)
 
 void triggerSetEndTeeth_Renix(void)
 {
-  byte toothAdder = 0;
-  if ((configPage4.sparkMode == IGN_MODE_SEQUENTIAL) && (configPage4.TrigSpeed == CRANK_SPEED))
-  {
-    toothAdder = configPage4.triggerTeeth;
-  }
-
-  //Temp variables are used here to avoid potential issues if a trigger interrupt occurs part way through this function
+  //Temp variables are used here to avoid potential issues if a trigger interrupt
+  //occurs part way through this function
 
   calcEndTeeth_Renix_ignition(ignitions.ignition(ignChannel1));
   calcEndTeeth_Renix_ignition(ignitions.ignition(ignChannel2));
