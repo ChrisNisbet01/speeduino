@@ -269,21 +269,23 @@ uint16_t o2Calibration_bins[32];
 uint8_t o2Calibration_values[32];
 struct table2D o2CalibrationTable;
 
-//These function do checks on a pin to determine if it is already in use by another (higher importance) active function
+//These function do checks on a pin to determine if it is already in use by another
+//(higher importance) active function
 bool pinIsOutput(byte pin)
 {
   bool used = false;
-  bool isIdlePWM = (configPage6.iacAlgorithm > 0) && ((configPage6.iacAlgorithm <= 3) || (configPage6.iacAlgorithm == 6));
-  bool isIdleSteper = (configPage6.iacAlgorithm > 3) && (configPage6.iacAlgorithm != 6);
+  bool isIdlePWM = configPage6.iacAlgorithm > 0
+    && (configPage6.iacAlgorithm <= 3 || configPage6.iacAlgorithm == 6);
+  bool isIdleSteper = configPage6.iacAlgorithm > 3 && configPage6.iacAlgorithm != 6;
   //Injector?
-  if ((pin == pinInjector1)
-  || ((pin == pinInjector2) && (configPage2.nInjectors > 1))
-  || ((pin == pinInjector3) && (configPage2.nInjectors > 2))
-  || ((pin == pinInjector4) && (configPage2.nInjectors > 3))
-  || ((pin == pinInjector5) && (configPage2.nInjectors > 4))
-  || ((pin == pinInjector6) && (configPage2.nInjectors > 5))
-  || ((pin == pinInjector7) && (configPage2.nInjectors > 6))
-  || ((pin == pinInjector8) && (configPage2.nInjectors > 7)))
+  if (pin == pinInjector1
+  || (pin == pinInjector2 && configPage2.nInjectors > 1)
+  || (pin == pinInjector3 && configPage2.nInjectors > 2)
+  || (pin == pinInjector4 && configPage2.nInjectors > 3)
+  || (pin == pinInjector5 && configPage2.nInjectors > 4)
+  || (pin == pinInjector6 && configPage2.nInjectors > 5)
+  || (pin == pinInjector7 && configPage2.nInjectors > 6)
+  || (pin == pinInjector8 && configPage2.nInjectors > 7))
   {
     used = true;
   }
@@ -300,25 +302,28 @@ bool pinIsOutput(byte pin)
     used = true;
   }
   //Functions?
-  if ((pin == pinFuelPump)
-  || ((pin == pinFan) && (configPage2.fanEnable == 1))
-  || ((pin == pinVVT_1) && (configPage6.vvtEnabled > 0))
-  || ((pin == pinVVT_1) && (configPage10.wmiEnabled > 0))
-  || ((pin == pinVVT_2) && (configPage10.vvt2Enabled > 0))
-  || ((pin == pinBoost) && (configPage6.boostEnabled == 1))
-  || ((pin == pinIdle1) && isIdlePWM)
-  || ((pin == pinIdle2) && isIdlePWM && (configPage6.iacChannels == 1))
-  || ((pin == pinStepperEnable) && isIdleSteper)
-  || ((pin == pinStepperStep) && isIdleSteper)
-  || ((pin == pinStepperDir) && isIdleSteper)
+  if (pin == pinFuelPump
+  || (pin == pinFan && configPage2.fanEnable == 1)
+  || (pin == pinVVT_1 && configPage6.vvtEnabled > 0)
+  || (pin == pinVVT_1 && configPage10.wmiEnabled > 0)
+  || (pin == pinVVT_2 && configPage10.vvt2Enabled > 0)
+  || (pin == pinBoost && configPage6.boostEnabled == 1)
+  || (pin == pinIdle1 && isIdlePWM)
+  || (pin == pinIdle2 && isIdlePWM && (configPage6.iacChannels == 1))
+  || (pin == pinStepperEnable && isIdleSteper)
+  || (pin == pinStepperStep && isIdleSteper)
+  || (pin == pinStepperDir && isIdleSteper)
   || (pin == pinTachOut)
-  || ((pin == pinAirConComp) && (configPage15.airConEnable > 0))
-  || ((pin == pinAirConFan) && (configPage15.airConEnable > 0) && (configPage15.airConFanEnabled > 0)) )
+  || (pin == pinAirConComp && configPage15.airConEnable > 0)
+  || (pin == pinAirConFan && configPage15.airConEnable > 0 && configPage15.airConFanEnabled > 0))
   {
     used = true;
   }
-  //Forbiden or hardware reserved? (Defined at board_xyz.h file)
-  if ( pinIsReserved(pin) ) { used = true; }
+  //Forbidden or hardware reserved? (Defined at board_xyz.h file)
+  if (pinIsReserved(pin))
+  {
+    used = true;
+  }
 
   return used;
 }
@@ -328,12 +333,13 @@ bool pinIsUsed(byte pin)
   bool used = false;
 
   //Analog input?
-  if ( pinIsSensor(pin) )
+  if (pinIsSensor(pin))
   {
     used = true;
   }
+
   //Functions?
-  if ( pinIsOutput(pin) )
+  if (pinIsOutput(pin))
   {
     used = true;
   }

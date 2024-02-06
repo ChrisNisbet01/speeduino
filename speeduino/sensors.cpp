@@ -307,7 +307,7 @@ static uint32_t readAnalogTwice(byte const pin)
 }
 #endif
 
-void instantaneousMAPReading(bool const initialisationComplete)
+static void instantaneousMAP(bool const initialisationComplete)
 {
   //Update the calculation times and last value. These are used by the MAP based Accel enrich
   MAPlast = currentStatus.MAP;
@@ -315,6 +315,7 @@ void instantaneousMAPReading(bool const initialisationComplete)
   MAP_time = micros();
 
   unsigned int tempReading;
+
   //Instantaneous MAP readings
 #if defined(ANALOG_ISR_MAP)
   tempReading = AnChannel[pinMAP - A0];
@@ -347,15 +348,25 @@ void instantaneousMAPReading(bool const initialisationComplete)
   {
     currentStatus.MAP = 0;
   }
+}
 
-  //Repeat for EMAP if it's enabled
+static void instantaneousEMAP(bool const initialisationComplete)
+{
   if (configPage6.useEMAP)
   {
+    unsigned int tempReading;
+
 #if defined(ANALOG_ISR_MAP)
     tempReading = AnChannel[pinEMAP - A0];
 #else
     tempReading = readAnalogTwice(pinEMAP);
 #endif
+
+    if (!initialisationComplete)
+    {
+      /* First time through. Just assign the current reading to the output value. */
+      currentStatus.EMAPADC = tempReading;
+    }
 
     //Error check
     if (tempReading < VALID_MAP_MAX && tempReading > VALID_MAP_MIN)
@@ -366,13 +377,20 @@ void instantaneousMAPReading(bool const initialisationComplete)
     {
       mapErrorCount++;
     }
+
     currentStatus.EMAP = fastMap10Bit(currentStatus.EMAPADC, configPage2.EMAPMin, configPage2.EMAPMax);
     if (currentStatus.EMAP < 0) //Sanity check
     {
       currentStatus.EMAP = 0;
     }
   }
+}
 
+void instantaneousMAPReading(bool const initialisationComplete)
+{
+  instantaneousMAP(initialisationComplete);
+  //Repeat for EMAP if it's enabled
+  instantaneousEMAP(initialisationComplete);
 }
 
 void readMAP(void)
@@ -618,11 +636,14 @@ void readTPS(bool useFilter)
   {
     currentStatus.tpsADC = tempTPS;
   }
-  byte tempADC = currentStatus.tpsADC; //The tempADC value is used in order to allow TunerStudio to recover and redo the TPS calibration if this somehow gets corrupted
+  //The tempADC value is used in order to allow TunerStudio to recover and redo
+  //the TPS calibration if this somehow gets corrupted
+  byte tempADC = currentStatus.tpsADC;
 
   if (configPage2.tpsMax > configPage2.tpsMin)
   {
-    //Check that the ADC values fall within the min and max ranges (Should always be the case, but noise can cause these to fluctuate outside the defined range).
+    //Check that the ADC values fall within the min and max ranges (Should always
+    //be the case, but noise can cause these to fluctuate outside the defined range).
     if (currentStatus.tpsADC < configPage2.tpsMin)
     {
       tempADC = configPage2.tpsMin;
@@ -631,7 +652,8 @@ void readTPS(bool useFilter)
     {
       tempADC = configPage2.tpsMax;
     }
-    currentStatus.TPS = map(tempADC, configPage2.tpsMin, configPage2.tpsMax, 0, 200); //Take the raw TPS ADC value and convert it into a TPS% based on the calibrated values
+    //Take the raw TPS ADC value and convert it into a TPS% based on the calibrated values
+    currentStatus.TPS = map(tempADC, configPage2.tpsMin, configPage2.tpsMax, 0, 200);
   }
   else
   {
@@ -681,7 +703,8 @@ void readCLT(bool useFilter)
 #else
   tempReading = readAnalogTwice(pinCLT);
 #endif
-  //The use of the filter can be overridden if required. This is used on startup so there can be an immediately accurate coolant value for priming
+  //The use of the filter can be overridden if required. This is used on startup
+  //so there can be an immediately accurate coolant value for priming.
   if (useFilter)
   {
     currentStatus.cltADC = ADC_FILTER(tempReading, configPage4.ADCFILTER_CLT, currentStatus.cltADC);
@@ -691,7 +714,9 @@ void readCLT(bool useFilter)
     currentStatus.cltADC = tempReading;
   }
 
-  currentStatus.coolant = table2D_getValue(&cltCalibrationTable, currentStatus.cltADC) - CALIBRATION_TEMPERATURE_OFFSET; //Temperature calibration values are stored as positive bytes. We subtract 40 from them to allow for negative temperatures
+  //Temperature calibration values are stored as positive bytes. We subtract
+  //CALIBRATION_TEMPERATURE_OFFSET from them to allow for negative temperatures
+  currentStatus.coolant = table2D_getValue(&cltCalibrationTable, currentStatus.cltADC) - CALIBRATION_TEMPERATURE_OFFSET;
 }
 
 void readIAT(void)
@@ -902,7 +927,7 @@ uint32_t vssGetPulseGap(byte historyIndex)
 
 uint16_t getSpeed(void)
 {
-  uint16_t tempSpeed;
+  uint16_t tempSpeed = 0;
   // Get VSS from CAN, Serial or Analog by using Aux input channels.
   if (configPage2.vssMode == 1)
   {

@@ -1,7 +1,7 @@
 #ifndef AUX_H
 #define AUX_H
 
-#include BOARD_H //Note that this is not a real file, it is defined in globals.h. 
+#include BOARD_H //Note that this is not a real file, it is defined in globals.h.
 
 #if defined(CORE_AVR)
 #include <util/atomic.h>
@@ -41,8 +41,8 @@ void wmiControl(void);
 #define AIRCON_PIN_HIGH()       (digitalWrite(pinAirConComp, HIGH))
 #define AIRCON_FAN_PIN_LOW()    (digitalWrite(pinAirConFan, LOW))
 #define AIRCON_FAN_PIN_HIGH()   (digitalWrite(pinAirConFan, HIGH))
-#define FUEL_PUMP_ON()          (digitalWrite(pinFuelPump, HIGH))
-#define FUEL_PUMP_OFF()         (digitalWrite(pinFuelPump, LOW))
+#define FUEL_PUMP_ON()          digitalWrite(pinFuelPump, HIGH)
+#define FUEL_PUMP_OFF()         digitalWrite(pinFuelPump, LOW)
 
 #define AIRCON_ON()             { (((configPage15.airConCompPol==1)) ? AIRCON_PIN_LOW() : AIRCON_PIN_HIGH()); BIT_SET(currentStatus.airConStatus, BIT_AIRCON_COMPRESSOR); }
 #define AIRCON_OFF()            { (((configPage15.airConCompPol==1)) ? AIRCON_PIN_HIGH() : AIRCON_PIN_LOW()); BIT_CLEAR(currentStatus.airConStatus, BIT_AIRCON_COMPRESSOR); }
