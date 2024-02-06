@@ -279,14 +279,17 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     //Check whether fuel pump priming is complete
     if (!currentStatus.fpPrimed)
     {
-      //fpPrimeTime is the time that the pump priming started. This is 0 on startup, but can be changed if the unit has been running on USB power and then had the ignition turned on (Which starts the priming again)
-      if( (currentStatus.secl - fpPrimeTime) >= configPage2.fpPrime)
+      //fpPrimeTime is the time that the pump priming started. This is 0 on startup,
+      //but can be changed if the unit has been running on USB power and then had
+      //the ignition turned on (Which starts the priming again)
+      if (currentStatus.secl - fpPrimeTime >= configPage2.fpPrime)
       {
         currentStatus.fpPrimed = true; //Mark the priming as being completed
         if(currentStatus.RPM == 0)
         {
-          //If we reach here then the priming is complete, however only turn off the fuel pump if the engine isn't running
-          digitalWrite(pinFuelPump, LOW);
+          //If we reach here then the priming is complete, however only turn off
+          //the fuel pump if the engine isn't running
+          FUEL_PUMP_OFF();
           currentStatus.fuelPumpOn = false;
         }
       }
