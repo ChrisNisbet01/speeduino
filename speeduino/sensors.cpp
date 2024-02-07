@@ -20,6 +20,7 @@ A full copy of the license may be found in the projects root directory
 #include "auxiliaries.h"
 #include "utilities.h"
 #include BOARD_H
+#include "fuel_pump.h"
 
 uint32_t MAPcurRev; //Tracks which revolution we're sampling on
 unsigned int MAPcount; //Number of samples taken in the current MAP cycle
@@ -879,9 +880,8 @@ void readBat(void)
   if (currentStatus.battery10 < 55 && tempReading > 70 && currentStatus.RPM == 0)
   {
     //Re-prime the fuel pump
-    fpPrimeTime = currentStatus.secl;
-    currentStatus.fpPrimed = false;
-    FUEL_PUMP_ON();
+    fuelPriming.start(currentStatus.secl);
+    fuelPump.turnOn();
 
     //Redo the stepper homing
     if (configPage6.iacAlgorithm == IAC_ALGORITHM_STEP_CL

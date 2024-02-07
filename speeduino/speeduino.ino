@@ -49,6 +49,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "engine_load_calcs.h"
 #include "injector_contexts.h"
 #include "ignition_contexts.h"
+#include "fuel_pump.h"
 
 
 uint16_t req_fuel_uS = 0; /**< The required fuel variable (As calculated by TunerStudio) in uS */
@@ -145,8 +146,7 @@ void loop(void)
     currentStatus.longRPM = getRPM(); //Long RPM is included here
     currentStatus.RPM = currentStatus.longRPM;
     currentStatus.RPMdiv100 = div100(currentStatus.RPM);
-    FUEL_PUMP_ON();
-    currentStatus.fuelPumpOn = true; //Not sure if this is needed.
+    fuelPump.turnOn();
   }
   else
   {
@@ -175,12 +175,12 @@ void loop(void)
     ignitions.setAllOff();
     injectors.setAllOff();
 
-    if (currentStatus.fpPrimed)
+    //Turn off the fuel pump if the priming is complete.
+    if (fuelPriming.isCompleted())
     {
-      //Turn off the fuel pump, but only if the priming is complete
-      FUEL_PUMP_OFF();
-      currentStatus.fuelPumpOn = false;
+      fuelPump.turnOff();
     }
+
     if (!configPage6.iacPWMrun)
     {
       //Turn off the idle PWM
