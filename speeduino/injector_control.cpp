@@ -1,4 +1,4 @@
-#include "injector_schedule.h"
+#include "injector_control.h"
 #include "injectors.h"
 #include "injector_schedule_direct.h"
 #include "injector_schedule_mc33810.h"

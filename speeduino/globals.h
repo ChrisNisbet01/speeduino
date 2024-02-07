@@ -109,8 +109,6 @@
 //This can only be included after the above section
 #include BOARD_H  //Note that this is not a real file, it is defined in globals.h.
 
-#include "schedule_contexts.h"
-
 //Handy bitsetting macros
 #define BIT_SET(a, b) ((a) |= (1U << (b)))
 #define BIT_CLEAR(a, b) ((a) &= ~(1U << (b)))
@@ -561,23 +559,6 @@ extern volatile byte HWTest_INJ;        /**< Each bit in this variable represent
 extern volatile byte HWTest_INJ_Pulsed; /**< Each bit in this variable represents one of the injector channels and it's 50% HW test status */
 extern volatile byte HWTest_IGN;        /**< Each bit in this variable represents one of the ignition channels and it's HW test status */
 extern volatile byte HWTest_IGN_Pulsed; /**< Each bit in this variable represents one of the ignition channels and it's 50% HW test status */
-
-extern FuelSchedule fuelSchedule1;
-extern FuelSchedule fuelSchedule2;
-extern FuelSchedule fuelSchedule3;
-extern FuelSchedule fuelSchedule4;
-#if INJ_CHANNELS >= 5
-extern FuelSchedule fuelSchedule5;
-#endif
-#if INJ_CHANNELS >= 6
-extern FuelSchedule fuelSchedule6;
-#endif
-#if INJ_CHANNELS >= 7
-extern FuelSchedule fuelSchedule7;
-#endif
-#if INJ_CHANNELS >= 8
-extern FuelSchedule fuelSchedule8;
-#endif
 
 ///< resetControl needs to be here (as global) because using the config page (4)
 ///directly can prevent burning the setting

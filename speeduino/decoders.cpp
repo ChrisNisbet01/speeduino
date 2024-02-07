@@ -37,7 +37,7 @@ A full copy of the license may be found in the projects root directory
 #include <limits.h>
 #include "globals.h"
 #include "decoders.h"
-#include "ignition_schedule.h"
+#include "ignition_control.h"
 #include "scheduledIO.h"
 #include "scheduler.h"
 #include "crankMaths.h"

@@ -1,4 +1,4 @@
-#include "ignition_schedule.h"
+#include "ignition_control.h"
 #include "ignition_schedule_direct.h"
 #include "ignition_schedule_mc33810.h"
 #include "globals.h"
