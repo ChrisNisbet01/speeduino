@@ -875,7 +875,8 @@ void readBat(void)
 
 
   //The following is a check for if the voltage has jumped up from under 5.5v to over 7v.
-  //If this occurs, it's very likely that the system has gone from being powered by USB to being powered from the 12v power source.
+  //If this occurs, it's very likely that the system has gone from being powered
+  //by USB to being powered from the 12v power source.
   //Should that happen, we re-trigger the fuel pump priming and idle homing (If using a stepper)
   if (currentStatus.battery10 < 55 && tempReading > 70 && currentStatus.RPM == 0)
   {

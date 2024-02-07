@@ -473,20 +473,20 @@ void initialiseAuxPWM(void)
   if(configPage6.boostMode == BOOST_MODE_SIMPLE) { boostPID.SetTunings(SIMPLE_BOOST_P, SIMPLE_BOOST_I, SIMPLE_BOOST_D); }
   else { boostPID.SetTunings(configPage6.boostKP, configPage6.boostKI, configPage6.boostKD); }
 
-  if( configPage6.vvtEnabled > 0)
+  if (configPage6.vvtEnabled > 0)
   {
     currentStatus.vvt1Angle = 0;
     currentStatus.vvt2Angle = 0;
 
-    #if defined(CORE_AVR)
-      vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (16U * configPage6.vvtFreq * 2U)); //Converts the frequency in Hz to the number of ticks (at 16uS) it takes to complete 1 cycle. Note that the frequency is divided by 2 coming from TS to allow for up to 512hz
-    #elif defined(CORE_TEENSY35)
-      vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (32U * configPage6.vvtFreq * 2U)); //Converts the frequency in Hz to the number of ticks (at 16uS) it takes to complete 1 cycle. Note that the frequency is divided by 2 coming from TS to allow for up to 512hz
-    #elif defined(CORE_TEENSY41)
-      vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (2U * configPage6.vvtFreq * 2U)); //Converts the frequency in Hz to the number of ticks (at 2uS) it takes to complete 1 cycle. Note that the frequency is divided by 2 coming fro TS to allow for up to 512hz
-    #endif
+#   if defined(CORE_AVR)
+    vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (16U * configPage6.vvtFreq * 2U)); //Converts the frequency in Hz to the number of ticks (at 16uS) it takes to complete 1 cycle. Note that the frequency is divided by 2 coming from TS to allow for up to 512hz
+#   elif defined(CORE_TEENSY35)
+    vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (32U * configPage6.vvtFreq * 2U)); //Converts the frequency in Hz to the number of ticks (at 16uS) it takes to complete 1 cycle. Note that the frequency is divided by 2 coming from TS to allow for up to 512hz
+#   elif defined(CORE_TEENSY41)
+    vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (2U * configPage6.vvtFreq * 2U)); //Converts the frequency in Hz to the number of ticks (at 2uS) it takes to complete 1 cycle. Note that the frequency is divided by 2 coming fro TS to allow for up to 512hz
+#   endif
 
-    if(configPage6.vvtMode == VVT_MODE_CLOSED_LOOP)
+    if (configPage6.vvtMode == VVT_MODE_CLOSED_LOOP)
     {
       vvtPID.SetOutputLimits(configPage10.vvtCLminDuty, configPage10.vvtCLmaxDuty);
       vvtPID.SetTunings(configPage10.vvtCLKP, configPage10.vvtCLKI, configPage10.vvtCLKD);
@@ -507,7 +507,11 @@ void initialiseAuxPWM(void)
     BIT_CLEAR(currentStatus.status4, BIT_STATUS4_VVT1_ERROR);
     BIT_CLEAR(currentStatus.status4, BIT_STATUS4_VVT2_ERROR);
     vvtTimeHold = false;
-    if (currentStatus.coolant >= (int)(configPage4.vvtMinClt - CALIBRATION_TEMPERATURE_OFFSET)) { vvtIsHot = true; } //Checks to see if coolant's already at operating temperature
+    //Checks to see if coolant's already at operating temperature
+    if (currentStatus.coolant >= (int)(configPage4.vvtMinClt - CALIBRATION_TEMPERATURE_OFFSET))
+    {
+      vvtIsHot = true;
+    }
   }
 
   if( (configPage6.vvtEnabled == 0) && (configPage10.wmiEnabled >= 1) )

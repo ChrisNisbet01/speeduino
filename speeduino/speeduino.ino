@@ -176,7 +176,7 @@ void loop(void)
     injectors.setAllOff();
 
     //Turn off the fuel pump if the priming is complete.
-    if (fuelPriming.isCompleted())
+    if (!fuelPriming.arePriming())
     {
       fuelPump.turnOff();
     }
@@ -419,6 +419,9 @@ void loop(void)
         digitalWrite(pinWMIIndicator, configPage10.wmiIndicatorPolarity ? HIGH : LOW);
       }
     }
+
+    //Check whether fuel pump priming is complete.
+    fuelPriming.update(currentStatus.secl, configPage2.fpPrime);
 
 #     ifdef SD_LOGGING
     if (configPage13.onboard_log_file_rate == LOGGER_RATE_1HZ)
