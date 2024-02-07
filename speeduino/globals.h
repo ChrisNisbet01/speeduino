@@ -532,7 +532,6 @@ extern byte triggerInterrupt2;
 extern byte triggerInterrupt3;
 
 
-extern byte fpPrimeTime;       //The time (in seconds, based on currentStatus.secl) that the fuel pump started priming
 extern uint8_t softLimitTime;  //The time (in 0.1 seconds, based on seclx10) that the soft limiter started
 extern volatile uint16_t mainLoopCount;
 extern unsigned long revolutionTime;                  //The time in uS that one revolution would take at current speed (The time tooth 1 was last seen, minus the time it was seen prior to that)
@@ -605,7 +604,6 @@ struct statuses {
   bool initialisationComplete : 1;  //Tracks whether the setup() function has run completely
   bool clutchTrigger : 1;
   bool previousClutchTrigger : 1;
-  volatile bool fpPrimed : 1;   //Tracks whether or not the fuel pump priming has been completed yet
   volatile bool injPrimed : 1;  //Tracks whether or not the injector priming has been completed yet
   volatile bool tachoSweepEnabled : 1;
   volatile bool tachoAlt : 1;
@@ -693,7 +691,6 @@ struct statuses {
   int16_t fuelLoad2;
   int16_t ignLoad;
   int16_t ignLoad2;
-  bool fuelPumpOn; /**< Indicator showing the current status of the fuel pump */
   volatile byte syncLossCounter;
   byte knockRetard;
   bool knockActive;

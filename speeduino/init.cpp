@@ -33,6 +33,7 @@
 #include "board_ids.h"
 #include "injector_contexts.h"
 #include "ignition_contexts.h"
+#include "fuel_pump.h"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 
@@ -77,16 +78,15 @@ static void configure_ignition_coil_schedule(
  */
 void initialiseAll(void)
 {
-    currentStatus.fpPrimed = false;
-    currentStatus.injPrimed = false;
+  currentStatus.injPrimed = false;
 
-    pinMode(LED_BUILTIN, OUTPUT);
-    digitalWrite(LED_BUILTIN, LOW);
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
 
 #if defined(CORE_STM32)
-    // device has internal canbus
-    configPage9.intcan_available = 1;
-    //STM32 can not currently enabled
+  // device has internal canbus
+  configPage9.intcan_available = 1;
+  //STM32 can not currently enabled
 #endif
 
     /*
@@ -328,7 +328,10 @@ void initialiseAll(void)
       resetConfigPages();
       setPinMapping(3); //Force board to v0.4
     }
-    else { setPinMapping(configPage2.pinMapping); }
+    else
+    {
+      setPinMapping(configPage2.pinMapping);
+    }
 
     #if defined(NATIVE_CAN_AVAILABLE)
       initCAN();
@@ -440,13 +443,14 @@ void initialiseAll(void)
     currentStatus.syncLossCounter = 0;
     currentStatus.flatShiftingHard = false;
     currentStatus.launchingHard = false;
-    currentStatus.crankRPM = ((unsigned int)configPage4.crankRPM * 10); //Crank RPM limit (Saves us calculating this over and over again. It's updated once per second in timers.ino)
-    currentStatus.fuelPumpOn = false;
+    //Crank RPM limit (Saves us calculating this over and over again.
+    //It's updated once per second in timers.ino)
+    currentStatus.crankRPM = ((unsigned int)configPage4.crankRPM * 10);
+    fuelPump.turnOff(); /* Assumes pin mappings have been applied. */
     currentStatus.engineProtectStatus = 0;
     triggerFilterTime = 0; //Trigger filter time is the shortest possible time (in uS) that there can be between crank teeth (ie at max RPM). Any pulses that occur faster than this time will be discarded as noise. This is simply a default value, the actual values are set in the setup() functions of each decoder
     dwellLimit_uS = (1000 * configPage4.dwellLimit);
     currentStatus.nChannels = ((uint8_t)INJ_CHANNELS << 4) + IGN_CHANNELS; //First 4 bits store the number of injection channels, 2nd 4 store the number of ignition channels
-    fpPrimeTime = 0;
     ms_counter = 0;
     fixedCrankingOverride = 0;
     timer5_overflow_count = 0;
@@ -1289,14 +1293,14 @@ void initialiseAll(void)
     //First check that the priming time is not 0.
     if(configPage2.fpPrime > 0)
     {
-      FUEL_PUMP_ON();
-      currentStatus.fuelPumpOn = true;
+      fuelPriming.start(currentStatus.secl);
+      fuelPump.turnOn();
     }
     else
     {
       //If the user has set 0 for the pump priming, immediately mark the priming
       //as being completed.
-      currentStatus.fpPrimed = true;
+      fuelPriming.complete();
     }
 
     interrupts();

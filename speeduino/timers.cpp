@@ -22,6 +22,7 @@ Timers are typically low resolution (Compared to Schedulers), with maximum frequ
 #include "auxiliaries.h"
 #include "comms.h"
 #include "maths.h"
+#include "fuel_pump.h"
 
 #if defined(CORE_AVR)
   #include <avr/wdt.h>
@@ -277,23 +278,18 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     }
 
     //Check whether fuel pump priming is complete
-    if (!currentStatus.fpPrimed)
+    if (!fuelPriming.isCompleted()
+        && fuelPriming.durationIsCompleted(currentStatus.secl, configPage2.fpPrime))
     {
-      //fpPrimeTime is the time that the pump priming started. This is 0 on startup,
-      //but can be changed if the unit has been running on USB power and then had
-      //the ignition turned on (Which starts the priming again)
-      if (currentStatus.secl - fpPrimeTime >= configPage2.fpPrime)
+      //If we reach here then the priming is complete, however only turn off
+      //the fuel pump if the engine isn't running
+      fuelPriming.complete();
+      if(currentStatus.RPM == 0)
       {
-        currentStatus.fpPrimed = true; //Mark the priming as being completed
-        if(currentStatus.RPM == 0)
-        {
-          //If we reach here then the priming is complete, however only turn off
-          //the fuel pump if the engine isn't running
-          FUEL_PUMP_OFF();
-          currentStatus.fuelPumpOn = false;
-        }
+        fuelPump.turnOff();
       }
     }
+
     //**************************************************************************************************************************************************
     //Set the flex reading (if enabled). The flexCounter is updated with every pulse from the sensor. If cleared once per second, we get a frequency reading
     if (configPage2.flexEnabled)
