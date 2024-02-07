@@ -52,11 +52,11 @@ int16_t ProgrammableIOGetData(uint16_t index);
 
 #if !defined(MIN)
 #define MIN(a, b) \
-    do { \
+    ({\
         const __typeof__(a) _a = (a); \
         const __typeof__(b) _b = (b); \
         (_a < _b) ? _a : _b; \
-    } while (0)
+    })
 #endif
 
 #define PP_INC_0 1

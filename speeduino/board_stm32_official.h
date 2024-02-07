@@ -128,7 +128,7 @@ void jumpToBootloader();
   #endif
 #elif defined(ARDUINO_DISCO_F407VG)
   // TODO: Assign the reserved pins.
-  #define pinIsReserved(pin)  (false)
+  #define pinIsReserved(pin)  (pin == PC8 || pin == PC12 || pin == PC14 || pin == PC15 || pin == PD2)
 #else
   #ifdef USE_SPI_EEPROM
     #define pinIsReserved(pin)  ( ((pin) == PA11) || ((pin) == PA12) || ((pin) == PB3) || ((pin) == PB4) || ((pin) == PB5) || ((pin) == USE_SPI_EEPROM) ) //Forbidden pins like USB

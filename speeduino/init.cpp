@@ -2724,6 +2724,7 @@ void setPinMapping(byte boardID)
       break;
 
     case BOARD_ID_RUSEFI_FRANKENSO_STM32_F407_DISC:
+#if defined(STM32F407xx)
       //******************************************
       //******** PORTA CONNECTIONS ***************
       //******************************************
@@ -2823,6 +2824,7 @@ void setPinMapping(byte boardID)
       /* = PE13; */ //
       pinCoil2 = PE14;
       /* = PE15; */ //
+#endif
       break;
 
     default:
