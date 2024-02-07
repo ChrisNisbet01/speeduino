@@ -1,5 +1,4 @@
-#ifndef INJECTOR_SCHEDULE_H__
-#define INJECTOR_SCHEDULE_H__
+#pragma once
 
 #include "types.h"
 #include "injector_id.h"
@@ -19,6 +18,4 @@ void closeSingleInjector(uint8_t injector_id);
 
 void openTwoInjectors(uint8_t injector1_id, uint8_t injector2_id);
 void closeTwoInjectors(uint8_t injector1_id, uint8_t injector2_id);
-
-#endif /* INJECTOR_SCHEDULE_H__ */
 

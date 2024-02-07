@@ -1,9 +1,6 @@
-#ifndef IGNITION_SCHEDULE_MC33810_H__
-#define IGNITION_SCHEDULE_MC33810_H__
+#pragma once
 
-#include "ignition.h"
+#include "ignition_control.h"
 
 extern ignition_st const ignition_mc33810;
-
-#endif /* IGNITION_SCHEDULE_MC33810_H__ */
 

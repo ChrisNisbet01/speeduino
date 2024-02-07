@@ -1,10 +1,22 @@
-#ifndef IGNITION_SCHEDULE_H__
-#define IGNITION_SCHEDULE_H__
+#pragma once
 
 #include "types.h"
 #include "ignition_id.h"
 
 #include <stdint.h>
+
+typedef void (*init_ignition_fn)(void);
+typedef void (*ignition_begin_charge_id_fn)(ignition_id_t coil);
+typedef void (*ignition_end_charge_id_fn)(ignition_id_t coil);
+typedef void (*ignition_toggle_id_fn)(ignition_id_t coil);
+
+typedef struct ignition_st
+{
+  init_ignition_fn init;
+  ignition_begin_charge_id_fn begin_charge;
+  ignition_end_charge_id_fn end_charge;
+  ignition_toggle_id_fn toggle;
+} ignition_st;
 
 void singleCoilBeginCharge(uint8_t coil_id, uint8_t unused);
 void singleCoilBeginCharge(uint8_t coil_id);
@@ -33,6 +45,4 @@ void ignitionControlMethodAssign(OUTPUT_CONTROL_TYPE control_method);
 
 /* Must be called _after_ the control method has been assigned. */
 void  ignition_pins_init(void);
-
-#endif /* IGNITION_SCHEDULE_H__ */
 

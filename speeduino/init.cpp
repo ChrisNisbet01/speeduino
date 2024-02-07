@@ -10,8 +10,9 @@
 #include "comms_secondary.h"
 #include "comms_CAN.h"
 #include "utilities.h"
-#include "ignition_schedule.h"
-#include "injector_schedule.h"
+#include "ignition.h"
+#include "ignition_control.h"
+#include "injector_control.h"
 #include "scheduledIO.h"
 #include "scheduler.h"
 #include "schedule_calcs.h"
@@ -36,25 +37,6 @@
 #include "fuel_pump.h"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
-
-static void configure_ignition_coil_schedule(IgnitionSchedule &ignitionSchedule, ignition_id_t ignition_id1)
-{
-  ignitionSchedule.start.pCallback = singleCoilBeginCharge;
-  ignitionSchedule.start.args[0] = ignition_id1;
-  ignitionSchedule.end.pCallback = singleCoilEndCharge;
-  ignitionSchedule.end.args[0] = ignition_id1;
-}
-
-static void configure_ignition_coil_schedule(
-  IgnitionSchedule &ignitionSchedule, ignition_id_t ignition_id1, ignition_id_t ignition_id2)
-{
-  ignitionSchedule.start.pCallback = twoCoilsBeginCharge;
-  ignitionSchedule.start.args[0] = ignition_id1;
-  ignitionSchedule.start.args[1] = ignition_id2;
-  ignitionSchedule.end.pCallback = twoCoilsEndCharge;
-  ignitionSchedule.end.args[0] = ignition_id1;
-  ignitionSchedule.end.args[1] = ignition_id2;
-}
 
 /** Initialise Speeduino for the main loop.
  * Top level init entry point for all initialisations:
@@ -3498,14 +3480,25 @@ void initialiseTriggers(void)
 
     case DECODER_NON360:
       triggerSetup_non360();
-      triggerHandler = triggerPri_DualWheel; //Is identical to the dual wheel decoder, so that is used. Same goes for the secondary below
-      triggerSecondaryHandler = triggerSec_DualWheel; //Note the use of the Dual Wheel trigger function here. No point in having the same code in twice.
+      //Is identical to the dual wheel decoder, so that is used.
+      //Same goes for the secondary below
+      //Note the use of the Dual Wheel trigger function here.
+      //No point in having the same code in twice.
+      triggerHandler = triggerPri_DualWheel;
+      triggerSecondaryHandler = triggerSec_DualWheel;
       getRPM = getRPM_non360;
       getCrankAngle = getCrankAngle_non360;
       triggerSetEndTeeth = triggerSetEndTeeth_non360;
-
-      if(configPage4.TrigEdge == 0) { primaryTriggerEdge = RISING; } // Attach the crank trigger wheel interrupt (Hall sensor drags to ground when triggering)
-      else { primaryTriggerEdge = FALLING; }
+      // Attach the crank trigger wheel interrupt (Hall sensor drags to ground
+      // when triggering)
+      if (configPage4.TrigEdge == 0)
+      {
+        primaryTriggerEdge = RISING;
+      }
+      else
+      {
+        primaryTriggerEdge = FALLING;
+      }
       secondaryTriggerEdge = FALLING;
 
       attachInterrupt(triggerInterrupt, triggerHandler, primaryTriggerEdge);
