@@ -1,5 +1,6 @@
 #include "injector_contexts.h"
 #include "injector_control.h"
+#include "utilities.h"
 
 injectors_context_st injectors;
 
