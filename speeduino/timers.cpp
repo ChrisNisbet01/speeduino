@@ -274,20 +274,7 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     //Check the fan output status
     if (configPage2.fanEnable >= 1)
     {
-       fanControl();            // Function to turn the cooling fan on/off
-    }
-
-    //Check whether fuel pump priming is complete
-    if (!fuelPriming.isCompleted()
-        && fuelPriming.durationIsCompleted(currentStatus.secl, configPage2.fpPrime))
-    {
-      //If we reach here then the priming is complete, however only turn off
-      //the fuel pump if the engine isn't running
-      fuelPriming.complete();
-      if(currentStatus.RPM == 0)
-      {
-        fuelPump.turnOff();
-      }
+       fanControl(); // Function to turn the cooling fan on/off
     }
 
     //**************************************************************************************************************************************************
