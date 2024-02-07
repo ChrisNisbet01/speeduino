@@ -789,7 +789,7 @@ void initialiseAll(void)
         injectors.injector(injChannel2).channelInjDegrees = 72;
         injectors.injector(injChannel3).channelInjDegrees = 144;
         injectors.injector(injChannel4).channelInjDegrees = 216;
-#if (IGN_CHANNELS >= 5)
+#if (INJ_CHANNELS >= 5)
         injectors.injector(injChannel5).channelInjDegrees = 288;
 #endif
         ignitions.setMaxIgnitions(5);
