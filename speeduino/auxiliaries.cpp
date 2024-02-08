@@ -341,110 +341,100 @@ void initialiseFan(void)
 
 void fanControl(void)
 {
+  bool const fanPermit = configPage2.fanWhenOff || BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN);
+  bool stop_fan = false;
+  bool start_fan = false;
+
+  if (!fanPermit)
+  {
+    stop_fan = true;
+    goto done;
+  }
+
+  if (BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK)
+      && configPage2.fanWhenCranking == 0)
+  {
+    //If the user has elected to disable the fan during cranking, make sure it's off
+    stop_fan = true;
+    goto done;
+  }
+
   if (configPage2.fanEnable == 1) // regular on/off fan control
   {
     int const onTemp = (int)configPage6.fanSP - CALIBRATION_TEMPERATURE_OFFSET;
     int const offTemp = onTemp - configPage6.fanHyster;
-    bool const fanPermit = configPage2.fanWhenOff || BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN);
 
-    if (fanPermit
-        && (currentStatus.coolant >= onTemp
-            || (configPage15.airConTurnsFanOn == 1
-                && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON)))
-       )
+    if (currentStatus.coolant >= onTemp
+        || (configPage15.airConTurnsFanOn == 1
+            && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON)))
     {
       //Fan needs to be turned on - either by high coolant temp, or from an
       //A/C request (to ensure there is airflow over the A/C radiator).
-      if (BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) && configPage2.fanWhenCranking == 0)
-      {
-        //If the user has elected to disable the fan during cranking, make sure it's off
-        FAN_OFF();
-        BIT_CLEAR(currentStatus.status4, BIT_STATUS4_FAN);
-      }
-      else
-      {
-        FAN_ON();
-        BIT_SET(currentStatus.status4, BIT_STATUS4_FAN);
-      }
+      start_fan = true;
+      goto done;
     }
-    else if (currentStatus.coolant < offTemp || !fanPermit)
+
+    if (currentStatus.coolant < offTemp)
     {
       //Fan needs to be turned off.
-      FAN_OFF();
-      BIT_CLEAR(currentStatus.status4, BIT_STATUS4_FAN);
+      stop_fan = true;
+      goto done;
     }
   }
   else if (configPage2.fanEnable == 2) // PWM Fan control
   {
-    bool const fanPermit = configPage2.fanWhenOff || BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN);
+    //In normal situation read PWM duty from the table
+    byte tempFanDuty = table2D_getValue(&fanPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET);
 
-    if (fanPermit)
+    if (configPage15.airConTurnsFanOn == 1
+        && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON))
     {
-      if (BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) && (configPage2.fanWhenCranking == 0))
+      // Clamp the fan duty to airConPwmFanMinDuty or above, to ensure there is airflow over the A/C radiator
+      if (tempFanDuty < configPage15.airConPwmFanMinDuty)
       {
-        currentStatus.fanDuty = 0; //If the user has elected to disable the fan during cranking, make sure it's off
-        BIT_CLEAR(currentStatus.status4, BIT_STATUS4_FAN);
-#       if defined(PWM_FAN_AVAILABLE)//PWM fan not available on Arduino MEGA
-        DISABLE_FAN_TIMER();
-#       endif
+        tempFanDuty = configPage15.airConPwmFanMinDuty;
       }
-      else
-      {
-        byte tempFanDuty = table2D_getValue(&fanPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET); //In normal situation read PWM duty from the table
-        if (configPage15.airConTurnsFanOn == 1
-            && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON))
-        {
-          // Clamp the fan duty to airConPwmFanMinDuty or above, to ensure there is airflow over the A/C radiator
-          if (tempFanDuty < configPage15.airConPwmFanMinDuty)
-          {
-            tempFanDuty = configPage15.airConPwmFanMinDuty;
-          }
-        }
-        currentStatus.fanDuty = tempFanDuty;
+    }
+
+    currentStatus.fanDuty = tempFanDuty;
+    if (currentStatus.fanDuty == 0)
+    {
+      stop_fan = true;
+      goto done;
+    }
+
 #if defined(PWM_FAN_AVAILABLE)
-        fan_pwm_value = halfPercentage(currentStatus.fanDuty, fan_pwm_max_count); //update FAN PWM value last
-        if (currentStatus.fanDuty > 0)
-        {
-          ENABLE_FAN_TIMER();
-          BIT_SET(currentStatus.status4, BIT_STATUS4_FAN);
-        }
+    if (currentStatus.fanDuty < 200)
+    {
+      fan_pwm_value = halfPercentage(currentStatus.fanDuty, fan_pwm_max_count); //update FAN PWM value last
+      BIT_SET(currentStatus.status4, BIT_STATUS4_FAN);
+      ENABLE_FAN_TIMER();
+    }
+    else
 #endif
-      }
-    }
-    else
     {
-      currentStatus.fanDuty = 0; ////If the user has elected to disable the fan when engine is not running, make sure it's off
-      BIT_CLEAR(currentStatus.status4, BIT_STATUS4_FAN);
+      //Make sure fan has 100% duty
+      start_fan = true;
+      goto done;
     }
+  }
 
+done:
+  if (stop_fan)
+  {
+    currentStatus.fanDuty = 0;
+    FAN_OFF();
+    BIT_CLEAR(currentStatus.status4, BIT_STATUS4_FAN);
 #if defined(PWM_FAN_AVAILABLE)
-    if (currentStatus.fanDuty == 0)
-    {
-      //Make sure fan has 0% duty)
-      FAN_OFF();
-      BIT_CLEAR(currentStatus.status4, BIT_STATUS4_FAN);
-      DISABLE_FAN_TIMER();
-    }
-    else if (currentStatus.fanDuty == 200)
-    {
-      //Make sure fan has 100% duty
-      FAN_ON();
-      BIT_SET(currentStatus.status4, BIT_STATUS4_FAN);
-      DISABLE_FAN_TIMER();
-    }
-#else //Just in case if user still has selected PWM fan in TS, even though it warns that it doesn't work on mega.
-    if (currentStatus.fanDuty == 0)
-    {
-      //Make sure fan has 0% duty)
-      FAN_OFF();
-      BIT_CLEAR(currentStatus.status4, BIT_STATUS4_FAN);
-    }
-    else
-    {
-      //Make sure fan has 100% duty
-      FAN_ON();
-      BIT_SET(currentStatus.status4, BIT_STATUS4_FAN);
-    }
+    DISABLE_FAN_TIMER();
+#endif
+  }
+  else if (start_fan) /* Fan should be at 100%. */
+  {
+    FAN_ON();
+    BIT_SET(currentStatus.status4, BIT_STATUS4_FAN);
+#if defined(PWM_FAN_AVAILABLE)
+    DISABLE_FAN_TIMER();
 #endif
   }
 }
