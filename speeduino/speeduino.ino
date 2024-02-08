@@ -277,11 +277,14 @@ void loop(void)
     BIT_CLEAR(TIMER_mask, BIT_TIMER_30HZ);
     //Most boost tends to run at about 30Hz, so placing it here ensures a new target time is fetched frequently enough
     boostControl();
+
     //VVT may eventually need to be synced with the cam readings (ie run once per cam rev) but for now run at 30Hz
     vvtControl();
+
     //Water methanol injection
     wmiControl();
-#     if defined(NATIVE_CAN_AVAILABLE)
+
+#if defined(NATIVE_CAN_AVAILABLE)
     if (configPage2.canBMWCluster)
     {
       sendBMWCluster();
@@ -290,19 +293,21 @@ void loop(void)
     {
       sendVAGCluster();
     }
-#     endif
-#     if TPS_READ_FREQUENCY == 30
+#endif
+
+#if TPS_READ_FREQUENCY == 30
     readTPS();
-#     endif
+#endif
+
     readO2();
     readO2_2();
 
-#     ifdef SD_LOGGING
+#ifdef SD_LOGGING
     if (configPage13.onboard_log_file_rate == LOGGER_RATE_30HZ)
     {
       writeSDLogEntry();
     }
-#     endif
+#endif
 
     //Check for any outstanding EEPROM writes.
     if (isEepromWritePending()
@@ -312,6 +317,7 @@ void loop(void)
       writeAllConfig();
     }
   }
+
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_4HZ))
   {
     BIT_CLEAR(TIMER_mask, BIT_TIMER_4HZ);
@@ -322,22 +328,23 @@ void loop(void)
     nitrousControl();
 
     //Lookup the current target idle RPM. This is aligned with coolant and so needs to be calculated at the same rate CLT is read
-    if ((configPage2.idleAdvEnabled >= 1) || (configPage6.iacAlgorithm != IAC_ALGORITHM_NONE))
+    if (configPage2.idleAdvEnabled >= 1 || configPage6.iacAlgorithm != IAC_ALGORITHM_NONE)
     {
-      currentStatus.CLIdleTarget = (byte)table2D_getValue(&idleTargetTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET); //All temps are offset by 40 degrees
+      currentStatus.CLIdleTarget =
+        (byte)table2D_getValue(&idleTargetTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET); //All temps are offset by 40 degrees
       if (BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON)) //Adds Idle Up RPM amount if active
       {
         currentStatus.CLIdleTarget += configPage15.airConIdleUpRPMAdder;
       }
     }
 
-#     ifdef SD_LOGGING
+#ifdef SD_LOGGING
     if (configPage13.onboard_log_file_rate == LOGGER_RATE_4HZ)
     {
       writeSDLogEntry();
     }
     syncSDLog(); //Sync the SD log file to the card 4 times per second.
-#     endif
+#endif
 
     currentStatus.fuelPressure = getFuelPressure();
     currentStatus.oilPressure = getOilPressure();
@@ -372,13 +379,13 @@ void loop(void)
         { //if current input channel is enabled as external for canbus & secondary serial enabled & internal can enabled(and internal can is available)
           // or current input channel is enabled as external for canbus & secondary serial disabled & internal can enabled(and internal can is available)
           //currentStatus.canin[13] = 12;  Dev test use only!
-#         if defined(CORE_STM32) || defined(CORE_TEENSY)
+#if defined(CORE_STM32) || defined(CORE_TEENSY)
           if (configPage9.enable_intcan == 1) //  if internal can is enabled
           {
             sendCancommand(3, configPage9.speeduino_tsCanId, currentStatus.current_caninchannel, 0, ((configPage9.caninput_source_can_address[currentStatus.current_caninchannel] & 2047) + 0x100));
             //send an R command for data from caninput_source_address[currentStatus.current_caninchannel] from internal canbus
           }
-#         endif
+#endif
         }
         else if ((((configPage9.enable_secondarySerial == 1) || ((configPage9.enable_intcan == 1) && (configPage9.intcan_available == 1))) && (configPage9.caninput_sel[currentStatus.current_caninchannel] & 12) == 8)
                  || (((configPage9.enable_secondarySerial == 0) && ((configPage9.enable_intcan == 1) && (configPage9.intcan_available == 0))) && (configPage9.caninput_sel[currentStatus.current_caninchannel] & 3) == 2)
@@ -406,10 +413,10 @@ void loop(void)
     //Infrequent baro readings are not an issue.
     readBaro(currentStatus.initialisationComplete);
 
-    if ((configPage10.wmiEnabled > 0) && (configPage10.wmiIndicatorEnabled > 0))
+    if (configPage10.wmiEnabled > 0 && configPage10.wmiIndicatorEnabled > 0)
     {
       // water tank empty
-      if (BIT_CHECK(currentStatus.status4, BIT_STATUS4_WMI_EMPTY) > 0)
+      if (BIT_CHECK(currentStatus.status4, BIT_STATUS4_WMI_EMPTY))
       {
         // flash with 1sec interval
         digitalWrite(pinWMIIndicator, !digitalRead(pinWMIIndicator));
@@ -423,18 +430,18 @@ void loop(void)
     //Check whether fuel pump priming is complete.
     fuelPriming.update(currentStatus.secl, configPage2.fpPrime);
 
-#     ifdef SD_LOGGING
+#ifdef SD_LOGGING
     if (configPage13.onboard_log_file_rate == LOGGER_RATE_1HZ)
     {
       writeSDLogEntry();
     }
-#     endif
+#endif
 
   } //1Hz timer
 
-  if ((configPage6.iacAlgorithm == IAC_ALGORITHM_STEP_OL)
-      || (configPage6.iacAlgorithm == IAC_ALGORITHM_STEP_CL)
-      || (configPage6.iacAlgorithm == IAC_ALGORITHM_STEP_OLCL))
+  if (configPage6.iacAlgorithm == IAC_ALGORITHM_STEP_OL
+      || configPage6.iacAlgorithm == IAC_ALGORITHM_STEP_CL
+      || configPage6.iacAlgorithm == IAC_ALGORITHM_STEP_OLCL)
   {
     idleControl(); //Run idlecontrol every loop for stepper idle.
   }
@@ -452,10 +459,12 @@ void loop(void)
 
   //Always check for sync
   //Main loop runs within this clause
-  if ((currentStatus.hasSync || BIT_CHECK(currentStatus.status3, BIT_STATUS3_HALFSYNC)) && (currentStatus.RPM > 0))
+  if ((currentStatus.hasSync || BIT_CHECK(currentStatus.status3, BIT_STATUS3_HALFSYNC)) && currentStatus.RPM > 0)
   {
     //Check whether running or cranking
-    if (currentStatus.RPM > currentStatus.crankRPM) //Crank RPM in the config is stored as a x10. currentStatus.crankRPM is set in timers.ino and represents the true value
+    //Crank RPM in the config is stored as a x10. currentStatus.crankRPM is set
+    //in timers.ino and represents the true value
+    if (currentStatus.RPM > currentStatus.crankRPM)
     {
       BIT_SET(currentStatus.engine, BIT_ENGINE_RUN); //Sets the engine running bit
       //Only need to do anything if we're transitioning from cranking to running
@@ -471,7 +480,7 @@ void loop(void)
     else
     {
       if (!BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN)
-          || currentStatus.RPM < (currentStatus.crankRPM - CRANK_RUN_HYSTER))
+          || currentStatus.RPM < currentStatus.crankRPM - CRANK_RUN_HYSTER)
       {
         //Sets the engine cranking bit, clears the engine running bit
         BIT_SET(currentStatus.engine, BIT_ENGINE_CRANK);
