@@ -275,10 +275,12 @@ void loop(void)
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_30HZ)) //30 hertz
   {
     BIT_CLEAR(TIMER_mask, BIT_TIMER_30HZ);
-    //Most boost tends to run at about 30Hz, so placing it here ensures a new target time is fetched frequently enough
+    //Most boost tends to run at about 30Hz,
+    //so placing it here ensures a new target time is fetched frequently enough
     boostControl();
 
-    //VVT may eventually need to be synced with the cam readings (ie run once per cam rev) but for now run at 30Hz
+    //VVT may eventually need to be synced with the cam readings
+    //(ie run once per cam rev) but for now run at 30Hz
     vvtControl();
 
     //Water methanol injection

@@ -777,7 +777,9 @@ void boostControl(void)
 
 void vvtControl(void)
 {
-  if ((configPage6.vvtEnabled == 1) && (currentStatus.coolant >= (int)(configPage4.vvtMinClt - CALIBRATION_TEMPERATURE_OFFSET)) && (BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN)))
+  if (configPage6.vvtEnabled == 1
+      && currentStatus.coolant >= (int)(configPage4.vvtMinClt - CALIBRATION_TEMPERATURE_OFFSET)
+      && BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN))
   {
     if (!vvtTimeHold)
     {
@@ -791,7 +793,7 @@ void vvtControl(void)
       currentStatus.vvt1Angle = getCamAngle_Miata9905();
     }
 
-    if (vvtIsHot || (runSecsX10 - vvtWarmTime) >= (configPage4.vvtDelay * VVT_TIME_DELAY_MULTIPLIER))
+    if (vvtIsHot || runSecsX10 - vvtWarmTime >= configPage4.vvtDelay * VVT_TIME_DELAY_MULTIPLIER)
     {
       vvtIsHot = true;
 
@@ -808,7 +810,7 @@ void vvtControl(void)
         }
 
         //VVT table can be used for controlling on/off switching. If this is turned on, then disregard any interpolation or non-binary values
-        if ((configPage6.vvtMode == VVT_MODE_ONOFF) && (currentStatus.vvt1Duty < 200))
+        if (configPage6.vvtMode == VVT_MODE_ONOFF && currentStatus.vvt1Duty < 200)
         {
           currentStatus.vvt1Duty = 0;
         }
@@ -827,8 +829,9 @@ void vvtControl(void)
             currentStatus.vvt2Duty = get3DTableValue(&vvt2Table, (currentStatus.MAP), currentStatus.RPM);
           }
 
-          //VVT table can be used for controlling on/off switching. If this is turned on, then disregard any interpolation or non-binary values
-          if ((configPage6.vvtMode == VVT_MODE_ONOFF) && (currentStatus.vvt2Duty < 200))
+          //VVT table can be used for controlling on/off switching. If this is turned on,
+          //then disregard any interpolation or non-binary values
+          if (configPage6.vvtMode == VVT_MODE_ONOFF && currentStatus.vvt2Duty < 200)
           {
             currentStatus.vvt2Duty = 0;
           }
@@ -837,7 +840,7 @@ void vvtControl(void)
         }
 
       } //Open loop
-      else if ((configPage6.vvtMode == VVT_MODE_CLOSED_LOOP))
+      else if (configPage6.vvtMode == VVT_MODE_CLOSED_LOOP)
       {
         //Lookup VVT duty based on either MAP or TPS
         if (configPage6.vvtLoadSource == VVT_LOAD_TPS)
@@ -849,14 +852,18 @@ void vvtControl(void)
           currentStatus.vvt1TargetAngle = get3DTableValue(&vvtTable, currentStatus.MAP, currentStatus.RPM);
         }
 
-        if ((vvtCounter & 31) == 1)  //This only needs to be run very infrequently, once every 32 calls to vvtControl(). This is approx. once per second
+        //This only needs to be run very infrequently, once every 32 calls to vvtControl().
+        //This is approx. once per second
+        if ((vvtCounter & 31) == 1)
         {
           vvtPID.SetTunings(configPage10.vvtCLKP, configPage10.vvtCLKI, configPage10.vvtCLKD);
           vvtPID.SetControllerDirection(configPage6.vvtPWMdir);
         }
 
-        // safety check that the cam angles are ok. The engine will be totally undriveable if the cam sensor is faulty and giving wrong cam angles, so if that happens, default to 0 duty.
-        // This also prevents using zero or negative current angle values for PID adjustment, because those don't work in integer PID.
+        // safety check that the cam angles are ok. The engine will be totally undriveable
+        // if the cam sensor is faulty and giving wrong cam angles, so if that happens, default to 0 duty.
+        // This also prevents using zero or negative current angle values for PID adjustment,
+        // because those don't work in integer PID.
         if (currentStatus.vvt1Angle <=  configPage10.vvtCLMinAng || currentStatus.vvt1Angle > configPage10.vvtCLMaxAng)
         {
           currentStatus.vvt1Duty = 0;
@@ -864,7 +871,7 @@ void vvtControl(void)
           BIT_SET(currentStatus.status4, BIT_STATUS4_VVT1_ERROR);
         }
         //Check that we're not already at the angle we want to be
-        else if ((configPage6.vvtCLUseHold > 0) && (currentStatus.vvt1TargetAngle == currentStatus.vvt1Angle))
+        else if (configPage6.vvtCLUseHold > 0 && currentStatus.vvt1TargetAngle == currentStatus.vvt1Angle)
         {
           currentStatus.vvt1Duty = configPage10.vvtCLholdDuty;
           vvt1_pwm_value = halfPercentage(currentStatus.vvt1Duty, vvt_pwm_max_count);
@@ -879,9 +886,6 @@ void vvtControl(void)
 
           //If not already at target angle, calculate new value from PID
           bool PID_compute = vvtPID.Compute(true);
-          //vvtPID.Compute2(currentStatus.vvt1TargetAngle, currentStatus.vvt1Angle, false);
-          //vvt_pwm_target_value = percentage(40, vvt_pwm_max_count);
-          //if (currentStatus.vvt1Angle > currentStatus.vvt1TargetAngle) { vvt_pwm_target_value = 0; }
           if (PID_compute)
           {
             vvt1_pwm_value = halfPercentage(currentStatus.vvt1Duty, vvt_pwm_max_count);
@@ -900,7 +904,9 @@ void vvtControl(void)
             currentStatus.vvt2TargetAngle = get3DTableValue(&vvt2Table, currentStatus.MAP, currentStatus.RPM);
           }
 
-          if ((vvtCounter & 31) == 1)  //This only needs to be run very infrequently, once every 32 calls to vvtControl(). This is approx. once per second
+          //This only needs to be run very infrequently, once every 32 calls to vvtControl().
+          //This is approx. once per second
+          if ((vvtCounter & 31) == 1)
           {
             vvt2PID.SetTunings(configPage10.vvtCLKP, configPage10.vvtCLKI, configPage10.vvtCLKD);
             vvt2PID.SetControllerDirection(configPage4.vvt2PWMdir);
@@ -915,7 +921,7 @@ void vvtControl(void)
             BIT_SET(currentStatus.status4, BIT_STATUS4_VVT2_ERROR);
           }
           //Check that we're not already at the angle we want to be
-          else if ((configPage6.vvtCLUseHold > 0) && (currentStatus.vvt2TargetAngle == currentStatus.vvt2Angle))
+          else if (configPage6.vvtCLUseHold > 0 && currentStatus.vvt2TargetAngle == currentStatus.vvt2Angle)
           {
             currentStatus.vvt2Duty = configPage10.vvtCLholdDuty;
             vvt2_pwm_value = halfPercentage(currentStatus.vvt2Duty, vvt_pwm_max_count);
@@ -942,7 +948,7 @@ void vvtControl(void)
       //Set the PWM state based on the above lookups
       if (configPage10.wmiEnabled == 0) //Added possibility to use vvt and wmi at the same time
       {
-        if ((currentStatus.vvt1Duty == 0) && (currentStatus.vvt2Duty == 0))
+        if (currentStatus.vvt1Duty == 0 && currentStatus.vvt2Duty == 0)
         {
           //Make sure solenoid is off (0% duty)
           VVT1_PIN_OFF();
@@ -953,7 +959,7 @@ void vvtControl(void)
           vvt2_max_pwm = false;
           DISABLE_VVT_TIMER();
         }
-        else if ((currentStatus.vvt1Duty >= 200) && (currentStatus.vvt2Duty >= 200))
+        else if (currentStatus.vvt1Duty >= 200 && currentStatus.vvt2Duty >= 200)
         {
           //Make sure solenoid is on (100% duty)
           VVT1_PIN_ON();

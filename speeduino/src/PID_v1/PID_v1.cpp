@@ -202,11 +202,11 @@ int PID::GetDirection(){ return controllerDirection;}
  *    reliable defaults, so we need to have the user set them.
  ***************************************************************************/
 /**
- * @brief A standard integer PID controller. 
+ * @brief A standard integer PID controller.
  *
  * @param Input Pointer to the variable holding the current value that is to be controlled. Eg In an idle control this would point to RPM
  * @param Output The address in the page that should be returned. This is as per the page definition in the ini
- * 
+ *
  * @return byte The current target advance value in degrees
  */
 integerPID::integerPID(long* Input, long* Output, long* Setpoint,
@@ -259,7 +259,7 @@ bool integerPID::Compute(bool pOnE, long FeedForwardTerm)
 
          /*Compute PID Output*/
          long output;
-         
+
          if(pOnE)
          {
             output = (kp * error);
@@ -335,7 +335,7 @@ bool integerPID::Compute2(int target, int input, bool pOnE)
    if(timeChange >= SampleTime)
    {
       long Kp, Ki, Kd;
-      long PV; 
+      long PV;
       long output;
       long SP1;
       long error;
@@ -343,33 +343,33 @@ bool integerPID::Compute2(int target, int input, bool pOnE)
 
       #define pid_divider 1024
       #define pid_multiplier 100
-      
+
       //pid_divider = 128;
       //pid_multiplier = 10;
 
       //convert_unitless_percent(min, max, targ, raw_PV, &PV, &SP);
       PV = (((long)input - outMin) * 10000L) / (outMax - outMin); //125
       SP1 = (((long)target - outMin) * 10000L) / (outMax - outMin); //500
-   
+
       error = SP1 - PV; //375
       pid_deriv = PV - (2 * lastInput) + lastMinusOneInput; //125
 
-      if(!pOnE) 
+      if(!pOnE)
       {
          Kp = ((long) ((PV - lastInput) * (long)kp)); //125 * kp
-      } 
+      }
       else
       {
-        Kp = ((long) ((error - lastError) * (long)kp)); 
+        Kp = ((long) ((error - lastError) * (long)kp));
       }
       Ki = ((((long) error * timeChange) / (long)pid_divider) * (long)ki); //12*ki
-      Kd = ((long) pid_deriv * (((long) kd * pid_multiplier) / timeChange)); 
+      Kd = ((long) pid_deriv * (((long) kd * pid_multiplier) / timeChange));
 
-      if(!pOnE) 
+      if(!pOnE)
       {
         output = Kp - Ki + Kd;
-      } 
-      else 
+      }
+      else
       {
         output = Kp + Ki - Kd;
       }
@@ -397,7 +397,10 @@ bool integerPID::Compute2(int target, int input, bool pOnE)
  ******************************************************************************/
 void integerPID::SetTunings(int16_t Kp, int16_t Ki, int16_t Kd, byte realTime)
 {
-   if ( dispKp == Kp && dispKi == Ki && dispKd == Kd ) return; //Only do anything if one of the values has changed
+  if (dispKp == Kp && dispKi == Ki && dispKd == Kd)
+  {
+     return; //Only do anything if one of the values has changed
+  }
    dispKp = Kp; dispKi = Ki; dispKd = Kd;
 
    /*
@@ -423,9 +426,9 @@ void integerPID::SetTunings(int16_t Kp, int16_t Ki, int16_t Kd, byte realTime)
 
    if(controllerDirection == REVERSE)
    {
-      kp = (0 - kp);
-      ki = (0 - ki);
-      kd = (0 - kd);
+      kp = -kp;
+      ki = -ki;
+      kd = -kd;
    }
 }
 
@@ -605,12 +608,12 @@ bool integerPID_ideal::Compute(uint16_t FeedForward)
       //if(output < (outMin * limitMultiplier)) { output  = (outMin * limitMultiplier);  }
 
       if(output > (outMax * limitMultiplier))
-      { 
+      {
          output  = (outMax * limitMultiplier);
          ITerm -= error; //Prevent the ITerm from growing indefinitely whilst the output is being limited (error was added to ITerm above, so this is simply setting it back to it's original value)
       }
-      if(output < (outMin * limitMultiplier)) 
-      { 
+      if(output < (outMin * limitMultiplier))
+      {
          output  = (outMin * limitMultiplier);
          ITerm -= error; //Prevent the ITerm from growing indefinitely whilst the output is being limited (error was added to ITerm above, so this is simply setting it back to it's original value)
       }
