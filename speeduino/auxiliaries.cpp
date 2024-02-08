@@ -263,8 +263,7 @@ static inline void checkAirConTPSLockout(void)
     BIT_SET(currentStatus.airConStatus, BIT_AIRCON_TPS_LOCKOUT);
     acTPSLockoutDelay = 0;
   }
-  else if (BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TPS_LOCKOUT)
-           && currentStatus.TPS <= configPage15.airConTPSCut)
+  else if (BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TPS_LOCKOUT))
   {
     // No need for hysteresis as we have the stand-down delay period after the high TPS condition goes away.
     if (acTPSLockoutDelay >= configPage15.airConTPSCutTime)
@@ -344,9 +343,9 @@ void fanControl(void)
 {
   if (configPage2.fanEnable == 1) // regular on/off fan control
   {
-    int onTemp = (int)configPage6.fanSP - CALIBRATION_TEMPERATURE_OFFSET;
-    int offTemp = onTemp - configPage6.fanHyster;
-    bool fanPermit = configPage2.fanWhenOff || BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN);
+    int const onTemp = (int)configPage6.fanSP - CALIBRATION_TEMPERATURE_OFFSET;
+    int const offTemp = onTemp - configPage6.fanHyster;
+    bool const fanPermit = configPage2.fanWhenOff || BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN);
 
     if (fanPermit
         && (currentStatus.coolant >= onTemp
@@ -440,7 +439,7 @@ void fanControl(void)
       FAN_OFF();
       BIT_CLEAR(currentStatus.status4, BIT_STATUS4_FAN);
     }
-    else if (currentStatus.fanDuty > 0)
+    else
     {
       //Make sure fan has 100% duty
       FAN_ON();
@@ -465,7 +464,9 @@ void initialiseAuxPWM(void)
   n2o_arming_pin_port = portInputRegister(digitalPinToPort(configPage10.n2o_arming_pin));
   n2o_arming_pin_mask = digitalPinToBitMask(configPage10.n2o_arming_pin);
 
-  //This is a safety check that will be true if the board is uninitialised. This prevents hangs on a new board that could otherwise try to write to an invalid pin port/mask (Without this a new Teensy 4.x hangs on startup)
+  //This is a safety check that will be true if the board is uninitialised.
+  //This prevents hangs on a new board that could otherwise try to write to an
+  //invalid pin port/mask (Without this a new Teensy 4.x hangs on startup)
   //The n2o_minTPS variable is capped at 100 by TS, so 255 indicates a new board.
   if (configPage10.n2o_minTPS == 255)
   {
