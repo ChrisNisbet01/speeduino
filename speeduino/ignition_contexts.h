@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ignition_id.h"
 #include "scheduler.h"
 #include "maths.h"
 
@@ -48,6 +49,13 @@ public:
   void setIgnitionSchedule(unsigned long timeout, unsigned long durationMicrosecs);
 
   void applyOverDwellCheck(uint32_t targetOverdwellTime);
+
+  void configure_coil_schedule(ignition_id_t const id);
+
+  void configure_coil_schedule(ignition_id_t const id1, ignition_id_t const id2);
+
+  void inhibit_coil_schedule(void);
+
 } ignition_context_st;
 
 
@@ -75,17 +83,25 @@ public:
 
   void setAllOff(void);
 
-  void setOn(ignitionChannelID_t inj);
+  void setOn(ignitionChannelID_t ign);
 
-  void setOff(ignitionChannelID_t inj);
+  void setOff(ignitionChannelID_t ign);
 
-  bool isOperational(ignitionChannelID_t inj);
+  bool isOperational(ignitionChannelID_t ign);
 
   byte channelsOnMask(void);
 
   void setChannelsOnMask(uint8_t mask);
 
   void applyIgnitionControl(ignitionChannelID_t ign, int crankAngle);
+
+  void configure_coil_schedule(ignitionChannelID_t ign, ignition_id_t const id);
+
+  void configure_coil_schedule(ignitionChannelID_t ign, ignition_id_t const id1, ignition_id_t const id2);
+
+  void inhibit_coil_schedule(ignitionChannelID_t ign);
+
+  void configure_rotary_fc_trailing_coil_schedules(void);
 
 private:
   ignition_context_st ignitions[ignChannelCount];
