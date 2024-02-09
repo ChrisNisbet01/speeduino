@@ -1107,119 +1107,107 @@ void initialiseAll(void)
     {
     case IGN_MODE_WASTED:
       //Wasted Spark (Normal mode)
-      configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
-      configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2);
-      configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3);
-      configure_ignition_coil_schedule(ignitionSchedule4, ignition_id_4);
-      configure_ignition_coil_schedule(ignitionSchedule5, ignition_id_5);
+      ignitions.configure_coil_schedule(ignChannel1, ignition_id_1);
+      ignitions.configure_coil_schedule(ignChannel2, ignition_id_2);
+      ignitions.configure_coil_schedule(ignChannel3, ignition_id_3);
+      ignitions.configure_coil_schedule(ignChannel4, ignition_id_4);
+      ignitions.configure_coil_schedule(ignChannel5, ignition_id_5);
       break;
 
     case IGN_MODE_SINGLE:
       //Single channel mode. All ignition pulses are on channel 1
-      configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
-      configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_1);
-      configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_1);
-      configure_ignition_coil_schedule(ignitionSchedule4, ignition_id_1);
+      ignitions.configure_coil_schedule(ignChannel1, ignition_id_1);
+      ignitions.configure_coil_schedule(ignChannel2, ignition_id_1);
+      ignitions.configure_coil_schedule(ignChannel3, ignition_id_1);
+      ignitions.configure_coil_schedule(ignChannel4, ignition_id_1);
 #if IGN_CHANNELS >= 5
-      configure_ignition_coil_schedule(ignitionSchedule5, ignition_id_1);
+      ignitions.configure_coil_schedule(ignChannel5, ignition_id_1);
 #endif
 #if IGN_CHANNELS >= 6
-      configure_ignition_coil_schedule(ignitionSchedule6, ignition_id_1);
+      ignitions.configure_coil_schedule(ignChannel6, ignition_id_1);
 #endif
 #if IGN_CHANNELS >= 7
-      configure_ignition_coil_schedule(ignitionSchedule7, ignition_id_1);
+      ignitions.configure_coil_schedule(ignChannel7, ignition_id_1);
 #endif
 #if IGN_CHANNELS >= 8
-      configure_ignition_coil_schedule(ignitionSchedule8, ignition_id_1);
+      ignitions.configure_coil_schedule(ignChannel8, ignition_id_1);
 #endif
-        break;
+      break;
 
     case IGN_MODE_WASTEDCOP:
       //Wasted COP mode. Note, most of the boards can only run this for 4-cyl only.
       if( configPage2.nCylinders <= 3)
       {
         //1-3 cylinder wasted COP is the same as regular wasted mode
-        configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
-        configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2);
-        configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3);
+        ignitions.configure_coil_schedule(ignChannel1, ignition_id_1);
+        ignitions.configure_coil_schedule(ignChannel2, ignition_id_2);
+        ignitions.configure_coil_schedule(ignChannel3, ignition_id_3);
       }
       else if( configPage2.nCylinders == 4 )
       {
         //Wasted COP mode for 4 cylinders. Ignition channels 1&3 and 2&4 are paired together
-        configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1, ignition_id_3);
-        configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2, ignition_id_4);
-
-        /* TODO: - Call reset() instead? */
-        ignitionSchedule3.start.pCallback = nullCallback;
-        ignitionSchedule3.end.pCallback = nullCallback;
-        ignitionSchedule4.start.pCallback = nullCallback;
-        ignitionSchedule4.end.pCallback = nullCallback;
+        ignitions.configure_coil_schedule(ignChannel1, ignition_id_1, ignition_id_3);
+        ignitions.configure_coil_schedule(ignChannel2, ignition_id_2, ignition_id_4);
+        ignitions.inhibit_coil_schedule(ignChannel3);
+        ignitions.inhibit_coil_schedule(ignChannel4);
       }
       else if( configPage2.nCylinders == 6 )
       {
         //Wasted COP mode for 6 cylinders. Ignition channels 1&4, 2&5 and 3&6 are paired together
-        configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1, ignition_id_4);
-        configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2, ignition_id_5);
-        configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3, ignition_id_6);
-
-        ignitionSchedule4.start.pCallback = nullCallback;
-        ignitionSchedule4.end.pCallback = nullCallback;
-        ignitionSchedule5.start.pCallback = nullCallback;
-        ignitionSchedule5.end.pCallback = nullCallback;
+        ignitions.configure_coil_schedule(ignChannel1, ignition_id_1, ignition_id_4);
+        ignitions.configure_coil_schedule(ignChannel2, ignition_id_2, ignition_id_5);
+        ignitions.configure_coil_schedule(ignChannel3, ignition_id_3, ignition_id_6);
+        ignitions.inhibit_coil_schedule(ignChannel4);
+        ignitions.inhibit_coil_schedule(ignChannel5);
 #if IGN_CHANNELS >= 6
-        ignitionSchedule6.start.pCallback = nullCallback;
-        ignitionSchedule6.end.pCallback = nullCallback;
+        ignitions.inhibit_coil_schedule(ignChannel6);
 #endif
       }
       else if( configPage2.nCylinders == 8 )
       {
         //Wasted COP mode for 8 cylinders. Ignition channels 1&5, 2&6, 3&7 and 4&8 are paired together
-        configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1, ignition_id_5);
-        configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2, ignition_id_6);
-        configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3, ignition_id_7);
-        configure_ignition_coil_schedule(ignitionSchedule4, ignition_id_4, ignition_id_8);
+        ignitions.configure_coil_schedule(ignChannel1, ignition_id_1, ignition_id_5);
+        ignitions.configure_coil_schedule(ignChannel2, ignition_id_2, ignition_id_6);
+        ignitions.configure_coil_schedule(ignChannel3, ignition_id_3, ignition_id_7);
+        ignitions.configure_coil_schedule(ignChannel4, ignition_id_4, ignition_id_8);
 
-        ignitionSchedule5.start.pCallback = nullCallback;
-        ignitionSchedule5.end.pCallback = nullCallback;
+        ignitions.inhibit_coil_schedule(ignChannel5);
 #if IGN_CHANNELS >= 6
-        ignitionSchedule6.start.pCallback = nullCallback;
-        ignitionSchedule6.end.pCallback = nullCallback;
+        ignitions.inhibit_coil_schedule(ignChannel6);
 #endif
 #if IGN_CHANNELS >= 7
-        ignitionSchedule7.start.pCallback = nullCallback;
-        ignitionSchedule7.end.pCallback = nullCallback;
+        ignitions.inhibit_coil_schedule(ignChannel7);
 #endif
 #if IGN_CHANNELS >= 8
-        ignitionSchedule8.start.pCallback = nullCallback;
-        ignitionSchedule8.end.pCallback = nullCallback;
+        ignitions.inhibit_coil_schedule(ignChannel8);
 #endif
       }
       else
       {
         //If the person has inadvertently selected this when running more than
         //4 cylinders or other than 6 cylinders, just use standard Wasted spark mode
-        configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
-        configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2);
-        configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3);
-        configure_ignition_coil_schedule(ignitionSchedule4, ignition_id_4);
-        configure_ignition_coil_schedule(ignitionSchedule5, ignition_id_5);
+        ignitions.configure_coil_schedule(ignChannel1, ignition_id_1);
+        ignitions.configure_coil_schedule(ignChannel2, ignition_id_2);
+        ignitions.configure_coil_schedule(ignChannel3, ignition_id_3);
+        ignitions.configure_coil_schedule(ignChannel4, ignition_id_4);
+        ignitions.configure_coil_schedule(ignChannel5, ignition_id_5);
       }
       break;
 
     case IGN_MODE_SEQUENTIAL:
-      configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
-      configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2);
-      configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3);
-      configure_ignition_coil_schedule(ignitionSchedule4, ignition_id_4);
-      configure_ignition_coil_schedule(ignitionSchedule5, ignition_id_5);
+      ignitions.configure_coil_schedule(ignChannel1, ignition_id_1);
+      ignitions.configure_coil_schedule(ignChannel2, ignition_id_2);
+      ignitions.configure_coil_schedule(ignChannel3, ignition_id_3);
+      ignitions.configure_coil_schedule(ignChannel4, ignition_id_4);
+      ignitions.configure_coil_schedule(ignChannel5, ignition_id_5);
 #if IGN_CHANNELS >= 6
-      configure_ignition_coil_schedule(ignitionSchedule6, ignition_id_6);
+      ignitions.configure_coil_schedule(ignChannel6, ignition_id_6);
 #endif
 #if IGN_CHANNELS >= 7
-      configure_ignition_coil_schedule(ignitionSchedule7, ignition_id_7);
+      ignitions.configure_coil_schedule(ignChannel7, ignition_id_7);
 #endif
 #if IGN_CHANNELS >= 8
-      configure_ignition_coil_schedule(ignitionSchedule8, ignition_id_8);
+      ignitions.configure_coil_schedule(ignChannel8, ignition_id_8);
 #endif
       break;
 
@@ -1227,25 +1215,20 @@ void initialiseAll(void)
       if(configPage10.rotaryType == ROTARY_IGN_FC)
       {
         //Ignition channel 1 is a wasted spark signal for leading signal on both rotors
-        configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
-        configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_1);
-
-        ignitionSchedule3.start.pCallback = beginTrailingCoilCharge;
-        ignitionSchedule3.end.pCallback = endTrailingCoilCharge1;
-        ignitionSchedule4.start.pCallback = beginTrailingCoilCharge;
-        ignitionSchedule4.end.pCallback = endTrailingCoilCharge2;
+        ignitions.configure_coil_schedule(ignChannel1, ignition_id_1);
+        ignitions.configure_coil_schedule(ignChannel2, ignition_id_1);
+        ignitions.configure_rotary_fc_trailing_coil_schedules();
       }
       else if(configPage10.rotaryType == ROTARY_IGN_FD)
       {
         //Ignition channel 1 is a wasted spark signal for leading signal on both rotors
-        configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
-        configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_1);
-
+        ignitions.configure_coil_schedule(ignChannel1, ignition_id_1);
+        ignitions.configure_coil_schedule(ignChannel2, ignition_id_1);
         //Trailing coils have their own channel each
         //IGN2 = front rotor trailing spark
-        configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_2);
+        ignitions.configure_coil_schedule(ignChannel3, ignition_id_2);
         //IGN3 = rear rotor trailing spark
-        configure_ignition_coil_schedule(ignitionSchedule4, ignition_id_3);
+        ignitions.configure_coil_schedule(ignChannel4, ignition_id_3);
 
         //IGN4 not used
       }
@@ -1254,13 +1237,13 @@ void initialiseAll(void)
         //RX8 outputs are simply 1 coil and 1 output per plug
 
         //IGN1 is front rotor, leading spark
-        configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
+        ignitions.configure_coil_schedule(ignChannel1, ignition_id_1);
         //IGN2 is rear rotor, leading spark
-        configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2);
+        ignitions.configure_coil_schedule(ignChannel2, ignition_id_2);
         //IGN3 = front rotor trailing spark
-        configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3);
+        ignitions.configure_coil_schedule(ignChannel3, ignition_id_3);
         //IGN4 = rear rotor trailing spark
-        configure_ignition_coil_schedule(ignitionSchedule4, ignition_id_4);
+        ignitions.configure_coil_schedule(ignChannel4, ignition_id_4);
       }
       else
       {
@@ -1270,11 +1253,11 @@ void initialiseAll(void)
 
     default:
       //Wasted spark (Shouldn't ever happen anyway)
-      configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
-      configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2);
-      configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3);
-      configure_ignition_coil_schedule(ignitionSchedule4, ignition_id_4);
-      configure_ignition_coil_schedule(ignitionSchedule5, ignition_id_5);
+      ignitions.configure_coil_schedule(ignChannel1, ignition_id_1);
+      ignitions.configure_coil_schedule(ignChannel2, ignition_id_2);
+      ignitions.configure_coil_schedule(ignChannel3, ignition_id_3);
+      ignitions.configure_coil_schedule(ignChannel4, ignition_id_4);
+      ignitions.configure_coil_schedule(ignChannel5, ignition_id_5);
       break;
     }
 
@@ -3827,21 +3810,21 @@ void changeHalfToFullSync(void)
     switch (configPage2.nCylinders)
     {
     case 4:
-      configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
-      configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2);
+      ignitions.configure_coil_schedule(ignChannel1, ignition_id_1);
+      ignitions.configure_coil_schedule(ignChannel2, ignition_id_2);
       break;
 
     case 6:
-      configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
-      configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2);
-      configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3);
+      ignitions.configure_coil_schedule(ignChannel1, ignition_id_1);
+      ignitions.configure_coil_schedule(ignChannel2, ignition_id_2);
+      ignitions.configure_coil_schedule(ignChannel3, ignition_id_3);
       break;
 
     case 8:
-      configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1);
-      configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2);
-      configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3);
-      configure_ignition_coil_schedule(ignitionSchedule4, ignition_id_4);
+      ignitions.configure_coil_schedule(ignChannel1, ignition_id_1);
+      ignitions.configure_coil_schedule(ignChannel2, ignition_id_2);
+      ignitions.configure_coil_schedule(ignChannel3, ignition_id_3);
+      ignitions.configure_coil_schedule(ignChannel4, ignition_id_4);
       break;
 
     default:
@@ -3902,21 +3885,21 @@ void changeFullToHalfSync(void)
     switch (configPage2.nCylinders)
     {
       case 4:
-        configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1, ignition_id_3);
-        configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2, ignition_id_4);
+        ignitions.configure_coil_schedule(ignChannel1, ignition_id_1, ignition_id_3);
+        ignitions.configure_coil_schedule(ignChannel2, ignition_id_2, ignition_id_4);
         break;
 
       case 6:
-        configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1, ignition_id_4);
-        configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2, ignition_id_5);
-        configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3, ignition_id_6);
+        ignitions.configure_coil_schedule(ignChannel1, ignition_id_1, ignition_id_4);
+        ignitions.configure_coil_schedule(ignChannel2, ignition_id_2, ignition_id_5);
+        ignitions.configure_coil_schedule(ignChannel3, ignition_id_3, ignition_id_6);
         break;
 
       case 8:
-        configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1, ignition_id_5);
-        configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2, ignition_id_6);
-        configure_ignition_coil_schedule(ignitionSchedule3, ignition_id_3, ignition_id_7);
-        configure_ignition_coil_schedule(ignitionSchedule4, ignition_id_4, ignition_id_8);
+        ignitions.configure_coil_schedule(ignChannel1, ignition_id_1, ignition_id_5);
+        ignitions.configure_coil_schedule(ignChannel2, ignition_id_2, ignition_id_6);
+        ignitions.configure_coil_schedule(ignChannel3, ignition_id_3, ignition_id_7);
+        ignitions.configure_coil_schedule(ignChannel4, ignition_id_4, ignition_id_8);
         break;
     }
   }
