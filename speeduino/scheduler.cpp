@@ -71,22 +71,6 @@ IgnitionSchedule ignitionSchedule7(IGN7_COUNTER, IGN7_COMPARE, IGN7_TIMER_DISABL
 IgnitionSchedule ignitionSchedule8(IGN8_COUNTER, IGN8_COMPARE, IGN8_TIMER_DISABLE, IGN8_TIMER_ENABLE);
 #endif
 
-static void reset(FuelSchedule &schedule)
-{
-    schedule.Status = OFF;
-    schedule.pTimerEnable();
-    schedule.start.pCallback = nullCallback;
-    schedule.end.pCallback = nullCallback;
-}
-
-static void reset(IgnitionSchedule &schedule)
-{
-    schedule.Status = OFF;
-    schedule.pTimerEnable();
-    schedule.start.pCallback = nullCallback;
-    schedule.end.pCallback = nullCallback;
-}
-
 static void initialiseFuelSchedules(void)
 {
   injectors.injector(injChannel1).fuelSchedule = &fuelSchedule1;
@@ -134,20 +118,16 @@ void initialiseSchedulers(void)
 
   for (size_t i = injChannel1; i < injChannelCount; i++)
   {
-    reset(*injectors.injector((injectorChannelID_t)i).fuelSchedule);
+    injector_context_st &injector = injectors.injector((injectorChannelID_t)i);
+
+    injector.reset();
   }
 
-  for (size_t i = injChannel1; i < ignChannelCount; i++)
+  for (size_t i = ignChannel1; i < ignChannelCount; i++)
   {
     ignition_context_st &ignition = ignitions.ignition((ignitionChannelID_t)i);
 
-    reset(*ignition.ignitionSchedule);
     ignition.reset();
-  }
-
-  for (size_t i = 0; i < injChannelCount; i++)
-  {
-    injectors.injector((injectorChannelID_t)i).channelInjDegrees = 0;
   }
 }
 

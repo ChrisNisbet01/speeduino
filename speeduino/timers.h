@@ -21,11 +21,16 @@ Hence we will preload the timer with 131 cycles to leave 125 until overflow (1ms
 
 #include "globals.h"
 
-#define SET_COMPARE(compare, value) compare = (COMPARE_TYPE)(value) // It is important that we cast this to the actual overflow limit of the timer. The compare variables type can be bigger than the timer overflow.
+// It is important that we cast this to the actual overflow limit of the timer.
+// The compare variables type can be bigger than the timer overflow.
+#define SET_COMPARE(compare, value) compare = (COMPARE_TYPE)(value)
 
 #define TACHO_PULSE_HIGH() *tach_pin_port |= (tach_pin_mask)
 #define TACHO_PULSE_LOW() *tach_pin_port &= ~(tach_pin_mask)
-enum TachoOutputStatus {TACHO_INACTIVE, READY, ACTIVE}; //The 3 statuses that the tacho output pulse can have. NOTE: Cannot just use 'INACTIVE' as this is already defined within the Teensy Libs
+
+//The 3 statuses that the tacho output pulse can have. NOTE: Cannot just use 'INACTIVE'
+//as this is already defined within the Teensy Libs
+enum TachoOutputStatus {TACHO_INACTIVE, READY, ACTIVE};
 
 extern volatile TachoOutputStatus tachoOutputFlag;
 extern volatile bool tachoSweepEnabled;

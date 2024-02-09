@@ -1,5 +1,6 @@
 #pragma once
 
+#include "scheduledIO.h"
 #include "schedule_status.h"
 #include "globals.h"
 
@@ -47,5 +48,13 @@ struct IgnitionSchedule {
   compare_t &compare;  // Reference to the compare register. E.g. OCR3A
   void (&pTimerDisable)();    // Reference to the timer disable function
   void (&pTimerEnable)();     // Reference to the timer enable function
+
+  void reset(void)
+  {
+      Status = OFF;
+      pTimerEnable();
+      start.pCallback = nullCallback;
+      end.pCallback = nullCallback;
+  }
 };
 

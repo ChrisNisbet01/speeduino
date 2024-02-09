@@ -14,6 +14,7 @@ Timers are typically low resolution (Compared to Schedulers), with maximum frequ
 #include "globals.h"
 #include "sensors.h"
 #include "scheduler.h"
+#include "ignition_contexts.h"
 #include "ignition_control.h"
 #include "injector_control.h"
 #include "scheduledIO.h"
@@ -61,13 +62,6 @@ void initialiseTimers(void)
   tachoOutputFlag = TACHO_INACTIVE;
 }
 
-static inline void applyOverDwellCheck(IgnitionSchedule &schedule, uint32_t targetOverdwellTime) {
-  //Check first whether each spark output is currently on. Only check it's dwell time if it is
-  if ((schedule.Status == RUNNING) && (schedule.startTime < targetOverdwellTime)) {
-    schedule.end.pCallback(schedule.end.args[0], schedule.end.args[1]); schedule.Status = OFF;
-  }
-}
-
 //Timer2 Overflow Interrupt Vector, called when the timer overflows.
 //Executes every ~1ms.
 #if defined(CORE_AVR) //AVR chips use the ISR for this
@@ -89,48 +83,47 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
   loopSec++;
 
   //Overdwell check
-  uint32_t targetOverdwellTime = micros() - dwellLimit_uS; //Set a target time in the past that all coil charging must have begun after. If the coil charge began before this time, it's been running too long
-  bool isCrankLocked = configPage4.ignCranklock && (currentStatus.RPM < currentStatus.crankRPM); //Dwell limiter is disabled during cranking on setups using the locked cranking timing. WE HAVE to do the RPM check here as relying on the engine cranking bit can be potentially too slow in updating
-  if ((configPage4.useDwellLim == 1) && (isCrankLocked != true))
+  //Set a target time in the past that all coil charging must have begun after.
+  //If the coil charge began before this time, it's been running too long
+  uint32_t targetOverdwellTime = micros() - dwellLimit_uS;
+  //Dwell limiter is disabled during cranking on setups using the locked cranking timing.
+  //WE HAVE to do the RPM check here as relying on the engine cranking bit can be
+  //potentially too slow in updating
+  bool isCrankLocked = configPage4.ignCranklock && currentStatus.RPM < currentStatus.crankRPM;
+
+  if (configPage4.useDwellLim == 1 && isCrankLocked != true)
   {
-    applyOverDwellCheck(ignitionSchedule1, targetOverdwellTime);
-#if IGN_CHANNELS >= 2
-    applyOverDwellCheck(ignitionSchedule2, targetOverdwellTime);
-#endif
-#if IGN_CHANNELS >= 3
-    applyOverDwellCheck(ignitionSchedule3, targetOverdwellTime);
-#endif
-#if IGN_CHANNELS >= 4
-    applyOverDwellCheck(ignitionSchedule4, targetOverdwellTime);
-#endif
-#if IGN_CHANNELS >= 5
-    applyOverDwellCheck(ignitionSchedule5, targetOverdwellTime);
-#endif
-#if IGN_CHANNELS >= 6
-    applyOverDwellCheck(ignitionSchedule6, targetOverdwellTime);
-#endif
-#if IGN_CHANNELS >= 7
-    applyOverDwellCheck(ignitionSchedule7, targetOverdwellTime);
-#endif
-#if IGN_CHANNELS >= 8
-    applyOverDwellCheck(ignitionSchedule8, targetOverdwellTime);
-#endif
+    for (size_t i = 0; i < ignChannelCount; i++)
+    {
+      ignitions.ignition((ignitionChannelID_t)i).applyOverDwellCheck(targetOverdwellTime);
+    }
   }
 
-  //Tacho is flagged as being ready for a pulse by the ignition outputs, or the sweep interval upon startup
+  //Tacho is flagged as being ready for a pulse by the ignition outputs,
+  //or the sweep interval upon startup
 
   // See if we're in power-on sweep mode
-  if( currentStatus.tachoSweepEnabled )
+  if (currentStatus.tachoSweepEnabled)
   {
-    if( (currentStatus.engine != 0) || (ms_counter >= TACHO_SWEEP_TIME_MS) )  { currentStatus.tachoSweepEnabled = false; }  // Stop the sweep after SWEEP_TIME, or if real tach signals have started
+    // Stop the sweep after SWEEP_TIME, or if real tach signals have started
+    if (currentStatus.engine != 0 || ms_counter >= TACHO_SWEEP_TIME_MS)
+    {
+      currentStatus.tachoSweepEnabled = false;
+    }
     else
     {
       // Ramp the needle smoothly to the max over the SWEEP_RAMP time
-      if( ms_counter < TACHO_SWEEP_RAMP_MS ) { tachoSweepAccum += map(ms_counter, 0, TACHO_SWEEP_RAMP_MS, 0, tachoSweepIncr); }
-      else                                   { tachoSweepAccum += tachoSweepIncr;                                             }
+      if (ms_counter < TACHO_SWEEP_RAMP_MS)
+      {
+        tachoSweepAccum += map(ms_counter, 0, TACHO_SWEEP_RAMP_MS, 0, tachoSweepIncr);
+      }
+      else
+      {
+        tachoSweepAccum += tachoSweepIncr;
+      }
 
       // Each time it rolls over, it's time to pulse the Tach
-      if( tachoSweepAccum >= MS_PER_SEC )
+      if (tachoSweepAccum >= MS_PER_SEC)
       {
         tachoOutputFlag = READY;
         tachoSweepAccum -= MS_PER_SEC;
@@ -145,7 +138,8 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     if (configPage2.tachoDiv == 0 || currentStatus.tachoAlt)
     {
       TACHO_PULSE_LOW();
-      //ms_counter is cast down to a byte as the tacho duration can only be in the range of 1-6, so no extra resolution above that is required
+      //ms_counter is cast down to a byte as the tacho duration can only be in
+      //the range of 1-6, so no extra resolution above that is required
       tachoEndTime = (uint8_t)ms_counter + configPage2.tachoDuration;
       tachoOutputFlag = ACTIVE;
     }

@@ -118,13 +118,19 @@ void initialiseAll(void)
     //This should be 0 until we hear otherwise from the 16u2
     configPage4.bootloaderCaps = 0;
 
+    /*
+     * Initialise the schedulers before the board because initBoard starts the
+     * interval timer, and the timer handler may expect the schedulers to be set up.
+     */
+    initialiseSchedulers();
+
     initBoard(); //This calls the current individual boards init function. See the board_xxx.ino files for these.
     initialiseTimers();
 
-  #ifdef SD_LOGGING
+#ifdef SD_LOGGING
     initRTC();
     initSD();
-  #endif
+#endif
 
     Serial.begin(115200);
     BIT_SET(currentStatus.status4, BIT_STATUS4_ALLOW_LEGACY_COMMS); //Flag legacy comms as being allowed on startup
@@ -301,8 +307,6 @@ void initialiseAll(void)
     //Setup the calibration tables
     loadCalibration();
 
-
-
     //Set the pin mappings
     if((configPage2.pinMapping == 255) || (configPage2.pinMapping == 0)) //255 = EEPROM value in a blank AVR; 0 = EEPROM value in new FRAM
     {
@@ -315,14 +319,17 @@ void initialiseAll(void)
       setPinMapping(configPage2.pinMapping);
     }
 
-    #if defined(NATIVE_CAN_AVAILABLE)
+#if defined(NATIVE_CAN_AVAILABLE)
       initCAN();
-    #endif
+#endif
 
     //Must come after setPinMapping() as secondary serial can be changed on a per board basis
-    #if defined(secondarySerial_AVAILABLE)
-      if (configPage9.enable_secondarySerial == 1) { secondarySerial.begin(115200); }
-    #endif
+#if defined(secondarySerial_AVAILABLE)
+      if (configPage9.enable_secondarySerial == 1)
+      {
+        secondarySerial.begin(115200);
+      }
+#endif
 
     //End all coil charges to ensure no stray sparks on startup
     singleCoilEndCharge(ignition_id_1);
@@ -330,15 +337,15 @@ void initialiseAll(void)
     singleCoilEndCharge(ignition_id_3);
     singleCoilEndCharge(ignition_id_4);
     singleCoilEndCharge(ignition_id_5);
-    #if (IGN_CHANNELS >= 6)
+#if (IGN_CHANNELS >= 6)
     singleCoilEndCharge(ignition_id_6);
-    #endif
-    #if (IGN_CHANNELS >= 7)
+#endif
+#if (IGN_CHANNELS >= 7)
     singleCoilEndCharge(ignition_id_7);
-    #endif
-    #if (IGN_CHANNELS >= 8)
+#endif
+#if (IGN_CHANNELS >= 8)
     singleCoilEndCharge(ignition_id_8);
-    #endif
+#endif
 
     //Similar for injectors, make sure they're turned off
     closeSingleInjector(injector_id_1);
@@ -359,7 +366,6 @@ void initialiseAll(void)
     //Set the tacho output default state
     digitalWrite(pinTachOut, HIGH);
     //Perform all initialisations
-    initialiseSchedulers();
     //initialiseDisplay();
     initialiseIdle(true);
     initialiseFan();
@@ -1143,6 +1149,7 @@ void initialiseAll(void)
         configure_ignition_coil_schedule(ignitionSchedule1, ignition_id_1, ignition_id_3);
         configure_ignition_coil_schedule(ignitionSchedule2, ignition_id_2, ignition_id_4);
 
+        /* TODO: - Call reset() instead? */
         ignitionSchedule3.start.pCallback = nullCallback;
         ignitionSchedule3.end.pCallback = nullCallback;
         ignitionSchedule4.start.pCallback = nullCallback;
