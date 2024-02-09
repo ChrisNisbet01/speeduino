@@ -1,5 +1,4 @@
-#ifndef IGNITION_ID_H__
-#define IGNITION_ID_H__
+#pragma once
 
 typedef enum ignition_id_t
 {
@@ -13,6 +12,4 @@ typedef enum ignition_id_t
   ignition_id_8,
   ignition_id_COUNT,
 } ignition_id_t;
-
-#endif /* IGNITION_ID_H__ */
 

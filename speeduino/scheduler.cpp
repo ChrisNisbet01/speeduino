@@ -26,7 +26,6 @@ A full copy of the license may be found in the project's root directory
  */
 #include "globals.h"
 #include "scheduler.h"
-#include "scheduledIO.h"
 #include "timers.h"
 #include "schedule_calcs.h"
 #include "injector_contexts.h"
@@ -245,7 +244,7 @@ static void fuelScheduleISR(FuelSchedule &schedule)
 {
   if (schedule.Status == PENDING) //Check to see if this schedule is turn on
   {
-    schedule.start.pCallback(schedule.start.args[0], schedule.start.args[1]);
+    schedule.start.pCallback(schedule.start.injector_ids[0], schedule.start.injector_ids[1]);
     //Set the status to be in progress (ie The start callback has been called,
     //but not the end callback)
     schedule.Status = RUNNING;
@@ -255,7 +254,7 @@ static void fuelScheduleISR(FuelSchedule &schedule)
   }
   else if (schedule.Status == RUNNING)
   {
-      schedule.end.pCallback(schedule.end.args[0], schedule.end.args[1]);
+      schedule.end.pCallback(schedule.end.injector_ids[0], schedule.end.injector_ids[1]);
       schedule.Status = OFF; //Turn off the schedule
 
       //If there is a next schedule queued up, activate it
@@ -376,8 +375,10 @@ static void ignitionScheduleISR(IgnitionSchedule &schedule)
 {
   if (schedule.Status == PENDING) //Check to see if this schedule is turn on
   {
-    schedule.start.pCallback(schedule.start.args[0], schedule.start.args[1]);
-    schedule.Status = RUNNING; //Set the status to be in progress (ie The start callback has been called, but not the end callback)
+    schedule.start.pCallback(schedule.start.coil_ids[0], schedule.start.coil_ids[1]);
+    //Set the status to be in progress (ie The start callback has been called,
+    //but not the end callback)
+    schedule.Status = RUNNING;
     schedule.startTime = micros();
     if(schedule.endScheduleSetByDecoder)
     {
@@ -391,10 +392,11 @@ static void ignitionScheduleISR(IgnitionSchedule &schedule)
   }
   else if (schedule.Status == RUNNING)
   {
-    schedule.end.pCallback(schedule.end.args[0], schedule.end.args[1]);
+    schedule.end.pCallback(schedule.end.coil_ids[0], schedule.end.coil_ids[1]);
     schedule.endScheduleSetByDecoder = false;
     ignitionCount = ignitionCount + 1; //Increment the ignition counter
-    currentStatus.actualDwell = DWELL_SMOOTHED(currentStatus.actualDwell, micros() - schedule.startTime);
+    currentStatus.actualDwell =
+      DWELL_SMOOTHED(currentStatus.actualDwell, micros() - schedule.startTime);
 
     //If there is a next schedule queued up, activate it
     if (schedule.hasNextSchedule)

@@ -29,38 +29,44 @@ static void toggleInjector(injector_id_t injector)
   injectors->toggle(injector);
 }
 
-void openSingleInjector(uint8_t injector_id, uint8_t unused)
+void openSingleInjector(injector_id_t injector_id, injector_id_t unused)
 {
   UNUSED(unused);
-  openInjector((injector_id_t)injector_id);
+  openInjector(injector_id);
 }
 
-void openSingleInjector(uint8_t injector_id)
+void openSingleInjector(injector_id_t injector_id)
 {
-  openInjector((injector_id_t)injector_id);
+  openInjector(injector_id);
 }
 
-void closeSingleInjector(uint8_t injector_id, uint8_t unused)
+void closeSingleInjector(injector_id_t injector_id, injector_id_t unused)
 {
   UNUSED(unused);
-  closeInjector((injector_id_t)injector_id);
+  closeInjector(injector_id);
 }
 
-void closeSingleInjector(uint8_t injector_id)
+void closeSingleInjector(injector_id_t injector_id)
 {
-  closeInjector((injector_id_t)injector_id);
+  closeInjector(injector_id);
 }
 
-void openTwoInjectors(uint8_t arg1, uint8_t arg2)
+void openTwoInjectors(injector_id_t arg1, injector_id_t arg2)
 {
-  openInjector((injector_id_t)arg1);
-  openInjector((injector_id_t)arg2);
+  openInjector(arg1);
+  openInjector(arg2);
 }
 
-void closeTwoInjectors(uint8_t arg1, uint8_t arg2)
+void closeTwoInjectors(injector_id_t arg1, injector_id_t arg2)
 {
-  closeInjector((injector_id_t)arg1);
-  closeInjector((injector_id_t)arg2);
+  closeInjector(arg1);
+  closeInjector(arg2);
+}
+
+void nullCallback(injector_id_t arg1, injector_id_t arg2)
+{
+  UNUSED(arg1);
+  UNUSED(arg2);
 }
 
 void openInjector1(void)

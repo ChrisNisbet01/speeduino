@@ -3,7 +3,6 @@
 #include <unity.h>
 
 #include "scheduler.h"
-#include "scheduledIO.h"
 
 #define TIMEOUT 1000
 #define DURATION 1000

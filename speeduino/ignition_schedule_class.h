@@ -1,8 +1,10 @@
 #pragma once
 
-#include "scheduledIO.h"
+#include "ignition_id.h"
 #include "schedule_status.h"
 #include "globals.h"
+
+typedef void (*coilCallback_fn)(ignition_id_t coil_id1, ignition_id_t coil_id2);
 
 /** Ignition schedule.
  */
@@ -27,13 +29,13 @@ struct IgnitionSchedule {
   volatile ScheduleStatus Status; ///< Schedule status: OFF, PENDING, STAGED, RUNNING
   struct
   {
-    void (*pCallback)(uint8_t arg1, uint8_t arg2);
-    uint8_t args[2];
+    coilCallback_fn pCallback;
+    ignition_id_t coil_ids[2];
   } start;
   struct
   {
-    void (*pCallback)(uint8_t arg1, uint8_t arg2);
-    uint8_t args[2];
+    coilCallback_fn pCallback;
+    ignition_id_t coil_ids[2];
   } end;
   volatile unsigned long startTime; /**< The system time (in uS) that the schedule started, used by the overdwell protection in timers.ino */
   volatile COMPARE_TYPE startCompare; ///< The counter value of the timer when this will start
@@ -49,12 +51,6 @@ struct IgnitionSchedule {
   void (&pTimerDisable)();    // Reference to the timer disable function
   void (&pTimerEnable)();     // Reference to the timer enable function
 
-  void reset(void)
-  {
-      Status = OFF;
-      pTimerEnable();
-      start.pCallback = nullCallback;
-      end.pCallback = nullCallback;
-  }
+  void reset(void);
 };
 

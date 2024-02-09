@@ -8,20 +8,20 @@ static void
 configure_injector_schedule(FuelSchedule &fuelSchedule, injector_id_t injector_id)
 {
   fuelSchedule.start.pCallback = openSingleInjector;
-  fuelSchedule.start.args[0] = injector_id;
+  fuelSchedule.start.injector_ids[0] = injector_id;
   fuelSchedule.end.pCallback = closeSingleInjector;
-  fuelSchedule.end.args[0] = injector_id;
+  fuelSchedule.end.injector_ids[0] = injector_id;
 }
 
 static void
 configure_injector_schedule(FuelSchedule &fuelSchedule, injector_id_t injector_id1, injector_id_t injector_id2)
 {
   fuelSchedule.start.pCallback = openTwoInjectors;
-  fuelSchedule.start.args[0] = injector_id1;
-  fuelSchedule.start.args[1] = injector_id2;
+  fuelSchedule.start.injector_ids[0] = injector_id1;
+  fuelSchedule.start.injector_ids[1] = injector_id2;
   fuelSchedule.end.pCallback = closeTwoInjectors;
-  fuelSchedule.end.args[0] = injector_id1;
-  fuelSchedule.end.args[1] = injector_id2;
+  fuelSchedule.end.injector_ids[0] = injector_id1;
+  fuelSchedule.end.injector_ids[1] = injector_id2;
 }
 
 void injector_context_st::scheduleFuel(uint32_t const timeout)

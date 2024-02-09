@@ -18,19 +18,21 @@ typedef struct ignition_st
   ignition_toggle_id_fn toggle;
 } ignition_st;
 
-void singleCoilBeginCharge(uint8_t coil_id, uint8_t unused);
-void singleCoilBeginCharge(uint8_t coil_id);
-void singleCoilEndCharge(uint8_t coil_id, uint8_t unused);
-void singleCoilEndCharge(uint8_t coil_id);
+void singleCoilBeginCharge(ignition_id_t coil_id, ignition_id_t unused);
+void singleCoilBeginCharge(ignition_id_t coil_id);
+void singleCoilEndCharge(ignition_id_t coil_id, ignition_id_t unused);
+void singleCoilEndCharge(ignition_id_t coil_id);
 
-void twoCoilsBeginCharge(uint8_t coil_id1, uint8_t coil_id2);
-void twoCoilsEndCharge(uint8_t coil_id1, uint8_t coil_id2);
+void twoCoilsBeginCharge(ignition_id_t coil_id1, ignition_id_t coil_id2);
+void twoCoilsEndCharge(ignition_id_t coil_id1, ignition_id_t coil_id2);
 
 //The following functions are used specifically for the trailing coil on rotary engines.
 //They are separate as they also control the switching of the trailing select pin.
-void beginTrailingCoilCharge(uint8_t unused1, uint8_t unused2);
-void endTrailingCoilCharge1(uint8_t unused1, uint8_t unused2);
-void endTrailingCoilCharge2(uint8_t unused1, uint8_t unused2);
+void beginTrailingCoilCharge(ignition_id_t unused1, ignition_id_t unused2);
+void endTrailingCoilCharge1(ignition_id_t unused1, ignition_id_t unused2);
+void endTrailingCoilCharge2(ignition_id_t unused1, ignition_id_t unused2);
+
+void nullCallback(ignition_id_t coil_id1, ignition_id_t coil_id2);
 
 void coil1Toggle(void);
 void coil2Toggle(void);

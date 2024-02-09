@@ -9,7 +9,6 @@
 #include "utilities.h"
 #include "ignition_control.h"
 #include "injector_control.h"
-#include "scheduledIO.h"
 #include "sensors.h"
 #include "storage.h"
 #include "SD_logger.h"

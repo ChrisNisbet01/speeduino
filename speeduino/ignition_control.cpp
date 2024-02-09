@@ -68,65 +68,71 @@ void coil8Toggle(void)
   coil_toggle(ignition_id_8);
 }
 
-void singleCoilBeginCharge(uint8_t coil_id, uint8_t unused)
+void singleCoilBeginCharge(ignition_id_t coil_id, ignition_id_t unused)
 {
   UNUSED(unused);
-  ignition->begin_charge((ignition_id_t)coil_id);
+  ignition->begin_charge(coil_id);
   tachoOutputOn();
 }
 
-void singleCoilBeginCharge(uint8_t coil_id)
+void singleCoilBeginCharge(ignition_id_t coil_id)
 {
-  ignition->begin_charge((ignition_id_t)coil_id);
+  ignition->begin_charge(coil_id);
   tachoOutputOn();
 }
 
-void singleCoilEndCharge(uint8_t coil_id, uint8_t unused)
+void singleCoilEndCharge(ignition_id_t coil_id, ignition_id_t unused)
 {
   UNUSED(unused);
-  ignition->end_charge((ignition_id_t)coil_id);
+  ignition->end_charge(coil_id);
   tachoOutputOff();
 }
 
-void singleCoilEndCharge(uint8_t coil_id)
+void singleCoilEndCharge(ignition_id_t coil_id)
 {
-  ignition->end_charge((ignition_id_t)coil_id);
+  ignition->end_charge(coil_id);
   tachoOutputOff();
 }
 
-void twoCoilsBeginCharge(uint8_t coil_id1, uint8_t coil_id2)
+void twoCoilsBeginCharge(ignition_id_t coil_id1, ignition_id_t coil_id2)
 {
-  ignition->begin_charge((ignition_id_t)coil_id1);
-  ignition->begin_charge((ignition_id_t)coil_id2);
+  ignition->begin_charge(coil_id1);
+  ignition->begin_charge(coil_id2);
   tachoOutputOn();
 }
 
-void twoCoilsEndCharge(uint8_t coil_id1, uint8_t coil_id2)
+void twoCoilsEndCharge(ignition_id_t coil_id1, ignition_id_t coil_id2)
 {
-  ignition->end_charge((ignition_id_t)coil_id1);
-  ignition->end_charge((ignition_id_t)coil_id2);
+  ignition->end_charge(coil_id1);
+  ignition->end_charge(coil_id2);
   tachoOutputOff();
 }
 
 //The below 3 calls are all part of the rotary ignition mode
-void beginTrailingCoilCharge(uint8_t unused1, uint8_t unused2)
+void beginTrailingCoilCharge(ignition_id_t unused1, ignition_id_t unused2)
 {
   UNUSED(unused1);
   UNUSED(unused2);
   singleCoilBeginCharge(ignition_id_2);
 }
-void endTrailingCoilCharge1(uint8_t unused1, uint8_t unused2) //Sets ign3 (Trailing select) high
+void endTrailingCoilCharge1(ignition_id_t unused1, ignition_id_t unused2) //Sets ign3 (Trailing select) high
 {
   UNUSED(unused1);
   UNUSED(unused2);
   singleCoilEndCharge(ignition_id_2);
   singleCoilBeginCharge(ignition_id_3);
 }
-void endTrailingCoilCharge2(uint8_t unused1, uint8_t unused2) //sets ign3 (Trailing select) low
+void endTrailingCoilCharge2(ignition_id_t unused1, ignition_id_t unused2) //sets ign3 (Trailing select) low
 {
   UNUSED(unused1);
   UNUSED(unused2);
   twoCoilsEndCharge(ignition_id_2, ignition_id_3);
+}
+
+void nullCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
+{
+  UNUSED(coil_id1);
+  UNUSED(coil_id2);
 }
 
 static void ignition_control_update(OUTPUT_CONTROL_TYPE const control_method)

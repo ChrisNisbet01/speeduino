@@ -13,7 +13,6 @@
 #include "ignition.h"
 #include "ignition_control.h"
 #include "injector_control.h"
-#include "scheduledIO.h"
 #include "scheduler.h"
 #include "schedule_calcs.h"
 #include "auxiliaries.h"

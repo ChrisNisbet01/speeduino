@@ -1,8 +1,10 @@
 #pragma once
 
-#include "scheduledIO.h"
+#include "injector_id.h"
 #include "schedule_status.h"
 #include "globals.h"
+
+typedef void (*injectorCallback_fn)(injector_id_t coil_id1, injector_id_t coil_id2);
 
 /** Fuel injection schedule.
 * Fuel schedules don't use the callback pointers, or the startTime/endScheduleSetByDecoder variables.
@@ -31,13 +33,13 @@ struct FuelSchedule {
   volatile COMPARE_TYPE endCompare;   ///< The counter value of the timer when this will end
   struct
   {
-    void (*pCallback)(uint8_t arg1, uint8_t arg2);
-    uint8_t args[2];
+    injectorCallback_fn pCallback;
+    injector_id_t injector_ids[2];
   } start;
   struct
   {
-    void (*pCallback)(uint8_t arg1, uint8_t arg2);
-    uint8_t args[2];
+    injectorCallback_fn pCallback;
+    injector_id_t injector_ids[2];
   } end;
   COMPARE_TYPE nextStartCompare;
   COMPARE_TYPE nextEndCompare;
@@ -48,13 +50,7 @@ struct FuelSchedule {
   void (&pTimerDisable)();    // Reference to the timer disable function
   void (&pTimerEnable)();     // Reference to the timer enable function
 
-  void reset(void)
-  {
-      Status = OFF;
-      pTimerEnable();
-      start.pCallback = nullCallback;
-      end.pCallback = nullCallback;
-  }
+  void reset(void);
 };
 
 extern FuelSchedule fuelSchedule1;
