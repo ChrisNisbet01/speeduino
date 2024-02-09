@@ -1,6 +1,7 @@
 #include "ignition_contexts.h"
 
 #include "ignition.h"
+#include "ignition_control.h"
 #include "schedule_calcs.h"
 
 bool ignition_context_st::
@@ -52,7 +53,7 @@ applyOverDwellCheck(uint32_t targetOverdwellTime)
   //Check first whether each spark output is currently on. Only check it's dwell time if it is
   if (ignitionSchedule->Status == RUNNING && ignitionSchedule->startTime < targetOverdwellTime)
   {
-    ignitionSchedule->end.pCallback(ignitionSchedule->end.args[0], ignitionSchedule->end.args[1]);
+    ignitionSchedule->end.pCallback(ignitionSchedule->end.coil_ids[0], ignitionSchedule->end.coil_ids[1]);
     ignitionSchedule->Status = OFF;
   }
 }
