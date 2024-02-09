@@ -108,28 +108,30 @@ STM32RTC& rtc = STM32RTC::getInstance();
     ***********************************************************************************************************
     * Real Time clock for datalogging/time stamping
     */
-    #ifdef RTC_ENABLED
+#ifdef RTC_ENABLED
       //Check if RTC time has been set earlier. If yes, RTC will use LSE_CLOCK. If not, default LSI_CLOCK is used, to prevent hanging on boot.
       if (rtc.isTimeSet()) {
         rtc.setClockSource(STM32RTC::LSE_CLOCK); //Initialise external clock for RTC if clock is set. That is the only clock running of VBAT
       }
       rtc.begin(); // initialise RTC 24H format
-    #endif
+#endif
     /*
     ***********************************************************************************************************
     * Idle
     */
     if( (configPage6.iacAlgorithm == IAC_ALGORITHM_PWM_OL) || (configPage6.iacAlgorithm == IAC_ALGORITHM_PWM_CL) || (configPage6.iacAlgorithm == IAC_ALGORITHM_PWM_OLCL))
     {
-        idle_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (TIMER_RESOLUTION * configPage6.idleFreq * 2U)); //Converts the frequency in Hz to the number of ticks (at 4uS) it takes to complete 1 cycle. Note that the frequency is divided by 2 coming from TS to allow for up to 5KHz
+      //Converts the frequency in Hz to the number of ticks (at 4uS) it takes to complete 1 cycle.
+      //Note that the frequency is divided by 2 coming from TS to allow for up to 5KHz
+      idle_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (TIMER_RESOLUTION * configPage6.idleFreq * 2U));
     }
 
     //This must happen at the end of the idle init
-    #if ( STM32_CORE_VERSION_MAJOR < 2 )
+#if ( STM32_CORE_VERSION_MAJOR < 2 )
     Timer1.setMode(4, TIMER_OUTPUT_COMPARE);
-    #else
+#else
     Timer1.setMode(4, TIMER_OUTPUT_COMPARE_TOGGLE);
-    #endif
+#endif
     Timer1.attachInterrupt(4, idleInterrupt);  //on first flash the configPage4.iacAlgorithm is invalid
 
 
@@ -137,25 +139,26 @@ STM32RTC& rtc = STM32RTC::getInstance();
     ***********************************************************************************************************
     * Timers
     */
-    #if defined(ARDUINO_BLUEPILL_F103C8) || defined(ARDUINO_BLUEPILL_F103CB)
+#if defined(ARDUINO_BLUEPILL_F103C8) || defined(ARDUINO_BLUEPILL_F103CB)
       Timer4.setOverflow(1000, MICROSEC_FORMAT);  // Set up period
-      #if ( STM32_CORE_VERSION_MAJOR < 2 )
+#if ( STM32_CORE_VERSION_MAJOR < 2 )
       Timer4.setMode(1, TIMER_OUTPUT_COMPARE);
       Timer4.attachInterrupt(1, oneMSInterval);
-      #else //2.0 forward
+#else //2.0 forward
       Timer4.attachInterrupt(oneMSInterval);
-      #endif
+#endif
       Timer4.resume(); //Start Timer
-    #else
+#else
       Timer11.setOverflow(1000, MICROSEC_FORMAT);  // Set up period
-      #if ( STM32_CORE_VERSION_MAJOR < 2 )
+#if ( STM32_CORE_VERSION_MAJOR < 2 )
       Timer11.setMode(1, TIMER_OUTPUT_COMPARE);
       Timer11.attachInterrupt(1, oneMSInterval);
-      #else
+#else
       Timer11.attachInterrupt(oneMSInterval);
-      #endif
+#endif
       Timer11.resume(); //Start Timer
-    #endif
+#endif
+
     pinMode(LED_BUILTIN, OUTPUT); //Visual WDT
 
     /*
@@ -165,22 +168,22 @@ STM32RTC& rtc = STM32RTC::getInstance();
     //2uS resolution Min 8Hz, Max 5KHz
     boost_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (TIMER_RESOLUTION * configPage6.boostFreq * 2U)); //Converts the frequency in Hz to the number of ticks (at 4uS) it takes to complete 1 cycle. The x2 is there because the frequency is stored at half value (in a byte) to allow frequencies up to 511Hz
     vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (TIMER_RESOLUTION * configPage6.vvtFreq * 2U)); //Converts the frequency in Hz to the number of ticks (at 4uS) it takes to complete 1 cycle
-    #if defined(PWM_FAN_AVAILABLE)
+#if defined(PWM_FAN_AVAILABLE)
     fan_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (TIMER_RESOLUTION * configPage6.fanFreq * 2U)); //Converts the frequency in Hz to the number of ticks (at 4uS) it takes to complete 1 cycle
-    #endif
+#endif
     //Need to be initialised last due to instant interrupt
-    #if ( STM32_CORE_VERSION_MAJOR < 2 )
+#if ( STM32_CORE_VERSION_MAJOR < 2 )
     Timer1.setMode(1, TIMER_OUTPUT_COMPARE);
     Timer1.setMode(2, TIMER_OUTPUT_COMPARE);
     Timer1.setMode(3, TIMER_OUTPUT_COMPARE);
-    #else //2.0 forward
+#else //2.0 forward
     Timer1.setMode(1, TIMER_OUTPUT_COMPARE_TOGGLE);
     Timer1.setMode(2, TIMER_OUTPUT_COMPARE_TOGGLE);
     Timer1.setMode(3, TIMER_OUTPUT_COMPARE_TOGGLE);
-    #endif
-    #if defined(PWM_FAN_AVAILABLE)
+#endif
+#if defined(PWM_FAN_AVAILABLE)
     Timer1.attachInterrupt(1, fanInterrupt);
-    #endif
+#endif
     Timer1.attachInterrupt(2, boostInterrupt);
     Timer1.attachInterrupt(3, vvtInterrupt);
 
@@ -196,7 +199,7 @@ STM32RTC& rtc = STM32RTC::getInstance();
     Timer2.setPrescaleFactor(((Timer2.getTimerClkFreq()/1000000) * TIMER_RESOLUTION)-1);   //4us resolution
     Timer3.setPrescaleFactor(((Timer3.getTimerClkFreq()/1000000) * TIMER_RESOLUTION)-1);   //4us resolution
 
-    #if ( STM32_CORE_VERSION_MAJOR < 2 )
+#if ( STM32_CORE_VERSION_MAJOR < 2 )
     Timer2.setMode(1, TIMER_OUTPUT_COMPARE);
     Timer2.setMode(2, TIMER_OUTPUT_COMPARE);
     Timer2.setMode(3, TIMER_OUTPUT_COMPARE);
@@ -206,7 +209,7 @@ STM32RTC& rtc = STM32RTC::getInstance();
     Timer3.setMode(2, TIMER_OUTPUT_COMPARE);
     Timer3.setMode(3, TIMER_OUTPUT_COMPARE);
     Timer3.setMode(4, TIMER_OUTPUT_COMPARE);
-    #else //2.0 forward
+#else //2.0 forward
     Timer2.setMode(1, TIMER_OUTPUT_COMPARE_TOGGLE);
     Timer2.setMode(2, TIMER_OUTPUT_COMPARE_TOGGLE);
     Timer2.setMode(3, TIMER_OUTPUT_COMPARE_TOGGLE);
@@ -216,90 +219,88 @@ STM32RTC& rtc = STM32RTC::getInstance();
     Timer3.setMode(2, TIMER_OUTPUT_COMPARE_TOGGLE);
     Timer3.setMode(3, TIMER_OUTPUT_COMPARE_TOGGLE);
     Timer3.setMode(4, TIMER_OUTPUT_COMPARE_TOGGLE);
-    #endif
+#endif
     //Attach interrupt functions
     //Injection
     Timer3.attachInterrupt(1, fuelSchedule1Interrupt);
     Timer3.attachInterrupt(2, fuelSchedule2Interrupt);
     Timer3.attachInterrupt(3, fuelSchedule3Interrupt);
     Timer3.attachInterrupt(4, fuelSchedule4Interrupt);
-    #if (INJ_CHANNELS >= 5)
+#if (INJ_CHANNELS >= 5)
     Timer5.setOverflow(0xFFFF, TICK_FORMAT);
     Timer5.setPrescaleFactor(((Timer5.getTimerClkFreq()/1000000) * TIMER_RESOLUTION)-1);   //4us resolution
-    #if ( STM32_CORE_VERSION_MAJOR < 2 )
+#if ( STM32_CORE_VERSION_MAJOR < 2 )
     Timer5.setMode(1, TIMER_OUTPUT_COMPARE);
-    #else //2.0 forward
+#else //2.0 forward
     Timer5.setMode(1, TIMER_OUTPUT_COMPARE_TOGGLE);
-    #endif
+#endif
     Timer5.attachInterrupt(1, fuelSchedule5Interrupt);
-    #endif
-    #if (INJ_CHANNELS >= 6)
-    #if ( STM32_CORE_VERSION_MAJOR < 2 )
+#endif
+#if (INJ_CHANNELS >= 6)
+#if ( STM32_CORE_VERSION_MAJOR < 2 )
     Timer5.setMode(2, TIMER_OUTPUT_COMPARE);
-    #else //2.0 forward
+#else //2.0 forward
     Timer5.setMode(1, TIMER_OUTPUT_COMPARE_TOGGLE);
-    #endif
+#endif
     Timer5.attachInterrupt(2, fuelSchedule6Interrupt);
-    #endif
-    #if (INJ_CHANNELS >= 7)
-    #if ( STM32_CORE_VERSION_MAJOR < 2 )
+#endif
+#if (INJ_CHANNELS >= 7)
+#if ( STM32_CORE_VERSION_MAJOR < 2 )
     Timer5.setMode(3, TIMER_OUTPUT_COMPARE);
-    #else //2.0 forward
+#else //2.0 forward
     Timer5.setMode(3, TIMER_OUTPUT_COMPARE_TOGGLE);
-    #endif
+#endif
     Timer5.attachInterrupt(3, fuelSchedule7Interrupt);
-    #endif
-    #if (INJ_CHANNELS >= 8)
-    #if ( STM32_CORE_VERSION_MAJOR < 2 )
+#endif
+#if (INJ_CHANNELS >= 8)
+#if ( STM32_CORE_VERSION_MAJOR < 2 )
     Timer5.setMode(4, TIMER_OUTPUT_COMPARE);
-    #else //2.0 forward
+#else //2.0 forward
     Timer5.setMode(4, TIMER_OUTPUT_COMPARE_TOGGLE);
-    #endif
+#endif
     Timer5.attachInterrupt(4, fuelSchedule8Interrupt);
-    #endif
+#endif
 
     //Ignition
     Timer2.attachInterrupt(1, ignitionSchedule1Interrupt);
     Timer2.attachInterrupt(2, ignitionSchedule2Interrupt);
     Timer2.attachInterrupt(3, ignitionSchedule3Interrupt);
     Timer2.attachInterrupt(4, ignitionSchedule4Interrupt);
-    #if (IGN_CHANNELS >= 5)
+#if (IGN_CHANNELS >= 5)
     Timer4.setOverflow(0xFFFF, TICK_FORMAT);
     Timer4.setPrescaleFactor(((Timer4.getTimerClkFreq()/1000000) * TIMER_RESOLUTION)-1);   //4us resolution
-    #if ( STM32_CORE_VERSION_MAJOR < 2 )
+#if ( STM32_CORE_VERSION_MAJOR < 2 )
     Timer4.setMode(1, TIMER_OUTPUT_COMPARE);
-    #else //2.0 forward
+#else //2.0 forward
     Timer4.setMode(1, TIMER_OUTPUT_COMPARE_TOGGLE);
-    #endif
+#endif
     Timer4.attachInterrupt(1, ignitionSchedule5Interrupt);
-    #endif
-    #if (IGN_CHANNELS >= 6)
-    #if ( STM32_CORE_VERSION_MAJOR < 2 )
+#endif
+#if (IGN_CHANNELS >= 6)
+#if ( STM32_CORE_VERSION_MAJOR < 2 )
     Timer4.setMode(2, TIMER_OUTPUT_COMPARE);
-    #else //2.0 forward
+#else //2.0 forward
     Timer4.setMode(2, TIMER_OUTPUT_COMPARE_TOGGLE);
-    #endif
+#endif
     Timer4.attachInterrupt(2, ignitionSchedule6Interrupt);
-    #endif
-    #if (IGN_CHANNELS >= 7)
-    #if ( STM32_CORE_VERSION_MAJOR < 2 )
+#endif
+#if (IGN_CHANNELS >= 7)
+#if ( STM32_CORE_VERSION_MAJOR < 2 )
     Timer4.setMode(3, TIMER_OUTPUT_COMPARE);
-    #else //2.0 forward
+#else //2.0 forward
     Timer4.setMode(3, TIMER_OUTPUT_COMPARE_TOGGLE);
-    #endif
+#endif
     Timer4.attachInterrupt(3, ignitionSchedule7Interrupt);
-    #endif
-    #if (IGN_CHANNELS >= 8)
-    #if ( STM32_CORE_VERSION_MAJOR < 2 )
+#endif
+#if (IGN_CHANNELS >= 8)
+#if ( STM32_CORE_VERSION_MAJOR < 2 )
     Timer4.setMode(4, TIMER_OUTPUT_COMPARE);
-    #else //2.0 forward
+#else //2.0 forward
     Timer4.setMode(4, TIMER_OUTPUT_COMPARE_TOGGLE);
-    #endif
+#endif
     Timer4.attachInterrupt(4, ignitionSchedule8Interrupt);
-    #endif
-
-
-  }
+#endif
+}
 
   uint16_t freeRam()
   {

@@ -24,9 +24,9 @@ void initBoard(void)
     * General
     */
     configPage9.intcan_available = 0;   // AVR devices do NOT have internal canbus
-    #ifdef secondarySerial_AVAILABLE
+#ifdef secondarySerial_AVAILABLE
       pSecondarySerial = &Serial3;
-    #endif
+#endif
 
     /*
     ***********************************************************************************************************
@@ -78,7 +78,7 @@ void initBoard(void)
     TCCR5A = TIMER_MODE_NORMAL;     //Timer5 Control Reg A: Wave Gen Mode normal
     TCCR5B = TIMER_PRESCALER_64;    //Timer5 Control Reg B: Timer Prescaler set to 64.
     TIFR5 = (1 << OCF5A) | (1<<OCF5B) | (1<<OCF5C) | (1<<TOV5) | (1<<ICF5); //Clear the compare flags, overflow flag and external input flag bits
-    
+
     #if defined(TIMER5_MICROS)
       TIMSK5 |= (1 << TOIE5); //Enable the timer5 overflow interrupt (See timers.ino for ISR)
       TIMSK0 &= ~_BV(TOIE0); // disable timer0 overflow interrupt
@@ -129,7 +129,7 @@ static inline unsigned long micros_safe(void)
   interrupts();
 
   return newMicros;
-} 
+}
 #endif //TIMER5_MICROS
 
 #endif //CORE_AVR

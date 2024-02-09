@@ -64,6 +64,12 @@ void injector_context_st::applyInjectorControl(uint16_t injOpenTime, uint16_t op
   }
 }
 
+void injector_context_st::
+reset(void)
+{
+  channelInjDegrees = 0;
+  fuelSchedule->reset();
+}
 
 void injectors_context_st::setMaxInjectors(byte const maxOutputs)
 {

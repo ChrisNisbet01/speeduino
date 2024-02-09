@@ -35,12 +35,7 @@ public:
    */
   int ignDegrees;
 
-  void reset(void)
-  {
-    startAngle = 0;
-    endAngle = 0;
-    ignDegrees = 0;
-  }
+  void reset(void);
 
   bool adjustCrankAngle(int crankAngle, uint16_t currentTooth);
 
@@ -52,6 +47,7 @@ public:
 
   void setIgnitionSchedule(unsigned long timeout, unsigned long durationMicrosecs);
 
+  void applyOverDwellCheck(uint32_t targetOverdwellTime);
 } ignition_context_st;
 
 

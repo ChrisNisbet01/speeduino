@@ -44,6 +44,26 @@ setIgnitionSchedule(unsigned long const timeout, unsigned long const durationMic
   ::setIgnitionSchedule(*ignitionSchedule, timeout, durationMicrosecs);
 }
 
+void ignition_context_st::
+applyOverDwellCheck(uint32_t targetOverdwellTime)
+{
+  //Check first whether each spark output is currently on. Only check it's dwell time if it is
+  if (ignitionSchedule->Status == RUNNING && ignitionSchedule->startTime < targetOverdwellTime)
+  {
+    ignitionSchedule->end.pCallback(ignitionSchedule->end.args[0], ignitionSchedule->end.args[1]);
+    ignitionSchedule->Status = OFF;
+  }
+}
+
+void ignition_context_st::
+reset(void)
+{
+  startAngle = 0;
+  endAngle = 0;
+  ignDegrees = 0;
+  ignitionSchedule->reset();
+}
+
 
 /* Ignitions context methods. */
 void ignition_contexts_st::adjustCrankAngle(int16_t const crankAngle, uint16_t const currentTooth)

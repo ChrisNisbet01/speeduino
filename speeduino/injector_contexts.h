@@ -34,6 +34,8 @@ typedef struct injector_context_st
   /* The number of crank degrees until the associated cylinder is at TDC */
   int channelInjDegrees;
 
+  void reset(void);
+
   void scheduleFuel(uint32_t const timeout);
 
   void applyFuelTrimToPW(trimTable3d * pTrimTable, int16_t fuelLoad, int16_t RPM);
@@ -45,7 +47,6 @@ typedef struct injector_context_st
   void configure_injector_schedule(injector_id_t injector_id1, injector_id_t injector_id2);
 
   void applyInjectorControl(uint16_t injOpenTime, uint16_t openAngle, int crankAngle);
-
 } injector_context_st;
 
 typedef struct injectors_context_st
