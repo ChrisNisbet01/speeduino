@@ -155,7 +155,7 @@ bit_clear_atomic(uint8_t &value, uint8_t const bit)
 #define VVT2_PIN_OFF() VVT2_PIN_LOW();
 #define VVT_TIME_DELAY_MULTIPLIER  50
 
-#define WMI_TANK_IS_EMPTY() (configPage10.wmiEmptyEnabled ? (configPage10.wmiEmptyPolarity ? digitalRead(pinWMIEmpty) : !digitalRead(pinWMIEmpty)) : 1)
+#define WMI_TANK_IS_EMPTY() (configPage10.wmiEmptyEnabled ? (configPage10.wmiEmptyPolarity == 0) ^ digitalRead(pinWMIEmpty) : 1)
 
 extern volatile PORT_TYPE *vvt1_pin_port;
 extern volatile PINMASK_TYPE vvt1_pin_mask;

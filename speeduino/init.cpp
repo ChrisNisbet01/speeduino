@@ -3076,10 +3076,12 @@ void setPinMapping(byte boardID)
   {
     pinMode(pinFlex, INPUT); //Standard GM / Continental flex sensor requires pullup, but this should be onboard. The internal pullup will not work (Requires ~3.3k)!
   }
+
   if( (configPage2.vssMode > 1) && (!pinIsOutput(pinVSS)) ) //Pin mode 1 for VSS is CAN
   {
     pinMode(pinVSS, INPUT);
   }
+
   if( (configPage6.launchEnabled > 0) && (!pinIsOutput(pinLaunch)) )
   {
     if (configPage6.lnchPullRes)
@@ -3092,15 +3094,27 @@ void setPinMapping(byte boardID)
       pinMode(pinLaunch, INPUT);
     }
   }
-  if( (configPage2.idleUpEnabled > 0) && (!pinIsOutput(pinIdleUp)) )
+  if ((configPage2.idleUpEnabled > 0) && (!pinIsOutput(pinIdleUp)))
   {
-    if (configPage2.idleUpPolarity == 0) { pinMode(pinIdleUp, INPUT_PULLUP); } //Normal setting
-    else { pinMode(pinIdleUp, INPUT); } //inverted setting
+    if (configPage2.idleUpPolarity == 0) //Normal setting
+    {
+      pinMode(pinIdleUp, INPUT_PULLUP);
+    }
+    else //inverted setting
+    {
+      pinMode(pinIdleUp, INPUT);
+    }
   }
-  if( (configPage2.CTPSEnabled > 0) && (!pinIsOutput(pinCTPS)) )
+  if ((configPage2.CTPSEnabled > 0) && (!pinIsOutput(pinCTPS)))
   {
-    if (configPage2.CTPSPolarity == 0) { pinMode(pinCTPS, INPUT_PULLUP); } //Normal setting
-    else { pinMode(pinCTPS, INPUT); } //inverted setting
+    if (configPage2.CTPSPolarity == 0) //Normal setting
+    {
+      pinMode(pinCTPS, INPUT_PULLUP);
+    }
+    else //inverted setting
+    {
+      pinMode(pinCTPS, INPUT);
+    }
   }
   if( (configPage10.fuel2Mode == FUEL2_MODE_INPUT_SWITCH) && (!pinIsOutput(pinFuel2Input)) )
   {
