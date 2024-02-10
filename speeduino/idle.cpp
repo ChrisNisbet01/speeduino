@@ -1130,95 +1130,65 @@ void disableIdle(void)
   currentStatus.idleLoad = 0;
 }
 
+static inline void
+switch_idle_low(bool const using_two_idle_channels)
+{
+#if defined (CORE_TEENSY41) //PIT TIMERS count down and have opposite effect on PWM
+    IDLE_PIN_HIGH();
+    if (using_two_idle_channels)
+    {
+      IDLE2_PIN_LOW();
+    }
+#else
+    IDLE_PIN_LOW();  // Switch pin to low (1 pin mode)
+    //If 2 idle channels are in use, flip idle2 to be the opposite of idle1
+    if (using_two_idle_channels)
+    {
+      IDLE2_PIN_HIGH();
+    }
+#endif
+}
+
+static inline void
+switch_idle_high(bool const using_two_idle_channels)
+{
+#if defined (CORE_TEENSY41) //PIT TIMERS count down and have opposite effect on PWM
+    IDLE_PIN_LOW();
+    if (using_two_idle_channels)
+    {
+      IDLE2_PIN_HIGH();
+    }
+#else
+    IDLE_PIN_HIGH();  // Switch pin high
+    //If 2 idle channels are in use, flip idle2 to be the opposite of idle1
+    if (using_two_idle_channels)
+    {
+      IDLE2_PIN_LOW();
+    }
+#endif
+}
+
 #if defined(CORE_AVR) //AVR chips use the ISR for this
 ISR(TIMER1_COMPC_vect) //cppcheck-suppress misra-c2012-8.2
 #else
 void idleInterrupt(void) //Most ARM chips can simply call a function
 #endif
 {
+  /* Take configured polarity into account. */
+  bool const switch_to_low = idle_pwm_state ^ (configPage6.iacPWMdir != 0);
   bool const using_two_idle_channels = configPage6.iacChannels == 1;
 
-  if (idle_pwm_state)
+  if (switch_to_low)
   {
-    if (configPage6.iacPWMdir == 0)
-    {
-      //Normal direction
-#if defined (CORE_TEENSY41) //PIT TIMERS count down and have opposite effect on PWM
-      IDLE_PIN_HIGH();
-      if (using_two_idle_channels)
-      {
-        IDLE2_PIN_LOW();
-      }
-#else
-      IDLE_PIN_LOW();  // Switch pin to low (1 pin mode)
-      //If 2 idle channels are in use, flip idle2 to be the opposite of idle1
-      if (using_two_idle_channels)
-      {
-        IDLE2_PIN_HIGH();
-      }
-#endif
-    }
-    else
-    {
-      //Reversed direction
-#if defined (CORE_TEENSY41) //PIT TIMERS count down and have opposite effect on PWM
-      IDLE_PIN_LOW();
-      if (using_two_idle_channels)
-      {
-        IDLE2_PIN_HIGH();
-      }
-#else
-      IDLE_PIN_HIGH();  // Switch pin high
-      //If 2 idle channels are in use, flip idle2 to be the opposite of idle1
-      if (using_two_idle_channels)
-      {
-        IDLE2_PIN_LOW();
-      }
-#endif
-    }
-    SET_COMPARE(IDLE_COMPARE, IDLE_COUNTER + (idle_pwm_max_count - idle_pwm_cur_value));
-    idle_pwm_state = false;
+    switch_idle_low(using_two_idle_channels);
   }
   else
   {
-    if (configPage6.iacPWMdir == 0)
-    {
-      //Normal direction
-#if defined (CORE_TEENSY41) //PIT TIMERS count down and have opposite effect on PWM
-      IDLE_PIN_LOW();
-      if (using_two_idle_channels)
-      {
-        IDLE2_PIN_HIGH();
-      }
-#else
-      IDLE_PIN_HIGH();  // Switch pin high
-      //If 2 idle channels are in use, flip idle2 to be the opposite of idle1
-      if (using_two_idle_channels)
-      {
-        IDLE2_PIN_LOW();
-      }
-#endif
-    }
-    else
-    {
-      //Reversed direction
-#if defined (CORE_TEENSY41) //PIT TIMERS count down and have opposite effect on PWM
-      IDLE_PIN_HIGH();
-      if (using_two_idle_channels)
-      {
-        IDLE2_PIN_LOW();
-      }
-#else
-      IDLE_PIN_LOW();  // Switch pin to low (1 pin mode)
-      //If 2 idle channels are in use, flip idle2 to be the opposite of idle1
-      if (using_two_idle_channels)
-      {
-        IDLE2_PIN_HIGH();
-      }
-#endif
-    }
-    SET_COMPARE(IDLE_COMPARE, IDLE_COUNTER + idle_pwm_target_value);
-    idle_pwm_cur_value = idle_pwm_target_value;
-    idle_pwm_state = true;
+    switch_idle_high(using_two_idle_channels);
   }
+
+  SET_COMPARE(IDLE_COMPARE, IDLE_COUNTER + idle_pwm_target_value);
+  idle_pwm_cur_value = idle_pwm_target_value;
+  idle_pwm_state = true;
 }
+
