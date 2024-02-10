@@ -61,43 +61,9 @@ void initialiseTimers(void)
   tachoOutputFlag = TACHO_INACTIVE;
 }
 
-//Timer2 Overflow Interrupt Vector, called when the timer overflows.
-//Executes every ~1ms.
-#if defined(CORE_AVR) //AVR chips use the ISR for this
-//This MUST be no block. Turning NO_BLOCK off messes with timing accuracy.
-ISR(TIMER2_OVF_vect, ISR_NOBLOCK) //cppcheck-suppress misra-c2012-8.2
-#else
-void oneMSInterval(void) //Most ARM chips can simply call a function
-#endif
+static void
+updateTacho(void)
 {
-  BIT_SET(TIMER_mask, BIT_TIMER_1KHZ);
-  ms_counter++;
-
-  //Increment Loop Counters
-  loop5ms++;
-  loop33ms++;
-  loop66ms++;
-  loop100ms++;
-  loop250ms++;
-  loopSec++;
-
-  //Overdwell check
-  //Set a target time in the past that all coil charging must have begun after.
-  //If the coil charge began before this time, it's been running too long
-  uint32_t targetOverdwellTime = micros() - dwellLimit_uS;
-  //Dwell limiter is disabled during cranking on setups using the locked cranking timing.
-  //WE HAVE to do the RPM check here as relying on the engine cranking bit can be
-  //potentially too slow in updating
-  bool isCrankLocked = configPage4.ignCranklock && currentStatus.RPM < currentStatus.crankRPM;
-
-  if (configPage4.useDwellLim == 1 && isCrankLocked != true)
-  {
-    for (size_t i = 0; i < ignChannelCount; i++)
-    {
-      ignitions.ignition((ignitionChannelID_t)i).applyOverDwellCheck(targetOverdwellTime);
-    }
-  }
-
   //Tacho is flagged as being ready for a pulse by the ignition outputs,
   //or the sweep interval upon startup
 
@@ -147,7 +113,8 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
       //Don't run on this pulse (Half speed tacho)
       tachoOutputFlag = TACHO_INACTIVE;
     }
-    currentStatus.tachoAlt = !currentStatus.tachoAlt; //Flip the alternating value in case half speed tacho is in use.
+    //Flip the alternating value in case half speed tacho is in use.
+    currentStatus.tachoAlt = !currentStatus.tachoAlt;
   }
   else if(tachoOutputFlag == ACTIVE)
   {
@@ -158,6 +125,99 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
       tachoOutputFlag = TACHO_INACTIVE;
     }
   }
+}
+
+static void
+updateFlex(void)
+{
+  byte tempEthPct;
+
+  if (flexCounter < 50)
+  {
+    //Standard GM Continental sensor reads from 50Hz (0 ethanol) to 150Hz (Pure ethanol).
+    //Subtracting 50 from the frequency therefore gives the ethanol percentage.
+    tempEthPct = 0;
+  }
+  else if (flexCounter > 151) //1 pulse buffer
+  {
+    if (flexCounter < 169)
+    {
+      tempEthPct = 100;
+    }
+    else
+    {
+      //This indicates an error condition. Spec of the sensor is that errors are above 170Hz)
+      tempEthPct = 0;
+    }
+  }
+  else
+  {
+    //Standard GM Continental sensor reads from 50Hz (0 ethanol) to 150Hz (Pure ethanol).
+    //Subtracting 50 from the frequency therefore gives the ethanol percentage.
+    tempEthPct = flexCounter - 50;
+  }
+  flexCounter = 0;
+
+  //Off by 1 error check
+  if (tempEthPct == 1)
+  {
+    tempEthPct = 0;
+  }
+
+  currentStatus.ethanolPct =
+    ADC_FILTER(tempEthPct, configPage4.FILTER_FLEX, currentStatus.ethanolPct);
+
+  //Continental flex sensor fuel temperature can be read with following formula:
+  //(Temperature = (41.25 * pulse width(ms)) - 81.25). 1000μs = -40C and 5000μs = 125C
+  if (flexPulseWidth > 5000)
+  {
+    flexPulseWidth = 5000;
+  }
+  else if (flexPulseWidth < 1000)
+  {
+    flexPulseWidth = 1000;
+  }
+  currentStatus.fuelTemp = div100((int16_t)(((4224 * (long)flexPulseWidth) >> 10) - 8125));
+}
+
+//Timer2 Overflow Interrupt Vector, called when the timer overflows.
+//Executes every ~1ms.
+#if defined(CORE_AVR) //AVR chips use the ISR for this
+//This MUST be no block. Turning NO_BLOCK off messes with timing accuracy.
+ISR(TIMER2_OVF_vect, ISR_NOBLOCK) //cppcheck-suppress misra-c2012-8.2
+#else
+void oneMSInterval(void) //Most ARM chips can simply call a function
+#endif
+{
+  BIT_SET(TIMER_mask, BIT_TIMER_1KHZ);
+  ms_counter++;
+
+  //Increment Loop Counters
+  loop5ms++;
+  loop33ms++;
+  loop66ms++;
+  loop100ms++;
+  loop250ms++;
+  loopSec++;
+
+  //Overdwell check
+  //Set a target time in the past that all coil charging must have begun after.
+  //If the coil charge began before this time, it's been running too long
+  uint32_t targetOverdwellTime = micros() - dwellLimit_uS;
+  //Dwell limiter is disabled during cranking on setups using the locked cranking timing.
+  //WE HAVE to do the RPM check here as relying on the engine cranking bit can be
+  //potentially too slow in updating
+  bool isCrankLocked = configPage4.ignCranklock && currentStatus.RPM < currentStatus.crankRPM;
+
+  if (configPage4.useDwellLim == 1 && isCrankLocked != true)
+  {
+    for (size_t i = 0; i < ignChannelCount; i++)
+    {
+      ignitions.ignition((ignitionChannelID_t)i).applyOverDwellCheck(targetOverdwellTime);
+    }
+  }
+
+  updateTacho();
 
   //200Hz loop
   if (loop5ms == 5)
@@ -172,28 +232,76 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     loop33ms = 0;
 
     //Pulse fuel and ignition test outputs are set at 30Hz
-    if( BIT_CHECK(currentStatus.testOutputs, 1) && (currentStatus.RPM == 0) )
+    if (BIT_CHECK(currentStatus.testOutputs, 1) && (currentStatus.RPM == 0))
     {
       //Check for pulsed injector output test
-      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ1_CMD_BIT)) { openSingleInjector(injector_id_1); }
-      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ2_CMD_BIT)) { openSingleInjector(injector_id_2); }
-      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ3_CMD_BIT)) { openSingleInjector(injector_id_3); }
-      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ4_CMD_BIT)) { openSingleInjector(injector_id_4); }
-      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ5_CMD_BIT)) { openSingleInjector(injector_id_5); }
-      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ6_CMD_BIT)) { openSingleInjector(injector_id_6); }
-      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ7_CMD_BIT)) { openSingleInjector(injector_id_7); }
-      if(BIT_CHECK(HWTest_INJ_Pulsed, INJ8_CMD_BIT)) { openSingleInjector(injector_id_8); }
+      if (BIT_CHECK(HWTest_INJ_Pulsed, INJ1_CMD_BIT))
+      {
+        openSingleInjector(injector_id_1);
+      }
+      if (BIT_CHECK(HWTest_INJ_Pulsed, INJ2_CMD_BIT))
+      {
+        openSingleInjector(injector_id_2);
+      }
+      if (BIT_CHECK(HWTest_INJ_Pulsed, INJ3_CMD_BIT))
+      {
+        openSingleInjector(injector_id_3);
+      }
+      if (BIT_CHECK(HWTest_INJ_Pulsed, INJ4_CMD_BIT))
+      {
+        openSingleInjector(injector_id_4);
+      }
+      if (BIT_CHECK(HWTest_INJ_Pulsed, INJ5_CMD_BIT))
+      {
+        openSingleInjector(injector_id_5);
+      }
+      if (BIT_CHECK(HWTest_INJ_Pulsed, INJ6_CMD_BIT))
+      {
+        openSingleInjector(injector_id_6);
+      }
+      if (BIT_CHECK(HWTest_INJ_Pulsed, INJ7_CMD_BIT))
+      {
+        openSingleInjector(injector_id_7);
+      }
+      if (BIT_CHECK(HWTest_INJ_Pulsed, INJ8_CMD_BIT))
+      {
+        openSingleInjector(injector_id_8);
+      }
       testInjectorPulseCount = 0;
 
       //Check for pulsed ignition output test
-      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN1_CMD_BIT)) { singleCoilBeginCharge(ignition_id_1); }
-      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN2_CMD_BIT)) { singleCoilBeginCharge(ignition_id_2); }
-      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN3_CMD_BIT)) { singleCoilBeginCharge(ignition_id_3); }
-      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN4_CMD_BIT)) { singleCoilBeginCharge(ignition_id_4); }
-      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN5_CMD_BIT)) { singleCoilBeginCharge(ignition_id_5); }
-      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN6_CMD_BIT)) { singleCoilBeginCharge(ignition_id_6); }
-      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN7_CMD_BIT)) { singleCoilBeginCharge(ignition_id_7); }
-      if(BIT_CHECK(HWTest_IGN_Pulsed, IGN8_CMD_BIT)) { singleCoilBeginCharge(ignition_id_8); }
+      if (BIT_CHECK(HWTest_IGN_Pulsed, IGN1_CMD_BIT))
+      {
+        singleCoilBeginCharge(ignition_id_1);
+      }
+      if (BIT_CHECK(HWTest_IGN_Pulsed, IGN2_CMD_BIT))
+      {
+        singleCoilBeginCharge(ignition_id_2);
+      }
+      if (BIT_CHECK(HWTest_IGN_Pulsed, IGN3_CMD_BIT))
+      {
+        singleCoilBeginCharge(ignition_id_3);
+      }
+      if (BIT_CHECK(HWTest_IGN_Pulsed, IGN4_CMD_BIT))
+      {
+        singleCoilBeginCharge(ignition_id_4);
+      }
+      if (BIT_CHECK(HWTest_IGN_Pulsed, IGN5_CMD_BIT))
+      {
+        singleCoilBeginCharge(ignition_id_5);
+      }
+      if (BIT_CHECK(HWTest_IGN_Pulsed, IGN6_CMD_BIT))
+      {
+        singleCoilBeginCharge(ignition_id_6);
+      }
+      if (BIT_CHECK(HWTest_IGN_Pulsed, IGN7_CMD_BIT))
+      {
+        singleCoilBeginCharge(ignition_id_7);
+      }
+      if (BIT_CHECK(HWTest_IGN_Pulsed, IGN8_CMD_BIT))
+      {
+        singleCoilBeginCharge(ignition_id_8);
+      }
       testIgnitionPulseCount = 0;
     }
 
@@ -213,11 +321,18 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     loop100ms = 0; //Reset counter
     BIT_SET(TIMER_mask, BIT_TIMER_10HZ);
 
-    currentStatus.rpmDOT = (currentStatus.RPM - lastRPM_100ms) * 10; //This is the RPM per second that the engine has accelerated/decelerated in the last loop
+    //This is the RPM per second that the engine has accelerated/decelerated in the last loop
+    currentStatus.rpmDOT = (currentStatus.RPM - lastRPM_100ms) * 10;
     lastRPM_100ms = currentStatus.RPM; //Record the current RPM for next calc
 
-    if ( BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN) ) { runSecsX10++; }
-    else { runSecsX10 = 0; }
+    if (BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN))
+    {
+      runSecsX10++;
+    }
+    else
+    {
+      runSecsX10 = 0;
+    }
 
     if (!currentStatus.injPrimed
         && seclx10 == configPage2.primingDelay
@@ -234,9 +349,9 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
   {
     loop250ms = 0; //Reset Counter
     BIT_SET(TIMER_mask, BIT_TIMER_4HZ);
-    #if defined(CORE_STM32) //debug purpose, only visual for running code
-      digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
-    #endif
+#if defined(CORE_STM32) //debug purpose, only visual for running code
+    digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+#endif
   }
 
   //1Hz loop
@@ -252,9 +367,15 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     //This updates the runSecs variable
     //If the engine is running or cranking, we need to update the run time counter.
     if (BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN))
-    { //NOTE - There is a potential for a ~1sec gap between engine crank starting and the runSec number being incremented. This may delay ASE!
-      if (currentStatus.runSecs <= 254) //Ensure we cap out at 255 and don't overflow. (which would reset ASE and cause problems with the closed loop fuelling (Which has to wait for the O2 to warmup))
-        { currentStatus.runSecs++; } //Increment our run counter by 1 second.
+    {
+      //NOTE - There is a potential for a ~1sec gap between engine crank starting
+      //and the runSec number being incremented. This may delay ASE!
+      //Ensure we cap out at 255 and don't overflow. (which would reset ASE and
+      //cause problems with the closed loop fuelling (Which has to wait for the O2 to warmup))
+      if (currentStatus.runSecs <= 254)
+      {
+        currentStatus.runSecs++;
+      }
     }
     //**************************************************************************************************************************************************
     //This records the number of main loops the system has completed in the last second
@@ -271,47 +392,12 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     }
 
     //**************************************************************************************************************************************************
-    //Set the flex reading (if enabled). The flexCounter is updated with every pulse from the sensor. If cleared once per second, we get a frequency reading
+    //Set the flex reading (if enabled). The flexCounter is updated with every pulse from the sensor.
+    //If cleared once per second, we get a frequency reading
     if (configPage2.flexEnabled)
     {
-      byte tempEthPct = 0;
-      if(flexCounter < 50)
-      {
-        tempEthPct = 0; //Standard GM Continental sensor reads from 50Hz (0 ethanol) to 150Hz (Pure ethanol). Subtracting 50 from the frequency therefore gives the ethanol percentage.
-        flexCounter = 0;
-      }
-      else if (flexCounter > 151) //1 pulse buffer
-      {
-
-        if(flexCounter < 169)
-        {
-          tempEthPct = 100;
-          flexCounter = 0;
-        }
-        else
-        {
-          //This indicates an error condition. Spec of the sensor is that errors are above 170Hz)
-          tempEthPct = 0;
-          flexCounter = 0;
-        }
-      }
-      else
-      {
-        tempEthPct = flexCounter - 50; //Standard GM Continental sensor reads from 50Hz (0 ethanol) to 150Hz (Pure ethanol). Subtracting 50 from the frequency therefore gives the ethanol percentage.
-        flexCounter = 0;
-      }
-
-      //Off by 1 error check
-      if (tempEthPct == 1) { tempEthPct = 0; }
-
-      currentStatus.ethanolPct = ADC_FILTER(tempEthPct, configPage4.FILTER_FLEX, currentStatus.ethanolPct);
-
-      //Continental flex sensor fuel temperature can be read with following formula: (Temperature = (41.25 * pulse width(ms)) - 81.25). 1000μs = -40C and 5000μs = 125C
-      if(flexPulseWidth > 5000) { flexPulseWidth = 5000; }
-      else if(flexPulseWidth < 1000) { flexPulseWidth = 1000; }
-      currentStatus.fuelTemp = div100( (int16_t)(((4224 * (long)flexPulseWidth) >> 10) - 8125) );
+      updateFlex();
     }
-
   }
 
   //Turn off any of the pulsed testing outputs if they are active and have been running for long enough
