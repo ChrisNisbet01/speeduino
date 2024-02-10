@@ -136,11 +136,14 @@ void _setFuelScheduleRunning(FuelSchedule &schedule, unsigned long timeout, unsi
 
   //The following must be enclosed in the noInterupts block to avoid contention caused if the relevant interrupt fires before the state is fully set
   noInterrupts();
+
   schedule.startCompare = schedule.counter + uS_TO_TIMER_COMPARE(timeout);
   schedule.endCompare = schedule.startCompare + uS_TO_TIMER_COMPARE(duration);
   SET_COMPARE(schedule.compare, schedule.startCompare); //Use the B compare unit of timer 3
   schedule.Status = PENDING; //Turn this schedule on
+
   interrupts();
+
   schedule.pTimerEnable();
 }
 
@@ -173,6 +176,7 @@ void _setIgnitionScheduleRunning(
   }
 
   noInterrupts();
+
   schedule.startCompare = schedule.counter + timeout_timer_compare;
 
   //The .endCompare value may be set by the per-tooth timing in decoders.cpp.
@@ -185,6 +189,7 @@ void _setIgnitionScheduleRunning(
   SET_COMPARE(schedule.compare, schedule.startCompare);
   schedule.Status = PENDING; //Turn this schedule on
   interrupts();
+
   schedule.pTimerEnable();
 }
 
@@ -202,6 +207,7 @@ void refreshIgnitionSchedule1(unsigned long timeToEnd)
 {
   //Must have the threshold check here otherwise it can cause a condition where
   //the compare fires twice, once after the other, both for the end
+
   noInterrupts();
 
   if (ignitionSchedule1.Status == RUNNING && timeToEnd < ignitionSchedule1.duration)
@@ -279,14 +285,17 @@ static void fuelScheduleISR(FuelSchedule &schedule)
 }
 
 /*******************************************************************************************************************************************************************************************************/
-/** fuelSchedule*Interrupt (All 8 ISR functions below) get called (as timed interrupts) when either the start time or the duration time are reached.
-* This calls the relevant callback function (startCallback or endCallback) depending on the status (PENDING => Needs to run, RUNNING => Needs to stop) of the schedule.
+/** fuelSchedule*Interrupt (All 8 ISR functions below) get called (as timed interrupts)
+*   when either the start time or the duration time are reached.
+* This calls the relevant callback function (startCallback or endCallback) depending
+*  on the status (PENDING => Needs to run, RUNNING => Needs to stop) of the schedule.
 * The status of schedule is managed here based on startCallback /endCallback function called:
 * - startCallback - change scheduler into RUNNING state
 * - endCallback - change scheduler into OFF state (or PENDING if schedule.hasNextSchedule is set)
 */
 //Timer3A (fuel schedule 1) Compare Vector
-#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__) //AVR chips use the ISR for this
+//AVR chips use the ISR for this
+#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__)
 //fuelSchedules 1 and 5
 ISR(TIMER3_COMPA_vect) //cppcheck-suppress misra-c2012-8.2
 #else
@@ -296,8 +305,8 @@ void fuelSchedule1Interrupt() //Most ARM chips can simply call a function
     fuelScheduleISR(*injectors.injector(injChannel1).fuelSchedule);
   }
 
-
-#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__) //AVR chips use the ISR for this
+//AVR chips use the ISR for this
+#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__)
 ISR(TIMER3_COMPB_vect) //cppcheck-suppress misra-c2012-8.2
 #else
 void fuelSchedule2Interrupt() //Most ARM chips can simply call a function
@@ -306,8 +315,8 @@ void fuelSchedule2Interrupt() //Most ARM chips can simply call a function
     fuelScheduleISR(*injectors.injector(injChannel2).fuelSchedule);
   }
 
-
-#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__) //AVR chips use the ISR for this
+//AVR chips use the ISR for this
+#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__)
 ISR(TIMER3_COMPC_vect) //cppcheck-suppress misra-c2012-8.2
 #else
 void fuelSchedule3Interrupt() //Most ARM chips can simply call a function
@@ -316,8 +325,8 @@ void fuelSchedule3Interrupt() //Most ARM chips can simply call a function
     fuelScheduleISR(*injectors.injector(injChannel3).fuelSchedule);
   }
 
-
-#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__) //AVR chips use the ISR for this
+//AVR chips use the ISR for this
+#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__)
 ISR(TIMER4_COMPB_vect) //cppcheck-suppress misra-c2012-8.2
 #else
 void fuelSchedule4Interrupt() //Most ARM chips can simply call a function

@@ -1,28 +1,9 @@
 #include "injector_contexts.h"
 #include "injector_control.h"
+#include "injector_schedule.h"
 #include "utilities.h"
 
 injectors_context_st injectors;
-
-static void
-configure_injector_schedule(FuelSchedule &fuelSchedule, injector_id_t injector_id)
-{
-  fuelSchedule.start.pCallback = openSingleInjector;
-  fuelSchedule.start.injector_ids[0] = injector_id;
-  fuelSchedule.end.pCallback = closeSingleInjector;
-  fuelSchedule.end.injector_ids[0] = injector_id;
-}
-
-static void
-configure_injector_schedule(FuelSchedule &fuelSchedule, injector_id_t injector_id1, injector_id_t injector_id2)
-{
-  fuelSchedule.start.pCallback = openTwoInjectors;
-  fuelSchedule.start.injector_ids[0] = injector_id1;
-  fuelSchedule.start.injector_ids[1] = injector_id2;
-  fuelSchedule.end.pCallback = closeTwoInjectors;
-  fuelSchedule.end.injector_ids[0] = injector_id1;
-  fuelSchedule.end.injector_ids[1] = injector_id2;
-}
 
 void injector_context_st::scheduleFuel(uint32_t const timeout)
 {

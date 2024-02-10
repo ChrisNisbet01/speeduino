@@ -10,7 +10,7 @@
 #include "comms_secondary.h"
 #include "comms_CAN.h"
 #include "utilities.h"
-#include "ignition.h"
+#include "ignition_schedule.h"
 #include "ignition_control.h"
 #include "injector_control.h"
 #include "scheduler.h"
