@@ -1,6 +1,6 @@
 #include "ignition_contexts.h"
 
-#include "ignition.h"
+#include "ignition_schedule.h"
 #include "ignition_control.h"
 #include "schedule_calcs.h"
 

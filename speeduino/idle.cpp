@@ -487,28 +487,12 @@ static inline byte isStepperHomed(void)
   return isHomed;
 }
 
-void idleControl(void)
+static void idleUpControl(void)
 {
-  if (idleInitComplete != configPage6.iacAlgorithm)
-  {
-    initialiseIdle(false);
-  }
-  if (currentStatus.RPM > 0 || configPage6.iacPWMrun)
-  {
-    enableIdle();
-  }
-
-  //Check whether the idleUp is active
   if (configPage2.idleUpEnabled)
   {
-    if (configPage2.idleUpPolarity == 0) //Normal mode (ground switched)
-    {
-      currentStatus.idleUpActive = !digitalRead(pinIdleUp);
-    }
-    else //Inverted mode (5v activates idleUp)
-    {
-      currentStatus.idleUpActive = digitalRead(pinIdleUp);
-    }
+    /* Read input pin, taking configured polarity into account. */
+    currentStatus.idleUpActive = (configPage2.idleUpPolarity == 0) ^ digitalRead(pinIdleUp);
 
     if (configPage2.idleUpOutputEnabled)
     {
@@ -528,6 +512,20 @@ void idleControl(void)
   {
     currentStatus.idleUpActive = false;
   }
+}
+
+void idleControl(void)
+{
+  if (idleInitComplete != configPage6.iacAlgorithm)
+  {
+    initialiseIdle(false);
+  }
+  if (currentStatus.RPM > 0 || configPage6.iacPWMrun)
+  {
+    enableIdle();
+  }
+
+  idleUpControl();
 
   bool PID_computed = false;
   switch (configPage6.iacAlgorithm)

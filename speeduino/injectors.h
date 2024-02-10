@@ -1,5 +1,4 @@
-#ifndef INJECTORS_H__
-#define INJECTORS_H__
+#pragma once
 
 #include "injector_id.h"
 
@@ -15,6 +14,4 @@ typedef struct injectors_st
   close_injector_id_fn close;
   toggle_injector_id_fn toggle;
 } injectors_st;
-
-#endif /* INJECTORS_H__ */
 
