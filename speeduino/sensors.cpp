@@ -680,14 +680,8 @@ void readTPS(bool useFilter)
   //Check whether the closed throttle position sensor is active
   if (configPage2.CTPSEnabled)
   {
-    if (configPage2.CTPSPolarity == 0) //Normal mode (ground switched)
-    {
-      currentStatus.CTPSActive = !digitalRead(pinCTPS);
-    }
-    else //Inverted mode (5v activates closed throttle position sensor)
-    {
-      currentStatus.CTPSActive = digitalRead(pinCTPS);
-    }
+    /* Take configured polarity into account. */
+    currentStatus.CTPSActive = (configPage2.CTPSPolarity == 0) ^ digitalRead(pinCTPS);
   }
   else
   {
