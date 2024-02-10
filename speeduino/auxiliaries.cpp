@@ -219,10 +219,10 @@ bool READ_AIRCON_REQUEST(void)
     return false;
   }
 
-  // Read the status of the A/C request pin (A/C button), taking into account the pin's polarity
-  bool acReqPinStatus = ((configPage15.airConReqPol == 1) ?
-                         !!(*aircon_req_pin_port & aircon_req_pin_mask) :
-                         !(*aircon_req_pin_port & aircon_req_pin_mask));
+  // Read the status of the A/C request pin (A/C button),
+  // taking into account the pin's polarity
+  bool const acReqPinStatus =
+    (configPage15.airConReqPol == 0) ^ (*aircon_req_pin_port & aircon_req_pin_mask);
   BIT_WRITE(currentStatus.airConStatus, BIT_AIRCON_REQUEST, acReqPinStatus);
 
   return acReqPinStatus;
@@ -233,14 +233,15 @@ static inline void checkAirConCoolantLockout(void)
   // ---------------------------
   // Coolant Temperature Lockout
   // ---------------------------
-  int offTemp = (int)configPage15.airConClTempCut - CALIBRATION_TEMPERATURE_OFFSET;
+  int const offTemp = (int)configPage15.airConClTempCut - CALIBRATION_TEMPERATURE_OFFSET;
 
   if (currentStatus.coolant > offTemp)
   {
     // A/C is cut off due to high coolant
     BIT_SET(currentStatus.airConStatus, BIT_AIRCON_CLT_LOCKOUT);
   }
-  else if (currentStatus.coolant < offTemp - 1)
+  else if (currentStatus.coolant < offTemp - 1
+           && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_CLT_LOCKOUT))
   {
     // Adds a bit of hysteresis (2 degrees) to removing the lockout
     // Yes, it is 2 degrees (not 1 degree or 3 degrees) because we go "> offTemp" to enable and "< (offtemp-1)" to disable,
@@ -265,7 +266,8 @@ static inline void checkAirConTPSLockout(void)
   }
   else if (BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TPS_LOCKOUT))
   {
-    // No need for hysteresis as we have the stand-down delay period after the high TPS condition goes away.
+    // No need for hysteresis as we have the stand-down delay period after the
+    // high TPS condition goes away.
     if (acTPSLockoutDelay >= configPage15.airConTPSCutTime)
     {
       BIT_CLEAR(currentStatus.airConStatus, BIT_AIRCON_TPS_LOCKOUT);
@@ -277,7 +279,7 @@ static inline void checkAirConTPSLockout(void)
   }
   else
   {
-    acTPSLockoutDelay = 0;
+    /* Nothing to do. */
   }
 }
 
@@ -293,10 +295,10 @@ static inline void checkAirConRPMLockout(void)
     BIT_SET(currentStatus.airConStatus, BIT_AIRCON_RPM_LOCKOUT);
     acRPMLockoutDelay = 0;
   }
-  else if (currentStatus.RPM >= configPage15.airConMinRPMdiv10 * 10
-           && currentStatus.RPMdiv100 <= configPage15.airConMaxRPMdiv100)
+  else if (BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_RPM_LOCKOUT))
   {
-    // No need to add hysteresis as we have the stand-down delay period after the high/low RPM condition goes away.
+    // No need to add hysteresis as we have the stand-down delay period after the
+    // high/low RPM condition goes away.
     if (acRPMLockoutDelay >= configPage15.airConRPMCutTime)
     {
       BIT_CLEAR(currentStatus.airConStatus, BIT_AIRCON_RPM_LOCKOUT);
@@ -308,7 +310,7 @@ static inline void checkAirConRPMLockout(void)
   }
   else
   {
-    acRPMLockoutDelay = 0;
+    /* Nothing to do. */
   }
 }
 
@@ -802,14 +804,15 @@ void vvtControl(void)
         //Lookup VVT duty based on either MAP or TPS
         if (configPage6.vvtLoadSource == VVT_LOAD_TPS)
         {
-          currentStatus.vvt1Duty = get3DTableValue(&vvtTable, (currentStatus.TPS * 2), currentStatus.RPM);
+          currentStatus.vvt1Duty = get3DTableValue(&vvtTable, currentStatus.TPS * 2, currentStatus.RPM);
         }
         else
         {
-          currentStatus.vvt1Duty = get3DTableValue(&vvtTable, (currentStatus.MAP), currentStatus.RPM);
+          currentStatus.vvt1Duty = get3DTableValue(&vvtTable, currentStatus.MAP, currentStatus.RPM);
         }
 
-        //VVT table can be used for controlling on/off switching. If this is turned on, then disregard any interpolation or non-binary values
+        //VVT table can be used for controlling on/off switching.
+        //If this is turned on, then disregard any interpolation or non-binary values
         if (configPage6.vvtMode == VVT_MODE_ONOFF && currentStatus.vvt1Duty < 200)
         {
           currentStatus.vvt1Duty = 0;
@@ -912,8 +915,11 @@ void vvtControl(void)
             vvt2PID.SetControllerDirection(configPage4.vvt2PWMdir);
           }
 
-          // safety check that the cam angles are ok. The engine will be totally undriveable if the cam sensor is faulty and giving wrong cam angles, so if that happens, default to 0 duty.
-          // This also prevents using zero or negative current angle values for PID adjustment, because those don't work in integer PID.
+          // safety check that the cam angles are ok. The engine will be totally
+          // undriveable if the cam sensor is faulty and giving wrong cam angles,
+          // so if that happens, default to 0 duty.
+          // This also prevents using zero or negative current angle values for PID adjustment,
+          // because those don't work in integer PID.
           if (currentStatus.vvt2Angle <= configPage10.vvtCLMinAng || currentStatus.vvt2Angle > configPage10.vvtCLMaxAng)
           {
             currentStatus.vvt2Duty = 0;
@@ -1034,13 +1040,12 @@ void vvtControl(void)
 void nitrousControl(void)
 {
   bool nitrousOn = false; //This tracks whether the control gets turned on at any point.
+
   if (configPage10.n2o_enable > 0)
   {
-    bool isArmed = READ_N2O_ARM_PIN();
-    if (configPage10.n2o_pin_polarity == 1) //If nitrous is active when pin is low, flip the reading (n2o_pin_polarity = 0 = active when High)
-    {
-      isArmed = !isArmed;
-    }
+    //If nitrous is active when pin is low, flip the reading
+    //(n2o_pin_polarity = 0 = active when High)
+    bool const isArmed = READ_N2O_ARM_PIN() ^ (configPage10.n2o_pin_polarity != 0);
 
     //Perform the main checks to see if nitrous is ready
     if (isArmed
@@ -1061,7 +1066,7 @@ void nitrousControl(void)
       // STAGE2 = 2
       // BOTH   = 3 (ie STAGE1 + STAGE2 = BOTH)
       currentStatus.nitrous_status = NITROUS_OFF; //Reset the current state
-      if ((currentStatus.RPM > realStage1MinRPM) && (currentStatus.RPM < realStage1MaxRPM))
+      if (currentStatus.RPM > realStage1MinRPM && currentStatus.RPM < realStage1MaxRPM)
       {
         currentStatus.nitrous_status += NITROUS_STAGE1;
         BIT_SET(currentStatus.status3, BIT_STATUS3_NITROUS);
@@ -1070,7 +1075,7 @@ void nitrousControl(void)
       }
       if (configPage10.n2o_enable == NITROUS_STAGE2) //This is really just a sanity check
       {
-        if ((currentStatus.RPM > realStage2MinRPM) && (currentStatus.RPM < realStage2MaxRPM))
+        if (currentStatus.RPM > realStage2MinRPM && currentStatus.RPM < realStage2MaxRPM)
         {
           currentStatus.nitrous_status += NITROUS_STAGE2;
           BIT_SET(currentStatus.status3, BIT_STATUS3_NITROUS);
@@ -1100,12 +1105,15 @@ void wmiControl(void)
   int wmiPW = 0;
 
   // wmi can only work when vvt2 is disabled
-  if ((configPage10.vvt2Enabled == 0) && (configPage10.wmiEnabled >= 1))
+  if (configPage10.vvt2Enabled == 0 && configPage10.wmiEnabled >= 1)
   {
     if (WMI_TANK_IS_EMPTY())
     {
       BIT_CLEAR(currentStatus.status4, BIT_STATUS4_WMI_EMPTY);
-      if ((currentStatus.TPS >= configPage10.wmiTPS) && (currentStatus.RPMdiv100 >= configPage10.wmiRPM) && ((currentStatus.MAP / 2) >= configPage10.wmiMAP) && ((currentStatus.IAT + CALIBRATION_TEMPERATURE_OFFSET) >= configPage10.wmiIAT))
+      if (currentStatus.TPS >= configPage10.wmiTPS
+          && currentStatus.RPMdiv100 >= configPage10.wmiRPM
+          && currentStatus.MAP / 2 >= configPage10.wmiMAP
+          && currentStatus.IAT + CALIBRATION_TEMPERATURE_OFFSET >= configPage10.wmiIAT)
       {
         switch (configPage10.wmiMode)
         {
@@ -1115,17 +1123,20 @@ void wmiControl(void)
           break;
 
         case WMI_MODE_PROPORTIONAL:
-          // Proportional Mode - Output PWM is proportionally controlled between two MAP values - MAP Value 1 = PWM:0% / MAP Value 2 = PWM:100%
+          // Proportional Mode - Output PWM is proportionally controlled between two MAP values
+          // - MAP Value 1 = PWM:0% / MAP Value 2 = PWM:100%
           wmiPW = map(currentStatus.MAP / 2, configPage10.wmiMAP, configPage10.wmiMAP2, 0, 200);
           break;
 
         case WMI_MODE_OPENLOOP:
-          //  Mapped open loop - Output PWM follows 2D map value (RPM vs MAP) Cell value contains desired PWM% [range 0-100%]
+          //  Mapped open loop - Output PWM follows 2D map value (RPM vs MAP)
+          // Cell value contains desired PWM% [range 0-100%]
           wmiPW = get3DTableValue(&wmiTable, currentStatus.MAP, currentStatus.RPM);
           break;
 
         case WMI_MODE_CLOSEDLOOP:
-          // Mapped closed loop - Output PWM follows injector duty cycle with 2D correction map applied (RPM vs MAP). Cell value contains correction value% [nom 100%]
+          // Mapped closed loop - Output PWM follows injector duty cycle with 2D correction map applied (RPM vs MAP).
+          // Cell value contains correction value% [nom 100%]
           wmiPW = max(0, ((int)injectors.injector(injChannel1).PW + configPage10.wmiOffset)) * get3DTableValue(&wmiTable, currentStatus.MAP, currentStatus.RPM) / 200;
           break;
 
@@ -1200,21 +1211,21 @@ void boostInterrupt(void) //Most ARM chips can simply call a function
 {
   if (boost_pwm_state)
   {
-#   if defined(CORE_TEENSY41) //PIT TIMERS count down and have opposite effect on PWM
+#if defined(CORE_TEENSY41) //PIT TIMERS count down and have opposite effect on PWM
     BOOST_PIN_HIGH();
-#   else
+#else
     BOOST_PIN_LOW();  // Switch pin to low
-#   endif
+#endif
     SET_COMPARE(BOOST_TIMER_COMPARE, BOOST_TIMER_COUNTER + (boost_pwm_max_count - boost_pwm_cur_value));
     boost_pwm_state = false;
   }
   else
   {
-#   if defined(CORE_TEENSY41) //PIT TIMERS count down and have opposite effect on PWM
+#if defined(CORE_TEENSY41) //PIT TIMERS count down and have opposite effect on PWM
     BOOST_PIN_LOW();
-#   else
+#else
     BOOST_PIN_HIGH();  // Switch pin high
-#   endif
+#endif
     SET_COMPARE(BOOST_TIMER_COMPARE, BOOST_TIMER_COUNTER + boost_pwm_target_value);
     boost_pwm_cur_value = boost_pwm_target_value;
     boost_pwm_state = true;
@@ -1232,20 +1243,20 @@ void vvtInterrupt(void) //Most ARM chips can simply call a function
   {
     if (vvt1_pwm_value > 0 && !vvt1_max_pwm) //Don't toggle if at 0%
     {
-#     if defined(CORE_TEENSY41)
+#if defined(CORE_TEENSY41)
       VVT1_PIN_OFF();
-#     else
+#else
       VVT1_PIN_ON();
-#     endif
+#endif
       vvt1_pwm_state = true;
     }
     if (vvt2_pwm_value > 0 && !vvt2_max_pwm) //Don't toggle if at 0%
     {
-#     if defined(CORE_TEENSY41)
+#if defined(CORE_TEENSY41)
       VVT2_PIN_OFF();
-#     else
+#else
       VVT2_PIN_ON();
-#     endif
+#endif
       vvt2_pwm_state = true;
     }
 
@@ -1282,11 +1293,11 @@ void vvtInterrupt(void) //Most ARM chips can simply call a function
     {
       if (vvt1_pwm_value < (long)vvt_pwm_max_count) //Don't toggle if at 100%
       {
-#       if defined(CORE_TEENSY41)
+#if defined(CORE_TEENSY41)
         VVT1_PIN_ON();
-#       else
+#else
         VVT1_PIN_OFF();
-#       endif
+#endif
         vvt1_pwm_state = false;
         vvt1_max_pwm = false;
       }
@@ -1309,11 +1320,11 @@ void vvtInterrupt(void) //Most ARM chips can simply call a function
     {
       if (vvt2_pwm_value < (long)vvt_pwm_max_count) //Don't toggle if at 100%
       {
-#       if defined(CORE_TEENSY41)
+#if defined(CORE_TEENSY41)
         VVT2_PIN_ON();
-#       else
+#else
         VVT2_PIN_OFF();
-#       endif
+#endif
         vvt2_pwm_state = false;
         vvt2_max_pwm = false;
       }
@@ -1336,11 +1347,11 @@ void vvtInterrupt(void) //Most ARM chips can simply call a function
     {
       if (vvt1_pwm_value < (long)vvt_pwm_max_count) //Don't toggle if at 100%
       {
-#      if defined(CORE_TEENSY41)
+#if defined(CORE_TEENSY41)
         VVT1_PIN_ON();
-#       else
+#else
         VVT1_PIN_OFF();
-#       endif
+#endif
         vvt1_pwm_state = false;
         vvt1_max_pwm = false;
         SET_COMPARE(VVT_TIMER_COMPARE, VVT_TIMER_COUNTER + (vvt_pwm_max_count - vvt1_pwm_cur_value));
@@ -1351,11 +1362,11 @@ void vvtInterrupt(void) //Most ARM chips can simply call a function
       }
       if (vvt2_pwm_value < (long)vvt_pwm_max_count) //Don't toggle if at 100%
       {
-#       if defined(CORE_TEENSY41)
+#if defined(CORE_TEENSY41)
         VVT2_PIN_ON();
-#       else
+#else
         VVT2_PIN_OFF();
-#       endif
+#endif
         vvt2_pwm_state = false;
         vvt2_max_pwm = false;
         SET_COMPARE(VVT_TIMER_COMPARE, VVT_TIMER_COUNTER + (vvt_pwm_max_count - vvt2_pwm_cur_value));
@@ -1369,7 +1380,8 @@ void vvtInterrupt(void) //Most ARM chips can simply call a function
 }
 
 #if defined(PWM_FAN_AVAILABLE)
-//The interrupt to control the FAN PWM. Mega2560 doesn't have enough timers, so this is only for the ARM chip ones
+//The interrupt to control the FAN PWM. Mega2560 doesn't have enough timers,
+//so this is only for the ARM chip ones
 void fanInterrupt(void)
 {
   if (fan_pwm_state)
