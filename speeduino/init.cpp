@@ -2730,8 +2730,8 @@ void setPinMapping(byte boardID)
       // = PA10
       // = PA11;
       // = PA12;
-      // = PA13
-      // = PA14
+      // = PA13 // Thermocouple #4 /CS
+      // = PA14 // Thermocouple #2 /CS
       // = PA15
 
       //******************************************
@@ -2789,7 +2789,7 @@ void setPinMapping(byte boardID)
       pinCoil8 = PD9;
       /* = PD10; */ //
       /* = PD11; */ //
-      /* = PD12; */ //
+      /* = PD12; */ // Thermocouple #1 /CS
       /* = PD13; */ //
       /* = PD14; */ //
       /* = PD15; */ //
@@ -2803,7 +2803,7 @@ void setPinMapping(byte boardID)
       pinInjector5 = PE3;
       pinInjector6 = PE4;
       pinInjector2 = PE5;
-      pinInjector6 = PE6;
+      pinInjector1 = PE6;
       // = PE7; //
       pinCoil5 = PE8;
       /* = PE9; */ //
