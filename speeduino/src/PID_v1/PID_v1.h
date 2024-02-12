@@ -79,8 +79,6 @@ class PID
 
 class integerPID
 {
-
-
   public:
 
   //Constants used in some of the functions below
@@ -90,23 +88,23 @@ class integerPID
   #define REVERSE  1
   #define PID_SHIFTS  10 //Increased resolution
 
-  //commonly used functions **************************************************************************
-    integerPID(long*, long*, long*,        // * constructor.  links the PID to the Input, Output, and
-        int16_t, int16_t, int16_t, byte);     //   Setpoint.  Initial tuning parameters are also set here
+  // commonly used functions **************************************************************************
+  //  * constructor.  links the PID to the Input, Output, and Setpoint.
+  // Initial tuning parameters are also set here
+  integerPID(long *, long *, long *, int16_t, int16_t, int16_t, byte);
 
+  void SetMode(int Mode); // * sets PID to either Manual (0) or Auto (non-0)
 
-    void SetMode(int Mode);               // * sets PID to either Manual (0) or Auto (non-0)
+  bool Compute(bool, long FeedForwardTerm = 0); // * performs the PID calculation.  it should be
+                                                //   called every time loop() cycles. ON/OFF and
+                                                //   calculation frequency can be set using SetMode
+                                                //   SetSampleTime respectively
+  bool Compute2(int, int, bool);
+  bool ComputeVVT(uint32_t);
 
-    bool Compute(bool, long FeedForwardTerm = 0);                       // * performs the PID calculation.  it should be
-                                          //   called every time loop() cycles. ON/OFF and
-                                          //   calculation frequency can be set using SetMode
-                                          //   SetSampleTime respectively
-    bool Compute2(int, int, bool);
-    bool ComputeVVT(uint32_t);
-
-    void SetOutputLimits(long, long); //clamps the output to a specific range. 0-255 by default, but
-										  //it's likely the user will want to change this depending on
-										  //the application
+  void SetOutputLimits(long, long); // clamps the output to a specific range. 0-255 by default, but
+                                    // it's likely the user will want to change this depending on
+                                    // the application
 
 
 
@@ -167,29 +165,31 @@ class integerPID_ideal
   #define DIRECT  0
   #define REVERSE  1
 
-  //commonly used functions **************************************************************************
-    integerPID_ideal(long*, uint16_t*, uint16_t*, uint16_t*, byte*,        // * constructor.  links the PID to the Input, Output, and
-        byte, byte, byte, byte);     //   Setpoint.  Initial tuning parameters are also set here
+  // commonly used functions **************************************************************************
+  //  * constructor.  links the PID to the Input, Output, and
+  //   setpoint.  Initial tuning parameters are also set here
+  integerPID_ideal(long *, uint16_t *, uint16_t *, uint16_t *, byte *,
+                   byte, byte, byte, byte);
 
-    bool Compute();                       // * performs the PID calculation.  it should be
-                                          //   called every time loop() cycles. ON/OFF and
-                                          //   calculation frequency can be set using SetMode
-                                          //   SetSampleTime respectively
-    bool Compute(uint16_t);               // * performs the PID calculation.  it should be
-                                          //   called every time loop() cycles. ON/OFF and
-                                          //   calculation frequency can be set using SetMode
-                                          //   SetSampleTime respectively
+  bool Compute();         // * performs the PID calculation.  it should be
+                          //   called every time loop() cycles. ON/OFF and
+                          //   calculation frequency can be set using SetMode
+                          //   SetSampleTime respectively
+  bool Compute(uint16_t); // * performs the PID calculation.  it should be
+                          //   called every time loop() cycles. ON/OFF and
+                          //   calculation frequency can be set using SetMode
+                          //   SetSampleTime respectively
 
-    void SetOutputLimits(long, long); //clamps the output to a specific range. 0-255 by default, but
-										  //it's likely the user will want to change this depending on
-										  //the application
+  void SetOutputLimits(long, long); // clamps the output to a specific range. 0-255 by default, but
+                                    // it's likely the user will want to change this depending on
+                                    // the application
 
 
 
   //available but not commonly used functions ********************************************************
-    void SetTunings(byte, byte,       // * While most users will set the tunings once in the
-                    byte);         	  //   constructor, this function gives the user the option
-                                          //   of changing tunings during runtime for Adaptive control
+  void SetTunings(byte, byte, byte);  // * While most users will set the tunings once in the
+                                  	  //   constructor, this function gives the user the option
+                                      //   of changing tunings during runtime for Adaptive control
 	void SetControllerDirection(byte);	  // * Sets the Direction, or "Action" of the controller. DIRECT
 										  //   means the output will increase when error is positive. REVERSE
 										  //   means the opposite.  it's very unlikely that this will be needed
