@@ -237,24 +237,35 @@ integerPID::integerPID(long* Input, long* Output, long* Setpoint,
  **********************************************************************************/
 bool integerPID::Compute(bool pOnE, long FeedForwardTerm)
 {
-   if(!inAuto) return false;
+   if(!inAuto)
+   {
+      return false;
+   }
+
    unsigned long now = millis();
-   unsigned long timeChange = (now - lastTime);
+   unsigned long timeChange = now - lastTime;
+
    if(timeChange >= SampleTime)
    {
       /*Compute all the working error variables*/
 	   long input = *myInput;
-      if(input > 0) //Fail safe, should never be 0
+      if (input > 0) //Fail safe, should never be 0
       {
          long error = *mySetpoint - input;
-         long dInput = (input - lastInput);
+         long dInput = input - lastInput;
          FeedForwardTerm <<= PID_SHIFTS;
 
          if (ki != 0)
          {
             outputSum += (ki * error); //integral += error × dt
-            if(outputSum > outMax-FeedForwardTerm) { outputSum = outMax-FeedForwardTerm; }
-            else if(outputSum < outMin-FeedForwardTerm) { outputSum = outMin-FeedForwardTerm; }
+            if (outputSum > outMax-FeedForwardTerm)
+            {
+               outputSum = outMax-FeedForwardTerm;
+            }
+            else if (outputSum < outMin-FeedForwardTerm)
+            {
+               outputSum = outMin-FeedForwardTerm;
+            }
          }
 
          /*Compute PID Output*/
@@ -263,21 +274,40 @@ bool integerPID::Compute(bool pOnE, long FeedForwardTerm)
          if(pOnE)
          {
             output = (kp * error);
-            if (ki != 0) { output += outputSum; }
+            if (ki != 0)
+            {
+               output += outputSum;
+            }
          }
          else
          {
             outputSum -= (kp * dInput);
-            if(outputSum > outMax) { outputSum = outMax; }
-            else if(outputSum < outMin) { outputSum = outMin; }
-
+            if (outputSum > outMax)
+            {
+              outputSum = outMax;
+            }
+            else if (outputSum < outMin)
+            {
+              outputSum = outMin;
+            }
             output = outputSum;
          }
-         if (kd != 0) { output -= (kd * dInput)>>2; }
+
+         if (kd != 0)
+         {
+           output -= (kd * dInput) >> 2;
+         }
+
          output += FeedForwardTerm;
 
-         if(output > outMax) output = outMax;
-         else if(output < outMin) output = outMin;
+         if (output > outMax)
+         {
+           output = outMax;
+         }
+         else if (output < outMin)
+         {
+           output = outMin;
+         }
 
          *myOutput = output >> PID_SHIFTS;
 
@@ -293,7 +323,10 @@ bool integerPID::Compute(bool pOnE, long FeedForwardTerm)
 
 bool integerPID::ComputeVVT(uint32_t Sample)
 {
-   if(!inAuto) return false;
+   if(!inAuto)
+   {
+     return false;
+   }
    /*Compute all the working error variables*/
    long pTerm, dTerm;
    long input = *myInput;
@@ -328,11 +361,15 @@ bool integerPID::ComputeVVT(uint32_t Sample)
 
 bool integerPID::Compute2(int target, int input, bool pOnE)
 {
-   if(!inAuto) return false;
+   if (!inAuto)
+   {
+     return false;
+   }
+
    unsigned long now = millis();
-   //SampleTime = (now - lastTime);
-   uint16_t timeChange = (now - lastTime);
-   if(timeChange >= SampleTime)
+   uint16_t timeChange = now - lastTime;
+
+   if (timeChange >= SampleTime)
    {
       long Kp, Ki, Kd;
       long PV;
@@ -343,9 +380,6 @@ bool integerPID::Compute2(int target, int input, bool pOnE)
 
       #define pid_divider 1024
       #define pid_multiplier 100
-
-      //pid_divider = 128;
-      //pid_multiplier = 10;
 
       //convert_unitless_percent(min, max, targ, raw_PV, &PV, &SP);
       PV = (((long)input - outMin) * 10000L) / (outMax - outMin); //125
@@ -374,9 +408,16 @@ bool integerPID::Compute2(int target, int input, bool pOnE)
         output = Kp + Ki - Kd;
       }
 
-	    if(output > outMax) output = outMax;
-      else if(output < outMin) output = outMin;
-	    *myOutput = output;
+	   if(output > outMax)
+      {
+        output = outMax;
+      }
+      else if(output < outMin)
+      {
+        output = outMin;
+      }
+
+	   *myOutput = output;
 
       /*Remember some variables for next time*/
       lastMinusOneInput = lastInput;
@@ -386,7 +427,10 @@ bool integerPID::Compute2(int target, int input, bool pOnE)
 
       return true;
    }
-   else return false;
+   else
+   {
+     return false;
+   }
 }
 
 
@@ -570,9 +614,8 @@ bool integerPID_ideal::Compute()
 bool integerPID_ideal::Compute(uint16_t FeedForward)
 {
    unsigned long now = millis();
-   //SampleTime = (now - lastTime);
-   unsigned long timeChange = (now - lastTime);
-   if(timeChange >= *mySampleTime)
+   unsigned long timeChange = now - lastTime;
+   if (timeChange >= *mySampleTime)
    {
       /*Compute all the working error variables*/
       uint16_t sensitivity = 10001 - (*mySensitivity * 2);
@@ -588,34 +631,56 @@ bool integerPID_ideal::Compute(uint16_t FeedForward)
       if(ki != 0)
       {
         output = ((outMax * limitMultiplier * 100) - FeedForward) / (long)ki;
-        if (output < 0) { output = 0; }
+        if (output < 0)
+        {
+         output = 0;
+        }
       }
-      if (ITerm > output) { ITerm = output; }
+      if (ITerm > output)
+      {
+         ITerm = output;
+      }
 
       if(ki != 0)
       {
         output = (FeedForward - (-outMin * limitMultiplier * 100)) / (long)ki;
-        if (output < 0) { output = 0; }
+        if (output < 0)
+        {
+         output = 0;
+        }
       }
-      else { output = 0; }
-      if (ITerm < -output) { ITerm = -output; }
+      else
+      {
+         output = 0;
+      }
+
+      if (ITerm < -output)
+      {
+         ITerm = -output;
+      }
 
       /*Compute PID Output*/
       output = (kp * error) + (ki * ITerm) + (kd * (error - lastError));
-      output = FeedForward + (output / 10); //output is % multipled by 1000. To get % with 2 decimal places, divide it by 10. Likewise, bias is % in whole numbers. Multiply it by 100 to get it with 2 places.
+      // output is % multipled by 1000. To get % with 2 decimal places, divide it by 10.
+      // Likewise, bias is % in whole numbers. Multiply it by 100 to get it with 2 places.
+      output = FeedForward + (output / 10);
 
-      //if(output > (outMax * limitMultiplier)) { output  = (outMax * limitMultiplier);  }
-      //if(output < (outMin * limitMultiplier)) { output  = (outMin * limitMultiplier);  }
-
+      // Prevent the ITerm from growing indefinitely whilst the output is being
+      // limited (error was added to ITerm above, so this is simply setting it
+      // back to it's original value)
       if(output > (outMax * limitMultiplier))
       {
          output  = (outMax * limitMultiplier);
-         ITerm -= error; //Prevent the ITerm from growing indefinitely whilst the output is being limited (error was added to ITerm above, so this is simply setting it back to it's original value)
+         ITerm -= error;
       }
+
+      // Prevent the ITerm from growing indefinitely whilst the output is being
+      // limited (error was added to ITerm above, so this is simply setting it
+      // back to it's original value)
       if(output < (outMin * limitMultiplier))
       {
          output  = (outMin * limitMultiplier);
-         ITerm -= error; //Prevent the ITerm from growing indefinitely whilst the output is being limited (error was added to ITerm above, so this is simply setting it back to it's original value)
+         ITerm -= error;
       }
 
 	    *myOutput = output;
