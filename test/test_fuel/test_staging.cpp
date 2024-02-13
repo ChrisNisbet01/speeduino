@@ -2,6 +2,7 @@
 #include <speeduino.h>
 #include <unity.h>
 #include "test_staging.h"
+#include "injector_contexts.h"
 
 void testStaging(void)
 {

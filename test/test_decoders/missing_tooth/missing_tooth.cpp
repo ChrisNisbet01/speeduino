@@ -3,6 +3,7 @@
 #include <unity.h>
 #include "missing_tooth.h"
 #include "schedule_calcs.h"
+#include "ignition_contexts.h"
 
 void test_setup_36_1()
 {

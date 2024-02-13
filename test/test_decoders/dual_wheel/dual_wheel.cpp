@@ -3,7 +3,7 @@
 #include <unity.h>
 #include "dual_wheel.h"
 #include "schedule_calcs.h"
-
+#include "ignition_contexts.h"
 
 void test_setup_dualwheel_12_1()
 {

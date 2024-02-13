@@ -2,6 +2,7 @@
 #include <speeduino.h>
 #include <unity.h>
 #include "test_PW.h"
+#include "injector_contexts.h"
 
 #define PW_ALLOWED_ERROR  30
 
