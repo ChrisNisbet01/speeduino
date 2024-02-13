@@ -6,6 +6,7 @@
 #include "utilities.h"
 #include "../test_utils.h"
 #include "storage.h"
+#include "injector_control.h"
 
 extern uint16_t req_fuel_uS;
 void prepareForInitialiseAll(uint8_t boardId);
@@ -14,12 +15,12 @@ static constexpr uint16_t reqFuel = 86; // ms * 10
 
 static void __attribute__((noinline))
 assert_fuel_channel(
-  bool enabled,
-  uint16_t angle,
-  uint8_t cmdBit,
-  int channelInjDegrees,
-  voidVoidCallback startFunction,
-  voidVoidCallback endFunction)
+    bool enabled,
+    uint16_t angle,
+    uint8_t cmdBit,
+    int channelInjDegrees,
+    injectorCallback_fn startFunction,
+    injectorCallback_fn endFunction)
 {
   char msg[39];
 

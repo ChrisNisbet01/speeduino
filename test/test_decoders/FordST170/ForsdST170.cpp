@@ -4,6 +4,7 @@
 #include "FordST170.h"
 #include "scheduler.h"
 #include "schedule_calcs.h"
+#include "ignition_contexts.h"
 
 void test_fordst170_newIgn_12_trig0_1(void)
 {
