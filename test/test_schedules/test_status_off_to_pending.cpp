@@ -7,7 +7,9 @@
 #define TIMEOUT 1000
 #define DURATION 1000
 
-static void emptyCallback(void) {  }
+static void emptyCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
+{
+}
 
 void test_status_off_to_pending_inj1(void)
 {
@@ -77,8 +79,8 @@ void test_status_off_to_pending_inj8(void)
 void test_status_off_to_pending_ign1(void)
 {
     initialiseSchedulers();
-    ignitionSchedule1.pStartCallback = emptyCallback;
-    ignitionSchedule1.pEndCallback = emptyCallback;
+    ignitionSchedule1.start.pCallback = emptyCallback;
+    ignitionSchedule1.end.pCallback = emptyCallback;
     setIgnitionSchedule(ignitionSchedule1, TIMEOUT, DURATION);
     TEST_ASSERT_EQUAL(PENDING, ignitionSchedule1.Status);
 }
@@ -86,8 +88,8 @@ void test_status_off_to_pending_ign1(void)
 void test_status_off_to_pending_ign2(void)
 {
     initialiseSchedulers();
-    ignitionSchedule2.pStartCallback = emptyCallback;
-    ignitionSchedule2.pEndCallback = emptyCallback;
+    ignitionSchedule2.start.pCallback = emptyCallback;
+    ignitionSchedule2.end.pCallback = emptyCallback;
     setIgnitionSchedule(ignitionSchedule2, TIMEOUT, DURATION);
     TEST_ASSERT_EQUAL(PENDING, ignitionSchedule2.Status);
 }
@@ -95,8 +97,8 @@ void test_status_off_to_pending_ign2(void)
 void test_status_off_to_pending_ign3(void)
 {
     initialiseSchedulers();
-    ignitionSchedule3.pStartCallback = emptyCallback;
-    ignitionSchedule3.pEndCallback = emptyCallback;
+    ignitionSchedule3.start.pCallback = emptyCallback;
+    ignitionSchedule3.end.pCallback = emptyCallback;
     setIgnitionSchedule(ignitionSchedule3, TIMEOUT, DURATION);
     TEST_ASSERT_EQUAL(PENDING, ignitionSchedule3.Status);
 }
@@ -104,8 +106,8 @@ void test_status_off_to_pending_ign3(void)
 void test_status_off_to_pending_ign4(void)
 {
     initialiseSchedulers();
-    ignitionSchedule4.pStartCallback = emptyCallback;
-    ignitionSchedule4.pEndCallback = emptyCallback;
+    ignitionSchedule4.start.pCallback = emptyCallback;
+    ignitionSchedule4.end.pCallback = emptyCallback;
     setIgnitionSchedule(ignitionSchedule4, TIMEOUT, DURATION);
     TEST_ASSERT_EQUAL(PENDING, ignitionSchedule4.Status);
 }
@@ -114,8 +116,8 @@ void test_status_off_to_pending_ign4(void)
 void test_status_off_to_pending_ign5(void)
 {
     initialiseSchedulers();
-    ignitionSchedule5.pStartCallback = emptyCallback;
-    ignitionSchedule5.pEndCallback = emptyCallback;
+    ignitionSchedule5.start.pCallback = emptyCallback;
+    ignitionSchedule5.end.pCallback = emptyCallback;
     setIgnitionSchedule(ignitionSchedule5, TIMEOUT, DURATION);
     TEST_ASSERT_EQUAL(PENDING, ignitionSchedule5.Status);
 }
@@ -125,8 +127,8 @@ void test_status_off_to_pending_ign5(void)
 void test_status_off_to_pending_ign6(void)
 {
     initialiseSchedulers();
-    ignitionSchedule6.pStartCallback = emptyCallback;
-    ignitionSchedule6.pEndCallback = emptyCallback;
+    ignitionSchedule6.start.pCallback = emptyCallback;
+    ignitionSchedule6.end.pCallback = emptyCallback;
     setIgnitionSchedule(ignitionSchedule6, TIMEOUT, DURATION);
     TEST_ASSERT_EQUAL(PENDING, ignitionSchedule6.Status);
 }
@@ -136,8 +138,8 @@ void test_status_off_to_pending_ign6(void)
 void test_status_off_to_pending_ign7(void)
 {
     initialiseSchedulers();
-    ignitionSchedule7.pStartCallback = emptyCallback;
-    ignitionSchedule7.pEndCallback = emptyCallback;
+    ignitionSchedule7.start.pCallback = emptyCallback;
+    ignitionSchedule7.end.pCallback = emptyCallback;
     setIgnitionSchedule(ignitionSchedule7, TIMEOUT, DURATION);
     TEST_ASSERT_EQUAL(PENDING, ignitionSchedule7.Status);
 }
@@ -147,8 +149,8 @@ void test_status_off_to_pending_ign7(void)
 void test_status_off_to_pending_ign8(void)
 {
     initialiseSchedulers();
-    ignitionSchedule8.pStartCallback = emptyCallback;
-    ignitionSchedule8.pEndCallback = emptyCallback;
+    ignitionSchedule8.start.pCallback = emptyCallback;
+    ignitionSchedule8.end.pCallback = emptyCallback;
     setIgnitionSchedule(ignitionSchedule8, TIMEOUT, DURATION);
     TEST_ASSERT_EQUAL(PENDING, ignitionSchedule8.Status);
 }
@@ -177,7 +179,7 @@ void test_status_off_to_pending(void)
     RUN_TEST(test_status_off_to_pending_ign2);
     RUN_TEST(test_status_off_to_pending_ign3);
     RUN_TEST(test_status_off_to_pending_ign4);
-#if IGN_CHANNELS >= 5    
+#if IGN_CHANNELS >= 5
     RUN_TEST(test_status_off_to_pending_ign5);
 #endif
 #if IGN_CHANNELS >= 6

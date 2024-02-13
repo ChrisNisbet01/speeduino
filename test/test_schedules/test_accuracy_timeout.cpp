@@ -3,20 +3,26 @@
 #include <unity.h>
 
 #include "scheduler.h"
+#include "ignition_control.h"
 
 #define TIMEOUT 1000
 #define DURATION 1000
 #define DELTA 24
 
 static uint32_t start_time, end_time;
-static void startCallback(void) { end_time = micros(); }
-static void endCallback(void) { /*Empty*/ }
+static void startCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
+{ end_time = micros();
+}
+
+static void endCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
+{ /*Empty*/
+}
 
 void test_accuracy_timeout_inj(FuelSchedule &schedule)
 {
     initialiseSchedulers();
-    schedule.pStartFunction = startCallback;
-    schedule.pEndFunction = endCallback;
+    schedule.start.pCallback = startCallback;
+    schedule.end.pCallback = endCallback;
     start_time = micros();
     setFuelSchedule(schedule, TIMEOUT, DURATION);
     while(schedule.Status == PENDING) /*Wait*/ ;
@@ -74,8 +80,8 @@ void test_accuracy_timeout_inj8(void)
 void test_accuracy_timeout_ign(IgnitionSchedule &schedule)
 {
     initialiseSchedulers();
-    schedule.pStartCallback = startCallback;
-    schedule.pEndCallback = endCallback;
+    schedule.start.pCallback = startCallback;
+    schedule.end.pCallback = endCallback;
     start_time = micros();
     setIgnitionSchedule(schedule, TIMEOUT, DURATION);
     while(schedule.Status == PENDING) /*Wait*/ ;

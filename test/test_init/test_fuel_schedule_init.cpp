@@ -7,6 +7,7 @@
 #include "../test_utils.h"
 #include "storage.h"
 #include "injector_control.h"
+#include "injector_contexts.h"
 
 extern uint16_t req_fuel_uS;
 void prepareForInitialiseAll(uint8_t boardId);
@@ -24,8 +25,8 @@ assert_fuel_channel(
 {
   char msg[39];
 
-  sprintf_P(msg, PSTR("channel%" PRIu8 ".InjChannelIsEnabled. Max:%" PRIu8), cmdBit + 1, injectors_context.maxOutputs);
-  TEST_ASSERT_TRUE_MESSAGE(!enabled || (cmdBit+1) <= injectors_context.maxOutputs, msg);
+  sprintf_P(msg, PSTR("channel%" PRIu8 ".InjChannelIsEnabled. Max:%" PRIu8), cmdBit + 1, injectors.maxOutputs);
+  TEST_ASSERT_TRUE_MESSAGE(!enabled || (cmdBit + 1) <= injectors.maxOutputs, msg);
   sprintf_P(msg, PSTR("channe%" PRIu8 ".InjDegrees"), cmdBit + 1);
   TEST_ASSERT_EQUAL_MESSAGE(angle, channelInjDegrees, msg);
   sprintf_P(msg, PSTR("inj%" PRIu8 ".StartFunction"), cmdBit + 1);
@@ -48,25 +49,25 @@ assert_fuel_schedules(
   strcpy_P(msg, PSTR("req_fuel_uS"));
   TEST_ASSERT_EQUAL_UINT16_MESSAGE(reqFuel, req_fuel_uS, msg);
 
-  assert_fuel_channel(enabled[0], angle[0], INJ1_CMD_BIT, injectors_context.injector(injChannel1).channelInjDegrees, fuelSchedule1.pStartFunction, fuelSchedule1.pEndFunction);
-  assert_fuel_channel(enabled[1], angle[1], INJ2_CMD_BIT, injectors_context.injector(injChannel2).channelInjDegrees, fuelSchedule2.pStartFunction, fuelSchedule2.pEndFunction);
-  assert_fuel_channel(enabled[2], angle[2], INJ3_CMD_BIT, injectors_context.injector(injChannel3).channelInjDegrees, fuelSchedule3.pStartFunction, fuelSchedule3.pEndFunction);
-  assert_fuel_channel(enabled[3], angle[3], INJ4_CMD_BIT, injectors_context.injector(injChannel4).channelInjDegrees, fuelSchedule4.pStartFunction, fuelSchedule4.pEndFunction);
+  assert_fuel_channel(enabled[0], angle[0], INJ1_CMD_BIT, injectors.injector(injChannel1).channelInjDegrees, fuelSchedule1.start.pCallback, fuelSchedule1.end.pCallback);
+  assert_fuel_channel(enabled[1], angle[1], INJ2_CMD_BIT, injectors.injector(injChannel2).channelInjDegrees, fuelSchedule2.start.pCallback, fuelSchedule2.end.pCallback);
+  assert_fuel_channel(enabled[2], angle[2], INJ3_CMD_BIT, injectors.injector(injChannel3).channelInjDegrees, fuelSchedule3.start.pCallback, fuelSchedule3.end.pCallback);
+  assert_fuel_channel(enabled[3], angle[3], INJ4_CMD_BIT, injectors.injector(injChannel4).channelInjDegrees, fuelSchedule4.start.pCallback, fuelSchedule4.end.pCallback);
 
 #if INJ_CHANNELS>=5
-  assert_fuel_channel(enabled[4], angle[4], INJ5_CMD_BIT, injectors_context.injector(injChannel5).channelInjDegrees, fuelSchedule5.pStartFunction, fuelSchedule5.pEndFunction);
+  assert_fuel_channel(enabled[4], angle[4], INJ5_CMD_BIT, injectors.injector(injChannel5).channelInjDegrees, fuelSchedule5.start.pCallback, fuelSchedule5.start.pCallback);
 #endif
 
 #if INJ_CHANNELS>=6
-  assert_fuel_channel(enabled[5], angle[5], INJ6_CMD_BIT, injectors_context.injector(injChannel6).channelInjDegrees, fuelSchedule6.pStartFunction, fuelSchedule6.pEndFunction);
+  assert_fuel_channel(enabled[5], angle[5], INJ6_CMD_BIT, injectors.injector(injChannel6).channelInjDegrees, fuelSchedule6.start.pCallback, fuelSchedule6.start.pCallback);
 #endif
 
 #if INJ_CHANNELS>=7
-  assert_fuel_channel(enabled[6], angle[6], INJ7_CMD_BIT, injectors_context.injector(injChannel7).channelInjDegrees, fuelSchedule7.pStartFunction, fuelSchedule7.pEndFunction);
+  assert_fuel_channel(enabled[6], angle[6], INJ7_CMD_BIT, injectors.injector(injChannel7).channelInjDegrees, fuelSchedule7.start.pCallback, fuelSchedule7.start.pCallback);
 #endif
 
 #if INJ_CHANNELS>=8
-  assert_fuel_channel(enabled[7], angle[7], INJ8_CMD_BIT, injectors_context.injector(injChannel8).channelInjDegrees, fuelSchedule8.pStartFunction, fuelSchedule8.pEndFunction);
+  assert_fuel_channel(enabled[7], angle[7], INJ8_CMD_BIT, injectors.injector(injChannel8).channelInjDegrees, fuelSchedule8.start.pCallback, fuelSchedule8.start.pCallback);
 #endif
 }
 

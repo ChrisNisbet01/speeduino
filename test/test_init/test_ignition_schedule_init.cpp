@@ -5,10 +5,17 @@
 #include "schedule_calcs.h"
 #include "../test_utils.h"
 #include "storage.h"
+#include "ignition_control.h"
+#include "ignition_contexts.h"
 
 void prepareForInitialiseAll(uint8_t boardId);
 
-static void assert_ignition_channel(uint16_t angle, uint8_t channel, int channelInjDegrees, voidVoidCallback startFunction, voidVoidCallback endFunction)
+static void assert_ignition_channel(
+    uint16_t angle,
+    uint8_t channel,
+    int channelInjDegrees,
+    coilCallback_fn startFunction,
+    coilCallback_fn endFunction)
 {
   char msg[32];
 
@@ -35,7 +42,7 @@ static void assert_ignition_schedules(uint16_t crankAngle, uint16_t expectedOutp
 
     assert_ignition_channel(angle[1], 1,
                             ignition.ignDegrees,
-                            ignition.ignitionSchedule->pStartCallback, ignition.ignitionSchedule->pEndCallback);
+                            ignition.ignitionSchedule->start.pCallback, ignition.ignitionSchedule->end.pCallback);
   }
 }
 
