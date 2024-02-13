@@ -12,12 +12,14 @@
 static uint32_t start_time, end_time;
 static void startCallback(ignition_id_t coil_id1, ignition_id_t coil_id2) { start_time = micros(); }
 static void endCallback(ignition_id_t coil_id1, ignition_id_t coil_id2) { end_time = micros(); }
+static void injStartCallback(injector_id_t inj_id1, injector_id_t inj_id2) { start_time = micros(); }
+static void injEndCallback(injector_id_t inj_id1, injector_id_t inj_id2) { end_time = micros(); }
 
 void test_accuracy_duration_inj(FuelSchedule &schedule)
 {
     initialiseSchedulers();
-    schedule.start.pCallback = startCallback;
-    schedule.end.pCallback = endCallback;
+    schedule.start.pCallback = injStartCallback;
+    schedule.end.pCallback = injEndCallback;
     setFuelSchedule(schedule, TIMEOUT, DURATION);
     while(schedule.Status != OFF)
     {

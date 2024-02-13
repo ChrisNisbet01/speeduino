@@ -22,11 +22,21 @@ static void endCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
   /*Empty*/
 }
 
+static void injStartCallback(injector_id_t inj_id1, injector_id_t inj_id2)
+{
+    start_time = micros();
+}
+
+static void injEndCallback(injector_id_t inj_id1, injector_id_t inj_id2)
+{
+    end_time = micros();
+}
+
 void test_accuracy_timeout_inj(FuelSchedule &schedule)
 {
     initialiseSchedulers();
-    schedule.start.pCallback = startCallback;
-    schedule.end.pCallback = endCallback;
+    schedule.start.pCallback = injStartCallback;
+    schedule.end.pCallback = injEndCallback;
     start_time = micros();
     setFuelSchedule(schedule, TIMEOUT, DURATION);
     while(schedule.Status == PENDING) /*Wait*/ ;
