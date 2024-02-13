@@ -3,6 +3,7 @@
 #include <unity.h>
 
 #include "scheduler.h"
+#include "injector_contexts.h"
 
 #define TIMEOUT 1000
 #define DURATION 1000
@@ -18,7 +19,10 @@ void test_accuracy_duration_inj(FuelSchedule &schedule)
     schedule.start.pCallback = startCallback;
     schedule.end.pCallback = endCallback;
     setFuelSchedule(schedule, TIMEOUT, DURATION);
-    while(schedule.Status != OFF) /*Wait*/ ;
+    while(schedule.Status != OFF)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_UINT32_WITHIN(DELTA, DURATION, end_time - start_time);
 }
 
@@ -76,7 +80,10 @@ void test_accuracy_duration_ign(IgnitionSchedule &schedule)
     schedule.start.pCallback = startCallback;
     schedule.end.pCallback = endCallback;
     setIgnitionSchedule(schedule, TIMEOUT, DURATION);
-    while(schedule.Status != OFF) /*Wait*/ ;
+    while(schedule.Status != OFF)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_UINT32_WITHIN(DELTA, DURATION, end_time - start_time);
 
 }

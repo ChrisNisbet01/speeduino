@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include <unity.h>
 
+#include "ignition_contexts.h"
 #include "scheduler.h"
 
 #define TIMEOUT 1000
@@ -15,7 +16,10 @@ void test_status_pending_to_running_inj1(void)
 {
     initialiseSchedulers();
     setFuelSchedule(fuelSchedule1, TIMEOUT, DURATION);
-    while(fuelSchedule1.Status == PENDING) /*Wait*/ ;
+    while(fuelSchedule1.Status == PENDING)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_EQUAL(RUNNING, fuelSchedule1.Status);
 }
 
@@ -23,7 +27,10 @@ void test_status_pending_to_running_inj2(void)
 {
     initialiseSchedulers();
     setFuelSchedule(fuelSchedule2, TIMEOUT, DURATION);
-    while(fuelSchedule2.Status == PENDING) /*Wait*/ ;
+    while(fuelSchedule2.Status == PENDING)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_EQUAL(RUNNING, fuelSchedule2.Status);
 }
 
@@ -31,7 +38,10 @@ void test_status_pending_to_running_inj3(void)
 {
     initialiseSchedulers();
     setFuelSchedule(fuelSchedule3, TIMEOUT, DURATION);
-    while(fuelSchedule3.Status == PENDING) /*Wait*/ ;
+    while(fuelSchedule3.Status == PENDING)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_EQUAL(RUNNING, fuelSchedule3.Status);
 }
 
@@ -39,7 +49,10 @@ void test_status_pending_to_running_inj4(void)
 {
     initialiseSchedulers();
     setFuelSchedule(fuelSchedule4, TIMEOUT, DURATION);
-    while(fuelSchedule4.Status == PENDING) /*Wait*/ ;
+    while(fuelSchedule4.Status == PENDING)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_EQUAL(RUNNING, fuelSchedule4.Status);
 }
 
@@ -48,7 +61,10 @@ void test_status_pending_to_running_inj5(void)
 #if INJ_CHANNELS >= 5
     initialiseSchedulers();
     setFuelSchedule(fuelSchedule5, TIMEOUT, DURATION);
-    while(fuelSchedule5.Status == PENDING) /*Wait*/ ;
+    while(fuelSchedule5.Status == PENDING)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_EQUAL(RUNNING, fuelSchedule5.Status);
 #endif
 }
@@ -58,7 +74,10 @@ void test_status_pending_to_running_inj6(void)
 #if INJ_CHANNELS >= 6
     initialiseSchedulers();
     setFuelSchedule(fuelSchedule6, TIMEOUT, DURATION);
-    while(fuelSchedule6.Status == PENDING) /*Wait*/ ;
+    while(fuelSchedule6.Status == PENDING)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_EQUAL(RUNNING, fuelSchedule6.Status);
 #endif
 }
@@ -68,7 +87,10 @@ void test_status_pending_to_running_inj7(void)
 #if INJ_CHANNELS >= 7
     initialiseSchedulers();
     setFuelSchedule(fuelSchedule7, TIMEOUT, DURATION);
-    while(fuelSchedule7.Status == PENDING) /*Wait*/ ;
+    while(fuelSchedule7.Status == PENDING)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_EQUAL(RUNNING, fuelSchedule7.Status);
 #endif
 }
@@ -78,7 +100,10 @@ void test_status_pending_to_running_inj8(void)
 #if INJ_CHANNELS >= 8
     initialiseSchedulers();
     setFuelSchedule(fuelSchedule8, TIMEOUT, DURATION);
-    while(fuelSchedule8.Status == PENDING) /*Wait*/ ;
+    while(fuelSchedule8.Status == PENDING)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_EQUAL(RUNNING, fuelSchedule8.Status);
 #endif
 }
@@ -90,7 +115,10 @@ void test_status_pending_to_running_ign1(void)
     ignitionSchedule1.start.pCallback = emptyCallback;
     ignitionSchedule1.end.pCallback = emptyCallback;
     setIgnitionSchedule(ignitionSchedule1, TIMEOUT, DURATION);
-    while(ignitionSchedule1.Status == PENDING) /*Wait*/ ;
+    while(ignitionSchedule1.Status == PENDING)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_EQUAL(RUNNING, ignitionSchedule1.Status);
 }
 
@@ -100,7 +128,10 @@ void test_status_pending_to_running_ign2(void)
     ignitionSchedule2.start.pCallback = emptyCallback;
     ignitionSchedule2.end.pCallback = emptyCallback;
     setIgnitionSchedule(ignitionSchedule2, TIMEOUT, DURATION);
-    while(ignitionSchedule2.Status == PENDING) /*Wait*/ ;
+    while(ignitionSchedule2.Status == PENDING)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_EQUAL(RUNNING, ignitionSchedule2.Status);
 }
 
@@ -110,7 +141,10 @@ void test_status_pending_to_running_ign3(void)
     ignitionSchedule3.start.pCallback = emptyCallback;
     ignitionSchedule3.end.pCallback = emptyCallback;
     setIgnitionSchedule(ignitionSchedule3, TIMEOUT, DURATION);
-    while(ignitionSchedule3.Status == PENDING) /*Wait*/ ;
+    while(ignitionSchedule3.Status == PENDING)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_EQUAL(RUNNING, ignitionSchedule3.Status);
 }
 
@@ -120,7 +154,10 @@ void test_status_pending_to_running_ign4(void)
     ignitionSchedule4.start.pCallback = emptyCallback;
     ignitionSchedule4.end.pCallback = emptyCallback;
     setIgnitionSchedule(ignitionSchedule4, TIMEOUT, DURATION);
-    while(ignitionSchedule4.Status == PENDING) /*Wait*/ ;
+    while(ignitionSchedule4.Status == PENDING)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_EQUAL(RUNNING, ignitionSchedule4.Status);
 }
 
@@ -131,7 +168,10 @@ void test_status_pending_to_running_ign5(void)
     ignitionSchedule5.start.pCallback = emptyCallback;
     ignitionSchedule5.end.pCallback = emptyCallback;
     setIgnitionSchedule(ignitionSchedule5, TIMEOUT, DURATION);
-    while(ignitionSchedule5.Status == PENDING) /*Wait*/ ;
+    while(ignitionSchedule5.Status == PENDING)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_EQUAL(RUNNING, ignitionSchedule5.Status);
 #endif
 }
@@ -143,7 +183,10 @@ void test_status_pending_to_running_ign6(void)
     ignitionSchedule6.start.pCallback = emptyCallback;
     ignitionSchedule6.end.pCallback = emptyCallback;
     setIgnitionSchedule(ignitionSchedule6, TIMEOUT, DURATION);
-    while(ignitionSchedule6.Status == PENDING) /*Wait*/ ;
+    while(ignitionSchedule6.Status == PENDING)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_EQUAL(RUNNING, ignitionSchedule6.Status);
 #endif
 }
@@ -155,7 +198,10 @@ void test_status_pending_to_running_ign7(void)
     ignitionSchedule7.start.pCallback = emptyCallback;
     ignitionSchedule7.pEndCallback = emptyCallback;
     setIgnitionSchedule(ignitionSchedule7, TIMEOUT, DURATION);
-    while(ignitionSchedule7.Status == PENDING) /*Wait*/ ;
+    while(ignitionSchedule7.Status == PENDING)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_EQUAL(RUNNING, ignitionSchedule7.Status);
 #endif
 }
@@ -167,7 +213,10 @@ void test_status_pending_to_running_ign8(void)
     ignitionSchedule8.start.pCallback = emptyCallback;
     ignitionSchedule8.pEndCallback = emptyCallback;
     setIgnitionSchedule(ignitionSchedule8, TIMEOUT, DURATION);
-    while(ignitionSchedule8.Status == PENDING) /*Wait*/ ;
+    while(ignitionSchedule8.Status == PENDING)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_EQUAL(RUNNING, ignitionSchedule8.Status);
 #endif
 }

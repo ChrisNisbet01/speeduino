@@ -32,7 +32,7 @@ void doUpdates(void)
       {
         *row = *row + 40;
         ++row;
-      }      
+      }
       ++table_it;
     }
     writeAllConfig();
@@ -319,8 +319,7 @@ void doUpdates(void)
     configPage10.crankingEnrichValues[3] = configPage10.crankingEnrichValues[3] / 5;
 
     //Added the injector timing curve
-    //Set all the values to be the same as the first one. 
-    configPage2.injAng[0] = configPage2.injAng[0]; //Obviously not needed, but here for completeness
+    //Set all the values to be the same as the first one.
     configPage2.injAng[1] = configPage2.injAng[0];
     configPage2.injAng[2] = configPage2.injAng[0];
     configPage2.injAng[3] = configPage2.injAng[0];
@@ -340,7 +339,7 @@ void doUpdates(void)
     {
       configPage10.flexAdvAdj[i] += 40;
     }
-    
+
     //AE cold modifier added. Default to sane values
     configPage2.aeColdPct = 100;
     configPage2.aeColdTaperMin = 40;
@@ -362,7 +361,7 @@ void doUpdates(void)
 
     //Cranking enrichment to run taper added. Default it to 0,1 secs
     configPage10.crankingEnrichTaper = 1;
-    
+
     //ASE to run taper added. Default it to 0,1 secs
     configPage2.aseTaperTime = 1;
 
@@ -382,9 +381,10 @@ void doUpdates(void)
     //202008
 
     //MAJOR update to move the coolant, IAT and O2 calibrations to 2D tables
-    int y;
     for(int x=0; x<(CALIBRATION_TABLE_SIZE/16); x++) //Each calibration table is 512 bytes long
     {
+      int y;
+
       y = EEPROM_CALIBRATION_CLT_OLD + (x * 16);
       cltCalibration_values[x] = EEPROM.read(y);
       cltCalibration_bins[x] = (x * 32);
@@ -403,7 +403,7 @@ void doUpdates(void)
     configPage10.oilPressureProtEnbl = false;
     configPage10.oilPressureEnable = false;
     configPage10.fuelPressureEnable = false;
-    
+
     //wmi
     configPage10.wmiEnabled = 0;
     configPage10.wmiMode = 0;
@@ -478,7 +478,7 @@ void doUpdates(void)
       {
         *row = *row << 1;
         ++row;
-      }      
+      }
       ++table_it;
     }
 
@@ -500,7 +500,7 @@ void doUpdates(void)
     configPage4.ANGLEFILTER_VVT = 0;
 
     configPage2.idleAdvDelay *= 2; //Increased resolution to 0.5 second
-    
+
     //RPM switch point added for map sample method. Set to 0 to not affect existing tunes.
     configPage2.mapSwitchPoint = 0;
 
@@ -552,7 +552,7 @@ void doUpdates(void)
       multiplyTableLoad(&trim7Table, trim7Table.type_key, 4);
       multiplyTableLoad(&trim8Table, trim8Table.type_key, 4);
       if(configPage4.sparkMode == IGN_MODE_ROTARY)
-      { 
+      {
         for(uint8_t x = 0; x < 8; x++)
         {
           configPage10.rotarySplitBins[x] *= 2;
@@ -606,7 +606,7 @@ void doUpdates(void)
     writeAllConfig();
     storeEEPROMVersion(19);
   }
-  
+
   if(readEEPROMVersion() == 19)
   {
     //202207
@@ -625,12 +625,12 @@ void doUpdates(void)
     //CAN broadcast introduced
     configPage2.canBMWCluster = 0;
     configPage2.canVAGCluster = 0;
-    
+
     configPage15.boostDCWhenDisabled = 0;
     configPage15.boostControlEnable = EN_BOOST_CONTROL_BARO;
-    
+
     //Fill the boostTableLookupDuty with all 50% duty cycle. This is the same as the hardcoded 50% DC that had been used before.
-    //This makes the boostcontrol fully backwards compatible.  
+    //This makes the boostcontrol fully backwards compatible.
     auto table_it = boostTableLookupDuty.values.begin();
     while (!table_it.at_end())
     {
@@ -639,7 +639,7 @@ void doUpdates(void)
       {
         *row = 50*2;
         ++row;
-      }      
+      }
       ++table_it;
     }
 
@@ -668,8 +668,8 @@ void doUpdates(void)
     configPage9.afrProtectMinMAP = 90; //Is divided by 2, vlue represents 180kPa
     configPage9.afrProtectMinRPM = 40; //4000 RPM min
     configPage9.afrProtectMinTPS = 160; //80% TPS min
-    configPage9.afrProtectDeviation = 14; //1.4 AFR deviation    
-    
+    configPage9.afrProtectDeviation = 14; //1.4 AFR deviation
+
     writeAllConfig();
     storeEEPROMVersion(20);
   }
@@ -689,7 +689,7 @@ void doUpdates(void)
       if ((configPage13.secondDataIn[y] > 22) && (configPage13.secondDataIn[y] < 240)) {configPage13.secondDataIn[y]++;}
       if ((configPage13.secondDataIn[y] > 92) && (configPage13.secondDataIn[y] < 240)) {configPage13.secondDataIn[y]++;}
     }
-    
+
     //AC Control (configPage15)
     //Set A/C default values - these line up with the ini file defaults
     configPage15.airConEnable = 0;
@@ -728,7 +728,7 @@ void doUpdates(void)
   if(readEEPROMVersion() == 22)
   {
     //202311-dev
-    
+
     if( configPage10.wmiMode >= WMI_MODE_OPENLOOP ) { multiplyTableValue(wmiMapPage, 2); } //Increased PWM resolution from 0-100 to 0-200 to match VVT
 
     //Default values for pulsed hw test modes
@@ -740,7 +740,7 @@ void doUpdates(void)
     configPage9.dfcoTaperTime = 10; //1 second
     configPage9.dfcoTaperFuel = 100; //Don't scale fuel
     configPage9.dfcoTaperAdvance = 20; //Reduce 20deg until full fuel cut
-    
+
     //EGO MAP Limits
     configPage9.egoMAPMax = 255, // 255 will be 510 kpa
     configPage9.egoMAPMin = 0,  // 0 will be 0 kpa
@@ -748,12 +748,12 @@ void doUpdates(void)
     writeAllConfig();
     storeEEPROMVersion(23);
   }
-  
+
   //Final check is always for 255 and 0 (Brand new arduino)
   if( (readEEPROMVersion() == 0) || (readEEPROMVersion() == 255) )
   {
     configPage9.true_address = 0x200;
-    
+
     //Programmable outputs added. Set all to disabled
     configPage13.outputPin[0] = 0;
     configPage13.outputPin[1] = 0;
@@ -778,7 +778,7 @@ void multiplyTableLoad(void *pTable, table_type_t key, uint8_t multiplier)
   auto y_it = y_begin(pTable, key);
   while(!y_it.at_end())
   {
-    *y_it = *y_it * multiplier; 
+    *y_it = *y_it * multiplier;
     ++y_it;
   }
 }
