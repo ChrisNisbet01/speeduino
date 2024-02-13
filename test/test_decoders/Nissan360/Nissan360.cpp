@@ -18,7 +18,7 @@ void test_nissan360_newIgn_12_trig0_1(void)
   configPage4.sparkMode = IGN_MODE_WASTED;
   configPage4.triggerAngle = 0; //No trigger offset
 
-  ignitioncalculateIgnitionAngle(5, 0, 10);
+  ignition1.calculateIgnitionAngle(5, 0, 10);
   triggerSetEndTeeth_Nissan360();
   TEST_ASSERT_EQUAL(171, ignition1.endTooth);
 

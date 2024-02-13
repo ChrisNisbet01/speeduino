@@ -9,14 +9,14 @@
 #define DELTA 20
 
 static uint32_t start_time, end_time;
-static void startCallback(void) { start_time = micros(); }
-static void endCallback(void) { end_time = micros(); }
+static void startCallback(ignition_id_t coil_id1, ignition_id_t coil_id2) { start_time = micros(); }
+static void endCallback(ignition_id_t coil_id1, ignition_id_t coil_id2) { end_time = micros(); }
 
 void test_accuracy_duration_inj(FuelSchedule &schedule)
 {
     initialiseSchedulers();
-    schedule.pStartFunction = startCallback;
-    schedule.pEndFunction = endCallback;
+    schedule.start.pCallback = startCallback;
+    schedule.end.pCallback = endCallback;
     setFuelSchedule(schedule, TIMEOUT, DURATION);
     while(schedule.Status != OFF) /*Wait*/ ;
     TEST_ASSERT_UINT32_WITHIN(DELTA, DURATION, end_time - start_time);
@@ -73,11 +73,11 @@ void test_accuracy_duration_inj8(void)
 void test_accuracy_duration_ign(IgnitionSchedule &schedule)
 {
     initialiseSchedulers();
-    schedule.pStartCallback = startCallback;
-    schedule.pEndCallback = endCallback;
+    schedule.start.pCallback = startCallback;
+    schedule.end.pCallback = endCallback;
     setIgnitionSchedule(schedule, TIMEOUT, DURATION);
     while(schedule.Status != OFF) /*Wait*/ ;
-    TEST_ASSERT_UINT32_WITHIN(DELTA, DURATION, end_time - start_time);    
+    TEST_ASSERT_UINT32_WITHIN(DELTA, DURATION, end_time - start_time);
 
 }
 void test_accuracy_duration_ign1(void)
