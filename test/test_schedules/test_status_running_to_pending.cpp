@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include <unity.h>
 
+#include "ignition_contexts.h"
 #include "scheduler.h"
 
 #define TIMEOUT 1000

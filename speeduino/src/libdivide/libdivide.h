@@ -37,7 +37,7 @@
 // disable warning C4146: unary minus operator applied
 // to unsigned type, result still unsigned
 #pragma warning(disable : 4146)
-// disable warning C4204: nonstandard extension used : non-constant aggregate 
+// disable warning C4204: nonstandard extension used : non-constant aggregate
 // initializer
 //
 // It's valid C99
@@ -240,7 +240,7 @@ static LIBDIVIDE_INLINE int16_t libdivide_s16_do_raw(
 static LIBDIVIDE_INLINE int16_t libdivide_s16_do(
     int16_t numer, const struct libdivide_s16_t* denom);
 static LIBDIVIDE_INLINE uint16_t libdivide_u16_do_raw(
-    uint16_t numer, uint16_t magic, uint8_t more);    
+    uint16_t numer, uint16_t magic, uint8_t more);
 static LIBDIVIDE_INLINE uint16_t libdivide_u16_do(
     uint16_t numer, const struct libdivide_u16_t* denom);
 static LIBDIVIDE_INLINE uint32_t libdivide_s32_do_raw(
@@ -768,7 +768,7 @@ uint16_t libdivide_u16_do_raw(uint16_t numer, uint16_t magic, uint8_t more) {
             // don't need to mask them off.
             return q >> more;
         }
-    }    
+    }
 }
 
 uint16_t libdivide_u16_do(uint16_t numer, const struct libdivide_u16_t* denom) {
@@ -1339,9 +1339,9 @@ int16_t libdivide_s16_recover(const struct libdivide_s16_t *denom) {
         int magic_was_negated = (more & LIBDIVIDE_ADD_MARKER) ? denom->magic > 0 : denom->magic < 0;
 
         // Handle the power of 2 case (including branchfree)
-        if (denom->magic == 0) {
-            int16_t result = (uint16_t)1 << shift;
-            return negative_divisor ? -result : result;
+        {
+        int16_t result = (uint16_t)1 << shift;
+        return negative_divisor ? -result : result;
         }
 
         uint16_t d = (uint16_t)(magic_was_negated ? -denom->magic : denom->magic);
@@ -1511,9 +1511,9 @@ int32_t libdivide_s32_recover(const struct libdivide_s32_t *denom) {
         int magic_was_negated = (more & LIBDIVIDE_ADD_MARKER) ? denom->magic > 0 : denom->magic < 0;
 
         // Handle the power of 2 case (including branchfree)
-        if (denom->magic == 0) {
-            int32_t result = (uint32_t)1 << shift;
-            return negative_divisor ? -result : result;
+        {
+        int32_t result = (uint32_t)1 << shift;
+        return negative_divisor ? -result : result;
         }
 
         uint32_t d = (uint32_t)(magic_was_negated ? -denom->magic : denom->magic);

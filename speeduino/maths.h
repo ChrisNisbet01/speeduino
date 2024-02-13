@@ -154,7 +154,7 @@ static inline int32_t div100(int32_t n) {
     if (n<=INT16_MAX && n>=INT16_MIN) {
         return div100((int16_t)n);
     }
-    return libdivide::libdivide_s32_do_raw(n + (DIV_ROUND_CORRECT(UINT16_C(100), uint32_t) * (n<0 ? -1 : 1)), 1374389535L, 5);
+    return libdivide::libdivide_s32_do_raw(n + ((int32_t)(DIV_ROUND_CORRECT(UINT16_C(100), uint32_t)) * (n < 0 ? -1 : 1)), 1374389535L, 5);
 #else
     return DIV_ROUND_CLOSEST(n, UINT32_C(100), int32_t);
 #endif

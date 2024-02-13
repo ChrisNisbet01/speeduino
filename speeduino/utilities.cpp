@@ -130,12 +130,12 @@ void setResetControlPinState(void)
 //*********************************************************************************************************************************************************************************
 void initialiseProgrammableIO(void)
 {
-  uint8_t outputPin;
   for (uint8_t y = 0; y < sizeof(configPage13.outputPin); y++)
   {
     ioDelay[y] = 0;
     ioOutDelay[y] = 0;
-    outputPin = configPage13.outputPin[y];
+    uint8_t const outputPin = configPage13.outputPin[y];
+
     if (outputPin > 0)
     {
       if ( outputPin >= 128 ) //Cascate rule usage
@@ -163,22 +163,31 @@ void checkProgrammableIO(void)
 {
   int16_t data, data2;
   uint8_t dataRequested;
-  bool firstCheck, secondCheck;
 
   for (uint8_t y = 0; y < sizeof(configPage13.outputPin); y++)
   {
-    firstCheck = false;
-    secondCheck = false;
+    bool firstCheck = false;
+    bool secondCheck = false;
+
     if ( BIT_CHECK(pinIsValid, y) ) //if outputPin == 0 it is disabled
     {
       dataRequested = configPage13.firstDataIn[y];
-      if ( dataRequested > 239U ) //Somehow using 239 uses 9 bytes of RAM, why??
+      if (dataRequested > 239U) //Somehow using 239 uses 9 bytes of RAM, why??
       {
         dataRequested -= REUSE_RULES;
-        if ( dataRequested <= sizeof(configPage13.outputPin) ) { data = BIT_CHECK(currentRuleStatus, dataRequested); }
-        else { data = 0; }
+        if ( dataRequested <= sizeof(configPage13.outputPin) )
+        {
+          data = BIT_CHECK(currentRuleStatus, dataRequested);
+        }
+        else
+        {
+          data = 0;
+        }
       }
-      else { data = ProgrammableIOGetData(dataRequested); }
+      else
+      {
+        data = ProgrammableIOGetData(dataRequested);
+      }
       data2 = configPage13.firstTarget[y];
 
       if ( (configPage13.operation[y].firstCompType == COMPARATOR_EQUAL) && (data == data2) ) { firstCheck = true; }

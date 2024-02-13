@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include <unity.h>
 
+#include "injector_contexts.h"
 #include "scheduler.h"
 #include "ignition_control.h"
 
@@ -10,12 +11,15 @@
 #define DELTA 24
 
 static uint32_t start_time, end_time;
+
 static void startCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
-{ end_time = micros();
+{
+  end_time = micros();
 }
 
 static void endCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
-{ /*Empty*/
+{
+  /*Empty*/
 }
 
 void test_accuracy_timeout_inj(FuelSchedule &schedule)

@@ -27,22 +27,22 @@ struct FuelSchedule {
   {
   }
 
-  volatile unsigned long duration;///< Scheduled duration (uS ?)
-  volatile ScheduleStatus Status; ///< Schedule status: OFF, PENDING, STAGED, RUNNING
-  volatile COMPARE_TYPE startCompare; ///< The counter value of the timer when this will start
-  volatile COMPARE_TYPE endCompare;   ///< The counter value of the timer when this will end
+  volatile unsigned long duration = 0;///< Scheduled duration (uS ?)
+  volatile ScheduleStatus Status = OFF; ///< Schedule status: OFF, PENDING, STAGED, RUNNING
+  volatile COMPARE_TYPE startCompare = 0; ///< The counter value of the timer when this will start
+  volatile COMPARE_TYPE endCompare = 0;   ///< The counter value of the timer when this will end
   struct
   {
-    injectorCallback_fn pCallback;
-    injector_id_t injector_ids[2];
+    injectorCallback_fn pCallback = nullptr;
+    injector_id_t injector_ids[2] = {injector_id_1, injector_id_1};
   } start;
   struct
   {
-    injectorCallback_fn pCallback;
-    injector_id_t injector_ids[2];
+    injectorCallback_fn pCallback = nullptr;
+    injector_id_t injector_ids[2] = {injector_id_1, injector_id_1};
   } end;
-  COMPARE_TYPE nextStartCompare;
-  COMPARE_TYPE nextEndCompare;
+  COMPARE_TYPE nextStartCompare = 0;
+  COMPARE_TYPE nextEndCompare = 0;
   volatile bool hasNextSchedule = false;
 
   counter_t &counter;  // Reference to the counter register. E.g. TCNT3
@@ -69,4 +69,3 @@ extern FuelSchedule fuelSchedule7;
 #if INJ_CHANNELS >= 8
 extern FuelSchedule fuelSchedule8;
 #endif
-
