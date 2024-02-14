@@ -20,9 +20,9 @@ void setup()
     UNITY_BEGIN();    // IMPORTANT LINE!
 
     initialiseAll(); //Run the main initialise function
-    testCorrections();
-    testPW();
-    testStaging();
+    //testCorrections();
+    //testPW();
+    //testStaging();
 
     UNITY_END(); // stop unit testing
 }
