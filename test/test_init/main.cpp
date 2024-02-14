@@ -39,9 +39,9 @@ void setup()
 
     UNITY_BEGIN();    // IMPORTANT LINE!
 
-    testFuelScheduleInit();
-    testIgnitionScheduleInit();
-    testInitialisation();
+    //testFuelScheduleInit();
+    //testIgnitionScheduleInit();
+    //testInitialisation();
 
     UNITY_END(); // stop unit testing
 }

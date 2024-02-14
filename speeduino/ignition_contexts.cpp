@@ -199,4 +199,3 @@ applyIgnitionControl(ignitionChannelID_t const ign, int const crankAngle)
 }
 
 ignition_contexts_st ignitions;
-

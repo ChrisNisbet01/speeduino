@@ -70,41 +70,47 @@ void initialiseAll(void)
   //STM32 can not currently enabled
 #endif
 
-    /*
-    ***********************************************************************************************************
-    * EEPROM reset
-    */
-    #if defined(EEPROM_RESET_PIN)
-    uint32_t start_time = millis();
-    byte exit_erase_loop = false;
-    pinMode(EEPROM_RESET_PIN, INPUT_PULLUP);
+/*
+***********************************************************************************************************
+* EEPROM reset
+*/
+#if defined(EEPROM_RESET_PIN)
+  uint32_t start_time = millis();
+  byte exit_erase_loop = false;
+  pinMode(EEPROM_RESET_PIN, INPUT_PULLUP);
 
-    //only start routine when this pin is low because it is pulled low
-    while (digitalRead(EEPROM_RESET_PIN) != HIGH && (millis() - start_time)<1050)
+  // only start routine when this pin is low because it is pulled low
+  while (digitalRead(EEPROM_RESET_PIN) != HIGH && (millis() - start_time) < 1050)
+  {
+    // make sure the key is pressed for at least 0.5 second
+    if ((millis() - start_time) > 500)
     {
-      //make sure the key is pressed for at least 0.5 second
-      if ((millis() - start_time)>500) {
-        //if key is pressed afterboot for 0.5 second make led turn off
-        digitalWrite(LED_BUILTIN, HIGH);
+      // if key is pressed afterboot for 0.5 second make led turn off
+      digitalWrite(LED_BUILTIN, HIGH);
 
-        //see if the user reacts to the led turned off with removing the keypress within 1 second
-        while (((millis() - start_time)<1000) && (exit_erase_loop!=true)){
+      // see if the user reacts to the led turned off with removing the keypress within 1 second
+      while (((millis() - start_time) < 1000) && (exit_erase_loop != true))
+      {
 
-          //if user let go of key within 1 second erase eeprom
-          if(digitalRead(EEPROM_RESET_PIN) != LOW){
-            #if defined(FLASH_AS_EEPROM_h)
-              EEPROM.read(0); //needed for SPI eeprom emulation.
-              EEPROM.clear();
-            #else
-              for (int i = 0 ; i < EEPROM.length() ; i++) { EEPROM.write(i, 255);}
-            #endif
-            //if erase done exit while loop.
-            exit_erase_loop = true;
+        // if user let go of key within 1 second erase eeprom
+        if (digitalRead(EEPROM_RESET_PIN) != LOW)
+        {
+#if defined(FLASH_AS_EEPROM_h)
+          EEPROM.read(0); // needed for SPI eeprom emulation.
+          EEPROM.clear();
+#else
+          for (int i = 0; i < EEPROM.length(); i++)
+          {
+            EEPROM.write(i, 255);
           }
+#endif
+          // if erase done exit while loop.
+          exit_erase_loop = true;
         }
       }
     }
-    #endif
+  }
+#endif
 
     // Unit tests should be independent of any stored configuration on the board!
 #if !defined(UNIT_TEST)
@@ -117,22 +123,19 @@ void initialiseAll(void)
     //This should be 0 until we hear otherwise from the 16u2
     configPage4.bootloaderCaps = 0;
 
-    /*
-     * Initialise the schedulers before the board because initBoard starts the
-     * interval timer, and the timer handler may expect the schedulers to be set up.
-     */
-    initialiseSchedulers();
-
-    initBoard(); //This calls the current individual boards init function. See the board_xxx.ino files for these.
     initialiseTimers();
+    // This calls the current individual boards init function.
+    // See the board_xxx.ino files for these.
+    initBoard();
+    initialiseSchedulers();
 
 #ifdef SD_LOGGING
     initRTC();
     initSD();
 #endif
 
-    Serial.begin(115200);
-    BIT_SET(currentStatus.status4, BIT_STATUS4_ALLOW_LEGACY_COMMS); //Flag legacy comms as being allowed on startup
+    //Serial.begin(115200);
+    BIT_SET(currentStatus.status4, BIT_STATUS4_ALLOW_LEGACY_COMMS); // Flag legacy comms as being allowed on startup
 
     //Repoint the 2D table structs to the config pages that were just loaded
     taeTable.valueSize = SIZE_BYTE; //Set this table to use byte values
