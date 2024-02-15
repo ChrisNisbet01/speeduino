@@ -6,5 +6,6 @@ void IgnitionSchedule::reset(void)
     Status = OFF;
     start.pCallback = nullCallback;
     end.pCallback = nullCallback;
-    pTimerEnable();
+
+    //pTimerEnable();
 }
