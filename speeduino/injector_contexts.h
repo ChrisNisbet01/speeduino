@@ -32,7 +32,7 @@ typedef struct injector_context_st
   FuelSchedule * fuelSchedule;
   unsigned int PW;
   /* The number of crank degrees until the associated cylinder is at TDC */
-  int channelInjDegrees;
+  int channelInjDegrees = 0;
 
   void reset(void);
 
@@ -93,4 +93,3 @@ private:
 } injectors_context_st;
 
 extern injectors_context_st injectors;
-

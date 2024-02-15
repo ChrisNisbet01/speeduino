@@ -20,8 +20,18 @@ void prepareForInitialiseAll(uint8_t boardId) {
   // configuration made in step 2.
   configPage2.pinMapping = boardId;
   currentStatus.initialisationComplete = false;
-}
 
+  /*
+     Avoid some divide-by-zero operations that would occur if the following
+     variables are not initialised.
+  */
+  configPage6.boostFreq = 10;
+  configPage6.vvtFreq = 10;
+  configPage6.idleFreq = 10;
+#if defined(PWM_FAN_AVAILABLE)
+  configPage6.fanFreq = 10;
+#endif
+}
 
 void testInitialisation(void);
 void testFuelScheduleInit(void);
@@ -37,13 +47,13 @@ void setup()
     // if board doesn't support software reset via Serial.DTR/RTS
     delay(2000);
 
-    UNITY_BEGIN();    // IMPORTANT LINE!
+    UNITY_BEGIN();
 
     testFuelScheduleInit();
-    //testIgnitionScheduleInit();
-    //testInitialisation();
+    testIgnitionScheduleInit();
+    testInitialisation();
 
-    UNITY_END(); // stop unit testing
+    UNITY_END();
 }
 
 void loop()
