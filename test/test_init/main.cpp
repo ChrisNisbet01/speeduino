@@ -39,7 +39,7 @@ void setup()
 
     UNITY_BEGIN();    // IMPORTANT LINE!
 
-    //testFuelScheduleInit();
+    testFuelScheduleInit();
     //testIgnitionScheduleInit();
     //testInitialisation();
 

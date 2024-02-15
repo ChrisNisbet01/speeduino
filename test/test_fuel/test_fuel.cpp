@@ -9,6 +9,32 @@
 
 #define UNITY_EXCLUDE_DETAILS
 
+int init_ok = 0;
+
+static void prepareForInitialiseAll(void)
+{
+    /*
+       Avoid some divide-by-zero operations that would occur if the following
+       variables are not initialised.
+    */
+    configPage6.boostFreq = 10;
+    configPage6.vvtFreq = 10;
+    configPage6.idleFreq = 10;
+#if defined(PWM_FAN_AVAILABLE)
+    configPage6.fanFreq = 10;
+#endif
+}
+
+#if 0
+static void testInitialiseAll(void)
+{
+    prepareForInitialiseAll();
+    initialiseAll();
+
+    TEST_ASSERT_EQUAL(init_ok, 1);
+}
+#endif
+
 void setup()
 {
     pinMode(LED_BUILTIN, OUTPUT);
@@ -17,14 +43,15 @@ void setup()
     // if board doesn't support software reset via Serial.DTR/RTS
     delay(2000);
 
-    UNITY_BEGIN();    // IMPORTANT LINE!
+    UNITY_BEGIN();
 
-    initialiseAll(); //Run the main initialise function
-    //testCorrections();
+    prepareForInitialiseAll();
+    initialiseAll(); // Run the main initialise function
+    testCorrections();
     //testPW();
     //testStaging();
 
-    UNITY_END(); // stop unit testing
+    UNITY_END();
 }
 
 void loop()
