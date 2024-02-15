@@ -52,6 +52,8 @@ void test_Staging_Off(void)
   TEST_ASSERT_FALSE(BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE));
 }
 
+bool is_split = false;
+
 void test_Staging_4cyl_Auto_Inactive(void)
 {
   test_Staging_setCommon();
@@ -61,18 +63,16 @@ void test_Staging_4cyl_Auto_Inactive(void)
   configPage2.injLayout = INJ_PAIRED;
   configPage10.stagingEnabled = true;
   configPage10.stagingMode = STAGING_MODE_AUTO;
-  injectors.injector(injChannel1).PW = testPW; //Over open time but below the pwLimit set below
-
 
   uint32_t pwLimit = 9000; //90% duty cycle at 6000rpm
   calculateInjectorStaging(testPW, pwLimit);
-  //PW 1 and 2 should be normal, 3 and 4 should be 0 as that testPW is below the pwLimit
-  //PW1/2 should be (PW - openTime) * staged_req_fuel_mult_pri = (3000 - 1000) * 3.0 = 6000
-  TEST_ASSERT_EQUAL(6000, injectors.injector(injChannel1).PW);
-  TEST_ASSERT_EQUAL(6000, injectors.injector(injChannel2).PW);
+  // PW 1 and 2 should be normal, 3 and 4 should be 0 as that testPW is below the pwLimit
+  // PW1/2 should be (PW - openTime) * staged_req_fuel_mult_pri = openTime + (3000 - 1000) * 3.0 = 7000
+  TEST_ASSERT_FALSE(BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE));
+  TEST_ASSERT_EQUAL(7000, injectors.injector(injChannel1).PW);
+  TEST_ASSERT_EQUAL(7000, injectors.injector(injChannel2).PW);
   TEST_ASSERT_EQUAL(0, injectors.injector(injChannel3).PW);
   TEST_ASSERT_EQUAL(0, injectors.injector(injChannel4).PW);
-  TEST_ASSERT_FALSE(BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE));
 }
 
 void test_Staging_4cyl_Table_Inactive(void)
@@ -84,11 +84,10 @@ void test_Staging_4cyl_Table_Inactive(void)
   configPage2.injLayout = INJ_PAIRED;
   configPage10.stagingEnabled = true;
   configPage10.stagingMode = STAGING_MODE_TABLE;
-  injectors.injector(injChannel1).PW = testPW; //Over open time but below the pwLimit set below
 
-  //Load the staging table with all 0
-  //For this test it doesn't matter what the X and Y axis are, as the table is all 0 values
-  for(byte x = 0; x < 64; x++)
+  // Load the staging table with all 0
+  // For this test it doesn't matter what the X and Y axis are, as the table is all 0 values
+  for (byte x = 0; x < 64; x++)
   {
     stagingTable.values.values[x] = 0;
   }
@@ -96,8 +95,11 @@ void test_Staging_4cyl_Table_Inactive(void)
 
   uint32_t pwLimit = 9000; //90% duty cycle at 6000rpm
   calculateInjectorStaging(testPW, pwLimit);
-  //PW 1 and 2 should be normal, 3 and 4 should be 0 as that testPW is below the pwLimit
-  //PW1/2 should be (PW - openTime) * staged_req_fuel_mult_pri = (3000 - 1000) * 3.0 = 6000
+
+  //TEST_ASSERT_TRUE(is_split);
+
+  // PW 1 and 2 should be normal, 3 and 4 should be 0 as that testPW is below the pwLimit
+  // PW1/2 should be (PW - openTime) * staged_req_fuel_mult_pri = openTime + (3000 - 1000) * 3.0 = 7000
   TEST_ASSERT_EQUAL(7000, injectors.injector(injChannel1).PW);
   TEST_ASSERT_EQUAL(7000, injectors.injector(injChannel2).PW);
   TEST_ASSERT_EQUAL(0, injectors.injector(injChannel3).PW);
@@ -114,17 +116,17 @@ void test_Staging_4cyl_Auto_50pct(void)
   configPage2.injLayout = INJ_PAIRED;
   configPage10.stagingEnabled = true;
   configPage10.stagingMode = STAGING_MODE_AUTO;
-  injectors.injector(injChannel1).PW = testPW; //Over open time but below the pwLimit set below
-
 
   uint32_t pwLimit = 9000; //90% duty cycle at 6000rpm
   calculateInjectorStaging(testPW, pwLimit);
-  //PW 1 and 2 should be maxed out at the pwLimit, 3 and 4 should be based on their relative size
-  TEST_ASSERT_EQUAL(pwLimit, injectors.injector(injChannel1).PW); //PW1/2 run at maximum available limit
-  TEST_ASSERT_EQUAL(pwLimit, injectors.injector(injChannel2).PW);
-  TEST_ASSERT_EQUAL(9000, injectors.injector(injChannel3).PW);
-  TEST_ASSERT_EQUAL(9000, injectors.injector(injChannel4).PW);
   TEST_ASSERT_TRUE(BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE));
+  // PW 1 and 2 should be maxed out at the pwLimit, 3 and 4 should be based on their relative size
+  // PW1/2 run at maximum available limit
+  TEST_ASSERT_EQUAL(pwLimit + inj_opentime_uS, injectors.injector(injChannel1).PW);
+  TEST_ASSERT_EQUAL(pwLimit + inj_opentime_uS, injectors.injector(injChannel2).PW);
+
+  TEST_ASSERT_EQUAL(8500, injectors.injector(injChannel3).PW);
+  TEST_ASSERT_EQUAL(8500, injectors.injector(injChannel4).PW);
 }
 
 void test_Staging_4cyl_Auto_33pct(void)
@@ -136,17 +138,17 @@ void test_Staging_4cyl_Auto_33pct(void)
   configPage2.injLayout = INJ_PAIRED;
   configPage10.stagingEnabled = true;
   configPage10.stagingMode = STAGING_MODE_AUTO;
-  injectors.injector(injChannel1).PW = testPW; //Over open time but below the pwLimit set below
-
 
   uint32_t pwLimit = 9000; //90% duty cycle at 6000rpm
+
   calculateInjectorStaging(testPW, pwLimit);
-  //PW 1 and 2 should be maxed out at the pwLimit, 3 and 4 should be based on their relative size
-  TEST_ASSERT_EQUAL(pwLimit, injectors.injector(injChannel1).PW); //PW1/2 run at maximum available limit
-  TEST_ASSERT_EQUAL(pwLimit, injectors.injector(injChannel2).PW);
-  TEST_ASSERT_EQUAL(6000, injectors.injector(injChannel3).PW);
-  TEST_ASSERT_EQUAL(6000, injectors.injector(injChannel4).PW);
   TEST_ASSERT_TRUE(BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE));
+  // PW 1 and 2 should be maxed out at the pwLimit, 3 and 4 should be based on their relative size
+  // PW1/2 run at maximum available limit
+  TEST_ASSERT_EQUAL(pwLimit + inj_opentime_uS, injectors.injector(injChannel1).PW);
+  TEST_ASSERT_EQUAL(pwLimit + inj_opentime_uS, injectors.injector(injChannel2).PW);
+  TEST_ASSERT_EQUAL(5500, injectors.injector(injChannel3).PW);
+  TEST_ASSERT_EQUAL(5500, injectors.injector(injChannel4).PW);
 }
 
 void test_Staging_4cyl_Table_50pct(void)
@@ -158,12 +160,13 @@ void test_Staging_4cyl_Table_50pct(void)
   configPage2.injLayout = INJ_PAIRED;
   configPage10.stagingEnabled = true;
   configPage10.stagingMode = STAGING_MODE_TABLE;
-  injectors.injector(injChannel1).PW = testPW; //Over open time but below the pwLimit set below
 
   //Load the staging table with all 0
   //For this test it doesn't matter what the X and Y axis are, as the table is all 50 values
-  for(byte x=0; x<64; x++) { stagingTable.values.values[x] = 50; }
-
+  for(byte x = 0; x < 64; x++)
+  {
+    stagingTable.values.values[x] = 50;
+  }
 
   uint32_t pwLimit = 9000; //90% duty cycle at 6000rpm
   //Need to change the lookup values so we don't get a cached value
@@ -172,9 +175,9 @@ void test_Staging_4cyl_Table_50pct(void)
 
   calculateInjectorStaging(testPW, pwLimit);
 
+  TEST_ASSERT_TRUE(BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE));
   TEST_ASSERT_EQUAL(4000, injectors.injector(injChannel1).PW);
   TEST_ASSERT_EQUAL(4000, injectors.injector(injChannel2).PW);
   TEST_ASSERT_EQUAL(2500, injectors.injector(injChannel3).PW);
   TEST_ASSERT_EQUAL(2500, injectors.injector(injChannel4).PW);
-  TEST_ASSERT_TRUE(BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE));
 }

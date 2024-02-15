@@ -127,8 +127,7 @@ void initialiseAll(void)
     // This calls the current individual boards init function.
     // See the board_xxx.ino files for these.
     initBoard();
-    return;
-    initialiseSchedulers();
+    //initialiseSchedulers();
 
 #ifdef SD_LOGGING
     initRTC();
