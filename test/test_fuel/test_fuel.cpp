@@ -25,16 +25,6 @@ static void prepareForInitialiseAll(void)
 #endif
 }
 
-#if 0
-static void testInitialiseAll(void)
-{
-    prepareForInitialiseAll();
-    initialiseAll();
-
-    TEST_ASSERT_EQUAL(init_ok, 1);
-}
-#endif
-
 void setup()
 {
     pinMode(LED_BUILTIN, OUTPUT);
@@ -47,9 +37,10 @@ void setup()
 
     prepareForInitialiseAll();
     initialiseAll(); // Run the main initialise function
+
     testCorrections();
-    //testPW();
-    //testStaging();
+    testPW();
+    testStaging();
 
     UNITY_END();
 }

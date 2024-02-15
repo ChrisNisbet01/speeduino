@@ -44,9 +44,10 @@ calculateStagedInjectorPulsewidths(uint32_t const desiredPW, uint32_t const pwLi
           div100((uint32_t)staged_PW.primary_PW_us * staged_req_fuel_mult_sec);
 
       staging_is_active = true;
-      staged_PW.primary_PW_us = div100((100U - stagingSplit) * tempPW1);
       staged_PW.secondary_PW_us = div100(stagingSplit * tempPW3);
     }
+    staged_PW.primary_PW_us = div100((100U - stagingSplit) * tempPW1);
+
     break;
   }
 
@@ -55,6 +56,8 @@ calculateStagedInjectorPulsewidths(uint32_t const desiredPW, uint32_t const pwLi
     // If automatic mode, the primary injectors are used all the way up to their limit
     //(Configured by the pulsewidth limit setting)
     // If they exceed their limit, the extra duty is passed to the secondaries
+    staged_PW.primary_PW_us = tempPW1;
+
     if (tempPW1 > pwLimit)
     {
       staging_is_active = true;
