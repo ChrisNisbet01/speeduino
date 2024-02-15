@@ -236,7 +236,9 @@ void calculateInjectorStaging(unsigned int const desiredPW, uint32_t const pwLim
 
   // Final check is to ensure that DFCO isn't active, which would cause an
   // overflow below (See #267)
-  if (configPage10.stagingEnabled && (configPage2.nCylinders <= INJ_CHANNELS || configPage2.injType == INJ_TYPE_TBODY) && injectors.injector(injChannel1).PW > inj_opentime_uS)
+  if (configPage10.stagingEnabled
+      && (configPage2.nCylinders <= INJ_CHANNELS || configPage2.injType == INJ_TYPE_TBODY)
+      && injectors.injector(injChannel1).PW > inj_opentime_uS)
   {
     staged_PW_st const staged_PW = calculateStagedInjectorPulsewidths(desiredPW, pwLimit);
 

@@ -27,6 +27,8 @@ void test_corrections_WUE_active(void)
 {
   //Check for WUE being active
   currentStatus.coolant = 0;
+  BIT_CLEAR(currentStatus.engine, BIT_ENGINE_WARMUP);
+
   ((uint8_t*)WUETable.axisX)[9] = 120 + CALIBRATION_TEMPERATURE_OFFSET; //Set a WUE end value of 120
   correctionWUE();
   TEST_ASSERT_BIT_HIGH(BIT_ENGINE_WARMUP, currentStatus.engine);
@@ -50,7 +52,7 @@ void test_corrections_WUE_inactive_value(void)
 
   //Force invalidate the cache
   WUETable.cacheTime = currentStatus.secl - 1;
-  
+
   TEST_ASSERT_EQUAL(123, correctionWUE() );
 }
 
@@ -75,7 +77,7 @@ void test_corrections_WUE_active_value(void)
 
   //Force invalidate the cache
   WUETable.cacheTime = currentStatus.secl - 1;
-  
+
   //Value should be midway between 120 and 130 = 125
   TEST_ASSERT_EQUAL(125, correctionWUE() );
 }
@@ -129,7 +131,7 @@ void setup_DFCO_on()
   //Sets all the required conditions to have the DFCO be active
   configPage2.dfcoEnabled = 1; //Ensure DFCO option is turned on
   currentStatus.RPM = 4000; //Set the current simulated RPM to a level above the DFCO rpm threshold
-  currentStatus.TPS = 0; //Set the simulated TPS to 0 
+  currentStatus.TPS = 0; //Set the simulated TPS to 0
   currentStatus.coolant = 80;
   configPage4.dfcoRPM = 150; //DFCO enable RPM = 1500
   configPage4.dfcoTPSThresh = 1;
@@ -248,6 +250,7 @@ void test_corrections_dfco()
   RUN_TEST(test_corrections_dfco_taper_fuel);
   RUN_TEST(test_corrections_dfco_taper_ign);
 }
+
 //**********************************************************************************************************************
 //Setup a basic TAE enrichment curve, threshold etc that are common to all tests. Specifica values maybe updated in each individual test
 void test_corrections_TAE_setup()
@@ -255,23 +258,23 @@ void test_corrections_TAE_setup()
   configPage2.aeMode = AE_MODE_TPS; //Set AE to TPS
 
   configPage4.taeValues[0] = 70;
-  configPage4.taeValues[1] = 103; 
+  configPage4.taeValues[1] = 103;
   configPage4.taeValues[2] = 124;
-  configPage4.taeValues[3] = 136; 
+  configPage4.taeValues[3] = 136;
 
   //Note: These values are divided by 10
   configPage4.taeBins[0] = 0;
-  configPage4.taeBins[1] = 8; 
+  configPage4.taeBins[1] = 8;
   configPage4.taeBins[2] = 22;
-  configPage4.taeBins[3] = 97; 
-  
+  configPage4.taeBins[3] = 97;
+
   configPage2.taeThresh = 0;
   configPage2.taeMinChange = 0;
 
   //Divided by 100
   configPage2.aeTaperMin = 10; //1000
   configPage2.aeTaperMax = 50; //5000
-	
+
 	//Set the coolant to be above the warmup AE taper
 	configPage2.aeColdTaperMax = 60;
 	configPage2.aeColdTaperMin = 0;
@@ -359,7 +362,7 @@ void test_corrections_TAE_50pc_warmup_taper()
 
   currentStatus.TPSlast = 0;
   currentStatus.TPS = 50; //25% actual value
-	
+
 	//Set a cold % of 50% increase
 	configPage2.aeColdPct = 150;
 	configPage2.aeColdTaperMax = 60 + CALIBRATION_TEMPERATURE_OFFSET;
@@ -388,6 +391,6 @@ void test_corrections_TAE()
   RUN_TEST(test_corrections_TAE_under_threshold);
 	BIT_CLEAR(currentStatus.engine, BIT_ENGINE_ACC); //Flag must be cleared between tests
   RUN_TEST(test_corrections_TAE_50pc_warmup_taper);
-	
-	
+
+
 }
