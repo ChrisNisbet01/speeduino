@@ -122,6 +122,10 @@ void loop(void)
     {
       can_Command();
       readAuxCanBus();
+      if (configPage2.canWBO > 0)
+      {
+        receiveCANwbo();
+      }
     }
   }
 #     endif
@@ -299,6 +303,11 @@ void loop(void)
 #if TPS_READ_FREQUENCY == 30
     readTPS();
 #endif
+    if (configPage2.canWBO == 0)
+    {
+      readO2();
+      readO2_2();
+    }
 
     readO2();
     readO2_2();
