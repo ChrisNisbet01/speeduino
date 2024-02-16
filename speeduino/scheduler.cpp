@@ -136,10 +136,29 @@ void _setFuelScheduleRunning(FuelSchedule &schedule, unsigned long timeout, unsi
 {
   schedule.duration = duration;
 
-  //The following must be enclosed in the noInterupts block to avoid contention caused if the relevant interrupt fires before the state is fully set
+    //Need to check that the timeout doesn't exceed the overflow
+  COMPARE_TYPE timeout_timer_compare;
+
+  if (timeout > MAX_TIMER_PERIOD)
+  {
+    // If the timeout is >4x (Each tick represents 4uS on a mega2560,
+    // other boards will be different) the maximum allowed value of unsigned int (65535),
+    // the timer compare value will overflow when applied causing erratic
+    // behaviour such as erroneous squirts.
+    timeout_timer_compare = uS_TO_TIMER_COMPARE(MAX_TIMER_PERIOD - 1);
+  }
+  else
+  {
+    //Normal case.
+    timeout_timer_compare = uS_TO_TIMER_COMPARE(timeout);
+  }
+
+
+  //The following must be enclosed in the noInterupts block to avoid contention
+  //caused if the relevant interrupt fires before the state is fully set
   noInterrupts();
 
-  schedule.startCompare = schedule.counter + uS_TO_TIMER_COMPARE(timeout);
+  schedule.startCompare = schedule.counter + timeout_timer_compare;
   schedule.endCompare = schedule.startCompare + uS_TO_TIMER_COMPARE(duration);
   SET_COMPARE(schedule.compare, schedule.startCompare); //Use the B compare unit of timer 3
   schedule.Status = PENDING; //Turn this schedule on

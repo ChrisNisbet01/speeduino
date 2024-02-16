@@ -127,16 +127,18 @@ void setIgnitionSchedule(
 void _setFuelScheduleRunning(FuelSchedule &schedule, unsigned long timeout, unsigned long duration);
 void _setFuelScheduleNext(FuelSchedule &schedule, unsigned long timeout, unsigned long duration);
 
-inline __attribute__((always_inline)) void setFuelSchedule(FuelSchedule &schedule, unsigned long timeout, unsigned long duration) {
-    //Check whether timeout exceeds the maximum future time. This can potentially occur on sequential setups when below ~115rpm
-  if(timeout < MAX_TIMER_PERIOD) {
-    if(schedule.Status != RUNNING) { //Check that we're not already part way through a schedule
+inline __attribute__((always_inline)) void
+setFuelSchedule(FuelSchedule &schedule, unsigned long timeout, unsigned long duration)
+{
+    if(schedule.Status != RUNNING)
+    {
+      //Check that we're not already part way through a schedule
       _setFuelScheduleRunning(schedule, timeout, duration);
     }
-    else {
+    else if(timeout < MAX_TIMER_PERIOD)
+    {
       _setFuelScheduleNext(schedule, timeout, duration);
     }
-  }
 }
 
 static inline uint16_t applyFuelTrimToPW(trimTable3d * pTrimTable, int16_t fuelLoad, int16_t RPM, uint16_t currentPW)
