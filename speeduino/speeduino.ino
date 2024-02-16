@@ -1331,13 +1331,12 @@ uint16_t calculateTotalInjectorPW(int REQ_FUEL, byte VE, long MAP, uint16_t corr
     bitShift = 5;
   }
 
-  iVE = ((unsigned int)VE << 7) / 100;
-  //iVE = divu100(((unsigned int)VE << 7));
+  iVE = div100((uint16_t)VE << 7);
 
   //Check whether either of the multiply MAP modes is turned on
   if (configPage2.multiplyMAP == MULTIPLY_MAP_MODE_100)
   {
-    iMAP = ((unsigned int)MAP << 7) / 100;
+    iMAP = div100((uint16_t)MAP << 7U);
   }
   else if (configPage2.multiplyMAP == MULTIPLY_MAP_MODE_BARO)
   {
@@ -1356,8 +1355,7 @@ uint16_t calculateTotalInjectorPW(int REQ_FUEL, byte VE, long MAP, uint16_t corr
     //Incorporate stoich vs target AFR, if enabled.
     iAFR = ((unsigned int)configPage2.stoich << 7) / currentStatus.afrTarget;
   }
-  iCorrections = (corrections << bitShift) / 100;
-  //iCorrections = divu100((corrections << bitShift));
+  iCorrections = div100(corrections << bitShift);
 
 
   //Need to use an intermediate value to avoid overflowing the long
