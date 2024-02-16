@@ -110,10 +110,11 @@
 #include BOARD_H  //Note that this is not a real file, it is defined in globals.h.
 
 //Handy bitsetting macros
-#define BIT_SET(a, b) ((a) |= (1U << (b)))
-#define BIT_CLEAR(a, b) ((a) &= ~(1U << (b)))
-#define BIT_CHECK(var, pos) !!((var) & (1U << (pos)))
-#define BIT_TOGGLE(var, pos) ((var) ^= 1UL << (pos))
+#define BIT(x) (1 << (x))
+#define BIT_SET(a, b) ((a) |= BIT((b)))
+#define BIT_CLEAR(a, b) ((a) &= ~BIT((b)))
+#define BIT_CHECK(var, pos) !!((var) & BIT((pos)))
+#define BIT_TOGGLE(var, pos) ((var) ^= BIT((pos)))
 #define BIT_WRITE(var, pos, bitvalue) ((bitvalue) ? BIT_SET((var), (pos)) : bitClear((var), (pos)))
 
 #if !defined(ARRAY_SIZE)
@@ -223,7 +224,8 @@ typedef enum load_source_t {
 #define IAT_CALIBRATION_PAGE 1U
 #define CLT_CALIBRATION_PAGE 0U
 
-// note the sequence of these defines which refernce the bits used in a byte has moved when the third trigger & engine cycle was incorporated
+// note the sequence of these defines which reference the bits used in a byte has
+// moved when the third trigger & engine cycle was incorporated
 #define COMPOSITE_LOG_PRI 0
 #define COMPOSITE_LOG_SEC 1
 #define COMPOSITE_LOG_THIRD 2
