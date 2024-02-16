@@ -951,15 +951,7 @@ void loop(void)
     //This may potentially be called a number of times as we get closer and closer to the opening time
 
     //Determine the current crank angle
-    int crankAngle = getCrankAngle();
-    //Continue reducing the crank angle by the max injection amount until it's
-    //below the required limit. This will usually only run (at most) once, but
-    //in cases where there is sequential ignition and more than 2 squirts per
-    //cycle, it may run up to 4 times.
-    while (crankAngle > CRANK_ANGLE_MAX_INJ)
-    {
-      crankAngle = crankAngle - CRANK_ANGLE_MAX_INJ;
-    }
+    int crankAngle = injectorLimits(getCrankAngle());
 
     //Check for any of the engine protections or rev limiters being turned on
     uint16_t maxAllowedRPM = checkRevLimit(); //The maximum RPM allowed by all the potential limiters (Engine protection, 2-step, flat shift etc). Divided by 100. `checkRevLimit()` returns the current maximum RPM allow (divided by 100) based on either the fixed hard limit or the current coolant temp
@@ -1206,12 +1198,7 @@ void loop(void)
     if (ignitions.channelsOn != 0)
     {
       //Refresh the current crank angle info
-      //ignition1StartAngle = 335;
-      crankAngle = getCrankAngle(); //Refresh with the latest crank angle
-      while (crankAngle > CRANK_ANGLE_MAX_IGN)
-      {
-        crankAngle -= CRANK_ANGLE_MAX_IGN;
-      }
+      crankAngle = ignitionLimits(getCrankAngle());
 
       ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
 
@@ -1227,11 +1214,8 @@ void loop(void)
       {
         unsigned long uSToEnd = 0;
 
-        crankAngle = getCrankAngle(); //Refresh with the latest crank angle
-        if (crankAngle > CRANK_ANGLE_MAX_IGN)
-        {
-          crankAngle -= 360;
-        }
+        //Refresh the crank angle info
+        crankAngle = ignitionLimits(getCrankAngle());
 
         //ONLY ONE OF THE BELOW SHOULD BE USED (PROBABLY THE FIRST):
         //*********

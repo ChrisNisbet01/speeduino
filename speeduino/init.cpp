@@ -611,6 +611,21 @@ void initialiseAll(void)
           injectors.injector(injChannel2).channelInjDegrees = 120;
           injectors.injector(injChannel3).channelInjDegrees = 240;
 
+          if(configPage2.injType == INJ_TYPE_PORT)
+          {
+            //Force nSquirts to 2 for individual port injection.
+            //This prevents TunerStudio forcing the value to 3 even when this isn't wanted.
+            currentStatus.nSquirts = 2;
+            if(configPage2.strokes == FOUR_STROKE)
+            {
+              CRANK_ANGLE_MAX_INJ = 360;
+            }
+            else
+            {
+              CRANK_ANGLE_MAX_INJ = 180;
+            }
+          }
+
           //Adjust the injection angles based on the number of squirts
           if (currentStatus.nSquirts > 2)
           {
@@ -1047,9 +1062,12 @@ void initialiseAll(void)
     //Special case:
     //3 or 5 squirts per cycle MUST be tracked over 720 degrees. This is because the angles for them (Eg 720/3=240) are not evenly divisible into 360
     //This is ONLY the case on 4 stroke systems
-    if( (currentStatus.nSquirts == 3) || (currentStatus.nSquirts == 5) )
+    if(currentStatus.nSquirts == 3 || currentStatus.nSquirts == 5)
     {
-      if(configPage2.strokes == FOUR_STROKE) { CRANK_ANGLE_MAX_INJ = 720; }
+      if(configPage2.strokes == FOUR_STROKE)
+      {
+        CRANK_ANGLE_MAX_INJ = 720U / currentStatus.nSquirts;
+      }
     }
 
     switch(configPage2.injLayout)
