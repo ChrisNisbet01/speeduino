@@ -314,6 +314,7 @@ void initialiseAll(void)
     {
       //First time running on this board
       resetConfigPages();
+      configPage4.triggerTeeth = 4; //Avoid divide by 0 when start decoders
       setPinMapping(3); //Force board to v0.4
     }
     else
