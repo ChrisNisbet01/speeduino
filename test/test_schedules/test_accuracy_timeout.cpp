@@ -5,6 +5,7 @@
 #include "injector_contexts.h"
 #include "scheduler.h"
 #include "ignition_control.h"
+#include "utilities.h"
 
 #define TIMEOUT 1000
 #define DURATION 1000
@@ -14,22 +15,34 @@ static uint32_t start_time, end_time;
 
 static void startCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
 {
-  end_time = micros();
+    UNUSED(coil_id1);
+    UNUSED(coil_id2);
+
+    end_time = micros();
 }
 
 static void endCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
 {
-  /*Empty*/
+    UNUSED(coil_id1);
+    UNUSED(coil_id2);
+
+    /* Empty */
 }
 
 static void injStartCallback(injector_id_t inj_id1, injector_id_t inj_id2)
 {
-    start_time = micros();
+    UNUSED(inj_id1);
+    UNUSED(inj_id2);
+
+    end_time = micros();
 }
 
 static void injEndCallback(injector_id_t inj_id1, injector_id_t inj_id2)
 {
-    end_time = micros();
+    UNUSED(inj_id1);
+    UNUSED(inj_id2);
+
+    /* Do nothing. */
 }
 
 void test_accuracy_timeout_inj(FuelSchedule &schedule)
@@ -39,7 +52,10 @@ void test_accuracy_timeout_inj(FuelSchedule &schedule)
     schedule.end.pCallback = injEndCallback;
     start_time = micros();
     setFuelSchedule(schedule, TIMEOUT, DURATION);
-    while(schedule.Status == PENDING) /*Wait*/ ;
+    while(schedule.Status == PENDING)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_UINT32_WITHIN(DELTA, TIMEOUT, end_time - start_time);
 }
 
@@ -98,7 +114,10 @@ void test_accuracy_timeout_ign(IgnitionSchedule &schedule)
     schedule.end.pCallback = endCallback;
     start_time = micros();
     setIgnitionSchedule(schedule, TIMEOUT, DURATION);
-    while(schedule.Status == PENDING) /*Wait*/ ;
+    while(schedule.Status == PENDING)
+    {
+        /*Wait*/
+    }
     TEST_ASSERT_UINT32_WITHIN(DELTA, TIMEOUT, end_time - start_time);
 }
 

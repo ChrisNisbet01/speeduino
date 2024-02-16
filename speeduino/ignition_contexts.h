@@ -10,14 +10,16 @@ typedef enum
   ignChannel2,
   ignChannel3,
   ignChannel4,
+#if IGN_CHANNELS >= 5
   ignChannel5,
+#endif
 #if IGN_CHANNELS >= 6
   ignChannel6,
 #endif
-#if IGN_CHANNELS >= 6
+#if IGN_CHANNELS >= 7
   ignChannel7,
 #endif
-#if IGN_CHANNELS >= 6
+#if IGN_CHANNELS >= 8
   ignChannel8,
 #endif
   ignChannelCount,

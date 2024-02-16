@@ -9,8 +9,6 @@
 
 #define UNITY_EXCLUDE_DETAILS
 
-int init_ok = 0;
-
 static void prepareForInitialiseAll(void)
 {
     /*

@@ -4,16 +4,41 @@
 
 #include "scheduler.h"
 #include "injector_contexts.h"
+#include "utilities.h"
 
 #define TIMEOUT 1000
 #define DURATION 1000
 #define DELTA 20
 
 static uint32_t start_time, end_time;
-static void startCallback(ignition_id_t coil_id1, ignition_id_t coil_id2) { start_time = micros(); }
-static void endCallback(ignition_id_t coil_id1, ignition_id_t coil_id2) { end_time = micros(); }
-static void injStartCallback(injector_id_t inj_id1, injector_id_t inj_id2) { start_time = micros(); }
-static void injEndCallback(injector_id_t inj_id1, injector_id_t inj_id2) { end_time = micros(); }
+static void startCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
+{
+    UNUSED(coil_id1);
+    UNUSED(coil_id2);
+
+    start_time = micros();
+}
+static void endCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
+{
+    UNUSED(coil_id1);
+    UNUSED(coil_id2);
+
+    end_time = micros();
+}
+static void injStartCallback(injector_id_t inj_id1, injector_id_t inj_id2)
+{
+    UNUSED(inj_id1);
+    UNUSED(inj_id2);
+
+    start_time = micros();
+}
+static void injEndCallback(injector_id_t inj_id1, injector_id_t inj_id2)
+{
+    UNUSED(inj_id1);
+    UNUSED(inj_id2);
+
+    end_time = micros();
+}
 
 void test_accuracy_duration_inj(FuelSchedule &schedule)
 {
@@ -116,21 +141,21 @@ void test_accuracy_duration_ign5(void)
 #endif
 }
 
-#if INJ_CHANNELS >= 6
+#if IGN_CHANNELS >= 6
 void test_accuracy_duration_ign6(void)
 {
     test_accuracy_duration_ign(ignitionSchedule6);
 }
 #endif
 
-#if INJ_CHANNELS >= 7
+#if IGN_CHANNELS >= 7
 void test_accuracy_duration_ign7(void)
 {
     test_accuracy_duration_ign(ignitionSchedule7);
 }
 #endif
 
-#if INJ_CHANNELS >= 8
+#if IGN_CHANNELS >= 8
 void test_accuracy_duration_ign8(void)
 {
     test_accuracy_duration_ign(ignitionSchedule8);
@@ -160,16 +185,16 @@ void test_accuracy_duration(void)
     RUN_TEST(test_accuracy_duration_ign2);
     RUN_TEST(test_accuracy_duration_ign3);
     RUN_TEST(test_accuracy_duration_ign4);
-#if INJ_CHANNELS >= 5
+#if IGN_CHANNELS >= 5
     RUN_TEST(test_accuracy_duration_ign5);
 #endif
-#if INJ_CHANNELS >= 6
+#if IGN_CHANNELS >= 6
     RUN_TEST(test_accuracy_duration_ign6);
 #endif
-#if INJ_CHANNELS >= 7
+#if IGN_CHANNELS >= 7
     RUN_TEST(test_accuracy_duration_ign7);
 #endif
-#if INJ_CHANNELS >= 8
+#if IGN_CHANNELS >= 8
     RUN_TEST(test_accuracy_duration_ign8);
 #endif
 }
