@@ -3830,6 +3830,22 @@ static inline bool isAnyFuelScheduleRunning(void) {
   return anyRunning;
 }
 
+static inline bool isAnyIgnScheduleRunning(void)
+{
+  bool anyRunning = false;
+
+  for (size_t i = ignChannel1; i < ignChannelCount; i++)
+  {
+    if (ignitions.ignition((ignitionChannelID_t)i).ignitionSchedule->Status == RUNNING)
+    {
+      anyRunning = true;
+      break;
+    }
+  }
+
+  return anyRunning;
+}
+
 /** Change injectors or/and ignition angles to 720deg.
  * Roll back req_fuel size and set number of outputs equal to cylinder count.
 * */
@@ -3862,7 +3878,9 @@ void changeHalfToFullSync(void)
   interrupts();
 
   //Need to do another check for sparkMode as this function can be called from injection
-  if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL && CRANK_ANGLE_MAX_IGN != 720)
+  if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL
+      && CRANK_ANGLE_MAX_IGN != 720
+      && !isAnyIgnScheduleRunning())
   {
     CRANK_ANGLE_MAX_IGN = 720;
     ignitions.setMaxIgnitions(configPage2.nCylinders);
