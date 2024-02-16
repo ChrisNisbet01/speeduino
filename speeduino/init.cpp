@@ -518,11 +518,11 @@ void initialiseAll(void)
         break;
 
     case 2:
-      init_ok = 1;
       ignitions.ignition(ignChannel1).ignDegrees = 0;
       ignitions.setMaxIgnitions(2);
       injectors.injector(injChannel1).channelInjDegrees = 0;
       injectors.setMaxInjectors(2);
+
       if (configPage2.engineType == EVEN_FIRE)
       {
         ignitions.ignition(ignChannel2).ignDegrees = 180;
@@ -533,12 +533,12 @@ void initialiseAll(void)
       }
 
         //Sequential ignition works identically on a 2 cylinder whether it's odd or even fire (With the default being a 180 degree second cylinder).
-        if( (configPage4.sparkMode == IGN_MODE_SEQUENTIAL) && (configPage2.strokes == FOUR_STROKE) )
+        if(configPage4.sparkMode == IGN_MODE_SEQUENTIAL && configPage2.strokes == FOUR_STROKE)
         {
           CRANK_ANGLE_MAX_IGN = 720;
         }
 
-        if ( (configPage2.injLayout == INJ_SEQUENTIAL) && (configPage2.strokes == FOUR_STROKE) )
+        if (configPage2.injLayout == INJ_SEQUENTIAL && configPage2.strokes == FOUR_STROKE)
         {
           CRANK_ANGLE_MAX_INJ = 720;
           currentStatus.nSquirts = 1;
@@ -553,6 +553,7 @@ void initialiseAll(void)
         {
           injectors.injector(injChannel2).channelInjDegrees = configPage2.oddfire2;
         }
+
         if (!configPage2.injTiming)
         {
           //For simultaneous, all squirts happen at the same time
@@ -794,11 +795,11 @@ void initialiseAll(void)
         break;
     case 5:
       ignitions.ignition(ignChannel1).ignDegrees = 0;
-      ignitions.ignition(ignChannel2).ignDegrees = 0;
-      ignitions.ignition(ignChannel3).ignDegrees = 0;
-      ignitions.ignition(ignChannel4).ignDegrees = 0;
-#if (INJ_CHANNELS >= 5)
-      ignitions.ignition(ignChannel5).ignDegrees = 0;
+      ignitions.ignition(ignChannel2).ignDegrees = 72;
+      ignitions.ignition(ignChannel3).ignDegrees = 144;
+      ignitions.ignition(ignChannel4).ignDegrees = 216;
+#if (IGN_CHANNELS >= 5)
+      ignitions.ignition(ignChannel5).ignDegrees = 288;
 #endif
       ignitions.setMaxIgnitions(5);
       // Is updated below to 5 if there are enough channels.
@@ -814,7 +815,7 @@ void initialiseAll(void)
 #endif
 
           CRANK_ANGLE_MAX_IGN = 720;
-        }
+      }
 
         //For alternating injection, the squirt occurs at different times for each channel
         if (configPage2.injLayout == INJ_SEMISEQUENTIAL

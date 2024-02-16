@@ -259,7 +259,6 @@ static void cylinder2_stroke2_seq_nostage(void)
   initialiseAll(); //Run the main initialise function
 	const bool enabled[] = {true, true, false, false, false, false, false, false};
 	const uint16_t angle[] = {0,180,0,0,0,0,0,0};
-  TEST_ASSERT_EQUAL(1, init_ok);
 
   assert_fuel_schedules(180U, reqFuel * 100U, enabled, angle);
 }
