@@ -9,8 +9,6 @@
 #include "injector_control.h"
 #include "injector_contexts.h"
 
-int init_ok = 0;
-
 extern uint16_t req_fuel_uS;
 void prepareForInitialiseAll(uint8_t boardId);
 

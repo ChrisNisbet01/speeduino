@@ -58,8 +58,10 @@ IgnitionSchedule ignitionSchedule1(IGN1_COUNTER, IGN1_COMPARE, IGN1_TIMER_DISABL
 IgnitionSchedule ignitionSchedule2(IGN2_COUNTER, IGN2_COMPARE, IGN2_TIMER_DISABLE, IGN2_TIMER_ENABLE);
 IgnitionSchedule ignitionSchedule3(IGN3_COUNTER, IGN3_COMPARE, IGN3_TIMER_DISABLE, IGN3_TIMER_ENABLE);
 IgnitionSchedule ignitionSchedule4(IGN4_COUNTER, IGN4_COMPARE, IGN4_TIMER_DISABLE, IGN4_TIMER_ENABLE);
-IgnitionSchedule ignitionSchedule5(IGN5_COUNTER, IGN5_COMPARE, IGN5_TIMER_DISABLE, IGN5_TIMER_ENABLE);
 
+#if IGN_CHANNELS >= 5
+IgnitionSchedule ignitionSchedule5(IGN5_COUNTER, IGN5_COMPARE, IGN5_TIMER_DISABLE, IGN5_TIMER_ENABLE);
+#endif
 #if IGN_CHANNELS >= 6
 IgnitionSchedule ignitionSchedule6(IGN6_COUNTER, IGN6_COMPARE, IGN6_TIMER_DISABLE, IGN6_TIMER_ENABLE);
 #endif
@@ -96,16 +98,16 @@ static void initialiseIgnitionSchedules(void)
   ignitions.ignition(ignChannel2).ignitionSchedule = &ignitionSchedule2;
   ignitions.ignition(ignChannel3).ignitionSchedule = &ignitionSchedule3;
   ignitions.ignition(ignChannel4).ignitionSchedule = &ignitionSchedule4;
-#if INJ_CHANNELS >= 5
+#if IGN_CHANNELS >= 5
   ignitions.ignition(ignChannel5).ignitionSchedule = &ignitionSchedule5;
 #endif
-#if INJ_CHANNELS >= 6
+#if IGN_CHANNELS >= 6
   ignitions.ignition(ignChannel6).ignitionSchedule = &ignitionSchedule6;
 #endif
-#if INJ_CHANNELS >= 7
+#if IGN_CHANNELS >= 7
   ignitions.ignition(ignChannel7).ignitionSchedule = &ignitionSchedule7;
 #endif
-#if INJ_CHANNELS >= 8
+#if IGN_CHANNELS >= 8
   ignitions.ignition(ignChannel8).ignitionSchedule = &ignitionSchedule8;
 #endif
 }

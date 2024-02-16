@@ -217,7 +217,6 @@ typedef enum load_source_t {
 #define TOOTH_LOG_SIZE 127
 #else
 #define TOOTH_LOG_SIZE 1
-extern int init_ok;
 #endif
 
 #define O2_CALIBRATION_PAGE 2U

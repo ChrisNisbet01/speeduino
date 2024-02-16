@@ -124,10 +124,10 @@ void initialiseAll(void)
     configPage4.bootloaderCaps = 0;
 
     initialiseTimers();
-    // This calls the current individual boards init function.
+    initialiseSchedulers();
+    // This calls the board-specific init function.
     // See the board_xxx.ino files for these.
     initBoard();
-    initialiseSchedulers();
 
 #ifdef SD_LOGGING
     initRTC();
@@ -338,7 +338,9 @@ void initialiseAll(void)
     singleCoilEndCharge(ignition_id_2);
     singleCoilEndCharge(ignition_id_3);
     singleCoilEndCharge(ignition_id_4);
+#if (IGN_CHANNELS >= 5)
     singleCoilEndCharge(ignition_id_5);
+#endif
 #if (IGN_CHANNELS >= 6)
     singleCoilEndCharge(ignition_id_6);
 #endif
@@ -354,16 +356,18 @@ void initialiseAll(void)
     closeSingleInjector(injector_id_2);
     closeSingleInjector(injector_id_3);
     closeSingleInjector(injector_id_4);
+#if (INJ_CHANNELS >= 5)
     closeSingleInjector(injector_id_5);
-    #if (INJ_CHANNELS >= 6)
+#endif
+#if (INJ_CHANNELS >= 6)
     closeSingleInjector(injector_id_6);
-    #endif
-    #if (INJ_CHANNELS >= 7)
+#endif
+#if (INJ_CHANNELS >= 7)
     closeSingleInjector(injector_id_7);
-    #endif
-    #if (INJ_CHANNELS >= 8)
+#endif
+#if (INJ_CHANNELS >= 8)
     closeSingleInjector(injector_id_8);
-    #endif
+#endif
 
     //Set the tacho output default state
     digitalWrite(pinTachOut, HIGH);
@@ -655,22 +659,22 @@ void initialiseAll(void)
         //Check if injector staging is enabled
         if (configPage10.stagingEnabled)
         {
-          #if INJ_CHANNELS >= 6
-            injectors.setMaxInjectors(6);
+#if INJ_CHANNELS >= 6
+          injectors.setMaxInjectors(6);
 
-            injectors.injector(injChannel4).channelInjDegrees =
-              injectors.injector(injChannel1).channelInjDegrees;
-            injectors.injector(injChannel5).channelInjDegrees =
-              injectors.injector(injChannel2).channelInjDegrees;
-            injectors.injector(injChannel6).channelInjDegrees =
-              injectors.injector(injChannel3).channelInjDegrees;
-          #else
-            //Staged output is on channel 4
-            injectors.setMaxInjectors(4);
+          injectors.injector(injChannel4).channelInjDegrees =
+            injectors.injector(injChannel1).channelInjDegrees;
+          injectors.injector(injChannel5).channelInjDegrees =
+            injectors.injector(injChannel2).channelInjDegrees;
+          injectors.injector(injChannel6).channelInjDegrees =
+            injectors.injector(injChannel3).channelInjDegrees;
+#else
+          //Staged output is on channel 4
+          injectors.setMaxInjectors(4);
 
-            injectors.injector(injChannel4).channelInjDegrees =
-              injectors.injector(injChannel1).channelInjDegrees;
-          #endif
+          injectors.injector(injChannel4).channelInjDegrees =
+            injectors.injector(injChannel1).channelInjDegrees;
+#endif
         }
         break;
     case 4:

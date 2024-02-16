@@ -43,7 +43,7 @@
   #endif
   #define pinIsReserved(pin)  ( ((pin) == 0) ) //Forbidden pins like USB on other boards
 
-  //Mega 2561 MCU does not have a serial3 available. 
+  //Mega 2561 MCU does not have a serial3 available.
   #if not defined(__AVR_ATmega2561__)
     #define USE_SERIAL3
   #endif
@@ -108,7 +108,7 @@ static inline void FUEL6_TIMER_DISABLE(void) { TIMSK4 &= ~(1 << OCIE4A); } // //
 static inline void FUEL7_TIMER_DISABLE(void) { TIMSK5 &= ~(1 << OCIE5C); } // //
 static inline void FUEL8_TIMER_DISABLE(void) { TIMSK5 &= ~(1 << OCIE5B); } //
 
-  //These have the TIFR5 bits set to 1 to clear the interrupt flag. This prevents a false interrupt being called the first time the channel is enabled.
+//These have the TIFR5 bits set to 1 to clear the interrupt flag. This prevents a false interrupt being called the first time the channel is enabled.
 static inline void IGN1_TIMER_ENABLE(void) { TIFR5 |= (1<<OCF5A); TIMSK5 |= (1 << OCIE5A); } //Turn on the A compare unit (ie turn on the interrupt)
 static inline void IGN2_TIMER_ENABLE(void) { TIFR5 |= (1<<OCF5B); TIMSK5 |= (1 << OCIE5B); }//Turn on the B compare unit (ie turn on the interrupt)
 static inline void IGN3_TIMER_ENABLE(void) { TIFR5 |= (1<<OCF5C); TIMSK5 |= (1 << OCIE5C); }//Turn on the C compare unit (ie turn on the interrupt)
@@ -127,8 +127,13 @@ static inline void IGN6_TIMER_DISABLE(void) { TIMSK4 &= ~(1 << OCIE4B); } //Repl
 static inline void IGN7_TIMER_DISABLE(void) { TIMSK3 &= ~(1 << OCIE3C); } //Replaces injector 3
 static inline void IGN8_TIMER_DISABLE(void) { TIMSK3 &= ~(1 << OCIE3B); } //Replaces injector 2
 
-  #define MAX_TIMER_PERIOD 262140UL //The longest period of time (in uS) that the timer can permit (IN this case it is 65535 * 4, as each timer tick is 4uS)
-  #define uS_TO_TIMER_COMPARE(uS1) ((uS1) >> 2) //Converts a given number of uS into the required number of timer ticks until that time has passed
+//The longest period of time (in uS) that the timer can permit
+//(IN this case it is 65535 * 4, as each timer tick is 4uS)
+#define MAX_TIMER_PERIOD 262140UL
+
+//Converts a given number of uS into the required number of timer ticks until
+//that time has passed
+#define uS_TO_TIMER_COMPARE(uS1) ((uS1) >> 2)
 
 /*
 ***********************************************************************************************************
