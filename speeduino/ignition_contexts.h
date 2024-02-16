@@ -65,8 +65,8 @@ typedef struct ignition_contexts_st
 {
 public:
   byte maxOutputs = 1; /**< Number of ignition outputs being used by the current tune configuration */
-  uint8_t channelsOn;
-  uint8_t channelsPending;
+  uint8_t channelsOn = 0;
+  uint8_t channelsPending = 0;
 
   ignition_context_st& ignition(ignitionChannelID_t ign)
   {

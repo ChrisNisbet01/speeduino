@@ -29,8 +29,8 @@ typedef enum
 
 typedef struct injector_context_st
 {
-  FuelSchedule * fuelSchedule;
-  unsigned int PW;
+  FuelSchedule * fuelSchedule = nullptr;
+  unsigned int PW = 0;
   /* The number of crank degrees until the associated cylinder is at TDC */
   int channelInjDegrees = 0;
 
@@ -53,7 +53,7 @@ typedef struct injectors_context_st
 {
 public:
   byte maxOutputs = 1; /**< Number of injection outputs being used by the current tune configuration */
-  byte channelsOn;
+  byte channelsOn = 0;
 
   void setMaxInjectors(byte const maxOutputs);
 
