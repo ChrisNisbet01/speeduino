@@ -41,7 +41,7 @@
 // MB85RS64A - 256 K (32 K x 8) bit SPI FRAM
 #define FRAM_SIZE 0x8000UL
 
-#define DUMMYBYTE  0xFE	//dummy bytes to make easier to sniff
+#define FRAM_DUMMYBYTE  0xFE	//dummy bytes to make easier to sniff
 
 #define FRAM_CMD_WREN  0x06	//write enable
 #define FRAM_CMD_WRDI  0x04	//write disable
@@ -82,7 +82,7 @@ class FramClass
     uint32_t length (void);
 
     /**
-     * Read AnyTypeOfData from eeprom 
+     * Read AnyTypeOfData from eeprom
      * @param address
      * @return AnyTypeOfData
      */
@@ -95,11 +95,11 @@ class FramClass
 
     /**
      * Write AnyTypeOfData to eeprom
-     * @param address 
-     * @param AnyTypeOfData 
-     * @return number of bytes written to flash 
+     * @param address
+     * @param AnyTypeOfData
+     * @return number of bytes written to flash
      */
-    template< typename T > const T &put( int idx, const T &t ){        
+    template< typename T > const T &put( int idx, const T &t ){
         const uint8_t *ptr = (const uint8_t*) &t;
         uint16_t e = idx;
         for( int count = sizeof(T) ; count ; --count, ++e )  write(e, *ptr++);
