@@ -4,12 +4,15 @@
 
 #include "ignition_contexts.h"
 #include "scheduler.h"
+#include "utilities.h"
 
 #define TIMEOUT 1000
 #define DURATION 1000
 
 static void emptyCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
 {
+    UNUSED(coil_id1);
+    UNUSED(coil_id2);
 }
 
 void test_status_pending_to_running_inj1(void)

@@ -808,10 +808,10 @@ int8_t correctionIATretard(int8_t advance)
  */
 int8_t correctionCLTadvance(int8_t advance)
 {
-  int8_t ignCLTValue = advance;
   //Adjust the advance based on CLT.
-  int8_t advanceCLTadjust = (int16_t)(table2D_getValue(&CLTAdvanceTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) - 15;
-  ignCLTValue = (advance + advanceCLTadjust);
+  int8_t advanceCLTadjust =
+     (int16_t)(table2D_getValue(&CLTAdvanceTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) - 15;
+  int8_t ignCLTValue = advance + advanceCLTadjust;
 
   return ignCLTValue;
 }
@@ -819,7 +819,6 @@ int8_t correctionCLTadvance(int8_t advance)
  */
 int8_t correctionIdleAdvance(int8_t advance)
 {
-
   int8_t ignIdleValue = advance;
   //Adjust the advance based on idle target rpm.
   if( (configPage2.idleAdvEnabled >= 1) && (runSecsX10 >= (configPage2.idleAdvDelay * 5)) && idleAdvActive)
