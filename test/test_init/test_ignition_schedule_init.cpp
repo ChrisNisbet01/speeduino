@@ -19,7 +19,7 @@ static void assert_ignition_channel(
 {
   char msg[32];
 
-  sprintf_P(msg, PSTR("channe%" PRIu8 "1InjDegrees"), channel+1);
+  sprintf_P(msg, PSTR("channel%" PRIu8 "IgnDegrees"), channel+1);
   TEST_ASSERT_EQUAL_MESSAGE(angle, channelInjDegrees, msg);
   sprintf_P(msg, PSTR("ign%" PRIu8 "StartFunction"), channel+1);
   TEST_ASSERT_TRUE_MESSAGE(channel>=ignitions.maxOutputs || startFunction != nullCallback, msg);
@@ -40,9 +40,12 @@ static void assert_ignition_schedules(uint16_t crankAngle, uint16_t expectedOutp
   {
     ignition_context_st &ignition = ignitions.ignition((ignitionChannelID_t)i);
 
-    assert_ignition_channel(angle[1], 1,
-                            ignition.ignDegrees,
-                            ignition.ignitionSchedule->start.pCallback, ignition.ignitionSchedule->end.pCallback);
+    assert_ignition_channel(
+      angle[i],
+      i,
+      ignition.ignDegrees,
+      ignition.ignitionSchedule->start.pCallback,
+      ignition.ignitionSchedule->end.pCallback);
   }
 }
 
