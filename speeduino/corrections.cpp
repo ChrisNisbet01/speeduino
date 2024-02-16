@@ -344,7 +344,10 @@ uint16_t correctionAccel(void)
     }
   }
 
-  if( !BIT_CHECK(currentStatus.engine, BIT_ENGINE_ACC) && !BIT_CHECK(currentStatus.engine, BIT_ENGINE_DCC)) //Need to check this again as it may have been changed in the above section (Both ACC and DCC are off if this has changed)
+  //Need to check this again as it may have been changed in the above section
+  //(Both ACC and DCC are off if this has changed)
+  if (!BIT_CHECK(currentStatus.engine, BIT_ENGINE_ACC)
+      && !BIT_CHECK(currentStatus.engine, BIT_ENGINE_DCC))
   {
     if(configPage2.aeMode == AE_MODE_MAP)
     {
@@ -359,17 +362,21 @@ uint16_t correctionAccel(void)
         if (abs(currentStatus.mapDOT) > configPage2.maeThresh)
         {
           activateMAPDOT = abs(currentStatus.mapDOT);
-          currentStatus.AEEndTime = micros_safe() + ((unsigned long)configPage2.aeTime * 10000); //Set the time in the future where the enrichment will be turned off. taeTime is stored as mS / 10, so multiply it by 100 to get it in uS
+          //Set the time in the future where the enrichment will be turned off.
+          //taeTime is stored as mS / 10, so multiply it by 100 to get it in uS
+          currentStatus.AEEndTime = micros_safe() + ((unsigned long)configPage2.aeTime * 10000);
           //Check if the MAP rate of change is negative or positive. Negative means decelarion.
           if (currentStatus.mapDOT < 0)
           {
-            BIT_SET(currentStatus.engine, BIT_ENGINE_DCC); //Mark deceleration enleanment as active.
+            //Deceleration
+            BIT_SET(currentStatus.engine, BIT_ENGINE_DCC);
             accelValue = configPage2.decelAmount; //In decel, use the decel fuel amount as accelValue
-          } //Deceleration
-          //Positive MAP rate of change is acceleration.
+          }
+
           else
           {
-            BIT_SET(currentStatus.engine, BIT_ENGINE_ACC); //Mark acceleration enrichment as active.
+            //Positive MAP rate of change is acceleration.
+            BIT_SET(currentStatus.engine, BIT_ENGINE_ACC);
             accelValue = table2D_getValue(&maeTable, currentStatus.mapDOT / 10); //The x-axis of mae table is divided by 10 to fit values in byte.
 
             //Apply the RPM taper to the above
@@ -378,32 +385,39 @@ uint16_t correctionAccel(void)
             uint16_t trueTaperMax = configPage2.aeTaperMax * 100;
             if (currentStatus.RPM > trueTaperMin)
             {
-              if(currentStatus.RPM > trueTaperMax) { accelValue = 0; } //RPM is beyond taper max limit, so accel enrich is turned off
+              if(currentStatus.RPM > trueTaperMax)
+              {
+                //RPM is beyond taper max limit, so accel enrich is turned off
+                accelValue = 0;
+              }
               else
               {
                 int16_t taperRange = trueTaperMax - trueTaperMin;
-                int16_t taperPercent = ((currentStatus.RPM - trueTaperMin) * 100UL) / taperRange; //The percentage of the way through the RPM taper range
-                accelValue = percentage((100-taperPercent), accelValue); //Calculate the above percentage of the calculated accel amount.
+                //The percentage of the way through the RPM taper range
+                int16_t taperPercent = ((currentStatus.RPM - trueTaperMin) * 100UL) / taperRange;
+                //Calculate the above percentage of the calculated accel amount.
+                accelValue = percentage((100-taperPercent), accelValue);
               }
             }
 
             //Apply AE cold coolant modifier, if CLT is less than taper end temperature
-            if ( currentStatus.coolant < (int)(configPage2.aeColdTaperMax - CALIBRATION_TEMPERATURE_OFFSET) )
+            if (currentStatus.coolant < (int)(configPage2.aeColdTaperMax - CALIBRATION_TEMPERATURE_OFFSET))
             {
               //If CLT is less than taper min temp, apply full modifier on top of accelValue
-              if ( currentStatus.coolant <= (int)(configPage2.aeColdTaperMin - CALIBRATION_TEMPERATURE_OFFSET) )
+              if (currentStatus.coolant <= (int)(configPage2.aeColdTaperMin - CALIBRATION_TEMPERATURE_OFFSET))
               {
                 uint16_t accelValue_uint = percentage(configPage2.aeColdPct, accelValue);
-                accelValue = (int16_t) accelValue_uint;
+                accelValue = (int16_t)accelValue_uint;
               }
-              //If CLT is between taper min and max, taper the modifier value and apply it on top of accelValue
               else
               {
-                int16_t taperRange = (int16_t) configPage2.aeColdTaperMax - configPage2.aeColdTaperMin;
+                //If CLT is between taper min and max, taper the modifier value and apply it on top of accelValue
+                int16_t taperRange = (int16_t)configPage2.aeColdTaperMax - configPage2.aeColdTaperMin;
                 int16_t taperPercent = (int)((currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET - configPage2.aeColdTaperMin) * 100) / taperRange;
-                int16_t coldPct = (int16_t) 100 + percentage( (100-taperPercent), (configPage2.aeColdPct-100) );
-                uint16_t accelValue_uint = (uint16_t) accelValue * coldPct / 100; //Potential overflow (if AE is large) without using uint16_t (percentage() may overflow)
-                accelValue = (int16_t) accelValue_uint;
+                int16_t coldPct = (int16_t)100 + percentage((100 - taperPercent), (configPage2.aeColdPct - 100));
+                //Potential overflow (if AE is large) without using uint16_t (percentage() may overflow)
+                uint16_t accelValue_uint = (uint16_t)accelValue * coldPct / 100;
+                accelValue = (int16_t)accelValue_uint;
               }
             }
             accelValue = 100 + accelValue; //In case of AE, add the 100 normalisation to the calculated amount
@@ -413,7 +427,8 @@ uint16_t correctionAccel(void)
     } //AE Mode
     else if(configPage2.aeMode == AE_MODE_TPS)
     {
-      //Check for only very small movement. This not only means we can skip the lookup, but helps reduce false triggering around 0-2% throttle openings
+      //Check for only very small movement. This not only means we can skip the lookup,
+      //but helps reduce false triggering around 0-2% throttle openings
       if (abs(TPS_change) <= configPage2.taeMinChange)
       {
         accelValue = 100;
@@ -425,30 +440,42 @@ uint16_t correctionAccel(void)
         if (abs(currentStatus.tpsDOT) > configPage2.taeThresh)
         {
           activateTPSDOT = abs(currentStatus.tpsDOT);
-          currentStatus.AEEndTime = micros_safe() + ((unsigned long)configPage2.aeTime * 10000); //Set the time in the future where the enrichment will be turned off. taeTime is stored as mS / 10, so multiply it by 100 to get it in uS
+          //Set the time in the future where the enrichment will be turned off.
+          //taeTime is stored as mS / 10, so multiply it by 100 to get it in uS
+          currentStatus.AEEndTime = micros_safe() + ((unsigned long)configPage2.aeTime * 10000);
           //Check if the TPS rate of change is negative or positive. Negative means decelarion.
           if (currentStatus.tpsDOT < 0)
           {
-            BIT_SET(currentStatus.engine, BIT_ENGINE_DCC); //Mark deceleration enleanment as active.
-            accelValue = configPage2.decelAmount; //In decel, use the decel fuel amount as accelValue
-          } //Deceleration
-          //Positive TPS rate of change is Acceleration.
+            //Deceleration
+            BIT_SET(currentStatus.engine, BIT_ENGINE_DCC);
+            //In decel, use the decel fuel amount as accelValue
+            accelValue = configPage2.decelAmount;
+          }
+
           else
           {
-            BIT_SET(currentStatus.engine, BIT_ENGINE_ACC); //Mark acceleration enrichment as active.
-            accelValue = table2D_getValue(&taeTable, currentStatus.tpsDOT / 10); //The x-axis of tae table is divided by 10 to fit values in byte.
+            //Positive TPS rate of change is Acceleration.
+            BIT_SET(currentStatus.engine, BIT_ENGINE_ACC);
+            //The x-axis of tae table is divided by 10 to fit values in byte.
+            accelValue = table2D_getValue(&taeTable, currentStatus.tpsDOT / 10);
             //Apply the RPM taper to the above
             //The RPM settings are stored divided by 100:
             uint16_t trueTaperMin = configPage2.aeTaperMin * 100;
             uint16_t trueTaperMax = configPage2.aeTaperMax * 100;
             if (currentStatus.RPM > trueTaperMin)
             {
-              if(currentStatus.RPM > trueTaperMax) { accelValue = 0; } //RPM is beyond taper max limit, so accel enrich is turned off
+              if(currentStatus.RPM > trueTaperMax)
+              {
+                //RPM is beyond taper max limit, so accel enrich is turned off
+                accelValue = 0;
+              }
               else
               {
                 int16_t taperRange = trueTaperMax - trueTaperMin;
-                int16_t taperPercent = ((currentStatus.RPM - trueTaperMin) * 100UL) / taperRange; //The percentage of the way through the RPM taper range
-                accelValue = percentage( (100 - taperPercent), accelValue); //Calculate the above percentage of the calculated accel amount.
+                //The percentage of the way through the RPM taper range
+                int16_t taperPercent = ((currentStatus.RPM - trueTaperMin) * 100UL) / taperRange;
+                //Calculate the above percentage of the calculated accel amount.
+                accelValue = percentage( (100 - taperPercent), accelValue);
               }
             }
 
