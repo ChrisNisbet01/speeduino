@@ -21,15 +21,14 @@ A full copy of the license may be found in the projects root directory
 #include "utilities.h"
 #include BOARD_H
 #include "fuel_pump.h"
+#include "tps_dot.h"
+#include "map_dot.h"
 
 uint32_t MAPcurRev; //Tracks which revolution we're sampling on
 unsigned int MAPcount; //Number of samples taken in the current MAP cycle
 unsigned long MAPrunningValue; //Used for tracking either the total of all MAP readings in this cycle (Event average) or the lowest value detected in this cycle (event minimum)
 unsigned long EMAPrunningValue; //As above but for EMAP
 bool auxIsEnabled;
-uint16_t MAPlast; /**< The previous MAP reading */
-unsigned long MAP_time; //The time the MAP sample was taken
-unsigned long MAPlast_time; //The time the previous MAP sample was taken
 volatile unsigned long vssTimes[VSS_SAMPLES] = { 0 };
 volatile byte vssIndex;
 
@@ -310,11 +309,6 @@ static uint32_t readAnalogTwice(byte const pin)
 
 static void instantaneousMAP(bool const initialisationComplete)
 {
-  //Update the calculation times and last value. These are used by the MAP based Accel enrich
-  MAPlast = currentStatus.MAP;
-  MAPlast_time = MAP_time;
-  MAP_time = micros();
-
   unsigned int tempReading;
 
   //Instantaneous MAP readings
@@ -349,6 +343,7 @@ static void instantaneousMAP(bool const initialisationComplete)
   {
     currentStatus.MAP = 0;
   }
+  currentStatus.mapDOT = mapDOT.update(currentStatus.MAP, micros(), configPage2.maeMinChange);
 }
 
 static void instantaneousEMAP(bool const initialisationComplete)
@@ -459,16 +454,15 @@ void readMAP(void)
       {
         //Reaching here means that the last cycle has completed and the MAP value should be calculated
         //Sanity check
-        if ((MAPrunningValue != 0) && (MAPcount != 0))
+        if (MAPrunningValue != 0 && MAPcount != 0)
         {
-          //Update the calculation times and last value. These are used by the MAP based Accel enrich
-          MAPlast = currentStatus.MAP;
-          MAPlast_time = MAP_time;
-          MAP_time = micros();
-
           currentStatus.mapADC = udiv_32_16(MAPrunningValue, MAPcount);
           currentStatus.MAP = fastMap10Bit(currentStatus.mapADC, configPage2.mapMin, configPage2.mapMax);
+
           validateMAP();
+
+          /* Calculate MAP DOT _after_ validation. */
+          currentStatus.mapDOT = mapDOT.update(currentStatus.MAP, micros(), configPage2.maeMinChange);
 
           //If EMAP is enabled, the process is identical to the above
           if (configPage6.useEMAP)
@@ -532,17 +526,17 @@ void readMAP(void)
       {
         //Reaching here means that the last cycle has completed and the MAP value should be calculated
 
-        //Update the calculation times and last value. These are used by the MAP based Accel enrich
-        MAPlast = currentStatus.MAP;
-        MAPlast_time = MAP_time;
-        MAP_time = micros();
-
         currentStatus.mapADC = MAPrunningValue;
         currentStatus.MAP = fastMap10Bit(currentStatus.mapADC, configPage2.mapMin, configPage2.mapMax);
+
         MAPcurRev = currentStatus.startRevolutions; //Reset the current rev count
         MAPrunningValue = 1023; //Reset the latest value so the next reading will always be lower
 
         validateMAP();
+
+        /* Calculate MAP DOT _after_ validation. */
+        currentStatus.mapDOT = mapDOT.update(currentStatus.MAP, micros(), configPage2.maeMinChange);
+
       }
     }
     else
@@ -583,16 +577,14 @@ void readMAP(void)
       {
         //Reaching here means that the  next ignition event has occurred and the MAP value should be calculated
         //Sanity check
-        if ((MAPrunningValue != 0) && (MAPcount != 0) && (MAPcurRev < ignitionCount))
+        if (MAPrunningValue != 0 && MAPcount != 0 && MAPcurRev < ignitionCount)
         {
-          //Update the calculation times and last value. These are used by the MAP based Accel enrich
-          MAPlast = currentStatus.MAP;
-          MAPlast_time = MAP_time;
-          MAP_time = micros();
-
           currentStatus.mapADC = udiv_32_16(MAPrunningValue, MAPcount);
           currentStatus.MAP = fastMap10Bit(currentStatus.mapADC, configPage2.mapMin, configPage2.mapMax);
           validateMAP();
+
+          /* Calculate MAP DOT _after_ validation. */
+          currentStatus.mapDOT = mapDOT.update(currentStatus.MAP, micros(), configPage2.maeMinChange);
         }
         else
         {
@@ -621,7 +613,6 @@ void readMAP(void)
 
 void readTPS(bool useFilter)
 {
-  currentStatus.TPSlast = currentStatus.TPS;
   //Get the current raw TPS ADC value and map it into a byte
 #if defined(ANALOG_ISR)
   byte tempTPS = fastMap1023toX(AnChannel[pinTPS - A0], 255);
@@ -656,6 +647,7 @@ void readTPS(bool useFilter)
     }
     //Take the raw TPS ADC value and convert it into a TPS% based on the calibrated values
     currentStatus.TPS = map(tempADC, configPage2.tpsMin, configPage2.tpsMax, 0, 200);
+    currentStatus.tpsDOT = tpsDOT.update(currentStatus.TPS, micros(), configPage2.taeMinChange);
   }
   else
   {
@@ -676,6 +668,7 @@ void readTPS(bool useFilter)
       tempADC = tempTPSMin;
     }
     currentStatus.TPS = map(tempADC, tempTPSMin, tempTPSMax, 0, 200);
+    currentStatus.tpsDOT = tpsDOT.update(currentStatus.TPS, micros(), configPage2.taeMinChange);
   }
 
   //Check whether the closed throttle position sensor is active

@@ -30,6 +30,8 @@ There are 2 top level functions that call more detailed corrections for Fuel and
 #include "maths.h"
 #include "sensors.h"
 #include "src/PID_v1/PID_v1.h"
+#include "tps_dot.h"
+#include "map_dot.h"
 
 long PID_O2, PID_output, PID_AFRTarget;
 /** Instance of the PID object in case that algorithm is used (Always instantiated).
@@ -327,23 +329,11 @@ byte correctionASE(void)
   return ASEValue;
 }
 
-static int16_t doAECalculation(
-  int16_t const change,
-  int16_t &DOT,
-  byte const minChange,
-  byte const threshold,
-  struct table2D &table,
-  byte &activateDOT
-  )
+static int16_t doAECalculation(int16_t const DOT, byte const threshold, struct table2D &table, byte &activateDOT)
 {
   int16_t accelValue;
 
-  if (abs(change) <= minChange)
-  {
-    accelValue = 100;
-    DOT = 0;
-  }
-  else if (abs(DOT) > threshold)
+  if (abs(DOT) > threshold)
   {
     //If AE isn't currently turned on, need to check whether it needs to be turned on
     activateDOT = abs(DOT);
@@ -435,23 +425,6 @@ static int16_t doAECalculation(
 uint16_t correctionAccel(void)
 {
   int16_t accelValue = 100;
-  int16_t MAP_change = 0;
-  int16_t TPS_change = 0;
-
-  if(configPage2.aeMode == AE_MODE_MAP)
-  {
-    //Get the MAP rate change
-    MAP_change = currentStatus.MAP - MAPlast;
-    //This is the % per second that the MAP has moved
-    currentStatus.mapDOT = (MICROS_PER_SEC / (MAP_time - MAPlast_time)) * MAP_change;
-  }
-  else if(configPage2.aeMode == AE_MODE_TPS)
-  {
-    //Get the TPS rate change
-    TPS_change = currentStatus.TPS - currentStatus.TPSlast;
-    //This is the % per second that the TPS has moved, adjusted for the 0.5% resolution of the TPS
-    currentStatus.tpsDOT = (TPS_READ_FREQUENCY * TPS_change) / 2;
-  }
 
   //First, check whether the accel. enrichment is already running
   if (BIT_CHECK(currentStatus.engine, BIT_ENGINE_ACC)
@@ -459,23 +432,13 @@ uint16_t correctionAccel(void)
   {
     //If it is currently running, check whether it should still be running or
     //whether it's reached it's end time
-    if( micros_safe() >= currentStatus.AEEndTime )
+    if (micros_safe() >= currentStatus.AEEndTime)
     {
       //Time to turn enrichment off
       BIT_CLEAR(currentStatus.engine, BIT_ENGINE_ACC);
       BIT_CLEAR(currentStatus.engine, BIT_ENGINE_DCC);
       currentStatus.AEamount = 0;
       accelValue = 100;
-
-      //Reset the relevant DOT value to 0
-      if (configPage2.aeMode == AE_MODE_MAP)
-      {
-        currentStatus.mapDOT = 0;
-      }
-      else if (configPage2.aeMode == AE_MODE_TPS)
-      {
-        currentStatus.tpsDOT = 0;
-      }
     }
     else
     {
@@ -507,21 +470,13 @@ uint16_t correctionAccel(void)
   {
     if(configPage2.aeMode == AE_MODE_MAP)
     {
-      accelValue = doAECalculation(MAP_change,
-                      currentStatus.mapDOT,
-                      configPage2.maeMinChange,
-                      configPage2.maeThresh,
-                      maeTable,
-                      activateMAPDOT);
+      accelValue =
+        doAECalculation(currentStatus.mapDOT, configPage2.maeThresh, maeTable, activateMAPDOT);
     }
     else if(configPage2.aeMode == AE_MODE_TPS)
     {
-      accelValue = doAECalculation(TPS_change,
-                      currentStatus.tpsDOT,
-                      configPage2.taeMinChange,
-                      configPage2.taeThresh,
-                      taeTable,
-                      activateTPSDOT);
+      accelValue =
+        doAECalculation(currentStatus.tpsDOT, configPage2.taeThresh, taeTable, activateTPSDOT);
     }
     else
     {

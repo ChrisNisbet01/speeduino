@@ -2,7 +2,7 @@
 #include <corrections.h>
 #include <unity.h>
 #include "test_corrections.h"
-
+#include "tps_dot.h"
 
 void testCorrections()
 {
@@ -291,13 +291,16 @@ void test_corrections_TAE_no_rpm_taper()
   configPage2.aeTaperMin = 50; //5000
   configPage2.aeTaperMax = 60; //6000
 
-  currentStatus.TPSlast = 0;
-  currentStatus.TPS = 50; //25% actual value
+  currentStatus.TPS = 50; //25% actual value (range is 0 - 200)
+  tpsDOT.reset();
+  tpsDOT.update(0, 0, 0);
+  /* Pretend 1/30 of a second has elapsed. */
+  currentStatus.tpsDOT = tpsDOT.update(currentStatus.TPS, MICROS_PER_SEC / 30, configPage2.taeMinChange);
 
   uint16_t accelValue = correctionAccel(); //Run the AE calcs
 
   TEST_ASSERT_EQUAL(750, currentStatus.tpsDOT); //DOT is 750%/s (25 * 30)
-  TEST_ASSERT_EQUAL((100+132), accelValue);
+  TEST_ASSERT_EQUAL(100 + 132, accelValue);
 	TEST_ASSERT_TRUE(BIT_CHECK(currentStatus.engine, BIT_ENGINE_ACC)); //Confirm AE is flagged on
 }
 
@@ -308,13 +311,16 @@ void test_corrections_TAE_50pc_rpm_taper()
   configPage2.aeTaperMin = 10; //1000
   configPage2.aeTaperMax = 50; //5000
 
-  currentStatus.TPSlast = 0;
-  currentStatus.TPS = 50; //25% actual value
+  currentStatus.TPS = 50; //25% actual value (0 - 200 range)
+  tpsDOT.reset();
+  tpsDOT.update(0, 0, 0);
+  /* Pretend 1/30 of a second has elapsed. */
+  currentStatus.tpsDOT = tpsDOT.update(currentStatus.TPS, MICROS_PER_SEC / 30, configPage2.taeMinChange);
 
   uint16_t accelValue = correctionAccel(); //Run the AE calcs
 
   TEST_ASSERT_EQUAL(750, currentStatus.tpsDOT); //DOT is 750%/s (25 * 30)
-  TEST_ASSERT_EQUAL((100+66), accelValue);
+  TEST_ASSERT_EQUAL(100 + 66, accelValue);
 	TEST_ASSERT_TRUE(BIT_CHECK(currentStatus.engine, BIT_ENGINE_ACC)); //Confirm AE is flagged on
 }
 
@@ -325,8 +331,11 @@ void test_corrections_TAE_110pc_rpm_taper()
   configPage2.aeTaperMin = 10; //1000
   configPage2.aeTaperMax = 50; //5000
 
-  currentStatus.TPSlast = 0;
-  currentStatus.TPS = 50; //25% actual value
+  currentStatus.TPS = 50; //25% actual value (0 - 200 range)
+  tpsDOT.reset();
+  tpsDOT.update(0, 0, 0);
+  /* Pretend 1/30 of a second has elapsed. */
+  currentStatus.tpsDOT = tpsDOT.update(currentStatus.TPS, MICROS_PER_SEC / 30, configPage2.taeMinChange);
 
   uint16_t accelValue = correctionAccel(); //Run the AE calcs
 
@@ -342,9 +351,13 @@ void test_corrections_TAE_under_threshold()
   configPage2.aeTaperMin = 10; //1000
   configPage2.aeTaperMax = 50; //5000
 
-  currentStatus.TPSlast = 0;
-  currentStatus.TPS = 6; //3% actual value. TPSDot should be 90%/s
-	configPage2.taeThresh = 100; //Above the reading of 90%/s
+  currentStatus.TPS = 6; //3% actual value (0 - 200 range). TPSDot should be 90%/s (3% change in 1/30 of a second)
+  tpsDOT.reset();
+  tpsDOT.update(0, 0, 0);
+  /* Pretend 1/30 of a second has elapsed. */
+  currentStatus.tpsDOT = tpsDOT.update(currentStatus.TPS, MICROS_PER_SEC / 30, configPage2.taeMinChange);
+
+  configPage2.taeThresh = 100; //Above the reading of 90%/s
 
   uint16_t accelValue = correctionAccel(); //Run the AE calcs
 
@@ -360,8 +373,11 @@ void test_corrections_TAE_50pc_warmup_taper()
   configPage2.aeTaperMin = 50; //5000
   configPage2.aeTaperMax = 60; //6000
 
-  currentStatus.TPSlast = 0;
-  currentStatus.TPS = 50; //25% actual value
+  currentStatus.TPS = 50; //25% actual value (0 - 200 range)
+  tpsDOT.reset();
+  tpsDOT.update(0, 0, 0);
+  /* Pretend 1/30 of a second has elapsed. */
+  currentStatus.tpsDOT = tpsDOT.update(currentStatus.TPS, MICROS_PER_SEC / 30, configPage2.taeMinChange);
 
 	//Set a cold % of 50% increase
 	configPage2.aeColdPct = 150;
@@ -373,7 +389,7 @@ void test_corrections_TAE_50pc_warmup_taper()
   uint16_t accelValue = correctionAccel(); //Run the AE calcs
 
   TEST_ASSERT_EQUAL(750, currentStatus.tpsDOT); //DOT is 750%/s (25 * 30)
-  TEST_ASSERT_EQUAL((100+165), accelValue); //Total AE should be 132 + (50% * 50%) = 132 * 1.25 = 165
+  TEST_ASSERT_EQUAL(100 + 165, accelValue); //Total AE should be 132 + (50% * 50%) = 132 * 1.25 = 165
 	TEST_ASSERT_TRUE(BIT_CHECK(currentStatus.engine, BIT_ENGINE_ACC)); //Confirm AE is flagged on
 }
 
