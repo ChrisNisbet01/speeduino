@@ -233,16 +233,16 @@ void loop(void)
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_15HZ)) //Every 32 loops
   {
     BIT_CLEAR(TIMER_mask, BIT_TIMER_15HZ);
-#     if TPS_READ_FREQUENCY == 15
+#if TPS_READ_FREQUENCY == 15
     readTPS(); //TPS reading to be performed every 32 loops (any faster and it can upset the TPSdot sampling time)
-#     endif
-#     if  defined(CORE_TEENSY35)
+#endif
+#if defined(CORE_TEENSY35)
     if (configPage9.enable_intcan == 1) // use internal can module
     {
       // this is just to test the interface is sending
       //sendCancommand(3,((configPage9.realtime_base_address & 0x3FF)+ 0x100),currentStatus.TPS,0,0x200);
     }
-#     endif
+#endif
 
     checkLaunchAndFlatShift(); //Check for launch control and flat shift being active
 

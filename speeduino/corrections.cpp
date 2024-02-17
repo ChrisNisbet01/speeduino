@@ -74,27 +74,48 @@ uint16_t correctionsFuel(void)
   uint32_t sumCorrections = 100;
   uint16_t result; //temporary variable to store the result of each corrections function
 
-  //The values returned by each of the correction functions are multiplied together and then divided back to give a single 0-255 value.
+  //The values returned by each of the correction functions are multiplied together
+  //and then divided back to give a single 0-255 value.
   currentStatus.wueCorrection = correctionWUE();
-  if (currentStatus.wueCorrection != 100) { sumCorrections = div100(sumCorrections * currentStatus.wueCorrection); }
+  if (currentStatus.wueCorrection != 100)
+  {
+    sumCorrections = div100(sumCorrections * currentStatus.wueCorrection);
+  }
 
   currentStatus.ASEValue = correctionASE();
-  if (currentStatus.ASEValue != 100) { sumCorrections = div100(sumCorrections * currentStatus.ASEValue); }
+  if (currentStatus.ASEValue != 100)
+  {
+    sumCorrections = div100(sumCorrections * currentStatus.ASEValue);
+  }
 
   result = correctionCranking();
-  if (result != 100) { sumCorrections = div100(sumCorrections * result); }
+  if (result != 100)
+  {
+    sumCorrections = div100(sumCorrections * result);
+  }
 
   currentStatus.AEamount = correctionAccel();
-  if ( (configPage2.aeApplyMode == AE_MODE_MULTIPLIER) || BIT_CHECK(currentStatus.engine, BIT_ENGINE_DCC) ) // multiply by the AE amount in case of multiplier AE mode or Decel
+  // multiply by the AE amount in case of multiplier AE mode or Decel
+  if (configPage2.aeApplyMode == AE_MODE_MULTIPLIER
+      || BIT_CHECK(currentStatus.engine, BIT_ENGINE_DCC))
   {
-    if (currentStatus.AEamount != 100) { sumCorrections = div100(sumCorrections * currentStatus.AEamount);}
+    if (currentStatus.AEamount != 100)
+    {
+      sumCorrections = div100(sumCorrections * currentStatus.AEamount);
+    }
   }
 
   result = correctionFloodClear();
-  if (result != 100) { sumCorrections = div100(sumCorrections * result); }
+  if (result != 100)
+  {
+    sumCorrections = div100(sumCorrections * result);
+  }
 
   currentStatus.egoCorrection = correctionAFRClosedLoop();
-  if (currentStatus.egoCorrection != 100) { sumCorrections = div100(sumCorrections * currentStatus.egoCorrection); }
+  if (currentStatus.egoCorrection != 100)
+  {
+    sumCorrections = div100(sumCorrections * currentStatus.egoCorrection);
+  }
 
   currentStatus.batCorrection = correctionBatVoltage();
   if (configPage2.battVCorMode == BATTV_COR_MODE_OPENTIME)
@@ -104,30 +125,61 @@ uint16_t correctionsFuel(void)
   }
   if (configPage2.battVCorMode == BATTV_COR_MODE_WHOLE)
   {
-    if (currentStatus.batCorrection != 100) { sumCorrections = div100(sumCorrections * currentStatus.batCorrection); }
+    if (currentStatus.batCorrection != 100)
+    {
+      sumCorrections = div100(sumCorrections * currentStatus.batCorrection);
+    }
   }
 
   currentStatus.iatCorrection = correctionIATDensity();
-  if (currentStatus.iatCorrection != 100) { sumCorrections = div100(sumCorrections * currentStatus.iatCorrection); }
+  if (currentStatus.iatCorrection != 100)
+  {
+    sumCorrections = div100(sumCorrections * currentStatus.iatCorrection);
+  }
 
   currentStatus.baroCorrection = correctionBaro();
-  if (currentStatus.baroCorrection != 100) { sumCorrections = div100(sumCorrections * currentStatus.baroCorrection); }
+  if (currentStatus.baroCorrection != 100)
+  {
+    sumCorrections = div100(sumCorrections * currentStatus.baroCorrection);
+  }
 
   currentStatus.flexCorrection = correctionFlex();
-  if (currentStatus.flexCorrection != 100) { sumCorrections = div100(sumCorrections * currentStatus.flexCorrection); }
+  if (currentStatus.flexCorrection != 100)
+  {
+    sumCorrections = div100(sumCorrections * currentStatus.flexCorrection);
+  }
 
   currentStatus.fuelTempCorrection = correctionFuelTemp();
-  if (currentStatus.fuelTempCorrection != 100) { sumCorrections = div100(sumCorrections * currentStatus.fuelTempCorrection); }
+  if (currentStatus.fuelTempCorrection != 100)
+  {
+    sumCorrections = div100(sumCorrections * currentStatus.fuelTempCorrection);
+  }
 
   currentStatus.launchCorrection = correctionLaunch();
-  if (currentStatus.launchCorrection != 100) { sumCorrections = div100(sumCorrections * currentStatus.launchCorrection); }
+  if (currentStatus.launchCorrection != 100)
+  {
+    sumCorrections = div100(sumCorrections * currentStatus.launchCorrection);
+  }
 
   bitWrite(currentStatus.status1, BIT_STATUS1_DFCO, correctionDFCO());
   byte dfcoTaperCorrection = correctionDFCOfuel();
-  if (dfcoTaperCorrection == 0) { sumCorrections = 0; }
-  else if (dfcoTaperCorrection != 100) { sumCorrections = div100(sumCorrections * dfcoTaperCorrection); }
+  if (dfcoTaperCorrection == 0)
+  {
+    sumCorrections = 0;
+  }
+  else if (dfcoTaperCorrection != 100)
+  {
+    sumCorrections = div100(sumCorrections * dfcoTaperCorrection);
+  }
 
-  if(sumCorrections > 1500) { sumCorrections = 1500; } //This is the maximum allowable increase during cranking
+  //This is the maximum allowable increase during cranking
+  uint32_t const max_fuel_corrections = 1500;
+
+  if (sumCorrections > max_fuel_corrections)
+  {
+    sumCorrections = max_fuel_corrections;
+  }
+
   return (uint16_t)sumCorrections;
 }
 
@@ -140,7 +192,8 @@ static inline byte correctionsFuel_new(void)
   uint32_t sumCorrections = 100;
   byte numCorrections = 0;
 
-  //The values returned by each of the correction functions are multiplied together and then divided back to give a single 0-255 value.
+  //The values returned by each of the correction functions are multiplied together
+  //and then divided back to give a single 0-255 value.
   currentStatus.wueCorrection = correctionWUE(); numCorrections++;
   currentStatus.ASEValue = correctionASE(); numCorrections++;
   uint16_t correctionCrankingValue = correctionCranking(); numCorrections++;

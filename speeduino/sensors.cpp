@@ -628,7 +628,8 @@ void readTPS(bool useFilter)
 #else
   byte tempTPS = fastMap1023toX(readAnalogTwice(pinTPS), 255);
 #endif
-  //The use of the filter can be overridden if required. This is used on startup to disable priming pulse if flood clear is wanted
+  //The use of the filter can be overridden if required. This is used on startup
+  //to disable priming pulse if flood clear is wanted
   if (useFilter)
   {
     currentStatus.tpsADC = ADC_FILTER(tempTPS, configPage4.ADCFILTER_TPS, currentStatus.tpsADC);
@@ -678,15 +679,9 @@ void readTPS(bool useFilter)
   }
 
   //Check whether the closed throttle position sensor is active
-  if (configPage2.CTPSEnabled)
-  {
-    /* Take configured polarity into account. */
-    currentStatus.CTPSActive = (configPage2.CTPSPolarity == 0) ^ digitalRead(pinCTPS);
-  }
-  else
-  {
-    currentStatus.CTPSActive = 0;
-  }
+  /* Take configured polarity into account. */
+  currentStatus.CTPSActive =
+    configPage2.CTPSEnabled && ((configPage2.CTPSPolarity == 0) ^ digitalRead(pinCTPS));
 }
 
 void readCLT(bool useFilter)
