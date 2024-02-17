@@ -1057,11 +1057,14 @@ void initialiseAll(void)
         injectors.injector(injChannel2).channelInjDegrees = 180;
         break;
     }
-
-    currentStatus.status3 |= currentStatus.nSquirts << BIT_STATUS3_NSQUIRTS1; //Top 3 bits of the status3 variable are the number of squirts. This must be done after the above section due to nSquirts being forced to 1 for sequential
+    //Top 3 bits of the status3 variable are the number of squirts.
+    //This must be done after the above section due to nSquirts being forced to
+    //1 for sequential
+    currentStatus.status3 |= currentStatus.nSquirts << BIT_STATUS3_NSQUIRTS1;
 
     //Special case:
-    //3 or 5 squirts per cycle MUST be tracked over 720 degrees. This is because the angles for them (Eg 720/3=240) are not evenly divisible into 360
+    //3 or 5 squirts per cycle MUST be tracked over 720 degrees.
+    //This is because the angles for them (Eg 720/3=240) are not evenly divisible into 360
     //This is ONLY the case on 4 stroke systems
     if(currentStatus.nSquirts == 3 || currentStatus.nSquirts == 5)
     {
@@ -1088,6 +1091,7 @@ void initialiseAll(void)
           injectors.configure_injector_schedule(injChannel2, injector_id_2, injector_id_3);
         }
       }
+#if INJ_CHANNELS >= 5
       else if (configPage2.nCylinders == 5)
       {
         //This is similar to the paired injection but uses five injector outputs instead of four.
@@ -1096,12 +1100,16 @@ void initialiseAll(void)
         injectors.configure_injector_schedule(injChannel3, injector_id_3, injector_id_5);
         injectors.configure_injector_schedule(injChannel4, injector_id_4);
       }
+#endif
+#if INJ_CHANNELS >= 6
       else if (configPage2.nCylinders == 6)
       {
         injectors.configure_injector_schedule(injChannel1, injector_id_1, injector_id_4);
         injectors.configure_injector_schedule(injChannel2, injector_id_2, injector_id_5);
         injectors.configure_injector_schedule(injChannel3, injector_id_3, injector_id_6);
       }
+#endif
+#if INJ_CHANNELS >= 8
       else if (configPage2.nCylinders == 8)
       {
         injectors.configure_injector_schedule(injChannel1, injector_id_1, injector_id_5);
@@ -1109,6 +1117,7 @@ void initialiseAll(void)
         injectors.configure_injector_schedule(injChannel3, injector_id_3, injector_id_7);
         injectors.configure_injector_schedule(injChannel4, injector_id_4, injector_id_8);
       }
+#endif
       else
       {
         //Fall back to paired injection
@@ -3939,18 +3948,22 @@ void changeFullToHalfSync(void)
         break;
 
       case 6:
+#if INJ_CHANNELS >= 6
         injectors.configure_injector_schedule(injChannel1, injector_id_1, injector_id_4);
         injectors.configure_injector_schedule(injChannel2, injector_id_2, injector_id_5);
         injectors.configure_injector_schedule(injChannel3, injector_id_3, injector_id_6);
         injectors.setMaxInjectors(3);
+#endif
         break;
 
       case 8:
+#if INJ_CHANNELS >= 8
         injectors.configure_injector_schedule(injChannel1, injector_id_1, injector_id_5);
         injectors.configure_injector_schedule(injChannel2, injector_id_2, injector_id_6);
         injectors.configure_injector_schedule(injChannel3, injector_id_3, injector_id_7);
         injectors.configure_injector_schedule(injChannel4, injector_id_4, injector_id_8);
         injectors.setMaxInjectors(4);
+#endif
         break;
     }
   }

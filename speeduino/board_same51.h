@@ -12,7 +12,6 @@
   #define BOARD_MAX_DIGITAL_PINS 54 //digital pins +1
   #define BOARD_MAX_IO_PINS  58 //digital pins + analog channels + 1
 
-  //#define PORT_TYPE uint8_t //Size of the port variables (Eg inj1_pin_port).
   #define PINMASK_TYPE uint8_t
   #define COMPARE_TYPE uint16_t
   #define COUNTER_TYPE uint16_t
@@ -24,7 +23,7 @@
     #include EEPROM_LIB_H
     //SPIClass SPI_for_flash(1, 2, 3); //SPI1_MOSI, SPI1_MISO, SPI1_SCK
     SPIClass SPI_for_flash = SPI; //SPI1_MOSI, SPI1_MISO, SPI1_SCK
- 
+
     //windbond W25Q16 SPI flash EEPROM emulation
     EEPROM_Emulation_Config EmulatedEEPROMMconfig{255UL, 4096UL, 31, 0x00100000UL};
     //Flash_SPI_Config SPIconfig{USE_SPI_EEPROM, SPI_for_flash};
@@ -163,10 +162,10 @@ static inline void IGN8_TIMER_DISABLE(void) { TCC2->INTENSET.bit.MC1 = 0x0; }
 */
   //Uses the 2nd TC
   //The 2nd TC is referred to as TC4
-  #define ENABLE_BOOST_TIMER()  TC4->COUNT16.INTENSET.bit.MC0 = 0x1    // Enable match interrupts on compare channel 0 
+  #define ENABLE_BOOST_TIMER()  TC4->COUNT16.INTENSET.bit.MC0 = 0x1    // Enable match interrupts on compare channel 0
   #define DISABLE_BOOST_TIMER() TC4->COUNT16.INTENSET.bit.MC0 = 0x0
 
-  #define ENABLE_VVT_TIMER()    TC4->COUNT16.INTENSET.bit.MC1 = 0x1 
+  #define ENABLE_VVT_TIMER()    TC4->COUNT16.INTENSET.bit.MC1 = 0x1
   #define DISABLE_VVT_TIMER()   TC4->COUNT16.INTENSET.bit.MC1 = 0x0
 
   #define BOOST_TIMER_COMPARE   TC4->COUNT16.CC[0].reg

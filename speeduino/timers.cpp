@@ -251,22 +251,30 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
       {
         openSingleInjector(injector_id_4);
       }
+#if INJ_CHANNELS >= 5
       if (BIT_CHECK(HWTest_INJ_Pulsed, INJ5_CMD_BIT))
       {
         openSingleInjector(injector_id_5);
       }
+#endif
+#if INJ_CHANNELS >= 6
       if (BIT_CHECK(HWTest_INJ_Pulsed, INJ6_CMD_BIT))
       {
         openSingleInjector(injector_id_6);
       }
+#endif
+#if INJ_CHANNELS >= 7
       if (BIT_CHECK(HWTest_INJ_Pulsed, INJ7_CMD_BIT))
       {
         openSingleInjector(injector_id_7);
       }
+#endif
+#if INJ_CHANNELS >= 8
       if (BIT_CHECK(HWTest_INJ_Pulsed, INJ8_CMD_BIT))
       {
         openSingleInjector(injector_id_8);
       }
+#endif
       testInjectorPulseCount = 0;
 
       //Check for pulsed ignition output test
@@ -412,11 +420,30 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
         if(BIT_CHECK(HWTest_INJ_Pulsed, INJ2_CMD_BIT)) { closeSingleInjector(injector_id_2); }
         if(BIT_CHECK(HWTest_INJ_Pulsed, INJ3_CMD_BIT)) { closeSingleInjector(injector_id_3); }
         if(BIT_CHECK(HWTest_INJ_Pulsed, INJ4_CMD_BIT)) { closeSingleInjector(injector_id_4); }
-        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ5_CMD_BIT)) { closeSingleInjector(injector_id_5); }
-        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ6_CMD_BIT)) { closeSingleInjector(injector_id_6); }
-        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ7_CMD_BIT)) { closeSingleInjector(injector_id_7); }
-        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ8_CMD_BIT)) { closeSingleInjector(injector_id_8); }
-
+#if INJ_CHANNELS >= 5
+        if (BIT_CHECK(HWTest_INJ_Pulsed, INJ5_CMD_BIT))
+        {
+          closeSingleInjector(injector_id_5);
+        }
+#endif
+#if INJ_CHANNELS >= 6
+        if (BIT_CHECK(HWTest_INJ_Pulsed, INJ6_CMD_BIT))
+        {
+          closeSingleInjector(injector_id_6);
+        }
+#endif
+#if INJ_CHANNELS >= 7
+        if (BIT_CHECK(HWTest_INJ_Pulsed, INJ7_CMD_BIT))
+        {
+          closeSingleInjector(injector_id_7);
+        }
+#endif
+#if INJ_CHANNELS >= 8
+        if (BIT_CHECK(HWTest_INJ_Pulsed, INJ8_CMD_BIT))
+        {
+          closeSingleInjector(injector_id_8);
+        }
+#endif
         testInjectorPulseCount = 0;
       }
       else { testInjectorPulseCount++; }
@@ -443,7 +470,6 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     }
 
   }
-
 
 #if defined(CORE_AVR) //AVR chips use the ISR for this
     //Reset Timer2 to trigger in another ~1ms

@@ -94,25 +94,33 @@ void injector4Toggle(void)
   toggleInjector(injector_id_4);
 }
 
+#if INJ_CHANNELS >= 5
 void injector5Toggle(void)
 {
   toggleInjector(injector_id_5);
 }
+#endif
 
+#if INJ_CHANNELS >= 6
 void injector6Toggle(void)
 {
   toggleInjector(injector_id_6);
 }
+#endif
 
+#if INJ_CHANNELS >= 7
 void injector7Toggle(void)
 {
   toggleInjector(injector_id_7);
 }
+#endif
 
+#if INJ_CHANNELS >= 8
 void injector8Toggle(void)
 {
   toggleInjector(injector_id_8);
 }
+#endif
 
 static void injector_control_update(OUTPUT_CONTROL_TYPE const control_method)
 {
@@ -136,4 +144,3 @@ void injector_pins_init(void)
 {
   injectors->init();
 }
-

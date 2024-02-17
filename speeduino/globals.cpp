@@ -58,24 +58,6 @@ struct table2D coolantProtectTable;
 struct table2D fanPWMTable;
 struct table2D rollingCutTable;
 
-/// volatile inj*_pin_port and  inj*_pin_mask vars are for the direct port manipulation of the injectors, coils and aux outputs.
-volatile PORT_TYPE *inj1_pin_port;
-volatile PINMASK_TYPE inj1_pin_mask;
-volatile PORT_TYPE *inj2_pin_port;
-volatile PINMASK_TYPE inj2_pin_mask;
-volatile PORT_TYPE *inj3_pin_port;
-volatile PINMASK_TYPE inj3_pin_mask;
-volatile PORT_TYPE *inj4_pin_port;
-volatile PINMASK_TYPE inj4_pin_mask;
-volatile PORT_TYPE *inj5_pin_port;
-volatile PINMASK_TYPE inj5_pin_mask;
-volatile PORT_TYPE *inj6_pin_port;
-volatile PINMASK_TYPE inj6_pin_mask;
-volatile PORT_TYPE *inj7_pin_port;
-volatile PINMASK_TYPE inj7_pin_mask;
-volatile PORT_TYPE *inj8_pin_port;
-volatile PINMASK_TYPE inj8_pin_mask;
-
 volatile PORT_TYPE *ign1_pin_port;
 volatile PINMASK_TYPE ign1_pin_mask;
 volatile PORT_TYPE *ign2_pin_port;
