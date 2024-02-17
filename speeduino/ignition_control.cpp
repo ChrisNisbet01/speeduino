@@ -39,34 +39,49 @@ void coil1Toggle(void)
 {
   coil_toggle(ignition_id_1);
 }
+
 void coil2Toggle(void)
 {
   coil_toggle(ignition_id_2);
 }
+
 void coil3Toggle(void)
 {
   coil_toggle(ignition_id_3);
 }
+
 void coil4Toggle(void)
 {
   coil_toggle(ignition_id_4);
 }
+
+#if IGN_CHANNELS >= 5
 void coil5Toggle(void)
 {
   coil_toggle(ignition_id_5);
 }
+#endif
+
+#if IGN_CHANNELS >= 6
 void coil6Toggle(void)
 {
   coil_toggle(ignition_id_6);
 }
+#endif
+
+#if IGN_CHANNELS >= 7
 void coil7Toggle(void)
 {
   coil_toggle(ignition_id_7);
 }
+#endif
+
+#if IGN_CHANNELS >= 8
 void coil8Toggle(void)
 {
   coil_toggle(ignition_id_8);
 }
+#endif
 
 void singleCoilBeginCharge(ignition_id_t coil_id, ignition_id_t unused)
 {

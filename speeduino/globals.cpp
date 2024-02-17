@@ -58,23 +58,6 @@ struct table2D coolantProtectTable;
 struct table2D fanPWMTable;
 struct table2D rollingCutTable;
 
-volatile PORT_TYPE *ign1_pin_port;
-volatile PINMASK_TYPE ign1_pin_mask;
-volatile PORT_TYPE *ign2_pin_port;
-volatile PINMASK_TYPE ign2_pin_mask;
-volatile PORT_TYPE *ign3_pin_port;
-volatile PINMASK_TYPE ign3_pin_mask;
-volatile PORT_TYPE *ign4_pin_port;
-volatile PINMASK_TYPE ign4_pin_mask;
-volatile PORT_TYPE *ign5_pin_port;
-volatile PINMASK_TYPE ign5_pin_mask;
-volatile PORT_TYPE *ign6_pin_port;
-volatile PINMASK_TYPE ign6_pin_mask;
-volatile PORT_TYPE *ign7_pin_port;
-volatile PINMASK_TYPE ign7_pin_mask;
-volatile PORT_TYPE *ign8_pin_port;
-volatile PINMASK_TYPE ign8_pin_mask;
-
 volatile PORT_TYPE *tach_pin_port;
 volatile PINMASK_TYPE tach_pin_mask;
 volatile PORT_TYPE *pump_pin_port;

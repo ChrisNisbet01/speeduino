@@ -303,55 +303,79 @@ bool TS_CommandButtonsHandler(uint16_t buttonCommand)
       break;
 
     case TS_CMD_IGN5_ON: // cmd group is for spark5 on actions
+#if IGN_CHANNELS >= 5
       if( BIT_CHECK(currentStatus.testOutputs, 1) ) { singleCoilBeginCharge(ignition_id_5); }
+#endif
       break;
 
     case TS_CMD_IGN5_OFF: // cmd group is for spark5 off actions
+#if IGN_CHANNELS >= 5
       if( BIT_CHECK(currentStatus.testOutputs, 1) ) { singleCoilEndCharge(ignition_id_5); BIT_CLEAR(HWTest_IGN_Pulsed, IGN5_CMD_BIT); }
+#endif
       break;
 
     case TS_CMD_IGN5_PULSED: // cmd group is for spark4 50%dc actions
+#if IGN_CHANNELS >= 5
       if( BIT_CHECK(currentStatus.testOutputs, 1) ) { BIT_SET(HWTest_IGN_Pulsed, IGN5_CMD_BIT); }
       if(!BIT_CHECK(HWTest_IGN_Pulsed, IGN5_CMD_BIT)) { singleCoilEndCharge(ignition_id_5); } //Ensure this output is turned off (Otherwise the output may stay on permanently)
+#endif
       break;
 
     case TS_CMD_IGN6_ON: // cmd group is for spark6 on actions
+#if IGN_CHANNELS >= 6
       if( BIT_CHECK(currentStatus.testOutputs, 1) ) { singleCoilBeginCharge(ignition_id_6); }
+#endif
       break;
 
     case TS_CMD_IGN6_OFF: // cmd group is for spark6 off actions
+#if IGN_CHANNELS >= 6
       if( BIT_CHECK(currentStatus.testOutputs, 1) ) { singleCoilEndCharge(ignition_id_6); BIT_CLEAR(HWTest_IGN_Pulsed, IGN6_CMD_BIT); }
+#endif
       break;
 
     case TS_CMD_IGN6_PULSED: // cmd group is for spark6 50%dc actions
+#if IGN_CHANNELS >= 6
       if( BIT_CHECK(currentStatus.testOutputs, 1) ) { BIT_SET(HWTest_IGN_Pulsed, IGN6_CMD_BIT); }
       if(!BIT_CHECK(HWTest_IGN_Pulsed, IGN6_CMD_BIT)) { singleCoilEndCharge(ignition_id_6); } //Ensure this output is turned off (Otherwise the output may stay on permanently)
+#endif
       break;
 
     case TS_CMD_IGN7_ON: // cmd group is for spark7 on actions
+#if IGN_CHANNELS >= 7
       if( BIT_CHECK(currentStatus.testOutputs, 1) ) { singleCoilBeginCharge(ignition_id_7); }
+#endif
       break;
 
     case TS_CMD_IGN7_OFF: // cmd group is for spark7 off actions
+#if IGN_CHANNELS >= 7
       if( BIT_CHECK(currentStatus.testOutputs, 1) ) { singleCoilEndCharge(ignition_id_7); BIT_CLEAR(HWTest_IGN_Pulsed, IGN7_CMD_BIT); }
+#endif
       break;
 
     case TS_CMD_IGN7_PULSED: // cmd group is for spark7 50%dc actions
+#if IGN_CHANNELS >= 8
       if( BIT_CHECK(currentStatus.testOutputs, 1) ) { BIT_SET(HWTest_IGN_Pulsed, IGN7_CMD_BIT); }
       if(!BIT_CHECK(HWTest_IGN_Pulsed, IGN7_CMD_BIT)) { singleCoilEndCharge(ignition_id_7); } //Ensure this output is turned off (Otherwise the output may stay on permanently)
+#endif
       break;
 
     case TS_CMD_IGN8_ON: // cmd group is for spark8 on actions
+#if IGN_CHANNELS >= 8
       if( BIT_CHECK(currentStatus.testOutputs, 1) ) { singleCoilBeginCharge(ignition_id_8); }
+#endif
       break;
 
     case TS_CMD_IGN8_OFF: // cmd group is for spark8 off actions
+#if IGN_CHANNELS >= 8
       if( BIT_CHECK(currentStatus.testOutputs, 1) ) { singleCoilEndCharge(ignition_id_8); BIT_CLEAR(HWTest_IGN_Pulsed, IGN8_CMD_BIT); }
+#endif
       break;
 
     case TS_CMD_IGN8_PULSED: // cmd group is for spark8 50%dc actions
+#if IGN_CHANNELS >= 8
       if( BIT_CHECK(currentStatus.testOutputs, 1) ) { BIT_SET(HWTest_IGN_Pulsed, IGN8_CMD_BIT); }
       if(!BIT_CHECK(HWTest_IGN_Pulsed, IGN8_CMD_BIT)) { singleCoilEndCharge(ignition_id_8); } //Ensure this output is turned off (Otherwise the output may stay on permanently)
+#endif
       break;
 
     //VSS Calibration routines

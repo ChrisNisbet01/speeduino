@@ -19,3 +19,4 @@ extern IOPin inj7;
 #if (INJ_CHANNELS >= 8)
 extern IOPin inj8;
 #endif
+

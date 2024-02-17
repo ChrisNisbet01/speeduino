@@ -294,22 +294,30 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
       {
         singleCoilBeginCharge(ignition_id_4);
       }
+#if IGN_CHANNELS >= 5
       if (BIT_CHECK(HWTest_IGN_Pulsed, IGN5_CMD_BIT))
       {
         singleCoilBeginCharge(ignition_id_5);
       }
+#endif
+#if IGN_CHANNELS >= 6
       if (BIT_CHECK(HWTest_IGN_Pulsed, IGN6_CMD_BIT))
       {
         singleCoilBeginCharge(ignition_id_6);
       }
+#endif
+#if IGN_CHANNELS >= 7
       if (BIT_CHECK(HWTest_IGN_Pulsed, IGN7_CMD_BIT))
       {
         singleCoilBeginCharge(ignition_id_7);
       }
+#endif
+#if IGN_CHANNELS >= 8
       if (BIT_CHECK(HWTest_IGN_Pulsed, IGN8_CMD_BIT))
       {
         singleCoilBeginCharge(ignition_id_8);
       }
+#endif
       testIgnitionPulseCount = 0;
     }
 
@@ -459,16 +467,25 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
         if(BIT_CHECK(HWTest_IGN_Pulsed, IGN2_CMD_BIT)) { singleCoilEndCharge(ignition_id_2); }
         if(BIT_CHECK(HWTest_IGN_Pulsed, IGN3_CMD_BIT)) { singleCoilEndCharge(ignition_id_3); }
         if(BIT_CHECK(HWTest_IGN_Pulsed, IGN4_CMD_BIT)) { singleCoilEndCharge(ignition_id_4); }
+#if IGN_CHANNELS >= 5
         if(BIT_CHECK(HWTest_IGN_Pulsed, IGN5_CMD_BIT)) { singleCoilEndCharge(ignition_id_5); }
+#endif
+#if IGN_CHANNELS >= 6
         if(BIT_CHECK(HWTest_IGN_Pulsed, IGN6_CMD_BIT)) { singleCoilEndCharge(ignition_id_6); }
+#endif
+#if IGN_CHANNELS >= 7
         if(BIT_CHECK(HWTest_IGN_Pulsed, IGN7_CMD_BIT)) { singleCoilEndCharge(ignition_id_7); }
+#endif
+#if IGN_CHANNELS >= 8
         if(BIT_CHECK(HWTest_IGN_Pulsed, IGN8_CMD_BIT)) { singleCoilEndCharge(ignition_id_8); }
-
+#endif
         testIgnitionPulseCount = 0;
       }
-      else { testIgnitionPulseCount++; }
+      else
+      {
+        testIgnitionPulseCount++;
+      }
     }
-
   }
 
 #if defined(CORE_AVR) //AVR chips use the ISR for this

@@ -1189,31 +1189,27 @@ void initialiseAll(void)
       else if( configPage2.nCylinders == 6 )
       {
         //Wasted COP mode for 6 cylinders. Ignition channels 1&4, 2&5 and 3&6 are paired together
+#if IGN_CHANNELS >= 6
         ignitions.configure_coil_schedule(ignChannel1, ignition_id_1, ignition_id_4);
         ignitions.configure_coil_schedule(ignChannel2, ignition_id_2, ignition_id_5);
         ignitions.configure_coil_schedule(ignChannel3, ignition_id_3, ignition_id_6);
         ignitions.inhibit_coil_schedule(ignChannel4);
         ignitions.inhibit_coil_schedule(ignChannel5);
-#if IGN_CHANNELS >= 6
         ignitions.inhibit_coil_schedule(ignChannel6);
 #endif
       }
       else if( configPage2.nCylinders == 8 )
       {
         //Wasted COP mode for 8 cylinders. Ignition channels 1&5, 2&6, 3&7 and 4&8 are paired together
+#if IGN_CHANNELS >= 8
         ignitions.configure_coil_schedule(ignChannel1, ignition_id_1, ignition_id_5);
         ignitions.configure_coil_schedule(ignChannel2, ignition_id_2, ignition_id_6);
         ignitions.configure_coil_schedule(ignChannel3, ignition_id_3, ignition_id_7);
         ignitions.configure_coil_schedule(ignChannel4, ignition_id_4, ignition_id_8);
 
         ignitions.inhibit_coil_schedule(ignChannel5);
-#if IGN_CHANNELS >= 6
         ignitions.inhibit_coil_schedule(ignChannel6);
-#endif
-#if IGN_CHANNELS >= 7
         ignitions.inhibit_coil_schedule(ignChannel7);
-#endif
-#if IGN_CHANNELS >= 8
         ignitions.inhibit_coil_schedule(ignChannel8);
 #endif
       }
@@ -1225,7 +1221,9 @@ void initialiseAll(void)
         ignitions.configure_coil_schedule(ignChannel2, ignition_id_2);
         ignitions.configure_coil_schedule(ignChannel3, ignition_id_3);
         ignitions.configure_coil_schedule(ignChannel4, ignition_id_4);
+#if IGN_CHANNELS >= 5
         ignitions.configure_coil_schedule(ignChannel5, ignition_id_5);
+#endif
       }
       break;
 
@@ -1292,7 +1290,9 @@ void initialiseAll(void)
       ignitions.configure_coil_schedule(ignChannel2, ignition_id_2);
       ignitions.configure_coil_schedule(ignChannel3, ignition_id_3);
       ignitions.configure_coil_schedule(ignChannel4, ignition_id_4);
+#if IGN_CHANNELS >= 5
       ignitions.configure_coil_schedule(ignChannel5, ignition_id_5);
+#endif
       break;
     }
 
@@ -3981,16 +3981,20 @@ void changeFullToHalfSync(void)
         break;
 
       case 6:
+#if IGN_CHANNELS >= 6
         ignitions.configure_coil_schedule(ignChannel1, ignition_id_1, ignition_id_4);
         ignitions.configure_coil_schedule(ignChannel2, ignition_id_2, ignition_id_5);
         ignitions.configure_coil_schedule(ignChannel3, ignition_id_3, ignition_id_6);
+#endif
         break;
 
       case 8:
+#if IGN_CHANNELS >= 8
         ignitions.configure_coil_schedule(ignChannel1, ignition_id_1, ignition_id_5);
         ignitions.configure_coil_schedule(ignChannel2, ignition_id_2, ignition_id_6);
         ignitions.configure_coil_schedule(ignChannel3, ignition_id_3, ignition_id_7);
         ignitions.configure_coil_schedule(ignChannel4, ignition_id_4, ignition_id_8);
+#endif
         break;
     }
   }

@@ -4,6 +4,7 @@
 #include "../test_utils.h"
 #include "storage.h"
 #include "injector_pins.h"
+#include "ignition_pins.h"
 
 void prepareForInitialiseAll(uint8_t boardId);
 
@@ -51,14 +52,16 @@ void test_initialisation_ports(void)
   //Test that all the port values have been set
   prepareForInitialiseAll(3);
   initialiseAll(); //Run the main initialise function
+
   TEST_ASSERT_TRUE(inj1.is_configured());
   TEST_ASSERT_TRUE(inj2.is_configured());
   TEST_ASSERT_TRUE(inj3.is_configured());
   TEST_ASSERT_TRUE(inj4.is_configured());
-  TEST_ASSERT_NOT_EQUAL(0, ign1_pin_port);
-  TEST_ASSERT_NOT_EQUAL(0, ign2_pin_port);
-  TEST_ASSERT_NOT_EQUAL(0, ign3_pin_port);
-  TEST_ASSERT_NOT_EQUAL(0, ign4_pin_port);
+
+  TEST_ASSERT_TRUE(ign1.is_configured());
+  TEST_ASSERT_TRUE(ign2.is_configured());
+  TEST_ASSERT_TRUE(ign3.is_configured());
+  TEST_ASSERT_TRUE(ign4.is_configured());
 }
 
 //Test that all mandatory output pins have their mode correctly set to output
