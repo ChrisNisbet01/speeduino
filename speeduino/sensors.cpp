@@ -467,7 +467,7 @@ void readMAP(void)
           MAP_time = micros();
 
           currentStatus.mapADC = udiv_32_16(MAPrunningValue, MAPcount);
-          currentStatus.MAP = fastMap10Bit(currentStatus.mapADC, configPage2.mapMin, configPage2.mapMax); //Get the current MAP value
+          currentStatus.MAP = fastMap10Bit(currentStatus.mapADC, configPage2.mapMin, configPage2.mapMax);
           validateMAP();
 
           //If EMAP is enabled, the process is identical to the above
@@ -538,7 +538,7 @@ void readMAP(void)
         MAP_time = micros();
 
         currentStatus.mapADC = MAPrunningValue;
-        currentStatus.MAP = fastMap10Bit(currentStatus.mapADC, configPage2.mapMin, configPage2.mapMax); //Get the current MAP value
+        currentStatus.MAP = fastMap10Bit(currentStatus.mapADC, configPage2.mapMin, configPage2.mapMax);
         MAPcurRev = currentStatus.startRevolutions; //Reset the current rev count
         MAPrunningValue = 1023; //Reset the latest value so the next reading will always be lower
 
@@ -591,7 +591,7 @@ void readMAP(void)
           MAP_time = micros();
 
           currentStatus.mapADC = udiv_32_16(MAPrunningValue, MAPcount);
-          currentStatus.MAP = fastMap10Bit(currentStatus.mapADC, configPage2.mapMin, configPage2.mapMax); //Get the current MAP value
+          currentStatus.MAP = fastMap10Bit(currentStatus.mapADC, configPage2.mapMin, configPage2.mapMax);
           validateMAP();
         }
         else
