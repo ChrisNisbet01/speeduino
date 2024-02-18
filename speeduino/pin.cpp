@@ -18,8 +18,14 @@ void IOPortMaskOutputPin::toggle(void)
 
 void IOPortMaskOutputPin::configure(byte pin, byte initial_state)
 {
-  m_port = portOutputRegister(digitalPinToPort(pin));
-  m_mask = digitalPinToBitMask(pin);
+  m_pin = pin;
+  if (m_pin == INVALID_PIN_NUMBER)
+  {
+    return;
+  }
+
+  m_port = portOutputRegister(digitalPinToPort(m_pin));
+  m_mask = digitalPinToBitMask(m_pin);
   /* Set the pin before configuring as an output. */
   if (initial_state == LOW)
   {
@@ -33,7 +39,7 @@ void IOPortMaskOutputPin::configure(byte pin, byte initial_state)
   {
     /* do_nothing */
   }
-  pinMode(pin, OUTPUT);
+  pinMode(m_pin, OUTPUT);
   m_is_configured = true;
 }
 
@@ -44,6 +50,7 @@ bool IOPortMaskOutputPin::is_configured(void)
 
 
 #if defined(CORE_TEENSY) || defined(CORE_STM32)
+
 void IODigitalWriteOutputPin::on(void)
 {
   digitalWrite(m_pin, HIGH);
@@ -62,6 +69,11 @@ void IODigitalWriteOutputPin::toggle(void)
 void IODigitalWriteOutputPin::configure(byte pin, byte initial_state)
 {
   m_pin = pin;
+  if (m_pin == INVALID_PIN_NUMBER)
+  {
+    return;
+  }
+
   /* Set the pin before configuring as an output. */
   if (initial_state == LOW)
   {
@@ -76,7 +88,7 @@ void IODigitalWriteOutputPin::configure(byte pin, byte initial_state)
     /* do_nothing */
   }
 
-  pinMode(pin, OUTPUT);
+  pinMode(m_pin, OUTPUT);
   m_is_configured = true;
 }
 
@@ -104,8 +116,14 @@ void IOAtomicWriteOutputPin::toggle(void)
 
 void IOAtomicWriteOutputPin::configure(byte pin, byte initial_state)
 {
-  m_port = portOutputRegister(digitalPinToPort(pin));
-  m_mask = digitalPinToBitMask(pin);
+  m_pin = pin;
+  if (m_pin == INVALID_PIN_NUMBER)
+  {
+    return;
+  }
+  m_port = portOutputRegister(digitalPinToPort(m_pin));
+  m_mask = digitalPinToBitMask(m_pin);
+
   /* Set the pin before configuring as an output. */
   if (initial_state == LOW)
   {
@@ -120,7 +138,7 @@ void IOAtomicWriteOutputPin::configure(byte pin, byte initial_state)
     /* do_nothing */
   }
 
-  pinMode(pin, OUTPUT);
+  pinMode(m_pin, OUTPUT);
   m_is_configured = true;
 }
 

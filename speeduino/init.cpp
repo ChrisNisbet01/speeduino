@@ -3031,25 +3031,24 @@ void setPinMapping(byte boardID)
 
   //Finally, set the relevant pin modes for outputs
   boost.configure(pinBoost);
-  //Set the tacho output default state
-  TachOut.configure(pinTachOut, HIGH);
-
-  pinMode(pinIdle1, OUTPUT);
-  pinMode(pinIdle2, OUTPUT);
-  pinMode(pinIdleUpOutput, OUTPUT);
-  pinMode(pinFuelPump, OUTPUT);
-  pinMode(pinFan, OUTPUT);
-  pinMode(pinStepperDir, OUTPUT);
-  pinMode(pinStepperStep, OUTPUT);
-  pinMode(pinStepperEnable, OUTPUT);
-  pinMode(pinVVT_1, OUTPUT);
-  pinMode(pinVVT_2, OUTPUT);
-  if(configPage4.ignBypassEnabled > 0)
+  TachOut.configure(pinTachOut, HIGH); //Set the tacho output default state
+  Idle1.configure(pinIdle1);
+  Idle2.configure(pinIdle2);
+  IdleUpOutput.configure(pinIdleUpOutput);
+  FuelPump.configure(pinFuelPump);
+  Fan.configure(pinFan);
+  StepperDir.configure(pinStepperDir);
+  StepperStep.configure(pinStepperStep);
+  StepperEnable.configure(pinStepperEnable);
+  VVT_1.configure(pinVVT_1);
+  VVT_2.configure(pinVVT_2);
+  if (configPage4.ignBypassEnabled > 0)
   {
-    pinMode(pinIgnBypass, OUTPUT);
+    IgnBypass.configure(pinIgnBypass);
   }
 
-  //This is a legacy mode option to revert the MAP reading behaviour to match what was in place prior to the 201905 firmware
+  //This is a legacy mode option to revert the MAP reading behaviour to match
+  //what was in place prior to the 201905 firmware
   if(configPage2.legacyMAP > 0)
   {
     digitalWrite(pinMAP, HIGH);
@@ -3079,9 +3078,6 @@ void setPinMapping(byte boardID)
 //   //We need to send the flash CS (SS) pin if we're using SPI flash. It cannot read from globals.
 //   EEPROM.begin(USE_SPI_EEPROM);
 // #endif
-
-  pump_pin_port = portOutputRegister(digitalPinToPort(pinFuelPump));
-  pump_pin_mask = digitalPinToBitMask(pinFuelPump);
 
   //And for inputs
   #if defined(CORE_STM32)

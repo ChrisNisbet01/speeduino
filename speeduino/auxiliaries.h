@@ -2,7 +2,7 @@
 #define AUX_H
 
 #include "globals.h" /* For BOARD_H. */
-#include BOARD_H //Note that this is not a real file, it is defined in globals.h.
+#include "auxiliary_pins.h"
 
 #if defined(CORE_AVR)
 #include <util/atomic.h>
@@ -44,8 +44,6 @@ void wmiControl(void);
 #define AIRCON_PIN_HIGH() digitalWrite(pinAirConComp, HIGH)
 #define AIRCON_FAN_PIN_LOW() digitalWrite(pinAirConFan, LOW)
 #define AIRCON_FAN_PIN_HIGH() digitalWrite(pinAirConFan, HIGH)
-#define FUEL_PUMP_ON() digitalWrite(pinFuelPump, HIGH)
-#define FUEL_PUMP_OFF() digitalWrite(pinFuelPump, LOW)
 
 #define AIRCON_ON() { configPage15.airConCompPol==1 ? AIRCON_PIN_LOW() : AIRCON_PIN_HIGH(); BIT_SET(currentStatus.airConStatus, BIT_AIRCON_COMPRESSOR); }
 #define AIRCON_OFF() { configPage15.airConCompPol==1 ? AIRCON_PIN_HIGH() : AIRCON_PIN_LOW(); BIT_CLEAR(currentStatus.airConStatus, BIT_AIRCON_COMPRESSOR); }
@@ -116,9 +114,6 @@ bit_clear_atomic(uint8_t &value, uint8_t const bit)
 #define N2O_STAGE2_PIN_LOW() pin_clear(*n2o_stage2_pin_port, n2o_stage2_pin_mask)
 #define N2O_STAGE2_PIN_HIGH() pin_set(*n2o_stage2_pin_port, n2o_stage2_pin_mask)
 
-#define FUEL_PUMP_ON() pin_set(*pump_pin_port, pump_pin_mask)
-#define FUEL_PUMP_OFF() pin_clear(*pump_pin_port, pump_pin_mask)
-
 #define FAN_PIN_LOW() pin_clear(*fan_pin_port, fan_pin_mask)
 #define FAN_PIN_HIGH() pin_set(*fan_pin_port, fan_pin_mask)
 
@@ -155,6 +150,9 @@ bit_clear_atomic(uint8_t &value, uint8_t const bit)
 
 
 #endif
+
+#define FUEL_PUMP_ON() FuelPump.on()
+#define FUEL_PUMP_OFF() FuelPump.off()
 
 #define READ_N2O_ARM_PIN() ((*n2o_arming_pin_port & n2o_arming_pin_mask) ? true : false)
 

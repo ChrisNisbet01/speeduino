@@ -1,5 +1,5 @@
 #include "fuel_pump.h"
 
-FuelPump fuelPump;
+FuelPumpControl fuelPump;
 
 FuelPriming fuelPriming;

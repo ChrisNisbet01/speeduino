@@ -2,7 +2,7 @@
 
 #include "auxiliaries.h"
 
-class FuelPump
+class FuelPumpControl
 {
 public:
   void turnOn(void)
@@ -91,6 +91,6 @@ private:
   byte m_priming_time = 0;
 };
 
-extern FuelPump fuelPump;
+extern FuelPumpControl fuelPump;
 
 extern FuelPriming fuelPriming;

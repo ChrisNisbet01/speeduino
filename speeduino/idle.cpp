@@ -29,13 +29,6 @@ long FeedForwardTerm;
 unsigned long idle_pwm_target_value;
 long idle_cl_target_rpm;
 
-volatile PORT_TYPE *idle_pin_port;
-volatile PINMASK_TYPE idle_pin_mask;
-volatile PORT_TYPE *idle2_pin_port;
-volatile PINMASK_TYPE idle2_pin_mask;
-volatile PORT_TYPE *idleUpOutput_pin_port;
-volatile PINMASK_TYPE idleUpOutput_pin_mask;
-
 struct table2D iacPWMTable;
 struct table2D iacStepTable;
 //Open loop tables specifically for cranking
@@ -81,13 +74,6 @@ void initialiseIdle(bool forcehoming)
 {
   //By default, turn off the PWM interrupt (It gets turned on below if needed)
   IDLE_TIMER_DISABLE();
-
-  //Pin masks must always be initialised, regardless of whether PWM idle is used.
-  //This is required for STM32 to prevent issues if the IRQ function fires on restart/overflow
-  idle_pin_port = portOutputRegister(digitalPinToPort(pinIdle1));
-  idle_pin_mask = digitalPinToBitMask(pinIdle1);
-  idle2_pin_port = portOutputRegister(digitalPinToPort(pinIdle2));
-  idle2_pin_mask = digitalPinToBitMask(pinIdle2);
 
   //Initialising comprises of setting the 2D tables with the relevant values from the config pages
   switch(configPage6.iacAlgorithm)
@@ -355,9 +341,6 @@ void initialiseIdleUpOutput(void)
     digitalWrite(pinIdleUpOutput, idleUpOutputLOW);
   }
   currentStatus.idleUpOutputActive = false;
-
-  idleUpOutput_pin_port = portOutputRegister(digitalPinToPort(pinIdleUpOutput));
-  idleUpOutput_pin_mask = digitalPinToBitMask(pinIdleUpOutput);
 }
 
 /*

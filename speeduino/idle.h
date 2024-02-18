@@ -3,7 +3,7 @@
 
 #include "globals.h"
 #include "table2d.h"
-#include BOARD_H //Note that this is not a real file, it is defined in globals.h. 
+#include BOARD_H //Note that this is not a real file, it is defined in globals.h.
 
 #define IAC_ALGORITHM_NONE    0
 #define IAC_ALGORITHM_ONOFF   1
@@ -14,10 +14,10 @@
 #define IAC_ALGORITHM_PWM_OLCL  6 //Openloop plus closedloop IAC control
 #define IAC_ALGORITHM_STEP_OLCL  7 //Openloop plus closedloop IAC control
 
-#define IDLE_PIN_LOW()  *idle_pin_port &= ~(idle_pin_mask)
-#define IDLE_PIN_HIGH() *idle_pin_port |= (idle_pin_mask)
-#define IDLE2_PIN_LOW()  *idle2_pin_port &= ~(idle2_pin_mask)
-#define IDLE2_PIN_HIGH() *idle2_pin_port |= (idle2_pin_mask)
+#define IDLE_PIN_LOW()  Idle1.off()
+#define IDLE_PIN_HIGH() Idle1.on()
+#define IDLE2_PIN_LOW() Idle2.off()
+#define IDLE2_PIN_HIGH() Idle2.on()
 
 #define STEPPER_FORWARD 0
 #define STEPPER_BACKWARD 1

@@ -2,6 +2,7 @@
 
 #include "globals.h"
 
+#define INVALID_PIN_NUMBER 0xff
 /*
  * Probably don't need all these classes - simply wanted to make them equivalent
  * to what's already there.
@@ -26,6 +27,8 @@ public:
 
 private:
 
+  bool m_inverted;
+  byte m_pin = INVALID_PIN_NUMBER;
   volatile PORT_TYPE * m_port = nullptr;
   PINMASK_TYPE m_mask = 0;
   bool m_is_configured = false;
@@ -48,7 +51,8 @@ public:
 
 private:
 
-  byte m_pin = 0xff;
+  bool m_inverted;
+  byte m_pin = INVALID_PIN_NUMBER;
   bool m_is_configured = false;
 };
 
@@ -73,6 +77,7 @@ public:
 
 private:
 
+  byte m_pin = INVALID_PIN_NUMBER;
   volatile PORT_TYPE * m_port = nullptr;
   PINMASK_TYPE m_mask = 0;
   bool m_is_configured = false;
