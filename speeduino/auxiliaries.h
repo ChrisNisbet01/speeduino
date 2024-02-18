@@ -27,8 +27,9 @@ void wmiControl(void);
 
 #if(defined(CORE_TEENSY) || defined(CORE_STM32))
 
-#define BOOST_PIN_LOW() digitalWrite(pinBoost, LOW)
-#define BOOST_PIN_HIGH() digitalWrite(pinBoost, HIGH)
+#define BOOST_PIN_LOW() boost.off()
+#define BOOST_PIN_HIGH() boost.on()
+
 #define VVT1_PIN_LOW() digitalWrite(pinVVT_1, LOW)
 #define VVT1_PIN_HIGH() digitalWrite(pinVVT_1, HIGH)
 #define VVT2_PIN_LOW() digitalWrite(pinVVT_2, LOW)
@@ -56,7 +57,7 @@ void wmiControl(void);
 #else
 
 static inline void
-pin_set(volatile PORT_TYPE &port, volatile PINMASK_TYPE const mask)
+pin_set(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
 {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
   {
@@ -65,7 +66,16 @@ pin_set(volatile PORT_TYPE &port, volatile PINMASK_TYPE const mask)
 }
 
 static inline void
-pin_clear(volatile PORT_TYPE &port, volatile PINMASK_TYPE const mask)
+pin_clear(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
+{
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+  {
+    port &= ~mask;
+  }
+}
+
+static inline void
+pin_toggle(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
 {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
   {
@@ -91,8 +101,8 @@ bit_clear_atomic(uint8_t &value, uint8_t const bit)
   }
 }
 
-#define BOOST_PIN_LOW() pin_clear(*boost_pin_port, boost_pin_mask)
-#define BOOST_PIN_HIGH() pin_set(*boost_pin_port, boost_pin_mask)
+#define BOOST_PIN_LOW() boost.off()
+#define BOOST_PIN_HIGH() boost.on()
 
 #define VVT1_PIN_LOW() pin_clear(*vvt1_pin_port, vvt1_pin_mask)
 #define VVT1_PIN_HIGH() pin_set(*vvt1_pin_port, vvt1_pin_mask)

@@ -477,8 +477,6 @@ extern struct table2D coolantProtectTable;  //6 bin coolant temperature protecti
 extern struct table2D fanPWMTable;
 extern struct table2D rollingCutTable;
 
-extern volatile PORT_TYPE *tach_pin_port;
-extern volatile PINMASK_TYPE tach_pin_mask;
 extern volatile PORT_TYPE *pump_pin_port;
 extern volatile PINMASK_TYPE pump_pin_mask;
 

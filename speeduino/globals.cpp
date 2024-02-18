@@ -58,8 +58,6 @@ struct table2D coolantProtectTable;
 struct table2D fanPWMTable;
 struct table2D rollingCutTable;
 
-volatile PORT_TYPE *tach_pin_port;
-volatile PINMASK_TYPE tach_pin_mask;
 volatile PORT_TYPE *pump_pin_port;
 volatile PINMASK_TYPE pump_pin_mask;
 

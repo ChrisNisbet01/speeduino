@@ -10,6 +10,7 @@ A full copy of the license may be found in the projects root directory
 #include "decoders.h"
 #include "timers.h"
 #include "injector_contexts.h"
+#include "auxiliary_pins.h"
 
 static long vvt1_pwm_value;
 static long vvt2_pwm_value;
@@ -27,8 +28,6 @@ volatile char nextVVT;
 byte boostCounter;
 byte vvtCounter;
 
-volatile PORT_TYPE * boost_pin_port;
-volatile PINMASK_TYPE boost_pin_mask;
 volatile PORT_TYPE * n2o_stage1_pin_port;
 volatile PINMASK_TYPE n2o_stage1_pin_mask;
 volatile PORT_TYPE * n2o_stage2_pin_port;
@@ -443,8 +442,6 @@ done:
 
 void initialiseAuxPWM(void)
 {
-  boost_pin_port = portOutputRegister(digitalPinToPort(pinBoost));
-  boost_pin_mask = digitalPinToBitMask(pinBoost);
   vvt1_pin_port = portOutputRegister(digitalPinToPort(pinVVT_1));
   vvt1_pin_mask = digitalPinToBitMask(pinVVT_1);
   vvt2_pin_port = portOutputRegister(digitalPinToPort(pinVVT_2));
@@ -553,7 +550,6 @@ void initialiseAuxPWM(void)
   vvtCounter = 0;
 
   currentStatus.nitrous_status = NITROUS_OFF;
-
 }
 
 void boostByGear(void)

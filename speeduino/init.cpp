@@ -34,6 +34,7 @@
 #include "injector_contexts.h"
 #include "ignition_contexts.h"
 #include "fuel_pump.h"
+#include "auxiliary_pins.h"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 
@@ -328,10 +329,10 @@ void initialiseAll(void)
 
     //Must come after setPinMapping() as secondary serial can be changed on a per board basis
 #if defined(secondarySerial_AVAILABLE)
-      if (configPage9.enable_secondarySerial == 1)
-      {
-        secondarySerial.begin(115200);
-      }
+    if (configPage9.enable_secondarySerial == 1)
+    {
+      secondarySerial.begin(115200);
+    }
 #endif
 
     //End all coil charges to ensure no stray sparks on startup
@@ -370,8 +371,6 @@ void initialiseAll(void)
     closeSingleInjector(injector_id_8);
 #endif
 
-    //Set the tacho output default state
-    digitalWrite(pinTachOut, HIGH);
     //Perform all initialisations
     //initialiseDisplay();
     initialiseIdle(true);
@@ -3031,7 +3030,10 @@ void setPinMapping(byte boardID)
 
 
   //Finally, set the relevant pin modes for outputs
-  pinMode(pinTachOut, OUTPUT);
+  boost.configure(pinBoost);
+  //Set the tacho output default state
+  TachOut.configure(pinTachOut, HIGH);
+
   pinMode(pinIdle1, OUTPUT);
   pinMode(pinIdle2, OUTPUT);
   pinMode(pinIdleUpOutput, OUTPUT);
@@ -3040,7 +3042,6 @@ void setPinMapping(byte boardID)
   pinMode(pinStepperDir, OUTPUT);
   pinMode(pinStepperStep, OUTPUT);
   pinMode(pinStepperEnable, OUTPUT);
-  pinMode(pinBoost, OUTPUT);
   pinMode(pinVVT_1, OUTPUT);
   pinMode(pinVVT_2, OUTPUT);
   if(configPage4.ignBypassEnabled > 0)
@@ -3079,8 +3080,6 @@ void setPinMapping(byte boardID)
 //   EEPROM.begin(USE_SPI_EEPROM);
 // #endif
 
-  tach_pin_port = portOutputRegister(digitalPinToPort(pinTachOut));
-  tach_pin_mask = digitalPinToBitMask(pinTachOut);
   pump_pin_port = portOutputRegister(digitalPinToPort(pinFuelPump));
   pump_pin_mask = digitalPinToBitMask(pinFuelPump);
 

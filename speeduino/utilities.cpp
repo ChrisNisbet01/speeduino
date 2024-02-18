@@ -116,8 +116,10 @@ void setResetControlPinState(void)
       BIT_SET(currentStatus.status3, BIT_STATUS3_RESET_PREVENT);
       break;
     case RESET_CONTROL_SERIAL_COMMAND:
-      /* Set the reset control pin HIGH. There currently isn't any practical difference
-         between this and PREVENT_ALWAYS but it doesn't hurt anything to have them separate. */
+      /*
+       * Set the reset control pin HIGH. There currently isn't any practical difference
+       * between this and PREVENT_ALWAYS but it doesn't hurt anything to have them separate.
+       */
       digitalWrite(pinResetControl, HIGH);
       BIT_CLEAR(currentStatus.status3, BIT_STATUS3_RESET_PREVENT);
       break;
