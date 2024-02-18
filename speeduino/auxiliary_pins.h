@@ -58,3 +58,5 @@ extern IODigitalWriteOutputPin WMIIndicator;
 
 extern IOPortMaskOutputPin NitrousArming;
 
+extern IOPortMaskOutputPin AirConRequest;
+

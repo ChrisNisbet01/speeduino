@@ -3221,16 +3221,19 @@ void setPinMapping(byte boardID)
     AirConComp.configure(pinAirConComp);
   }
 
-  if (pinAirConRequest > 0 && configPage15.airConEnable == 1 && !pinIsOutput(pinAirConRequest))
+  if (configPage15.airConEnable == 1 )
   {
-    byte const input_mode = (configPage15.airConReqPol == 1) ? INPUT : INPUT_PULLUP;
+    if (pinAirConRequest > 0 && !pinIsOutput(pinAirConRequest))
+    {
+      byte const input_mode = (configPage15.airConReqPol == 1) ? INPUT : INPUT_PULLUP;
 
-    pinMode(pinAirConRequest, input_mode);
-  }
+      AirConRequest.configure(pinAirConRequest, LOW, input_mode);
+    }
 
-  if(pinAirConFan > 0 && configPage15.airConEnable == 1 && configPage15.airConFanEnabled == 1)
-  {
-    AirConFan.configure(pinAirConFan);
+    if(pinAirConFan > 0 && configPage15.airConFanEnabled == 1)
+    {
+      AirConFan.configure(pinAirConFan);
+    }
   }
 }
 

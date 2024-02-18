@@ -28,9 +28,6 @@ volatile char nextVVT;
 byte boostCounter;
 byte vvtCounter;
 
-volatile PORT_TYPE * aircon_req_pin_port;
-volatile PINMASK_TYPE aircon_req_pin_mask;
-
 #if defined(PWM_FAN_AVAILABLE)//PWM fan not available on Arduino MEGA
 volatile bool fan_pwm_state;
 uint16_t fan_pwm_max_count; //Used for variable PWM frequency
@@ -90,8 +87,6 @@ void initialiseAirCon(void)
     BIT_CLEAR(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON);  // Bit 4
     BIT_CLEAR(currentStatus.airConStatus, BIT_AIRCON_CLT_LOCKOUT); // Bit 5
     BIT_CLEAR(currentStatus.airConStatus, BIT_AIRCON_FAN);         // Bit 6
-    aircon_req_pin_port = portInputRegister(digitalPinToPort(pinAirConRequest));
-    aircon_req_pin_mask = digitalPinToBitMask(pinAirConRequest);
 
     AIRCON_OFF();
 
@@ -201,7 +196,7 @@ bool READ_AIRCON_REQUEST(void)
   // Read the status of the A/C request pin (A/C button),
   // taking into account the pin's polarity
   bool const acReqPinStatus =
-    (configPage15.airConReqPol == 0) ^ (*aircon_req_pin_port & aircon_req_pin_mask);
+    (configPage15.airConReqPol == 0) ^ AirConRequest.read();
   BIT_WRITE(currentStatus.airConStatus, BIT_AIRCON_REQUEST, acReqPinStatus);
 
   return acReqPinStatus;
