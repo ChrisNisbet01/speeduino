@@ -445,14 +445,9 @@ void initialiseAuxPWM(void)
   if (configPage10.n2o_enable > 0)
   {
     //The pin modes are only set if the if n2o is enabled to prevent them conflicting with other outputs.
-    if (configPage10.n2o_pin_polarity == 1)
-    {
-      pinMode(configPage10.n2o_arming_pin, INPUT_PULLUP);
-    }
-    else
-    {
-      pinMode(configPage10.n2o_arming_pin, INPUT);
-    }
+    byte const input_polarity = (configPage10.n2o_pin_polarity == 1) ? INPUT_PULLUP : INPUT;
+
+    pinMode(configPage10.n2o_arming_pin, input_polarity);
   }
 
   boostPID.SetOutputLimits(configPage2.boostMinDuty, configPage2.boostMaxDuty);
@@ -470,12 +465,15 @@ void initialiseAuxPWM(void)
     currentStatus.vvt1Angle = 0;
     currentStatus.vvt2Angle = 0;
 
+    //Converts the frequency in Hz to the number of ticks (at 16uS) it takes to
+    //complete 1 cycle. Note that the frequency is divided by 2 coming from TS
+    //to allow for up to 512hz
 #if defined(CORE_AVR)
-    vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (16U * configPage6.vvtFreq * 2U)); //Converts the frequency in Hz to the number of ticks (at 16uS) it takes to complete 1 cycle. Note that the frequency is divided by 2 coming from TS to allow for up to 512hz
+    vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (16U * configPage6.vvtFreq * 2U));
 #elif defined(CORE_TEENSY35)
-    vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (32U * configPage6.vvtFreq * 2U)); //Converts the frequency in Hz to the number of ticks (at 16uS) it takes to complete 1 cycle. Note that the frequency is divided by 2 coming from TS to allow for up to 512hz
+    vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (32U * configPage6.vvtFreq * 2U));
 #elif defined(CORE_TEENSY41)
-    vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (2U * configPage6.vvtFreq * 2U)); //Converts the frequency in Hz to the number of ticks (at 2uS) it takes to complete 1 cycle. Note that the frequency is divided by 2 coming fro TS to allow for up to 512hz
+    vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (2U * configPage6.vvtFreq * 2U));
 #endif
 
     if (configPage6.vvtMode == VVT_MODE_CLOSED_LOOP)
@@ -484,6 +482,7 @@ void initialiseAuxPWM(void)
       vvtPID.SetTunings(configPage10.vvtCLKP, configPage10.vvtCLKI, configPage10.vvtCLKD);
       vvtPID.SetSampleTime(33); //30Hz is 33,33ms
       vvtPID.SetMode(AUTOMATIC); //Turn PID on
+
       if (configPage10.vvt2Enabled == 1) // same for VVT2 if it's enabled
       {
         vvt2PID.SetOutputLimits(configPage10.vvtCLminDuty, configPage10.vvtCLmaxDuty);
@@ -506,16 +505,20 @@ void initialiseAuxPWM(void)
     }
   }
 
-  if ((configPage6.vvtEnabled == 0) && (configPage10.wmiEnabled >= 1))
+  if (configPage6.vvtEnabled == 0 && configPage10.wmiEnabled >= 1)
   {
     // config wmi pwm output to use vvt output
-#   if defined(CORE_AVR)
-    vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (16U * configPage6.vvtFreq * 2U)); //Converts the frequency in Hz to the number of ticks (at 16uS) it takes to complete 1 cycle. Note that the frequency is divided by 2 coming from TS to allow for up to 512hz
-#   elif defined(CORE_TEENSY35)
-    vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (32U * configPage6.vvtFreq * 2U)); //Converts the frequency in Hz to the number of ticks (at 16uS) it takes to complete 1 cycle. Note that the frequency is divided by 2 coming from TS to allow for up to 512hz
-#   elif defined(CORE_TEENSY41)
-    vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (2U * configPage6.vvtFreq * 2U)); //Converts the frequency in Hz to the number of ticks (at 2uS) it takes to complete 1 cycle. Note that the frequency is divided by 2 coming from TS to allow for up to 512hz
-#   endif
+    //Converts the frequency in Hz to the number of ticks (at 16uS) it takes to
+    //complete 1 cycle. Note that the frequency is divided by 2 coming from TS
+    //to allow for up to 512hz
+#if defined(CORE_AVR)
+    vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (16U * configPage6.vvtFreq * 2U));
+#elif defined(CORE_TEENSY35)
+    vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (32U * configPage6.vvtFreq * 2U));
+#elif defined(CORE_TEENSY41)
+    vvt_pwm_max_count = (uint16_t)(MICROS_PER_SEC / (2U * configPage6.vvtFreq * 2U));
+#endif
+
     BIT_CLEAR(currentStatus.status4, BIT_STATUS4_WMI_EMPTY);
     currentStatus.wmiPW = 0;
     vvt1_pwm_value = 0;
@@ -571,8 +574,7 @@ void boostByGear(void)
     if (configPage9.boostByGearEnabled == 1)
     {
       uint16_t const combinedBoost =
-        (boost_multiplier
-         * (uint16_t)get3DTableValue(&boostTable, currentStatus.TPS * 2, currentStatus.RPM)) << 2;
+        (boost_multiplier * (uint16_t)get3DTableValue(&boostTable, currentStatus.TPS * 2, currentStatus.RPM)) << 2;
 
       uint16_t const maxBoostDuty = 10000;
 
@@ -641,7 +643,8 @@ void boostControl(void)
       else
       {
         //Convert boost duty (Which is a % multiplied by 100) to a pwm count
-        boost_pwm_target_value = ((unsigned long)currentStatus.boostDuty * boost_pwm_max_count) / 10000;
+        boost_pwm_target_value =
+          ((unsigned long)currentStatus.boostDuty * boost_pwm_max_count) / 10000;
       }
     }
     else if (configPage4.boostType == CLOSED_LOOP_BOOST)
@@ -694,7 +697,9 @@ void boostControl(void)
             }
           }
 
-          bool PIDcomputed = boostPID.Compute(get3DTableValue(&boostTableLookupDuty, currentStatus.boostTarget, currentStatus.RPM) * 100 / 2); //Compute() returns false if the required interval has not yet passed.
+          //Compute() returns false if the required interval has not yet passed.
+          bool PIDcomputed =
+            boostPID.Compute(get3DTableValue(&boostTableLookupDuty, currentStatus.boostTarget, currentStatus.RPM) * 100 / 2);
 
           if (currentStatus.boostDuty == 0)
           {

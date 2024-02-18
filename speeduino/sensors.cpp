@@ -171,7 +171,9 @@ void initialiseADC(void)
     {
       //if current input channel is enabled as analog local pin check
       //caninput_selxb(bits 2:3) with &12 and caninput_selxa(bits 0:1) with &3
-      byte pinNumber = pinTranslateAnalog(configPage9.Auxinpina[currentStatus.current_caninchannel] & 63);
+      byte const pinNumber =
+        pinTranslateAnalog(configPage9.Auxinpina[currentStatus.current_caninchannel] & 63);
+
       if (pinIsUsed(pinNumber))
       {
         //Do nothing here as the pin is already in use.
@@ -198,7 +200,9 @@ void initialiseADC(void)
             )
     {  //if current input channel is enabled as digital local pin check
        // caninput_selxb(bits 2:3) with &12 and caninput_selxa(bits 0:1) with &3
-      byte pinNumber = (configPage9.Auxinpinb[currentStatus.current_caninchannel] & 63) + 1;
+      byte const pinNumber =
+        (configPage9.Auxinpinb[currentStatus.current_caninchannel] & 63) + 1;
+
       if (pinIsUsed(pinNumber))
       {
         //Do nothing here as the pin is already in use.
@@ -211,10 +215,8 @@ void initialiseADC(void)
         //currentStatus.canin[14] = 44;  Dev test use only!
         auxIsEnabled = true;
       }
-
     }
   } //For loop iterating through aux in lines
-
 
   //Sanity checks to ensure none of the filter values are set above 240 (Which would include the 255 value which is the default on a new arduino)
   //If an invalid value is detected, it's reset to the default the value and burned to EEPROM.
