@@ -371,7 +371,7 @@ static inline byte checkForStepping(void)
       if (idleStepper.stepperStatus == STEPPING)
       {
         //Means we're currently in a step, but it needs to be turned off
-        digitalWrite(pinStepperStep, LOW); //Turn off the step
+        StepperStep.write(LOW); //Turn off the step
         idleStepper.stepStartTime = micros_safe();
 
         // if there is no cool time we can miss that step out completely.
@@ -397,7 +397,7 @@ static inline byte checkForStepping(void)
           //Disable the DRV8825, but only if we're at the final step in this cycle.
           if (idleStepper.targetIdleStep == idleStepper.curIdleStep)
           {
-            digitalWrite(pinStepperEnable, HIGH);
+            StepperEnable.write(HIGH);
           }
         }
       }
@@ -424,19 +424,19 @@ static inline void doStep(void)
     if(idleStepper.targetIdleStep < idleStepper.curIdleStep)
     {
       // we are moving toward the home position (reducing air)
-      digitalWrite(pinStepperDir, idleStepper.lessAirDirection);
+      StepperDir.write(idleStepper.lessAirDirection);
       idleStepper.curIdleStep--;
     }
     else
     if (idleStepper.targetIdleStep > idleStepper.curIdleStep)
     {
       // we are moving away from the home position (adding air).
-      digitalWrite(pinStepperDir, idleStepper.moreAirDirection);
+      StepperDir.write(idleStepper.moreAirDirection);
       idleStepper.curIdleStep++;
     }
 
-    digitalWrite(pinStepperEnable, LOW); //Enable the DRV8825
-    digitalWrite(pinStepperStep, HIGH);
+    StepperEnable.write(LOW); //Enable the DRV8825
+    StepperStep.write(HIGH);
     idleStepper.stepStartTime = micros_safe();
     idleStepper.stepperStatus = STEPPING;
     idleOn = true;
@@ -457,9 +457,9 @@ static inline byte isStepperHomed(void)
   if (completedHomeSteps < configPage6.iacStepHome * 3)
   {
     //homing the stepper closes off the air bleed
-    digitalWrite(pinStepperDir, idleStepper.lessAirDirection);
-    digitalWrite(pinStepperEnable, LOW); //Enable the DRV8825
-    digitalWrite(pinStepperStep, HIGH);
+    StepperDir.write(idleStepper.lessAirDirection);
+    StepperEnable.write(LOW); //Enable the DRV8825
+    StepperStep.write(HIGH);
     idleStepper.stepStartTime = micros_safe();
     idleStepper.stepperStatus = STEPPING;
     completedHomeSteps++;

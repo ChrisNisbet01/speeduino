@@ -48,9 +48,6 @@ bool IOPortMaskOutputPin::is_configured(void)
   return m_port != nullptr && m_is_configured;
 }
 
-
-#if defined(CORE_TEENSY) || defined(CORE_STM32)
-
 void IODigitalWriteOutputPin::on(void)
 {
   digitalWrite(m_pin, HIGH);
@@ -61,10 +58,17 @@ void IODigitalWriteOutputPin::off(void)
   digitalWrite(m_pin, LOW);
 }
 
+void IODigitalWriteOutputPin::write(byte value)
+{
+  digitalWrite(m_pin, value);
+}
+
+#if defined(CORE_TEENSY) || defined(CORE_STM32)
 void IODigitalWriteOutputPin::toggle(void)
 {
   digitalToggle(m_pin);
 }
+#endif
 
 void IODigitalWriteOutputPin::configure(byte pin, byte initial_state)
 {
@@ -96,6 +100,8 @@ bool IODigitalWriteOutputPin::is_configured(void)
 {
   return m_is_configured;
 }
+
+#if defined(CORE_TEENSY) || defined(CORE_STM32)
 
 #else
 

@@ -35,7 +35,6 @@ private:
 };
 
 
-#if defined(CORE_TEENSY) || defined(CORE_STM32)
 class IODigitalWriteOutputPin
 {
 public:
@@ -43,7 +42,11 @@ public:
 
   void off(void);
 
+  void write(byte value);
+
+#if defined(CORE_TEENSY) || defined(CORE_STM32)
   void toggle(void);
+#endif
 
   void configure(byte pin, byte initial_state = LOW);
 
@@ -55,6 +58,8 @@ private:
   byte m_pin = INVALID_PIN_NUMBER;
   bool m_is_configured = false;
 };
+
+#if defined(CORE_TEENSY) || defined(CORE_STM32)
 
 #else
 

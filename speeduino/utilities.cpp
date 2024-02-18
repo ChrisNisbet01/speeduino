@@ -140,22 +140,26 @@ void initialiseProgrammableIO(void)
 
     if (outputPin > 0)
     {
-      if ( outputPin >= 128 ) //Cascate rule usage
+      if (outputPin >= 128) //Cascate rule usage
       {
         BIT_WRITE(currentStatus.outputsStatus, y, BIT_CHECK(configPage13.outputInverted, y));
         BIT_SET(pinIsValid, y);
       }
-      else if ( !pinIsUsed(outputPin) )
+      else if (!pinIsUsed(outputPin))
       {
         pinMode(outputPin, OUTPUT);
         digitalWrite(outputPin, BIT_CHECK(configPage13.outputInverted, y));
         BIT_WRITE(currentStatus.outputsStatus, y, BIT_CHECK(configPage13.outputInverted, y));
         BIT_SET(pinIsValid, y);
       }
-      else { BIT_CLEAR(pinIsValid, y); }
+      else
+      {
+        BIT_CLEAR(pinIsValid, y);
+      }
     }
   }
 }
+
 /** Check all (8) programmable I/O:s and carry out action on output pin as needed.
  * Compare 2 (16 bit) vars in a way configured by @ref cmpOperation (see also @ref config13.operation).
  * Use ProgrammableIOGetData() to get 2 vars to compare.

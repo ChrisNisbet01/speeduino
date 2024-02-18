@@ -40,10 +40,6 @@ volatile PORT_TYPE * aircon_fan_pin_port;
 volatile PINMASK_TYPE aircon_fan_pin_mask;
 volatile PORT_TYPE * aircon_req_pin_port;
 volatile PINMASK_TYPE aircon_req_pin_mask;
-volatile PORT_TYPE * vvt1_pin_port;
-volatile PINMASK_TYPE vvt1_pin_mask;
-volatile PORT_TYPE * vvt2_pin_port;
-volatile PINMASK_TYPE vvt2_pin_mask;
 
 #if defined(PWM_FAN_AVAILABLE)//PWM fan not available on Arduino MEGA
 volatile bool fan_pwm_state;
@@ -438,10 +434,6 @@ done:
 
 void initialiseAuxPWM(void)
 {
-  vvt1_pin_port = portOutputRegister(digitalPinToPort(pinVVT_1));
-  vvt1_pin_mask = digitalPinToBitMask(pinVVT_1);
-  vvt2_pin_port = portOutputRegister(digitalPinToPort(pinVVT_2));
-  vvt2_pin_mask = digitalPinToBitMask(pinVVT_2);
   n2o_stage1_pin_port = portOutputRegister(digitalPinToPort(configPage10.n2o_stage1_pin));
   n2o_stage1_pin_mask = digitalPinToBitMask(configPage10.n2o_stage1_pin);
   n2o_stage2_pin_port = portOutputRegister(digitalPinToPort(configPage10.n2o_stage2_pin));
@@ -1154,7 +1146,7 @@ void wmiControl(void)
     if (wmiPW == 0)
     {
       // Make sure water pump is off
-      VVT2_PIN_LOW();
+      VVT2_PIN_OFF();
       vvt2_pwm_state = false;
       vvt2_max_pwm = false;
       if (configPage6.vvtEnabled == 0)
@@ -1169,7 +1161,7 @@ void wmiControl(void)
       if (wmiPW >= 200)
       {
         // Make sure water pump is on (100% duty)
-        VVT2_PIN_HIGH();
+        VVT2_PIN_ON();
         vvt2_pwm_state = true;
         vvt2_max_pwm = true;
         if (configPage6.vvtEnabled == 0)

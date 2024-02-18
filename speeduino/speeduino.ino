@@ -203,14 +203,14 @@ void loop(void)
       initialiseTriggers();
     }
 
-    VVT1_PIN_LOW();
-    VVT2_PIN_LOW();
+    VVT1_PIN_OFF();
+    VVT2_PIN_OFF();
     DISABLE_VVT_TIMER();
     boostDisable();
     if (configPage4.ignBypassEnabled > 0)
     {
       //Reset the ignition bypass ready for next crank attempt
-      digitalWrite(pinIgnBypass, LOW);
+      IgnBypass.off();
     }
   }
 
@@ -483,7 +483,7 @@ void loop(void)
         BIT_CLEAR(currentStatus.engine, BIT_ENGINE_CRANK);
         if (configPage4.ignBypassEnabled > 0)
         {
-          digitalWrite(pinIgnBypass, HIGH);
+          IgnBypass.on();
         }
       }
     }
@@ -498,7 +498,7 @@ void loop(void)
         currentStatus.runSecs = 0; //We're cranking (hopefully), so reset the engine run time to prompt ASE.
         if (configPage4.ignBypassEnabled > 0)
         {
-          digitalWrite(pinIgnBypass, LOW);
+          IgnBypass.off();
         }
 
         //Check whether the user has selected to disable to the fan during cranking

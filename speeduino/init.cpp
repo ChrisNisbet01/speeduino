@@ -3032,16 +3032,22 @@ void setPinMapping(byte boardID)
   //Finally, set the relevant pin modes for outputs
   boost.configure(pinBoost);
   TachOut.configure(pinTachOut, HIGH); //Set the tacho output default state
+
   Idle1.configure(pinIdle1);
   Idle2.configure(pinIdle2);
   IdleUpOutput.configure(pinIdleUpOutput);
+
   FuelPump.configure(pinFuelPump);
+
   Fan.configure(pinFan);
+
   StepperDir.configure(pinStepperDir);
   StepperStep.configure(pinStepperStep);
   StepperEnable.configure(pinStepperEnable);
+
   VVT_1.configure(pinVVT_1);
   VVT_2.configure(pinVVT_2);
+
   if (configPage4.ignBypassEnabled > 0)
   {
     IgnBypass.configure(pinIgnBypass);
@@ -3189,37 +3195,39 @@ void setPinMapping(byte boardID)
     if(configPage10.wmiIndicatorEnabled > 0)
     {
       pinMode(pinWMIIndicator, OUTPUT);
-      if (configPage10.wmiIndicatorPolarity > 0) { digitalWrite(pinWMIIndicator, HIGH); }
+      if (configPage10.wmiIndicatorPolarity > 0)
+      {
+        digitalWrite(pinWMIIndicator, HIGH);
+      }
     }
-    if( (configPage10.wmiEmptyEnabled > 0) && (!pinIsOutput(pinWMIEmpty)) )
+    if (configPage10.wmiEmptyEnabled > 0 && !pinIsOutput(pinWMIEmpty))
     {
-      if (configPage10.wmiEmptyPolarity == 0) { pinMode(pinWMIEmpty, INPUT_PULLUP); } //Normal setting
-      else { pinMode(pinWMIEmpty, INPUT); } //inverted setting
+      if (configPage10.wmiEmptyPolarity == 0)
+      {
+        //Normal setting
+        pinMode(pinWMIEmpty, INPUT_PULLUP);
+      }
+      else
+      {
+        //inverted setting
+        pinMode(pinWMIEmpty, INPUT);
+      }
     }
   }
 
-  if((pinAirConComp>0) && ((configPage15.airConEnable) == 1))
+  if (pinAirConComp > 0 && configPage15.airConEnable == 1)
   {
     pinMode(pinAirConComp, OUTPUT);
   }
 
-  if((pinAirConRequest > 0) && ((configPage15.airConEnable) == 1) && (!pinIsOutput(pinAirConRequest)))
+  if (pinAirConRequest > 0 && configPage15.airConEnable == 1 && !pinIsOutput(pinAirConRequest))
   {
-    if((configPage15.airConReqPol) == 1)
-    {
-      // Inverted
-      // +5V is ON, Use external pull-down resistor for OFF
-      pinMode(pinAirConRequest, INPUT);
-    }
-    else
-    {
-      //Normal
-      // Pin pulled to Ground is ON. Floating (internally pulled up to +5V) is OFF.
-      pinMode(pinAirConRequest, INPUT_PULLUP);
-    }
+    byte const input_mode (configPage15.airConReqPol == 1) ? INPUT : INPUT_PULLUP;
+
+    pinMode(pinAirConRequest, input_mode);
   }
 
-  if((pinAirConFan > 0) && ((configPage15.airConEnable) == 1) && ((configPage15.airConFanEnabled) == 1))
+  if(pinAirConFan > 0 && configPage15.airConEnable == 1 && configPage15.airConFanEnabled == 1)
   {
     pinMode(pinAirConFan, OUTPUT);
   }
@@ -3234,8 +3242,8 @@ void setPinMapping(byte boardID)
 
   flex_pin_port = portInputRegister(digitalPinToPort(pinFlex));
   flex_pin_mask = digitalPinToBitMask(pinFlex);
-
 }
+
 /** Initialise the chosen trigger decoder.
  * - Set Interrupt numbers @ref triggerInterrupt, @ref triggerInterrupt2 and @ref triggerInterrupt3  by pin their numbers (based on board CORE_* define)
  * - Call decoder specific setup function triggerSetup_*() (by @ref config4.TrigPattern, set to one of the DECODER_* defines) and do any additional initialisations needed.
