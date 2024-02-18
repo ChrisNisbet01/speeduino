@@ -44,7 +44,7 @@ IOPortMaskOutputPin TachOut;
 
 IOPortMaskOutputPin Idle1;
 IOPortMaskOutputPin Idle2;
-IOPortMaskOutputPin IdleUpOutput;
+IODigitalWriteOutputPin IdleUpOutput;
 
 IODigitalWriteOutputPin StepperDir;
 IODigitalWriteOutputPin StepperStep;

@@ -45,7 +45,7 @@ extern IOPortMaskOutputPin NitrousStage2;
 extern IOPortMaskOutputPin TachOut;
 extern IOPortMaskOutputPin Idle1;
 extern IOPortMaskOutputPin Idle2;
-extern IOPortMaskOutputPin IdleUpOutput;
+extern IODigitalWriteOutputPin IdleUpOutput;
 
 extern IODigitalWriteOutputPin StepperDir;
 extern IODigitalWriteOutputPin StepperStep;

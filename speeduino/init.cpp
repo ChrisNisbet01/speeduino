@@ -3001,7 +3001,6 @@ void setPinMapping(byte boardID)
   setup_selectable_io();
 
   //Currently there's no default pin for Idle Up
-
   pinIdleUp = pinTranslate(configPage2.idleUpPin);
 
   //Currently there's no default pin for Idle Up Output
@@ -3132,7 +3131,8 @@ void setPinMapping(byte boardID)
       pinMode(pinLaunch, INPUT);
     }
   }
-  if ((configPage2.idleUpEnabled > 0) && (!pinIsOutput(pinIdleUp)))
+
+  if (configPage2.idleUpEnabled > 0 && !pinIsOutput(pinIdleUp))
   {
     if (configPage2.idleUpPolarity == 0) //Normal setting
     {
@@ -3143,7 +3143,8 @@ void setPinMapping(byte boardID)
       pinMode(pinIdleUp, INPUT);
     }
   }
-  if ((configPage2.CTPSEnabled > 0) && (!pinIsOutput(pinCTPS)))
+
+  if (configPage2.CTPSEnabled > 0 && !pinIsOutput(pinCTPS))
   {
     if (configPage2.CTPSPolarity == 0) //Normal setting
     {
@@ -3214,14 +3215,18 @@ void setPinMapping(byte boardID)
     }
   }
 
-  if (pinAirConComp > 0 && configPage15.airConEnable == 1)
-  {
-    AirConComp.configure(pinAirConComp);
-  }
-
   if (configPage15.airConEnable == 1 )
   {
-    if (pinAirConRequest > 0 && !pinIsOutput(pinAirConRequest))
+    if (pinAirConComp > 0)
+    {
+      AirConComp.configure(pinAirConComp);
+    }
+
+    if (pinIsOutput(pinAirConRequest))
+    {
+      pinAirConRequest = 0;
+    }
+    if (pinAirConRequest > 0)
     {
       byte const input_mode = (configPage15.airConReqPol == 1) ? INPUT : INPUT_PULLUP;
 
