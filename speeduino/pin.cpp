@@ -37,7 +37,7 @@ void IOPortMaskOutputPin::configure(byte pin, byte initial_state)
   }
   else
   {
-    /* do_nothing */
+    /* Do_nothing. */
   }
   pinMode(m_pin, OUTPUT);
   m_is_configured = true;
@@ -89,7 +89,7 @@ void IODigitalWriteOutputPin::configure(byte pin, byte initial_state)
   }
   else
   {
-    /* do_nothing */
+    /* Do_nothing. */
   }
 
   pinMode(m_pin, OUTPUT);
@@ -141,7 +141,7 @@ void IOAtomicWriteOutputPin::configure(byte pin, byte initial_state)
   }
   else
   {
-    /* do_nothing */
+    /* Do_nothing. */
   }
 
   pinMode(m_pin, OUTPUT);

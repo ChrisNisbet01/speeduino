@@ -3191,14 +3191,12 @@ void setPinMapping(byte boardID)
   }
   if(configPage10.wmiEnabled > 0)
   {
-    pinMode(pinWMIEnabled, OUTPUT);
-    if(configPage10.wmiIndicatorEnabled > 0)
+    WMIEnabled.configure(pinWMIEnabled);
+    if (configPage10.wmiIndicatorEnabled > 0)
     {
-      pinMode(pinWMIIndicator, OUTPUT);
-      if (configPage10.wmiIndicatorPolarity > 0)
-      {
-        digitalWrite(pinWMIIndicator, HIGH);
-      }
+      byte const initial_state = (configPage10.wmiIndicatorPolarity > 0) ? HIGH : LOW;
+
+      WMIIndicator.configure(pinWMIIndicator, initial_state);
     }
     if (configPage10.wmiEmptyEnabled > 0 && !pinIsOutput(pinWMIEmpty))
     {
@@ -3217,19 +3215,19 @@ void setPinMapping(byte boardID)
 
   if (pinAirConComp > 0 && configPage15.airConEnable == 1)
   {
-    pinMode(pinAirConComp, OUTPUT);
+    AirConComp.configure(pinAirConComp);
   }
 
   if (pinAirConRequest > 0 && configPage15.airConEnable == 1 && !pinIsOutput(pinAirConRequest))
   {
-    byte const input_mode (configPage15.airConReqPol == 1) ? INPUT : INPUT_PULLUP;
+    byte const input_mode = (configPage15.airConReqPol == 1) ? INPUT : INPUT_PULLUP;
 
     pinMode(pinAirConRequest, input_mode);
   }
 
   if(pinAirConFan > 0 && configPage15.airConEnable == 1 && configPage15.airConFanEnabled == 1)
   {
-    pinMode(pinAirConFan, OUTPUT);
+    AirConFan.configure(pinAirConFan);
   }
 
   //These must come after the above pinMode statements

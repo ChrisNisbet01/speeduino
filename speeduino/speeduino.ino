@@ -429,11 +429,11 @@ void loop(void)
       if (BIT_CHECK(currentStatus.status4, BIT_STATUS4_WMI_EMPTY))
       {
         // flash with 1sec interval
-        digitalWrite(pinWMIIndicator, !digitalRead(pinWMIIndicator));
+        WMIIndicator.write(!digitalRead(pinWMIIndicator));
       }
       else
       {
-        digitalWrite(pinWMIIndicator, configPage10.wmiIndicatorPolarity ? HIGH : LOW);
+        WMIIndicator.write(configPage10.wmiIndicatorPolarity ? HIGH : LOW);
       }
     }
 

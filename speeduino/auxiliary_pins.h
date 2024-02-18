@@ -9,6 +9,8 @@ extern IODigitalWriteOutputPin FuelPump;
 extern IODigitalWriteOutputPin Fan;
 extern IODigitalWriteOutputPin VVT_1;
 extern IODigitalWriteOutputPin VVT_2;
+extern IODigitalWriteOutputPin AirConComp;
+extern IODigitalWriteOutputPin AirConFan;
 
 #else
 
@@ -17,6 +19,8 @@ extern IOAtomicWriteOutputPin FuelPump;
 extern IOAtomicWriteOutputPin Fan;
 extern IOAtomicWriteOutputPin VVT_1;
 extern IOAtomicWriteOutputPin VVT_2;
+extern IOAtomicWriteOutputPin AirConComp;
+extern IOAtomicWriteOutputPin AirConFan;
 
 #endif
 
@@ -30,4 +34,7 @@ extern IODigitalWriteOutputPin StepperStep;
 extern IODigitalWriteOutputPin StepperEnable;
 
 extern IODigitalWriteOutputPin IgnBypass;
+
+extern IODigitalWriteOutputPin WMIEnabled;
+extern IODigitalWriteOutputPin WMIIndicator;
 

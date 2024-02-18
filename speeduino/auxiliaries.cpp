@@ -34,10 +34,6 @@ volatile PORT_TYPE * n2o_stage2_pin_port;
 volatile PINMASK_TYPE n2o_stage2_pin_mask;
 volatile PORT_TYPE * n2o_arming_pin_port;
 volatile PINMASK_TYPE n2o_arming_pin_mask;
-volatile PORT_TYPE * aircon_comp_pin_port;
-volatile PINMASK_TYPE aircon_comp_pin_mask;
-volatile PORT_TYPE * aircon_fan_pin_port;
-volatile PINMASK_TYPE aircon_fan_pin_mask;
 volatile PORT_TYPE * aircon_req_pin_port;
 volatile PINMASK_TYPE aircon_req_pin_mask;
 
@@ -102,15 +98,11 @@ void initialiseAirCon(void)
     BIT_CLEAR(currentStatus.airConStatus, BIT_AIRCON_FAN);         // Bit 6
     aircon_req_pin_port = portInputRegister(digitalPinToPort(pinAirConRequest));
     aircon_req_pin_mask = digitalPinToBitMask(pinAirConRequest);
-    aircon_comp_pin_port = portOutputRegister(digitalPinToPort(pinAirConComp));
-    aircon_comp_pin_mask = digitalPinToBitMask(pinAirConComp);
 
     AIRCON_OFF();
 
     if (configPage15.airConFanEnabled > 0 && pinAirConFan != 0)
     {
-      aircon_fan_pin_port = portOutputRegister(digitalPinToPort(pinAirConFan));
-      aircon_fan_pin_mask = digitalPinToBitMask(pinAirConFan);
       AIRCON_FAN_OFF();
       acStandAloneFanIsEnabled = true;
     }
@@ -1153,11 +1145,11 @@ void wmiControl(void)
       {
         DISABLE_VVT_TIMER();
       }
-      digitalWrite(pinWMIEnabled, LOW);
+      WMIEnabled.off();
     }
     else
     {
-      digitalWrite(pinWMIEnabled, HIGH);
+      WMIEnabled.on();
       if (wmiPW >= 200)
       {
         // Make sure water pump is on (100% duty)
