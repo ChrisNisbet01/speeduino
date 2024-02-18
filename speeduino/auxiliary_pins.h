@@ -12,6 +12,12 @@ extern IODigitalWriteOutputPin VVT_2;
 extern IODigitalWriteOutputPin AirConComp;
 extern IODigitalWriteOutputPin AirConFan;
 
+extern IODigitalWriteOutputPin Trigger;
+extern IODigitalWriteOutputPin Trigger2;
+extern IODigitalWriteOutputPin Trigger3;
+
+extern IODigitalWriteOutputPin Flex;
+
 #else
 
 extern IOAtomicWriteOutputPin boost;
@@ -21,6 +27,12 @@ extern IOAtomicWriteOutputPin VVT_1;
 extern IOAtomicWriteOutputPin VVT_2;
 extern IOAtomicWriteOutputPin AirConComp;
 extern IOAtomicWriteOutputPin AirConFan;
+
+extern IOPortMaskOutputPin Trigger;
+extern IOPortMaskOutputPin Trigger2;
+extern IOPortMaskOutputPin Trigger3;
+
+extern IOPortMaskOutputPin Flex;
 
 #endif
 

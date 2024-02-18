@@ -3110,12 +3110,14 @@ void setPinMapping(byte boardID)
   #endif
 
   //Each of the below are only set when their relevant function is enabled. This can help prevent pin conflicts that users aren't aware of with unused functions
-  if( (configPage2.flexEnabled > 0) && (!pinIsOutput(pinFlex)) )
+  if (configPage2.flexEnabled > 0 && !pinIsOutput(pinFlex))
   {
-    pinMode(pinFlex, INPUT); //Standard GM / Continental flex sensor requires pullup, but this should be onboard. The internal pullup will not work (Requires ~3.3k)!
+    //Standard GM / Continental flex sensor requires pullup, but this should be onboard.
+    //The internal pullup will not work (Requires ~3.3k)!
+    Flex.configure(pinFlex, LOW, INPUT);
   }
 
-  if( (configPage2.vssMode > 1) && (!pinIsOutput(pinVSS)) ) //Pin mode 1 for VSS is CAN
+  if (configPage2.vssMode > 1 && !pinIsOutput(pinVSS)) //Pin mode 1 for VSS is CAN
   {
     pinMode(pinVSS, INPUT);
   }
@@ -3230,17 +3232,6 @@ void setPinMapping(byte boardID)
   {
     AirConFan.configure(pinAirConFan);
   }
-
-  //These must come after the above pinMode statements
-  triggerPri_pin_port = portInputRegister(digitalPinToPort(pinTrigger));
-  triggerPri_pin_mask = digitalPinToBitMask(pinTrigger);
-  triggerSec_pin_port = portInputRegister(digitalPinToPort(pinTrigger2));
-  triggerSec_pin_mask = digitalPinToBitMask(pinTrigger2);
-  triggerThird_pin_port = portInputRegister(digitalPinToPort(pinTrigger3));
-  triggerThird_pin_mask = digitalPinToBitMask(pinTrigger3);
-
-  flex_pin_port = portInputRegister(digitalPinToPort(pinFlex));
-  flex_pin_mask = digitalPinToBitMask(pinFlex);
 }
 
 /** Initialise the chosen trigger decoder.
@@ -3255,7 +3246,7 @@ void initialiseTriggers(void)
   byte triggerInterrupt2 = 1;
   byte triggerInterrupt3 = 2;
 
-  #if defined(CORE_AVR)
+#if defined(CORE_AVR)
     switch (pinTrigger) {
       //Arduino Mega 2560 mapping
       case 2:
@@ -3273,11 +3264,11 @@ void initialiseTriggers(void)
       default:
         triggerInterrupt = 0; break; //This should NEVER happen
     }
-  #else
+#else
     triggerInterrupt = pinTrigger;
-  #endif
+#endif
 
-  #if defined(CORE_AVR)
+#if defined(CORE_AVR)
     switch (pinTrigger2) {
       //Arduino Mega 2560 mapping
       case 2:
@@ -3295,11 +3286,11 @@ void initialiseTriggers(void)
       default:
         triggerInterrupt2 = 0; break; //This should NEVER happen
     }
-  #else
+#else
     triggerInterrupt2 = pinTrigger2;
-  #endif
+#endif
 
-  #if defined(CORE_AVR)
+#if defined(CORE_AVR)
     switch (pinTrigger3) {
       //Arduino Mega 2560 mapping
       case 2:
@@ -3317,13 +3308,12 @@ void initialiseTriggers(void)
       default:
         triggerInterrupt3 = 0; break; //This should NEVER happen
     }
-  #else
+#else
     triggerInterrupt3 = pinTrigger3;
-  #endif
-
-  pinMode(pinTrigger, INPUT);
-  pinMode(pinTrigger2, INPUT);
-  pinMode(pinTrigger3, INPUT);
+#endif
+    Trigger.configure(pinTrigger, LOW, INPUT);
+    Trigger2.configure(pinTrigger, LOW, INPUT);
+    Trigger3.configure(pinTrigger, LOW, INPUT);
 
   detachInterrupt(triggerInterrupt);
   detachInterrupt(triggerInterrupt2);

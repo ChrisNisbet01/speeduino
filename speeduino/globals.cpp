@@ -58,16 +58,6 @@ struct table2D coolantProtectTable;
 struct table2D fanPWMTable;
 struct table2D rollingCutTable;
 
-volatile PORT_TYPE *flex_pin_port;
-volatile PINMASK_TYPE flex_pin_mask;
-
-volatile PORT_TYPE *triggerPri_pin_port;
-volatile PINMASK_TYPE triggerPri_pin_mask;
-volatile PORT_TYPE *triggerSec_pin_port;
-volatile PINMASK_TYPE triggerSec_pin_mask;
-volatile PORT_TYPE *triggerThird_pin_port;
-volatile PINMASK_TYPE triggerThird_pin_mask;
-
 //These are variables used across multiple files
 bool initialisationComplete = false; ///< Tracks whether the setup() function has run completely (true = has run)
 uint8_t softLimitTime = 0; //The time (in 0.1 seconds, based on seclx10) that the soft limiter started

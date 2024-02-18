@@ -21,7 +21,9 @@ public:
 
   void toggle(void);
 
-  void configure(byte pin, byte initial_state = LOW);
+  bool read(void);
+
+  void configure(byte pin, byte initial_state = LOW, byte mode = OUTPUT);
 
   bool is_configured(void);
 
@@ -48,9 +50,11 @@ public:
   void toggle(void);
 #endif
 
-  void configure(byte pin, byte initial_state = LOW);
+  void configure(byte pin, byte initial_state = LOW, byte mode = OUTPUT);
 
   bool is_configured(void);
+
+  bool read(void);
 
 private:
 
@@ -76,7 +80,7 @@ public:
 
   void toggle(void);
 
-  void configure(byte pin, byte initial_state = LOW);
+  void configure(byte pin, byte initial_state = LOW, byte mode = OUTPUT);
 
   bool is_configured(void);
 
