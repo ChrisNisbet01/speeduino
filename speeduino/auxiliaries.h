@@ -25,67 +25,10 @@ void wmiControl(void);
 #define SIMPLE_BOOST_I  1
 #define SIMPLE_BOOST_D  1
 
-#if(defined(CORE_TEENSY) || defined(CORE_STM32))
-
-#define N2O_STAGE1_PIN_LOW() digitalWrite(configPage10.n2o_stage1_pin, LOW)
-#define N2O_STAGE1_PIN_HIGH() digitalWrite(configPage10.n2o_stage1_pin, HIGH)
-#define N2O_STAGE2_PIN_LOW() digitalWrite(configPage10.n2o_stage2_pin, LOW)
-#define N2O_STAGE2_PIN_HIGH() digitalWrite(configPage10.n2o_stage2_pin, HIGH)
-
-#else
-
-static inline void
-pin_set(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
-{
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-  {
-    port |= mask;
-  }
-}
-
-static inline void
-pin_clear(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
-{
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-  {
-    port &= ~mask;
-  }
-}
-
-static inline void
-pin_toggle(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
-{
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-  {
-    port &= ~mask;
-  }
-}
-
-static inline void
-bit_set_atomic(uint8_t &value, uint8_t const bit)
-{
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-  {
-    BIT_SET(value, bit);
-  }
-}
-
-static inline void
-bit_clear_atomic(uint8_t &value, uint8_t const bit)
-{
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-  {
-    BIT_CLEAR(value, bit);
-  }
-}
-
-#define N2O_STAGE1_PIN_LOW() pin_clear(*n2o_stage1_pin_port, n2o_stage1_pin_mask)
-#define N2O_STAGE1_PIN_HIGH() pin_set(*n2o_stage1_pin_port, n2o_stage1_pin_mask)
-
-#define N2O_STAGE2_PIN_LOW() pin_clear(*n2o_stage2_pin_port, n2o_stage2_pin_mask)
-#define N2O_STAGE2_PIN_HIGH() pin_set(*n2o_stage2_pin_port, n2o_stage2_pin_mask)
-
-#endif
+#define N2O_STAGE1_PIN_LOW() NitrousStage1.off()
+#define N2O_STAGE1_PIN_HIGH() NitrousStage1.on()
+#define N2O_STAGE2_PIN_LOW() NitrousStage2.off()
+#define N2O_STAGE2_PIN_HIGH() NitrousStage2.on()
 
 #define BOOST_PIN_LOW() boost.off()
 #define BOOST_PIN_HIGH() boost.on()
@@ -116,8 +59,7 @@ bit_clear_atomic(uint8_t &value, uint8_t const bit)
   } while (0)
 
 
-#define READ_N2O_ARM_PIN() ((*n2o_arming_pin_port & n2o_arming_pin_mask) ? true : false)
-
+#define READ_N2O_ARM_PIN() NitrousArming.read()
 
 #define VVT1_PIN_ON() VVT_1.on()
 #define VVT1_PIN_OFF() VVT_1.off()

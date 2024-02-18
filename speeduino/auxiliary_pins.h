@@ -18,6 +18,9 @@ extern IODigitalWriteOutputPin Trigger3;
 
 extern IODigitalWriteOutputPin Flex;
 
+extern IODigitalWriteOutputPin NitrousStage1;
+extern IODigitalWriteOutputPin NitrousStage2;
+
 #else
 
 extern IOAtomicWriteOutputPin boost;
@@ -34,6 +37,9 @@ extern IOPortMaskOutputPin Trigger3;
 
 extern IOPortMaskOutputPin Flex;
 
+extern IOPortMaskOutputPin NitrousStage1;
+extern IOPortMaskOutputPin NitrousStage2;
+
 #endif
 
 extern IOPortMaskOutputPin TachOut;
@@ -49,4 +55,6 @@ extern IODigitalWriteOutputPin IgnBypass;
 
 extern IODigitalWriteOutputPin WMIEnabled;
 extern IODigitalWriteOutputPin WMIIndicator;
+
+extern IOPortMaskOutputPin NitrousArming;
 

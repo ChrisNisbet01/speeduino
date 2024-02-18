@@ -1,6 +1,33 @@
 #include "pin.h"
 #include "auxiliaries.h"
 
+static inline void
+pin_set(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
+{
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+  {
+    port |= mask;
+  }
+}
+
+static inline void
+pin_clear(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
+{
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+  {
+    port &= ~mask;
+  }
+}
+
+static inline void
+pin_toggle(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
+{
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+  {
+    port &= ~mask;
+  }
+}
+
 void IOPortMaskOutputPin::on(void)
 {
   *m_port |= m_mask;

@@ -28,12 +28,6 @@ volatile char nextVVT;
 byte boostCounter;
 byte vvtCounter;
 
-volatile PORT_TYPE * n2o_stage1_pin_port;
-volatile PINMASK_TYPE n2o_stage1_pin_mask;
-volatile PORT_TYPE * n2o_stage2_pin_port;
-volatile PINMASK_TYPE n2o_stage2_pin_mask;
-volatile PORT_TYPE * n2o_arming_pin_port;
-volatile PINMASK_TYPE n2o_arming_pin_mask;
 volatile PORT_TYPE * aircon_req_pin_port;
 volatile PINMASK_TYPE aircon_req_pin_mask;
 
@@ -426,13 +420,6 @@ done:
 
 void initialiseAuxPWM(void)
 {
-  n2o_stage1_pin_port = portOutputRegister(digitalPinToPort(configPage10.n2o_stage1_pin));
-  n2o_stage1_pin_mask = digitalPinToBitMask(configPage10.n2o_stage1_pin);
-  n2o_stage2_pin_port = portOutputRegister(digitalPinToPort(configPage10.n2o_stage2_pin));
-  n2o_stage2_pin_mask = digitalPinToBitMask(configPage10.n2o_stage2_pin);
-  n2o_arming_pin_port = portInputRegister(digitalPinToPort(configPage10.n2o_arming_pin));
-  n2o_arming_pin_mask = digitalPinToBitMask(configPage10.n2o_arming_pin);
-
   //This is a safety check that will be true if the board is uninitialised.
   //This prevents hangs on a new board that could otherwise try to write to an
   //invalid pin port/mask (Without this a new Teensy 4.x hangs on startup)
@@ -445,9 +432,11 @@ void initialiseAuxPWM(void)
   if (configPage10.n2o_enable > 0)
   {
     //The pin modes are only set if the if n2o is enabled to prevent them conflicting with other outputs.
-    byte const input_polarity = (configPage10.n2o_pin_polarity == 1) ? INPUT_PULLUP : INPUT;
+    NitrousStage1.configure(configPage10.n2o_stage1_pin);
+    NitrousStage2.configure(configPage10.n2o_stage2_pin);
+    byte const input_type = (configPage10.n2o_pin_polarity == 1) ? INPUT_PULLUP : INPUT;
 
-    pinMode(configPage10.n2o_arming_pin, input_polarity);
+    NitrousArming.configure(configPage10.n2o_arming_pin, LOW, input_type);
   }
 
   boostPID.SetOutputLimits(configPage2.boostMinDuty, configPage2.boostMaxDuty);
