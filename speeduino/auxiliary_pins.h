@@ -6,11 +6,13 @@
 
 extern IODigitalWriteOutputPin boost;
 extern IODigitalWriteOutputPin FuelPump;
+extern IODigitalWriteOutputPin Fan;
 
 #else
 
 extern IOAtomicWriteOutputPin boost;
 extern IOAtomicWriteOutputPin FuelPump;
+extern IOAtomicWriteOutputPin Fan;
 
 #endif
 
@@ -18,7 +20,6 @@ extern IOPortMaskOutputPin TachOut;
 extern IOPortMaskOutputPin Idle1;
 extern IOPortMaskOutputPin Idle2;
 extern IOPortMaskOutputPin IdleUpOutput;
-extern IOPortMaskOutputPin Fan;
 extern IOPortMaskOutputPin StepperDir;
 extern IOPortMaskOutputPin StepperStep;
 extern IOPortMaskOutputPin StepperEnable;

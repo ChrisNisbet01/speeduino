@@ -44,8 +44,6 @@ volatile PORT_TYPE * vvt1_pin_port;
 volatile PINMASK_TYPE vvt1_pin_mask;
 volatile PORT_TYPE * vvt2_pin_port;
 volatile PINMASK_TYPE vvt2_pin_mask;
-volatile PORT_TYPE * fan_pin_port;
-volatile PINMASK_TYPE fan_pin_mask;
 
 #if defined(PWM_FAN_AVAILABLE)//PWM fan not available on Arduino MEGA
 volatile bool fan_pwm_state;
@@ -319,8 +317,6 @@ Fan control
 */
 void initialiseFan(void)
 {
-  fan_pin_port = portOutputRegister(digitalPinToPort(pinFan));
-  fan_pin_mask = digitalPinToBitMask(pinFan);
   FAN_OFF();  //Initialise program with the fan in the off state
   BIT_CLEAR(currentStatus.status4, BIT_STATUS4_FAN);
   currentStatus.fanDuty = 0;

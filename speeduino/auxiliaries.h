@@ -34,8 +34,7 @@ void wmiControl(void);
 #define VVT1_PIN_HIGH() digitalWrite(pinVVT_1, HIGH)
 #define VVT2_PIN_LOW() digitalWrite(pinVVT_2, LOW)
 #define VVT2_PIN_HIGH() digitalWrite(pinVVT_2, HIGH)
-#define FAN_PIN_LOW() digitalWrite(pinFan, LOW)
-#define FAN_PIN_HIGH() digitalWrite(pinFan, HIGH)
+
 #define N2O_STAGE1_PIN_LOW() digitalWrite(configPage10.n2o_stage1_pin, LOW)
 #define N2O_STAGE1_PIN_HIGH() digitalWrite(configPage10.n2o_stage1_pin, HIGH)
 #define N2O_STAGE2_PIN_LOW() digitalWrite(configPage10.n2o_stage2_pin, LOW)
@@ -50,8 +49,6 @@ void wmiControl(void);
 #define AIRCON_FAN_ON() { configPage15.airConFanPol==1 ? AIRCON_FAN_PIN_LOW() : AIRCON_FAN_PIN_HIGH(); BIT_SET(currentStatus.airConStatus, BIT_AIRCON_FAN); }
 #define AIRCON_FAN_OFF() { configPage15.airConFanPol==1 ? AIRCON_FAN_PIN_HIGH() : AIRCON_FAN_PIN_LOW(); BIT_CLEAR(currentStatus.airConStatus, BIT_AIRCON_FAN); }
 
-#define FAN_ON() { configPage6.fanInv ? FAN_PIN_LOW() : FAN_PIN_HIGH(); }
-#define FAN_OFF() { configPage6.fanInv ? FAN_PIN_HIGH() : FAN_PIN_LOW(); }
 #else
 
 static inline void
@@ -114,9 +111,6 @@ bit_clear_atomic(uint8_t &value, uint8_t const bit)
 #define N2O_STAGE2_PIN_LOW() pin_clear(*n2o_stage2_pin_port, n2o_stage2_pin_mask)
 #define N2O_STAGE2_PIN_HIGH() pin_set(*n2o_stage2_pin_port, n2o_stage2_pin_mask)
 
-#define FAN_PIN_LOW() pin_clear(*fan_pin_port, fan_pin_mask)
-#define FAN_PIN_HIGH() pin_set(*fan_pin_port, fan_pin_mask)
-
 #define AIRCON_PIN_LOW()  pin_clear(*aircon_comp_pin_port,aircon_comp_pin_mask)
 #define AIRCON_PIN_HIGH() pin_set(*aircon_comp_pin_port, aircon_comp_pin_mask)
 
@@ -141,18 +135,22 @@ bit_clear_atomic(uint8_t &value, uint8_t const bit)
   bit_clear_atomic(currentStatus.airConStatus, BIT_AIRCON_FAN); \
   } while(0)
 
-#define FAN_ON() do { \
-  configPage6.fanInv ? FAN_PIN_LOW() : FAN_PIN_HIGH(); \
-  } while (0)
-#define FAN_OFF() do { \
-  configPage6.fanInv ? FAN_PIN_HIGH() : FAN_PIN_LOW(); \
-  } while (0)
-
-
 #endif
 
 #define FUEL_PUMP_ON() FuelPump.on()
 #define FUEL_PUMP_OFF() FuelPump.off()
+
+#define FAN_PIN_LOW() Fan.off()
+#define FAN_PIN_HIGH() Fan.on()
+
+#define FAN_ON() do { \
+  configPage6.fanInv ? FAN_PIN_LOW() : FAN_PIN_HIGH(); \
+  } while (0)
+
+#define FAN_OFF() do { \
+  configPage6.fanInv ? FAN_PIN_HIGH() : FAN_PIN_LOW(); \
+  } while (0)
+
 
 #define READ_N2O_ARM_PIN() ((*n2o_arming_pin_port & n2o_arming_pin_mask) ? true : false)
 
@@ -169,8 +167,6 @@ extern volatile PORT_TYPE *vvt1_pin_port;
 extern volatile PINMASK_TYPE vvt1_pin_mask;
 extern volatile PORT_TYPE *vvt2_pin_port;
 extern volatile PINMASK_TYPE vvt2_pin_mask;
-extern volatile PORT_TYPE *fan_pin_port;
-extern volatile PINMASK_TYPE fan_pin_mask;
 
 #if defined(PWM_FAN_AVAILABLE)//PWM fan not available on Arduino MEGA
 extern uint16_t fan_pwm_max_count; //Used for variable PWM frequency

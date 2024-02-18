@@ -3,9 +3,11 @@
 #if defined(CORE_TEENSY) || defined(CORE_STM32)
 IODigitalWriteOutputPin boost;
 IODigitalWriteOutputPin FuelPump;
+IODigitalWriteOutputPin Fan;
 #else
 IOAtomicWriteOutputPin boost;
 IOAtomicWriteOutputPin FuelPump;
+IOAtomicWriteOutputPin Fan;
 #endif
 
 IOPortMaskOutputPin TachOut;
@@ -13,7 +15,6 @@ IOPortMaskOutputPin TachOut;
 IOPortMaskOutputPin Idle1;
 IOPortMaskOutputPin Idle2;
 IOPortMaskOutputPin IdleUpOutput;
-IOPortMaskOutputPin Fan;
 IOPortMaskOutputPin StepperDir;
 IOPortMaskOutputPin StepperStep;
 IOPortMaskOutputPin StepperEnable;
