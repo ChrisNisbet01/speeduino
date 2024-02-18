@@ -3018,7 +3018,7 @@ void setPinMapping(byte boardID)
   /* Reset control is a special case. If reset control is enabled, it needs its initial state set BEFORE its pinMode.
      If that doesn't happen and reset control is in "Serial Command" mode, the Arduino will end up in a reset loop
      because the control pin will go low as soon as the pinMode is set to OUTPUT. */
-  if ( (configPage4.resetControlConfig != 0) && (configPage4.resetControlPin < BOARD_MAX_IO_PINS) )
+  if (configPage4.resetControlConfig != 0 && configPage4.resetControlPin < BOARD_MAX_IO_PINS)
   {
     if (configPage4.resetControlPin!=0U)
     {
@@ -3029,7 +3029,6 @@ void setPinMapping(byte boardID)
     pinMode(pinResetControl, OUTPUT);
   }
 
-
   //Finally, set the relevant pin modes for outputs
   boost.configure(pinBoost);
   TachOut.configure(pinTachOut, HIGH); //Set the tacho output default state
@@ -3039,7 +3038,6 @@ void setPinMapping(byte boardID)
   IdleUpOutput.configure(pinIdleUpOutput);
 
   FuelPump.configure(pinFuelPump);
-
   Fan.configure(pinFan);
 
   StepperDir.configure(pinStepperDir);

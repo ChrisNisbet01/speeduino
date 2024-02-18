@@ -338,7 +338,7 @@ void initialiseIdleUpOutput(void)
   //Initialise program with the idle up output in the off state if it is enabled.
   if (configPage2.idleUpEnabled > 0)
   {
-    digitalWrite(pinIdleUpOutput, idleUpOutputLOW);
+    IdleUpOutput.write(idleUpOutputLOW);
   }
   currentStatus.idleUpOutputActive = false;
 }
@@ -481,12 +481,12 @@ static void idleUpControl(void)
     {
       if (currentStatus.idleUpActive)
       {
-        digitalWrite(pinIdleUpOutput, idleUpOutputHIGH);
+        IdleUpOutput.write(idleUpOutputHIGH);
         currentStatus.idleUpOutputActive = true;
       }
       else
       {
-        digitalWrite(pinIdleUpOutput, idleUpOutputLOW);
+        IdleUpOutput.write(idleUpOutputLOW);
         currentStatus.idleUpOutputActive = false;
       }
     }
