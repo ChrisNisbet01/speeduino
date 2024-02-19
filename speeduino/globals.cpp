@@ -164,22 +164,18 @@ byte pinSpareLOut3;
 byte pinSpareLOut4;
 byte pinSpareLOut5;
 byte pinLaunch;
-byte pinIgnBypass; //The pin used for an ignition bypass (Optional)
 byte pinVSS;  // VSS (Vehicle speed sensor) Pin
 byte pinBaro; //Pin that an al barometric pressure sensor is attached to (If used)
 byte pinResetControl; // Output pin used control resetting the Arduino
 byte pinFuelPressure;
 byte pinOilPressure;
 byte pinWMIEmpty; // Water tank empty sensor
-byte pinWMIIndicator; // No water indicator bulb
-byte pinWMIEnabled; // ON-OFF output to relay/pump/solenoid
 byte pinMC33810_1_CS;
 byte pinMC33810_2_CS;
 byte pinSDEnable;
 #ifdef USE_SPI_EEPROM
   byte pinSPIFlash_CS;
 #endif
-byte pinAirConRequest;  // Air conditioning request input (See: auxiliaries.ino)
 
 struct statuses currentStatus; /**< The master global "live" status struct. Contains all values that are updated frequently and used across modules */
 struct config2 configPage2;

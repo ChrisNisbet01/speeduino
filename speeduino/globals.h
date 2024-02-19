@@ -1453,22 +1453,18 @@ extern byte pinSpareLOut3;
 extern byte pinSpareLOut4;
 extern byte pinSpareLOut5;
 extern byte pinLaunch;
-extern byte pinIgnBypass;  //The pin used for an ignition bypass (Optional)
 extern byte pinVSS;
 extern byte pinBaro;          //Pin that an external barometric pressure sensor is attached to (If used)
 extern byte pinResetControl;  // Output pin used control resetting the Arduino
 extern byte pinFuelPressure;
 extern byte pinOilPressure;
 extern byte pinWMIEmpty;      // Water tank empty sensor
-extern byte pinWMIIndicator;  // No water indicator bulb
-extern byte pinWMIEnabled;    // ON-OFF output to relay/pump/solenoid
 extern byte pinMC33810_1_CS;
 extern byte pinMC33810_2_CS;
 extern byte pinSDEnable;  //Input for manually enabling SD logging
 #ifdef USE_SPI_EEPROM
 extern byte pinSPIFlash_CS;
 #endif
-extern byte pinAirConRequest;  // Air conditioning request input
 
 /* global variables */  // from speeduino.ino
 //#ifndef UNIT_TEST

@@ -1364,7 +1364,7 @@ static void
 setup_selectable_io(void)
 {
   translate_digital_pin_if_configured(configPage6.launchPin, pinLaunch);
-  translate_digital_pin_if_configured(configPage4.ignBypassPin, pinIgnBypass);
+  translate_digital_pin_if_configured(configPage4.ignBypassPin, IgnBypass.pin);
   translate_digital_pin_if_configured(configPage2.tachoPin, TachOut.pin);
   translate_digital_pin_if_configured(configPage4.fuelPumpPin, FuelPump.pin);
   translate_digital_pin_if_configured(configPage6.fanPin, Fan.pin);
@@ -1382,8 +1382,8 @@ setup_selectable_io(void)
   translate_analog_pin_if_configured(configPage10.oilPressureEnable, configPage10.oilPressurePin, pinOilPressure);
 
   translate_digital_pin_if_configured(configPage10.wmiEmptyPin, pinWMIEmpty);
-  translate_digital_pin_if_configured(configPage10.wmiIndicatorPin, pinWMIIndicator);
-  translate_digital_pin_if_configured(configPage10.wmiEnabledPin, pinWMIEnabled);
+  translate_digital_pin_if_configured(configPage10.wmiIndicatorPin, WMIIndicator.pin);
+  translate_digital_pin_if_configured(configPage10.wmiEnabledPin, WMIEnabled.pin);
   translate_digital_pin_if_configured(configPage10.vvt2Pin, VVT_2.pin);
   if (configPage13.onboard_log_trigger_Epin != 0)
   {
@@ -1535,8 +1535,8 @@ void setPinMapping(byte boardID)
       pinBaro = A5;
       pinVSS = 20;
       pinWMIEmpty = 46;
-      pinWMIIndicator = 44;
-      pinWMIEnabled = 42;
+      WMIIndicator.pin = 44;
+      WMIEnabled.pin = 42;
 
 #if defined(CORE_TEENSY35)
         pinInjector6 = 51;
@@ -1587,8 +1587,8 @@ void setPinMapping(byte boardID)
         Fan.pin = 27;
         FuelPump.pin = 33;
         pinWMIEmpty = 34;
-        pinWMIIndicator = 35;
-        pinWMIEnabled = 36;
+        WMIIndicator.pin = 35;
+        WMIEnabled.pin = 36;
 #elif defined(STM32F407xx)
      //Pin definitions for experimental board Tjeerd
         //Black F407VE wiki.stm32duino.com/index.php?title=STM32F407
@@ -2053,8 +2053,8 @@ void setPinMapping(byte boardID)
       pinResetControl = 43; //Reset control output
       pinVSS = 3; //VSS input pin
       pinWMIEmpty = 31; //(placeholder)
-      pinWMIIndicator = 33; //(placeholder)
-      pinWMIEnabled = 35; //(placeholder)
+      WMIIndicator.pin = 33; //(placeholder)
+      WMIEnabled.pin = 35; //(placeholder)
       pinIdleUp = 37; //(placeholder)
       pinCTPS = A6; //(placeholder)
      #elif defined(STM32F407xx)
@@ -2101,8 +2101,8 @@ void setPinMapping(byte boardID)
       pinResetControl = PB7; //Reset control output
       pinVSS = PB6; //VSS input pin
       pinWMIEmpty = PD15; //(placeholder)
-      pinWMIIndicator = PD13; //(placeholder)
-      pinWMIEnabled = PE15; //(placeholder)
+      WMIIndicator.pin = PD13; //(placeholder)
+      WMIEnabled.pin = PE15; //(placeholder)
       pinIdleUp = PE14; //(placeholder)
       pinCTPS = PA6; //(placeholder)
      #endif
@@ -3012,7 +3012,7 @@ void setPinMapping(byte boardID)
   // Air conditioning control initialisation
   if ((configPage15.airConCompPin != 0) && (configPage15.airConCompPin < BOARD_MAX_IO_PINS) ) { AirConComp.pin = pinTranslate(configPage15.airConCompPin); }
   if ((configPage15.airConFanPin != 0) && (configPage15.airConFanPin < BOARD_MAX_IO_PINS) ) { AirConFan.pin = pinTranslate(configPage15.airConFanPin); }
-  if ((configPage15.airConReqPin != 0) && (configPage15.airConReqPin < BOARD_MAX_IO_PINS) ) { pinAirConRequest = pinTranslate(configPage15.airConReqPin); }
+  if ((configPage15.airConReqPin != 0) && (configPage15.airConReqPin < BOARD_MAX_IO_PINS) ) { AirConRequest.pin = pinTranslate(configPage15.airConReqPin); }
 
   /* Reset control is a special case. If reset control is enabled, it needs its initial state set BEFORE its pinMode.
      If that doesn't happen and reset control is in "Serial Command" mode, the Arduino will end up in a reset loop
@@ -3048,7 +3048,7 @@ void setPinMapping(byte boardID)
 
   if (configPage4.ignBypassEnabled > 0)
   {
-    IgnBypass.configure(pinIgnBypass);
+    IgnBypass.configure(IgnBypass.pin);
   }
 
   //This is a legacy mode option to revert the MAP reading behaviour to match
@@ -3165,12 +3165,12 @@ void setPinMapping(byte boardID)
   }
   if(configPage10.wmiEnabled > 0)
   {
-    WMIEnabled.configure(pinWMIEnabled);
+    WMIEnabled.configure(WMIEnabled.pin);
     if (configPage10.wmiIndicatorEnabled > 0)
     {
       byte const initial_state = (configPage10.wmiIndicatorPolarity > 0) ? HIGH : LOW;
 
-      WMIIndicator.configure(pinWMIIndicator, initial_state);
+      WMIIndicator.configure(WMIIndicator.pin, initial_state);
     }
     if (configPage10.wmiEmptyEnabled > 0 && !pinIsOutput(pinWMIEmpty))
     {
@@ -3187,15 +3187,15 @@ void setPinMapping(byte boardID)
       AirConComp.configure(AirConComp.pin);
     }
 
-    if (pinIsOutput(pinAirConRequest))
+    if (pinIsOutput(AirConRequest.pin))
     {
-      pinAirConRequest = 0;
+      AirConRequest.pin = 0;
     }
-    if (pinAirConRequest != 0)
+    if (AirConRequest.pin != 0)
     {
       byte const input_mode = (configPage15.airConReqPol == 1) ? INPUT : INPUT_PULLUP;
 
-      AirConRequest.configure(pinAirConRequest, input_mode);
+      AirConRequest.configure(AirConRequest.pin, input_mode);
     }
 
     if (AirConFan.pin > 0 && configPage15.airConFanEnabled == 1)
