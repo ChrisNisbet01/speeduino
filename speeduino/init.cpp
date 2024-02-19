@@ -1365,7 +1365,7 @@ setup_selectable_io(void)
 {
   translate_digital_pin_if_configured(configPage6.launchPin, pinLaunch);
   translate_digital_pin_if_configured(configPage4.ignBypassPin, pinIgnBypass);
-  translate_digital_pin_if_configured(configPage2.tachoPin, pinTachOut);
+  translate_digital_pin_if_configured(configPage2.tachoPin, TachOut.pin);
   translate_digital_pin_if_configured(configPage4.fuelPumpPin, FuelPump.pin);
   translate_digital_pin_if_configured(configPage6.fanPin, Fan.pin);
   translate_digital_pin_if_configured(configPage6.boostPin, Boost.pin);
@@ -1430,9 +1430,9 @@ void setPinMapping(byte boardID)
       pinO2 = A8; //O2 Sensor pin
       pinBat = A4; //Battery reference voltage pin
       pinDisplayReset = 48; // OLED reset pin
-      pinTachOut = 49; //Tacho output pin
-      pinIdle1 = 30; //Single wire idle control
-      pinIdle2 = 31; //2 wire idle control
+      TachOut.pin = 49; //Tacho output pin
+      Idle1.pin = 30; //Single wire idle control
+      Idle2.pin = 31; //2 wire idle control
       StepperDir.setPin(16); //Direction pin  for DRV8825 driver
       pinStepperStep = 17; //Step pin for DRV8825 driver
       Fan.pin = 47; //Pin for the fan output
@@ -1464,9 +1464,9 @@ void setPinMapping(byte boardID)
       pinO2 = A8; //O2 Sensor pin
       pinBat = A4; //Battery reference voltage pin
       pinDisplayReset = 48; // OLED reset pin
-      pinTachOut = 49; //Tacho output pin
-      pinIdle1 = 5; //Single wire idle control
-      pinIdle2 = 53; //2 wire idle control
+      TachOut.pin = 49; //Tacho output pin
+      Idle1.pin = 5; //Single wire idle control
+      Idle2.pin = 53; //2 wire idle control
       Boost.pin = 7; //Boost control
       VVT_1.pin = 6; //Default VVT output
       VVT_2.pin = 48; //Default VVT2 output
@@ -1486,7 +1486,7 @@ void setPinMapping(byte boardID)
         StepperDir.setPin(33);
         pinStepperStep = 34;
         pinCoil1 = 31;
-        pinTachOut = 28;
+        TachOut.pin = 28;
         Fan.pin = 27;
         pinCoil4 = 21;
         pinCoil3 = 30;
@@ -1518,9 +1518,9 @@ void setPinMapping(byte boardID)
       pinO2 = A8; //O2 Sensor pin
       pinBat = A4; //Battery reference voltage pin
       pinDisplayReset = 48; // OLED reset pin
-      pinTachOut = 49; //Tacho output pin  (Goes to ULN2803)
-      pinIdle1 = 5; //Single wire idle control
-      pinIdle2 = 6; //2 wire idle control
+      TachOut.pin = 49; //Tacho output pin  (Goes to ULN2803)
+      Idle1.pin = 5; //Single wire idle control
+      Idle2.pin = 6; //2 wire idle control
       Boost.pin = 7; //Boost control
       VVT_1.pin = 4; //Default VVT output
       VVT_2.pin = 48; //Default VVT2 output
@@ -1547,7 +1547,7 @@ void setPinMapping(byte boardID)
         pinStepperStep = 35;
         pinCoil1 = 31;
         pinCoil2 = 32;
-        pinTachOut = 28;
+        TachOut.pin = 28;
         Fan.pin = 27;
         pinCoil4 = 29;
         pinCoil3 = 30;
@@ -1583,7 +1583,7 @@ void setPinMapping(byte boardID)
         pinCoil4 = 29;
         pinCoil3 = 30;
 
-        pinTachOut = 28;
+        TachOut.pin = 28;
         Fan.pin = 27;
         FuelPump.pin = 33;
         pinWMIEmpty = 34;
@@ -1628,8 +1628,8 @@ void setPinMapping(byte boardID)
         pinCoil2 = PB9; //
         /* = PB9; */ //
         pinCoil4 = PB10; //TXD3
-        pinIdle1 = PB11; //RXD3
-        pinIdle2 = PB12; //
+        Idle1.pin = PB11; //RXD3
+        Idle2.pin = PB12; //
         Boost.pin = PB12; //
         /* = PB13; */ //SPI2_SCK
         /* = PB14; */ //SPI2_MISO
@@ -1651,7 +1651,7 @@ void setPinMapping(byte boardID)
         /* = PC10; */ //(DO NOT USE FOR SPEEDUINO) - SDIO_D2
         /* = PC11; */ //(DO NOT USE FOR SPEEDUINO) - SDIO_D3
         /* = PC12; */ //(DO NOT USE FOR SPEEDUINO) - SDIO_SCK
-        pinTachOut = PC13; //
+        TachOut.pin = PC13; //
         /* = PC14; */ //(DO NOT USE FOR SPEEDUINO) - OSC32_IN
         /* = PC15; */ //(DO NOT USE FOR SPEEDUINO) - OSC32_OUT
 
@@ -1715,9 +1715,9 @@ void setPinMapping(byte boardID)
         pinO2 = A8; //O2 Sensor pin
         pinBat = A4; //Battery reference voltage pin
         pinBaro = pinMAP;
-        pinTachOut = PB1; //Tacho output pin  (Goes to ULN2803)
-        pinIdle1 = PB2; //Single wire idle control
-        pinIdle2 = PB10; //2 wire idle control
+        TachOut.pin = PB1; //Tacho output pin  (Goes to ULN2803)
+        Idle1.pin = PB2; //Single wire idle control
+        Idle2.pin = PB10; //2 wire idle control
         Boost.pin = PA6; //Boost control
         StepperDir.setPin(PB10); //Direction pin  for DRV8825 driver
         pinStepperStep = PB2; //Step pin for DRV8825 driver
@@ -1753,12 +1753,12 @@ void setPinMapping(byte boardID)
       pinO2 = A3; //O2 Sensor pin
       pinBat = A4; //Battery reference voltage pin
       pinDisplayReset = 48; // OLED reset pin
-      pinTachOut = 23; //Tacho output pin  (Goes to ULN2803)
-      pinIdle1 = 5; //Single wire idle control
+      TachOut.pin = 23; //Tacho output pin  (Goes to ULN2803)
+      Idle1.pin = 5; //Single wire idle control
       Boost.pin = 4;
       VVT_1.pin = 11; //Default VVT output
       VVT_2.pin = 48; //Default VVT2 output
-      pinIdle2 = 4; //2 wire idle control (Note this is shared with boost!!!)
+      Idle2.pin = 4; //2 wire idle control (Note this is shared with boost!!!)
       FuelPump.pin = 40; //Fuel pump output
       StepperDir.setPin(16); //Direction pin  for DRV8825 driver
       pinStepperStep = 17; //Step pin for DRV8825 driver
@@ -1780,7 +1780,7 @@ void setPinMapping(byte boardID)
         pinCoil4 = 52; //Won't work (No mapping for pin 33)
         FuelPump.pin = 26; //Requires PVT4 adapter or above
         Fan.pin = 50; //Won't work (No mapping for pin 35)
-        pinTachOut = 28; //Done
+        TachOut.pin = 28; //Done
       #endif
       break;
 
@@ -1806,10 +1806,10 @@ void setPinMapping(byte boardID)
       pinO2 = A3; //O2 Sensor pin
       pinBat = A4; //Battery reference voltage pin
       pinDisplayReset = 48; // OLED reset pin
-      pinTachOut = A9; //Tacho output pin  (Goes to ULN2803)
-      pinIdle1 = 2; //Single wire idle control
+      TachOut.pin = A9; //Tacho output pin  (Goes to ULN2803)
+      Idle1.pin = 2; //Single wire idle control
       Boost.pin = 4;
-      pinIdle2 = 4; //2 wire idle control (Note this is shared with boost!!!)
+      Idle2.pin = 4; //2 wire idle control (Note this is shared with boost!!!)
       FuelPump.pin = 49; //Fuel pump output
       StepperDir.setPin(16); //Direction pin  for DRV8825 driver
       pinStepperStep = 17; //Step pin for DRV8825 driver
@@ -1831,7 +1831,7 @@ void setPinMapping(byte boardID)
         pinCoil4 = 52; //Won't work (No mapping for pin 33)
         FuelPump.pin = 26; //Requires PVT4 adapter or above
         Fan.pin = 50; //Won't work (No mapping for pin 35)
-        pinTachOut = 28; //Done
+        TachOut.pin = 28; //Done
       #endif
       #endif
       break;
@@ -1858,10 +1858,10 @@ void setPinMapping(byte boardID)
       pinO2 = A3; //O2 Sensor pin
       pinBat = A4; //Battery reference voltage pin
       pinDisplayReset = 48; // OLED reset pin
-      pinTachOut = 49; //Tacho output pin  (Goes to ULN2803)
-      pinIdle1 = 2; //Single wire idle control
+      TachOut.pin = 49; //Tacho output pin  (Goes to ULN2803)
+      Idle1.pin = 2; //Single wire idle control
       Boost.pin = 4;
-      pinIdle2 = 4; //2 wire idle control (Note this is shared with boost!!!)
+      Idle2.pin = 4; //2 wire idle control (Note this is shared with boost!!!)
       FuelPump.pin = 37; //Fuel pump output
       //Note that there is no stepper driver output on the PNP boards. These pins are unconnected and remain here just to prevent issues with random pin numbers occurring
       pinStepperEnable = 15; //Enable pin for the DRV8825
@@ -1886,7 +1886,7 @@ void setPinMapping(byte boardID)
         pinCoil4 = 52; //Won't work (No mapping for pin 33)
         FuelPump.pin = 26; //Requires PVT4 adapter or above
         Fan.pin = 50; //Won't work (No mapping for pin 35)
-        pinTachOut = 28; //Done
+        TachOut.pin = 28; //Done
       #endif
       break;
 
@@ -1918,10 +1918,10 @@ void setPinMapping(byte boardID)
       pinDisplayReset = 48; // OLED reset pin
       pinSpareTemp1 = A6;
       pinSpareTemp2 = A5;
-      pinTachOut = 41; //Tacho output pin transistor is missing 2n2222 for this and 1k for 12v
+      TachOut.pin = 41; //Tacho output pin transistor is missing 2n2222 for this and 1k for 12v
       FuelPump.pin = 42; //Fuel pump output 2n2222
       Fan.pin = 47; //Pin for the fan output
-      pinTachOut = 49; //Tacho output pin
+      TachOut.pin = 49; //Tacho output pin
       Flex.pin = 2; // Flex sensor (Must be external interrupt enabled)
       pinResetControl = 26; //Reset control output
 
@@ -1959,7 +1959,7 @@ void setPinMapping(byte boardID)
       pinIAT = A0; //IAT sensor pin
       Fan.pin = 47; //Pin for the fan output
       FuelPump.pin = 4; //Fuel pump output
-      pinTachOut = 49; //Tacho output pin
+      TachOut.pin = 49; //Tacho output pin
       pinResetControl = 26; //Reset control output
     #endif
       break;
@@ -1988,8 +1988,8 @@ void setPinMapping(byte boardID)
       pinO2_2 = A9; //O2 sensor pin (second sensor)
       pinBat = A4; //Battery reference voltage pin
       pinDisplayReset = 48; // OLED reset pin
-      pinTachOut = 49; //Tacho output pin
-      pinIdle1 = 5; //Single wire idle control
+      TachOut.pin = 49; //Tacho output pin
+      Idle1.pin = 5; //Single wire idle control
       FuelPump.pin = 45; //Fuel pump output
       StepperDir.setPin(20); //Direction pin  for DRV8825 driver
       pinStepperStep = 21; //Step pin for DRV8825 driver
@@ -2037,9 +2037,9 @@ void setPinMapping(byte boardID)
       pinBat = A4; //Battery reference voltage pin
       pinBaro = A5; //Baro sensor pin
       pinDisplayReset = 41; // OLED reset pin
-      pinTachOut = 49; //Tacho output pin  (Goes to ULN2003)
-      pinIdle1 = 5; //ICV pin1
-      pinIdle2 = 6; //ICV pin3
+      TachOut.pin = 49; //Tacho output pin  (Goes to ULN2003)
+      Idle1.pin = 5; //ICV pin1
+      Idle2.pin = 6; //ICV pin3
       Boost.pin = 7; //Boost control
       VVT_1.pin = 4; //VVT1 output (intake vanos)
       VVT_2.pin = 26; //VVT2 output (exhaust vanos)
@@ -2085,9 +2085,9 @@ void setPinMapping(byte boardID)
       pinBat = PA4; //Battery reference voltage pin
       pinBaro = PA5; //Baro sensor pin
       pinDisplayReset = PE12; // OLED reset pin
-      pinTachOut = PE8; //Tacho output pin  (Goes to ULN2003)
-      pinIdle1 = PD10; //ICV pin1
-      pinIdle2 = PD9; //ICV pin3
+      TachOut.pin = PE8; //Tacho output pin  (Goes to ULN2003)
+      Idle1.pin = PD10; //ICV pin1
+      Idle2.pin = PD9; //ICV pin3
       Boost.pin = PD8; //Boost control
       VVT_1.pin = PD11; //VVT1 output (intake vanos)
       VVT_2.pin = PC7; //VVT2 output (exhaust vanos)
@@ -2133,9 +2133,9 @@ void setPinMapping(byte boardID)
       pinBaro = A6; //Baro sensor pin - ONLY WITH DB
       pinSpareTemp1 = A7; //spare Analog input 1 - ONLY WITH DB
       pinDisplayReset = 48; // OLED reset pin - NOT USED
-      pinTachOut = 38; //Tacho output pin
-      pinIdle1 = 5; //Single wire idle control
-      pinIdle2 = 47; //2 wire idle control - NOT USED
+      TachOut.pin = 38; //Tacho output pin
+      Idle1.pin = 5; //Single wire idle control
+      Idle2.pin = 47; //2 wire idle control - NOT USED
       Boost.pin = 7; //Boost control
       VVT_1.pin = 6; //Default VVT output
       VVT_2.pin = 48; //Default VVT2 output
@@ -2181,9 +2181,9 @@ void setPinMapping(byte boardID)
       pinSpareTemp1 = A8; //spare Analog input 1
       pinLaunch = 37; //Can be overwritten below
       pinDisplayReset = 48; // OLED reset pin PLACEHOLDER value for now
-      pinTachOut = 22; //Tacho output pin
-      pinIdle1 = 9; //Single wire idle control
-      pinIdle2 = 10; //2 wire idle control
+      TachOut.pin = 22; //Tacho output pin
+      Idle1.pin = 9; //Single wire idle control
+      Idle2.pin = 10; //2 wire idle control
       FuelPump.pin = 23; //Fuel pump output
       VVT_1.pin = 11; //Default VVT output
       VVT_2.pin = 48; //Default VVT2 output
@@ -2223,9 +2223,9 @@ void setPinMapping(byte boardID)
       pinBaro = A5; //external MAP/Baro sensor pin
       pinO2_2 = A9; //O2 sensor pin (second sensor) PLACEHOLDER value for now
       pinLaunch = 2; //Can be overwritten below
-      pinTachOut = 10; //Tacho output pin
-      pinIdle1 = 11; //Single wire idle control
-      pinIdle2 = 14; //2 wire idle control PLACEHOLDER value for now
+      TachOut.pin = 10; //Tacho output pin
+      Idle1.pin = 11; //Single wire idle control
+      Idle2.pin = 14; //2 wire idle control PLACEHOLDER value for now
       FuelPump.pin = 3; //Fuel pump output
       VVT_1.pin = 15; //Default VVT output PLACEHOLDER value for now
       Boost.pin = 13; //Boost control
@@ -2265,9 +2265,9 @@ void setPinMapping(byte boardID)
       pinSpareTemp1 = A14; //spare Analog input 1
       pinLaunch = 24; //Can be overwritten below
       pinDisplayReset = 48; // OLED reset pin PLACEHOLDER value for now
-      pinTachOut = 38; //Tacho output pin
-      pinIdle1 = 42; //Single wire idle control
-      pinIdle2 = 43; //2 wire idle control
+      TachOut.pin = 38; //Tacho output pin
+      Idle1.pin = 42; //Single wire idle control
+      Idle2.pin = 43; //2 wire idle control
       FuelPump.pin = 41; //Fuel pump output
       VVT_1.pin = 44; //Default VVT output
       VVT_2.pin = 48; //Default VVT2 output
@@ -2310,8 +2310,8 @@ void setPinMapping(byte boardID)
       pinO2 = A22; //O2 sensor pin
       pinO2_2 = A21; //O2 sensor pin (second sensor)
       pinBat = 18; //Battery reference voltage pin
-      pinTachOut = 20; //Tacho output pin
-      pinIdle1 = 5; //Single wire idle control
+      TachOut.pin = 20; //Tacho output pin
+      Idle1.pin = 5; //Single wire idle control
       Boost.pin = 11; //Boost control
       FuelPump.pin = 38; //Fuel pump output
       StepperDir.setPin(34); //Direction pin for DRV8825 driver
@@ -2343,8 +2343,8 @@ void setPinMapping(byte boardID)
       pinO2 = A22; //O2 sensor pin
       pinO2_2 = A21; //O2 sensor pin (second sensor)
       pinBat = 18; //Battery reference voltage pin
-      pinTachOut = 20; //Tacho output pin
-      pinIdle1 = 5; //Single wire idle control
+      TachOut.pin = 20; //Tacho output pin
+      Idle1.pin = 5; //Single wire idle control
       Boost.pin = 11; //Boost control
       FuelPump.pin = 38; //Fuel pump output
       StepperDir.setPin(34); //Direction pin for DRV8825 driver
@@ -2378,8 +2378,8 @@ void setPinMapping(byte boardID)
       pinO2 = A0; //O2 sensor pin
       pinO2_2 = A21; //O2 sensor pin (second sensor) - NOT USED
       pinBat = A6; //Battery reference voltage pin
-      pinTachOut = 28; //Tacho output pin
-      pinIdle1 = 5; //Single wire idle control - NOT USED
+      TachOut.pin = 28; //Tacho output pin
+      Idle1.pin = 5; //Single wire idle control - NOT USED
       Boost.pin = 11; //Boost control - NOT USED
       FuelPump.pin = 24; //Fuel pump output
       StepperDir.setPin(3); //Direction pin for DRV8825 driver - NOT USED
@@ -2426,9 +2426,9 @@ void setPinMapping(byte boardID)
       pinBat = A14; //Battery reference voltage pin
       pinSpareTemp1 = A17; //spare Analog input 1
       pinLaunch = A15; //Can be overwritten below
-      pinTachOut = 5; //Tacho output pin
-      pinIdle1 = 27; //Single wire idle control
-      pinIdle2 = 29; //2 wire idle control. Shared with Spare 1 output
+      TachOut.pin = 5; //Tacho output pin
+      Idle1.pin = 27; //Single wire idle control
+      Idle2.pin = 29; //2 wire idle control. Shared with Spare 1 output
       FuelPump.pin = 8; //Fuel pump output
       VVT_1.pin = 28; //Default VVT output
       StepperDir.setPin(32); //Direction pin  for DRV8825 driver
@@ -2481,7 +2481,7 @@ void setPinMapping(byte boardID)
         Trigger2.setPin(21); //The Cam Sensor pin
 
         FuelPump.pin = 5; //Fuel pump output
-        pinTachOut = 8; //Tacho output pin
+        TachOut.pin = 8; //Tacho output pin
 
         pinResetControl = 49; //PLaceholder only. Cannot use 42-47 as these are the SD card
 
@@ -2546,9 +2546,9 @@ void setPinMapping(byte boardID)
 
       pinSpareTemp1 = A16; //spare Analog input 1
       pinSpareTemp2 = A17; //spare Analog input 2
-      pinTachOut = 38; //Tacho output pin
-      pinIdle1 = 27; //Single wire idle control
-      pinIdle2 = 26; //2 wire idle control. Shared with Spare 1 output
+      TachOut.pin = 38; //Tacho output pin
+      Idle1.pin = 27; //Single wire idle control
+      Idle2.pin = 26; //2 wire idle control. Shared with Spare 1 output
       FuelPump.pin = 10; //Fuel pump output
       VVT_1.pin = 28; //Default VVT output
       StepperDir.setPin(32); //Direction pin  for DRV8825 driver
@@ -2623,13 +2623,13 @@ void setPinMapping(byte boardID)
         pinO2 = PC4; //ADC12
         pinBat = PC5;  //ADC12
         Boost.pin = PC6; //
-        pinIdle1 = PC7; //
+        Idle1.pin = PC7; //
         // = PC8;  //(DO NOT USE FOR SPEEDUINO) - SDIO_D0
         // = PC9;  //(DO NOT USE FOR SPEEDUINO) - SDIO_D1
         // = PC10;  //(DO NOT USE FOR SPEEDUINO) - SDIO_D2
         // = PC11;  //(DO NOT USE FOR SPEEDUINO) - SDIO_D3
         // = PC12;  //(DO NOT USE FOR SPEEDUINO) - SDIO_SCK
-        pinTachOut = PC13; //
+        TachOut.pin = PC13; //
         // = PC14;  //(DO NOT USE FOR SPEEDUINO) - OSC32_IN
         // = PC15;  //(DO NOT USE FOR SPEEDUINO) - OSC32_OUT
 
@@ -2639,7 +2639,7 @@ void setPinMapping(byte boardID)
         // = PD0;  //CANRX
         // = PD1;  //CANTX
         // = PD2;  //(DO NOT USE FOR SPEEDUINO) - SDIO_CMD
-        pinIdle2 = PD3; //
+        Idle2.pin = PD3; //
         // = PD4;  //
         Flex.pin = PD4;
         // = PD5; //TXD2
@@ -2692,9 +2692,9 @@ void setPinMapping(byte boardID)
         pinO2 = A8; //O2 Sensor pin
         pinBat = A4; //Battery reference voltage pin
         pinBaro = pinMAP;
-        pinTachOut = PB1; //Tacho output pin  (Goes to ULN2803)
-        pinIdle1 = PB2; //Single wire idle control
-        pinIdle2 = PB10; //2 wire idle control
+        TachOut.pin = PB1; //Tacho output pin  (Goes to ULN2803)
+        Idle1.pin = PB2; //Single wire idle control
+        Idle2.pin = PB10; //2 wire idle control
         Boost.pin = PA6; //Boost control
         StepperDir.setPin(PB10); //Direction pin  for DRV8825 driver
         pinStepperStep = PB2; //Step pin for DRV8825 driver
@@ -2727,8 +2727,8 @@ void setPinMapping(byte boardID)
         pinO2 = A4; //O2 Sensor pin
         pinBat = A5; //Battery reference voltage pin
         pinBaro = pinMAP;
-        pinIdle1 = PB2; //Single wire idle control
-        pinIdle2 = PA2; //2 wire idle control
+        Idle1.pin = PB2; //Single wire idle control
+        Idle2.pin = PA2; //2 wire idle control
         Boost.pin = PA1; //Boost control
         VVT_1.pin = PA0; //Default VVT output
         VVT_2.pin = PA2; //Default VVT2 output
@@ -2738,7 +2738,7 @@ void setPinMapping(byte boardID)
         pinDisplayReset = PB2; // OLED reset pin
         Fan.pin = PB1; //Pin for the fan output
         FuelPump.pin = PB11; //Fuel pump output
-        pinTachOut = PB10; //Tacho output pin
+        TachOut.pin = PB10; //Tacho output pin
         //external interrupt enabled pins
         Flex.pin = PB8; // Flex sensor (Must be external interrupt enabled)
         Trigger.setPin(PA10); //The CAS pin
@@ -2891,8 +2891,8 @@ void setPinMapping(byte boardID)
         pinCoil2 = PB9; //
         /* = PB9; */ //
         pinCoil4 = PB10; //TXD3
-        pinIdle1 = PB11; //RXD3
-        pinIdle2 = PB12; //
+        Idle1.pin = PB11; //RXD3
+        Idle2.pin = PB12; //
         /* Boost.pin = PB12; */ //
         /* = PB13; */ //SPI2_SCK
         /* = PB14; */ //SPI2_MISO
@@ -2914,7 +2914,7 @@ void setPinMapping(byte boardID)
         /* = PC10; */ //(DO NOT USE FOR SPEEDUINO) - SDIO_D2
         /* = PC11; */ //(DO NOT USE FOR SPEEDUINO) - SDIO_D3
         /* = PC12; */ //(DO NOT USE FOR SPEEDUINO) - SDIO_SCK
-        pinTachOut = PC13; //
+        TachOut.pin = PC13; //
         /* = PC14; */ //(DO NOT USE FOR SPEEDUINO) - OSC32_IN
         /* = PC15; */ //(DO NOT USE FOR SPEEDUINO) - OSC32_OUT
 
@@ -2987,10 +2987,10 @@ void setPinMapping(byte boardID)
         pinDisplayReset = 48; // OLED reset pin
         Fan.pin = 47; //Pin for the fan output
         FuelPump.pin = 4; //Fuel pump output
-        pinTachOut = 49; //Tacho output pin
+        TachOut.pin = 49; //Tacho output pin
         Flex.pin = 3; // Flex sensor (Must be external interrupt enabled)
         Boost.pin = 5;
-        pinIdle1 = 6;
+        Idle1.pin = 6;
         pinResetControl = 43; //Reset control output
         #endif
       #endif
@@ -3030,10 +3030,10 @@ void setPinMapping(byte boardID)
 
   //Finally, set the relevant pin modes for outputs
   Boost.configure(Boost.pin);
-  TachOut.configure(pinTachOut, HIGH); //Set the tacho output default state
+  TachOut.configure(TachOut.pin, HIGH); //Set the tacho output default state
 
-  Idle1.configure(pinIdle1);
-  Idle2.configure(pinIdle2);
+  Idle1.configure(Idle1.pin);
+  Idle2.configure(Idle2.pin);
   IdleUpOutput.configure(pinIdleUpOutput);
 
   FuelPump.configure(FuelPump.pin);

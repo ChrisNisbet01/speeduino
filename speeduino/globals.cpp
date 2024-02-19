@@ -144,9 +144,6 @@ byte pinO2;       //O2 Sensor pin
 byte pinO2_2;     //second O2 pin
 byte pinBat;      //Battery voltage pin
 byte pinDisplayReset; // OLED reset pin
-byte pinTachOut;  //Tacho output
-byte pinIdle1;    //Single wire idle control
-byte pinIdle2;    //2 wire idle control (Not currently used)
 byte pinIdleUp;   //Input for triggering Idle Up
 byte pinIdleUpOutput; //Output that follows (normal or inverted) the idle up pin
 byte pinCTPS;     //Input for triggering closed throttle state
@@ -249,12 +246,12 @@ bool pinIsOutput(byte pin)
   || (pin == VVT_1.pin && configPage10.wmiEnabled > 0)
   || (pin == VVT_2.pin && configPage10.vvt2Enabled > 0)
   || (pin == Boost.pin && configPage6.boostEnabled == 1)
-  || (pin == pinIdle1 && isIdlePWM)
-  || (pin == pinIdle2 && isIdlePWM && (configPage6.iacChannels == 1))
+  || (pin == Idle1.pin && isIdlePWM)
+  || (pin == Idle2.pin && isIdlePWM && (configPage6.iacChannels == 1))
   || (pin == pinStepperEnable && isIdleSteper)
   || (pin == pinStepperStep && isIdleSteper)
   || (pin == StepperDir.pin && isIdleSteper)
-  || (pin == pinTachOut)
+  || (pin == TachOut.pin)
   || (pin == AirConComp.pin && configPage15.airConEnable > 0)
   || (pin == AirConFan.pin && configPage15.airConEnable > 0 && configPage15.airConFanEnabled > 0))
   {

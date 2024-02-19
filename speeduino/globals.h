@@ -521,7 +521,7 @@ extern volatile byte LOOP_TIMER;
 //These functions all do checks on a pin to determine if it is already in use by another (higher importance) function
 #define pinIsInjector(pin) (((pin) == pinInjector1) || ((pin) == pinInjector2) || ((pin) == pinInjector3) || ((pin) == pinInjector4) || ((pin) == pinInjector5) || ((pin) == pinInjector6) || ((pin) == pinInjector7) || ((pin) == pinInjector8))
 #define pinIsIgnition(pin) (((pin) == pinCoil1) || ((pin) == pinCoil2) || ((pin) == pinCoil3) || ((pin) == pinCoil4) || ((pin) == pinCoil5) || ((pin) == pinCoil6) || ((pin) == pinCoil7) || ((pin) == pinCoil8))
-//#define pinIsOutput(pin)    ( pinIsInjector((pin)) || pinIsIgnition((pin)) || ((pin) == FuelPump.pin) || ((pin) == Fan.pin) || ((pin) == AirConComp.pin) || ((pin) == AirConFan.pin)|| ((pin) == VVT_1.pin) || ((pin) == VVT_2.pin) || ( ((pin) == Boost.pin) && configPage6.boostEnabled) || ((pin) == pinIdle1) || ((pin) == pinIdle2) || ((pin) == pinTachOut) || ((pin) == pinStepperEnable) || ((pin) == pinStepperStep) )
+//#define pinIsOutput(pin)    ( pinIsInjector((pin)) || pinIsIgnition((pin)) || ((pin) == FuelPump.pin) || ((pin) == Fan.pin) || ((pin) == AirConComp.pin) || ((pin) == AirConFan.pin)|| ((pin) == VVT_1.pin) || ((pin) == VVT_2.pin) || ( ((pin) == Boost.pin) && configPage6.boostEnabled) || ((pin) == Idle1.pin) || ((pin) == Idle2.pin) || ((pin) == TachOut.pin) || ((pin) == pinStepperEnable) || ((pin) == pinStepperStep) )
 #define pinIsSensor(pin) (((pin) == pinCLT) || ((pin) == pinIAT) || ((pin) == pinMAP) || ((pin) == pinTPS) || ((pin) == pinO2) || ((pin) == pinBat) || (((pin) == Flex.pin) && (configPage2.flexEnabled != 0)))
 //#define pinIsUsed(pin)      ( pinIsSensor((pin)) || pinIsOutput((pin)) || pinIsReserved((pin)) )
 
@@ -676,7 +676,7 @@ struct config2 {
   byte wueValues[10];    ///< Warm up enrichment array (10 bytes, transferred to @ref WUETable)
   byte crankingPct;      ///< Cranking enrichment (See @ref config10, updates.ino)
   byte pinMapping;       ///< The board / ping mapping number / id to be used (See: @ref setPinMapping in init.ino)
-  byte tachoPin : 6;     ///< Custom pin setting for tacho output (if != 0, override copied to pinTachOut, which defaults to board assigned tach pin)
+  byte tachoPin : 6;     ///< Custom pin setting for tacho output (if != 0, override copied to TachOut.pin, which defaults to board assigned tach pin)
   byte tachoDiv : 2;     ///< Whether to change the tacho speed ("half speed tacho" ?)
   byte tachoDuration;    //The duration of the tacho pulse in mS
   byte maeThresh;        /**< The MAPdot threshold that must be exceeded before AE is engaged */
@@ -1433,9 +1433,6 @@ extern byte pinO2;            //O2 Sensor pin
 extern byte pinO2_2;          //second O2 pin
 extern byte pinBat;           //Battery voltage pin
 extern byte pinDisplayReset;  // OLED reset pin
-extern byte pinTachOut;       //Tacho output
-extern byte pinIdle1;         //Single wire idle control
-extern byte pinIdle2;         //2 wire idle control (Not currently used)
 extern byte pinIdleUp;        //Input for triggering Idle Up
 extern byte pinIdleUpOutput;  //Output that follows (normal or inverted) the idle up pin
 extern byte pinCTPS;          //Input for triggering closed throttle state

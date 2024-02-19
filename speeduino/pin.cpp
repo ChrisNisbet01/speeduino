@@ -48,8 +48,9 @@ void IOPortMaskOutputPin:: write(byte val)
   val ? on() : off();
 }
 
-void IOPortMaskOutputPin::configure(byte pin, byte initial_state, byte mode)
+void IOPortMaskOutputPin::configure(byte pin_, byte initial_state, byte mode)
 {
+  pin = pin_;
   m_port = portOutputRegister(digitalPinToPort(pin));
   m_mask = digitalPinToBitMask(pin);
   /* Set the pin before configuring as an output. */

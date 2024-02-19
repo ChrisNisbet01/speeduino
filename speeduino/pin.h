@@ -11,6 +11,7 @@
 class IOPortMaskOutputPin
 {
 public:
+  byte pin = INVALID_PIN_NUMBER;
   /*
    * Assumes that port and mask have been assigned before control methods are
    * called.

@@ -88,7 +88,7 @@ void test_initialisation_outputs_V03(void)
   strcpy_P(msg, PSTR("Injector 4"));
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinInjector4), msg);
   strcpy_P(msg, PSTR("Tacho Out"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinTachOut), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(TachOut.pin), msg);
   strcpy_P(msg, PSTR("Fuel Pump"));
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(FuelPump.pin), msg);
   strcpy_P(msg, PSTR("Fan"));
@@ -119,7 +119,7 @@ void test_initialisation_outputs_V04(void)
   strcpy_P(msg, PSTR("Injector 4"));
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinInjector4), msg);
   strcpy_P(msg, PSTR("Tacho Out"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinTachOut), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(TachOut.pin), msg);
   strcpy_P(msg, PSTR("Fuel Pump"));
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(FuelPump.pin), msg);
   strcpy_P(msg, PSTR("Fan"));
@@ -127,8 +127,8 @@ void test_initialisation_outputs_V04(void)
   /*
   if(isIdlePWM)
   {
-    TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinIdle1), "Idle 1");
-    TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinIdle2), "Idle 2");
+    TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(Idle1.pin), "Idle 1");
+    TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(Idle2.pin), "Idle 2");
   }
   else if (isIdleStepper)
   {
@@ -169,7 +169,7 @@ void test_initialisation_outputs_MX5_8995(void)
   strcpy_P(msg, PSTR("Injector 4"));
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinInjector4), msg);
   strcpy_P(msg, PSTR("Tacho Out"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinTachOut), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(TachOut.pin), msg);
   strcpy_P(msg, PSTR("Fuel Pump"));
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(FuelPump.pin), msg);
   strcpy_P(msg, PSTR("Fan"));
@@ -192,9 +192,9 @@ void test_initialisation_outputs_PWM_idle(void)
   strcpy_P(msg, PSTR("Is PWM Idle"));
   TEST_ASSERT_TRUE_MESSAGE(isIdlePWM, msg);
   strcpy_P(msg, PSTR("Idle 1"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinIdle1), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(Idle1.pin), msg);
   strcpy_P(msg, PSTR("Idle 2"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinIdle2), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(Idle2.pin), msg);
 }
 
 void test_initialisation_outputs_stepper_idle(void)
@@ -268,8 +268,8 @@ void test_initialisation_user_pin_override_board_default(void)
   configPage2.tachoPin = 15;
   initialiseAll(); //Run the main initialise function
 
-  TEST_ASSERT_EQUAL(15, pinTachOut);
-  TEST_ASSERT_EQUAL(OUTPUT, getPinMode(pinTachOut));
+  TEST_ASSERT_EQUAL(15, TachOut.pin);
+  TEST_ASSERT_EQUAL(OUTPUT, getPinMode(TachOut.pin));
 }
 
 // All config user pin fields are <= 6 *bits*. So too small to
@@ -283,8 +283,8 @@ void test_initialisation_user_pin_not_valid_no_override(void)
   ++configPage2.tachoPin;
   initialiseAll(); //Run the main initialise function
 
-  TEST_ASSERT_EQUAL(49, pinTachOut);
-  TEST_ASSERT_EQUAL(OUTPUT, getPinMode(pinTachOut));
+  TEST_ASSERT_EQUAL(49, TachOut.pin);
+  TEST_ASSERT_EQUAL(OUTPUT, getPinMode(TachOut.pin));
 }
 #endif
 
@@ -295,8 +295,8 @@ void test_initialisation_input_user_pin_does_not_override_outputpin(void)
   configPage6.launchPin = 49; // 49 is the default tacho output
   initialiseAll(); //Run the main initialise function
 
-  TEST_ASSERT_EQUAL(49, pinTachOut);
-  TEST_ASSERT_EQUAL(OUTPUT, getPinMode(pinTachOut));
+  TEST_ASSERT_EQUAL(49, TachOut.pin);
+  TEST_ASSERT_EQUAL(OUTPUT, getPinMode(TachOut.pin));
   TEST_ASSERT_EQUAL(49, pinLaunch);
 }
 
