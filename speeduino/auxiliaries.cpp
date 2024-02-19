@@ -90,7 +90,7 @@ void initialiseAirCon(void)
 
     AIRCON_OFF();
 
-    if (pinAirConFan != 0 && configPage15.airConFanEnabled > 0)
+    if (AirConFan.pin != 0 && configPage15.airConFanEnabled > 0)
     {
       AIRCON_FAN_OFF();
       acStandAloneFanIsEnabled = true;
@@ -155,7 +155,7 @@ void airConControl(void)
       BIT_SET(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON);
 
       // Stand-alone fan operation
-      if (pinAirConFan != 0 && acStandAloneFanIsEnabled)
+      if (AirConFan.pin != 0 && acStandAloneFanIsEnabled)
       {
         AIRCON_FAN_ON();
       }
@@ -175,7 +175,7 @@ void airConControl(void)
       BIT_CLEAR(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON);
 
       // Stand-alone fan operation
-      if (pinAirConFan != 0 && acStandAloneFanIsEnabled)
+      if (AirConFan.pin != 0 && acStandAloneFanIsEnabled)
       {
         AIRCON_FAN_OFF();
       }

@@ -24,6 +24,6 @@ FLEX_USES_RPM2(void)
 {
   // Same as for VSS, but for Flex sensor
   return configPage2.flexEnabled > 0U
-         && pinFlex == Trigger2.pin
+         && Flex.pin == Trigger2.pin
          && !BIT_CHECK(decoderState, BIT_DECODER_HAS_SECONDARY);
 }

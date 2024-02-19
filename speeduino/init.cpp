@@ -385,7 +385,7 @@ void initialiseAll(void)
     //Check whether the flex sensor is enabled and if so, attach an interrupt for it
     if(configPage2.flexEnabled > 0)
     {
-      attachInterrupt(digitalPinToInterrupt(pinFlex), flexPulse, CHANGE);
+      attachInterrupt(digitalPinToInterrupt(Flex.pin), flexPulse, CHANGE);
       currentStatus.ethanolPct = 0;
     }
     //Same as above, but for the VSS input
@@ -460,7 +460,7 @@ void initialiseAll(void)
 
     //The secondary input can be used for VSS if nothing else requires it. Allows for the standard VR conditioner to be used for VSS. This MUST be run after the initialiseTriggers() function
     if( VSS_USES_RPM2() ) { attachInterrupt(digitalPinToInterrupt(pinVSS), vssPulse, RISING); } //Secondary trigger input can safely be used for VSS
-    if( FLEX_USES_RPM2() ) { attachInterrupt(digitalPinToInterrupt(pinFlex), flexPulse, CHANGE); } //Secondary trigger input can safely be used for Flex sensor
+    if( FLEX_USES_RPM2() ) { attachInterrupt(digitalPinToInterrupt(Flex.pin), flexPulse, CHANGE); } //Secondary trigger input can safely be used for Flex sensor
 
     //End crank trigger interrupt attachment
     if(configPage2.strokes == FOUR_STROKE)
@@ -1437,7 +1437,7 @@ void setPinMapping(byte boardID)
       pinStepperStep = 17; //Step pin for DRV8825 driver
       Fan.pin = 47; //Pin for the fan output
       FuelPump.pin = 4; //Fuel pump output
-      pinFlex = 2; // Flex sensor (Must be external interrupt enabled)
+      Flex.pin = 2; // Flex sensor (Must be external interrupt enabled)
       pinResetControl = 43; //Reset control output
       break;
     #endif
@@ -1476,7 +1476,7 @@ void setPinMapping(byte boardID)
       pinStepperEnable = 26; //Enable pin for DRV8825
       Fan.pin = A13; //Pin for the fan output
       pinLaunch = 51; //Can be overwritten below
-      pinFlex = 2; // Flex sensor (Must be external interrupt enabled)
+      Flex.pin = 2; // Flex sensor (Must be external interrupt enabled)
       pinResetControl = 50; //Reset control output
       pinBaro = A5;
       pinVSS = 20;
@@ -1530,7 +1530,7 @@ void setPinMapping(byte boardID)
       pinStepperEnable = 24; //Enable pin for DRV8825
       Fan.pin = 47; //Pin for the fan output (Goes to ULN2803)
       pinLaunch = 51; //Can be overwritten below
-      pinFlex = 2; // Flex sensor (Must be external interrupt enabled)
+      Flex.pin = 2; // Flex sensor (Must be external interrupt enabled)
       pinResetControl = 43; //Reset control output
       pinBaro = A5;
       pinVSS = 20;
@@ -1662,7 +1662,7 @@ void setPinMapping(byte boardID)
         /* = PD1; */ //CANTX
         /* = PD2; */ //(DO NOT USE FOR SPEEDUINO) - SDIO_CMD
         VVT_2.pin = PD3; //
-        pinFlex = PD4;
+        Flex.pin = PD4;
         /* = PD5;*/ //TXD2
         /* = PD6; */ //RXD2
         pinCoil1 = PD7; //
@@ -1724,7 +1724,7 @@ void setPinMapping(byte boardID)
         FuelPump.pin = PA8; //Fuel pump output
         Fan.pin = PA5; //Pin for the fan output (Goes to ULN2803)
         //external interrupt enabled pins
-        pinFlex = PC14; // Flex sensor (Must be external interrupt enabled)
+        Flex.pin = PC14; // Flex sensor (Must be external interrupt enabled)
         Trigger.setPin(PC13); //The CAS pin also led pin so bad idea
         Trigger2.setPin(PC15); //The Cam Sensor pin
 #endif
@@ -1765,7 +1765,7 @@ void setPinMapping(byte boardID)
       pinStepperEnable = 24;
       Fan.pin = 41; //Pin for the fan output
       pinLaunch = 12; //Can be overwritten below
-      pinFlex = 3; // Flex sensor (Must be external interrupt enabled)
+      Flex.pin = 3; // Flex sensor (Must be external interrupt enabled)
       pinResetControl = 39; //Reset control output
       #endif
       //This is NOT correct. It has not yet been tested with this board
@@ -1816,7 +1816,7 @@ void setPinMapping(byte boardID)
       pinStepperEnable = 24;
       Fan.pin = 35; //Pin for the fan output
       pinLaunch = 37; //Can be overwritten below
-      pinFlex = 3; // Flex sensor (Must be external interrupt enabled)
+      Flex.pin = 3; // Flex sensor (Must be external interrupt enabled)
       pinResetControl = 44; //Reset control output
 
       //This is NOT correct. It has not yet been tested with this board
@@ -1869,7 +1869,7 @@ void setPinMapping(byte boardID)
       pinStepperStep = 17; //Step pin for DRV8825 driver
       Fan.pin = 35; //Pin for the fan output
       pinLaunch = 12; //Can be overwritten below
-      pinFlex = 3; // Flex sensor (Must be external interrupt enabled)
+      Flex.pin = 3; // Flex sensor (Must be external interrupt enabled)
       pinResetControl = 44; //Reset control output
       pinVSS = 20;
       pinIdleUp = 48;
@@ -1922,7 +1922,7 @@ void setPinMapping(byte boardID)
       FuelPump.pin = 42; //Fuel pump output 2n2222
       Fan.pin = 47; //Pin for the fan output
       pinTachOut = 49; //Tacho output pin
-      pinFlex = 2; // Flex sensor (Must be external interrupt enabled)
+      Flex.pin = 2; // Flex sensor (Must be external interrupt enabled)
       pinResetControl = 26; //Reset control output
 
     #endif
@@ -2049,7 +2049,7 @@ void setPinMapping(byte boardID)
       pinStepperEnable = 24; //Stepper valve isn't used with these
       Fan.pin = 47; //Pin for the fan output (Goes to ULN2003)
       pinLaunch = 51; //Launch control pin
-      pinFlex = 2; // Flex sensor
+      Flex.pin = 2; // Flex sensor
       pinResetControl = 43; //Reset control output
       pinVSS = 3; //VSS input pin
       pinWMIEmpty = 31; //(placeholder)
@@ -2097,7 +2097,7 @@ void setPinMapping(byte boardID)
       pinStepperEnable = PA15; //Stepper valve isn't used with these
       Fan.pin = PE9; //Pin for the fan output (Goes to ULN2003)
       pinLaunch = PB8; //Launch control pin
-      pinFlex = PD7; // Flex sensor
+      Flex.pin = PD7; // Flex sensor
       pinResetControl = PB7; //Reset control output
       pinVSS = PB6; //VSS input pin
       pinWMIEmpty = PD15; //(placeholder)
@@ -2144,7 +2144,7 @@ void setPinMapping(byte boardID)
       pinStepperStep = 24; //Step pin for DRV8825 driver
       pinStepperEnable = 27; //Enable pin for DRV8825 driver
       pinLaunch = 10; //Can be overwritten below
-      pinFlex = 20; // Flex sensor (Must be external interrupt enabled) - ONLY WITH DB
+      Flex.pin = 20; // Flex sensor (Must be external interrupt enabled) - ONLY WITH DB
       Fan.pin = 30; //Pin for the fan output - ONLY WITH DB
       pinSpareLOut1 = 32; //low current output spare1 - ONLY WITH DB
       pinSpareLOut2 = 34; //low current output spare2 - ONLY WITH DB
@@ -2169,7 +2169,7 @@ void setPinMapping(byte boardID)
       Trigger.setPin(19); //The CAS pin
       Trigger2.setPin(18); //The Cam Sensor pin
       Trigger3.setPin(3); //The Cam sensor 2 pin
-      pinFlex = 20; // Flex sensor
+      Flex.pin = 20; // Flex sensor
       pinTPS = A3; //TPS input pin
       pinMAP = A0; //MAP sensor pin
       pinBaro = A7; //Baro sensor pin
@@ -2212,7 +2212,7 @@ void setPinMapping(byte boardID)
       pinCoil4 = 22; //Pin for coil 4
       Trigger.setPin(19); //The CRANK Sensor pin
       Trigger2.setPin(18); //The Cam Sensor pin
-      pinFlex = 20; // Flex sensor PLACEHOLDER value for now
+      Flex.pin = 20; // Flex sensor PLACEHOLDER value for now
       pinTPS = A0; //TPS input pin
       pinSpareTemp1 = A1; //LMM sensor pin
       pinO2 = A2; //O2 Sensor pin
@@ -2253,7 +2253,7 @@ void setPinMapping(byte boardID)
       Trigger.setPin(19); //The CAS pin
       Trigger2.setPin(18); //The Cam Sensor pin
       Trigger3.setPin(21);// The Cam sensor 2 pin
-      pinFlex = 20; // Flex sensor
+      Flex.pin = 20; // Flex sensor
       pinTPS = A3; //TPS input pin
       pinMAP = A2; //MAP sensor pin
       pinBaro = A15; //Baro sensor pin
@@ -2420,7 +2420,7 @@ void setPinMapping(byte boardID)
       Trigger.setPin(19); //The CAS pin
       Trigger2.setPin(18); //The Cam Sensor pin
       Trigger3.setPin(22); //Uses one of the protected spare digitial inputs. This must be set or Serial1 (Pin 0) gets broken
-      pinFlex = A16; // Flex sensor
+      Flex.pin = A16; // Flex sensor
       pinMAP = A1; //MAP sensor pin
       pinBaro = A0; //Baro sensor pin
       pinBat = A14; //Battery reference voltage pin
@@ -2473,7 +2473,7 @@ void setPinMapping(byte boardID)
         pinO2 = A2; //O2 Sensor pin
         pinBat = A15; //Battery reference voltage pin. Needs Alpha4+
         pinLaunch = 36;
-        pinFlex = 37; // Flex sensor
+        Flex.pin = 37; // Flex sensor
         pinSpareTemp1 = A16;
         pinSpareTemp2 = A17;
 
@@ -2534,7 +2534,7 @@ void setPinMapping(byte boardID)
 
       Trigger.setPin(20); //The CAS pin
       Trigger2.setPin(21); //The Cam Sensor pin
-      pinFlex = 37; // Flex sensor
+      Flex.pin = 37; // Flex sensor
       pinMAP = A5; //MAP sensor pin
       pinBaro = A4; //Baro sensor pin
       pinBat = A15; //Battery reference voltage pin
@@ -2641,7 +2641,7 @@ void setPinMapping(byte boardID)
         // = PD2;  //(DO NOT USE FOR SPEEDUINO) - SDIO_CMD
         pinIdle2 = PD3; //
         // = PD4;  //
-        pinFlex = PD4;
+        Flex.pin = PD4;
         // = PD5; //TXD2
         // = PD6;  //RXD2
         pinCoil1 = PD7; //
@@ -2702,7 +2702,7 @@ void setPinMapping(byte boardID)
         Fan.pin = PA5; //Pin for the fan output (Goes to ULN2803)
 
         //external interrupt enabled pins
-        pinFlex = PC14; // Flex sensor (Must be external interrupt enabled)
+        Flex.pin = PC14; // Flex sensor (Must be external interrupt enabled)
         Trigger.setPin(PC13); //The CAS pin also led pin so bad idea
         Trigger2.setPin(PC15); //The Cam Sensor pin
 
@@ -2740,7 +2740,7 @@ void setPinMapping(byte boardID)
         FuelPump.pin = PB11; //Fuel pump output
         pinTachOut = PB10; //Tacho output pin
         //external interrupt enabled pins
-        pinFlex = PB8; // Flex sensor (Must be external interrupt enabled)
+        Flex.pin = PB8; // Flex sensor (Must be external interrupt enabled)
         Trigger.setPin(PA10); //The CAS pin
         Trigger2.setPin(PA13); //The Cam Sensor pin
 
@@ -2926,7 +2926,7 @@ void setPinMapping(byte boardID)
         /* = PD2; */ //(DO NOT USE FOR SPEEDUINO) - SDIO_CMD
         /* = PD3; */ //
         /* = PD4; */ //
-        pinFlex = PD4;
+        Flex.pin = PD4;
         /* = PD5;*/ //TXD2
         /* = PD6; */ //RXD2
         pinCoil1 = PD7; //
@@ -2988,7 +2988,7 @@ void setPinMapping(byte boardID)
         Fan.pin = 47; //Pin for the fan output
         FuelPump.pin = 4; //Fuel pump output
         pinTachOut = 49; //Tacho output pin
-        pinFlex = 3; // Flex sensor (Must be external interrupt enabled)
+        Flex.pin = 3; // Flex sensor (Must be external interrupt enabled)
         Boost.pin = 5;
         pinIdle1 = 6;
         pinResetControl = 43; //Reset control output
@@ -3011,7 +3011,7 @@ void setPinMapping(byte boardID)
 
   // Air conditioning control initialisation
   if ((configPage15.airConCompPin != 0) && (configPage15.airConCompPin < BOARD_MAX_IO_PINS) ) { AirConComp.pin = pinTranslate(configPage15.airConCompPin); }
-  if ((configPage15.airConFanPin != 0) && (configPage15.airConFanPin < BOARD_MAX_IO_PINS) ) { pinAirConFan = pinTranslate(configPage15.airConFanPin); }
+  if ((configPage15.airConFanPin != 0) && (configPage15.airConFanPin < BOARD_MAX_IO_PINS) ) { AirConFan.pin = pinTranslate(configPage15.airConFanPin); }
   if ((configPage15.airConReqPin != 0) && (configPage15.airConReqPin < BOARD_MAX_IO_PINS) ) { pinAirConRequest = pinTranslate(configPage15.airConReqPin); }
 
   /* Reset control is a special case. If reset control is enabled, it needs its initial state set BEFORE its pinMode.
@@ -3107,11 +3107,11 @@ void setPinMapping(byte boardID)
 #endif
 
   //Each of the below are only set when their relevant function is enabled. This can help prevent pin conflicts that users aren't aware of with unused functions
-  if (configPage2.flexEnabled > 0 && !pinIsOutput(pinFlex))
+  if (configPage2.flexEnabled > 0 && !pinIsOutput(Flex.pin))
   {
     //Standard GM / Continental flex sensor requires pullup, but this should be onboard.
     //The internal pullup will not work (Requires ~3.3k)!
-    Flex.configure(pinFlex);
+    Flex.configure(Flex.pin);
   }
 
   if (configPage2.vssMode > 1 && !pinIsOutput(pinVSS)) //Pin mode 1 for VSS is CAN
@@ -3198,9 +3198,9 @@ void setPinMapping(byte boardID)
       AirConRequest.configure(pinAirConRequest, input_mode);
     }
 
-    if (pinAirConFan > 0 && configPage15.airConFanEnabled == 1)
+    if (AirConFan.pin > 0 && configPage15.airConFanEnabled == 1)
     {
-      AirConFan.configure(pinAirConFan);
+      AirConFan.configure(AirConFan.pin);
     }
   }
 }

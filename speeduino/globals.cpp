@@ -171,7 +171,6 @@ byte pinStepperStep; //Step pin for the stepper motor driver
 byte pinStepperEnable; //Turning the DRV8825 driver on/off
 byte pinLaunch;
 byte pinIgnBypass; //The pin used for an ignition bypass (Optional)
-byte pinFlex; //Pin with the flex sensor attached
 byte pinVSS;  // VSS (Vehicle speed sensor) Pin
 byte pinBaro; //Pin that an al barometric pressure sensor is attached to (If used)
 byte pinResetControl; // Output pin used control resetting the Arduino
@@ -186,7 +185,6 @@ byte pinSDEnable;
 #ifdef USE_SPI_EEPROM
   byte pinSPIFlash_CS;
 #endif
-byte pinAirConFan;    // Stand-alone air conditioning fan output (See: auxiliaries.ino)
 byte pinAirConRequest;  // Air conditioning request input (See: auxiliaries.ino)
 
 struct statuses currentStatus; /**< The master global "live" status struct. Contains all values that are updated frequently and used across modules */
@@ -258,7 +256,7 @@ bool pinIsOutput(byte pin)
   || (pin == StepperDir.pin && isIdleSteper)
   || (pin == pinTachOut)
   || (pin == AirConComp.pin && configPage15.airConEnable > 0)
-  || (pin == pinAirConFan && configPage15.airConEnable > 0 && configPage15.airConFanEnabled > 0))
+  || (pin == AirConFan.pin && configPage15.airConEnable > 0 && configPage15.airConFanEnabled > 0))
   {
     used = true;
   }
