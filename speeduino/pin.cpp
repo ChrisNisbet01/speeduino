@@ -159,12 +159,12 @@ bool IODigitalWriteOutputPin::is_configured(void)
   return m_is_configured;
 }
 
-byte IODigitalReadInputPin::getPin(void)
+byte IODigitalWriteOutputPin::getPin(void)
 {
   return m_pin;
 }
 
-void IODigitalReadInputPin::setPin(byte pin)
+void IODigitalWriteOutputPin::setPin(byte pin)
 {
   m_pin = pin;
 }
@@ -185,6 +185,16 @@ void IODigitalReadInputPin::configure(byte pin, byte mode)
 bool IODigitalReadInputPin::is_configured(void)
 {
   return m_is_configured;
+}
+
+byte IODigitalReadInputPin::getPin(void)
+{
+  return m_pin;
+}
+
+void IODigitalReadInputPin::setPin(byte pin)
+{
+  m_pin = pin;
 }
 
 #if defined(CORE_TEENSY) || defined(CORE_STM32)

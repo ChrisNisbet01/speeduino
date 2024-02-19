@@ -72,6 +72,10 @@ public:
 
   bool is_configured(void);
 
+  byte getPin(void);
+
+  void setPin(byte pin);
+
 private:
   byte m_pin = INVALID_PIN_NUMBER;
   bool m_is_configured = false;

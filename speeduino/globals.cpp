@@ -4,6 +4,7 @@
 #include "globals.h"
 #include "scheduler.h"
 #include "ignition_contexts.h"
+#include "auxiliary_pins.h"
 
 const char TSfirmwareVersion[] PROGMEM = "Speeduino";
 
@@ -171,7 +172,6 @@ byte pinBoost;
 byte pinVVT_1;     ///< vvt (variable valve timing) output 1
 byte pinVVT_2;     ///< vvt (variable valve timing) output 2
 byte pinFan;       ///< Cooling fan output (on/off? See: auxiliaries.ino)
-byte pinStepperDir; //Direction pin for the stepper motor driver
 byte pinStepperStep; //Step pin for the stepper motor driver
 byte pinStepperEnable; //Turning the DRV8825 driver on/off
 byte pinLaunch;
@@ -261,7 +261,7 @@ bool pinIsOutput(byte pin)
   || (pin == pinIdle2 && isIdlePWM && (configPage6.iacChannels == 1))
   || (pin == pinStepperEnable && isIdleSteper)
   || (pin == pinStepperStep && isIdleSteper)
-  || (pin == pinStepperDir && isIdleSteper)
+  || (pin == StepperDir.getPin() && isIdleSteper)
   || (pin == pinTachOut)
   || (pin == pinAirConComp && configPage15.airConEnable > 0)
   || (pin == pinAirConFan && configPage15.airConEnable > 0 && configPage15.airConFanEnabled > 0))
