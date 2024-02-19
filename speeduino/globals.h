@@ -521,7 +521,7 @@ extern volatile byte LOOP_TIMER;
 //These functions all do checks on a pin to determine if it is already in use by another (higher importance) function
 #define pinIsInjector(pin) (((pin) == pinInjector1) || ((pin) == pinInjector2) || ((pin) == pinInjector3) || ((pin) == pinInjector4) || ((pin) == pinInjector5) || ((pin) == pinInjector6) || ((pin) == pinInjector7) || ((pin) == pinInjector8))
 #define pinIsIgnition(pin) (((pin) == pinCoil1) || ((pin) == pinCoil2) || ((pin) == pinCoil3) || ((pin) == pinCoil4) || ((pin) == pinCoil5) || ((pin) == pinCoil6) || ((pin) == pinCoil7) || ((pin) == pinCoil8))
-//#define pinIsOutput(pin)    ( pinIsInjector((pin)) || pinIsIgnition((pin)) || ((pin) == pinFuelPump) || ((pin) == pinFan) || ((pin) == pinAirConComp) || ((pin) == pinAirConFan)|| ((pin) == pinVVT_1) || ((pin) == pinVVT_2) || ( ((pin) == pinBoost) && configPage6.boostEnabled) || ((pin) == pinIdle1) || ((pin) == pinIdle2) || ((pin) == pinTachOut) || ((pin) == pinStepperEnable) || ((pin) == pinStepperStep) )
+//#define pinIsOutput(pin)    ( pinIsInjector((pin)) || pinIsIgnition((pin)) || ((pin) == FuelPump.pin) || ((pin) == pinFan) || ((pin) == pinAirConComp) || ((pin) == pinAirConFan)|| ((pin) == pinVVT_1) || ((pin) == pinVVT_2) || ( ((pin) == Boost.pin) && configPage6.boostEnabled) || ((pin) == pinIdle1) || ((pin) == pinIdle2) || ((pin) == pinTachOut) || ((pin) == pinStepperEnable) || ((pin) == pinStepperStep) )
 #define pinIsSensor(pin) (((pin) == pinCLT) || ((pin) == pinIAT) || ((pin) == pinMAP) || ((pin) == pinTPS) || ((pin) == pinO2) || ((pin) == pinBat) || (((pin) == pinFlex) && (configPage2.flexEnabled != 0)))
 //#define pinIsUsed(pin)      ( pinIsSensor((pin)) || pinIsOutput((pin)) || pinIsReserved((pin)) )
 
@@ -841,7 +841,7 @@ struct config4 {
   byte TrigPattern : 5;  ///< Decoder configured (DECODER_MISSING_TOOTH, DECODER_BASIC_DISTRIBUTOR, DECODER_GM7X, ... See init.ino)
 
   byte TrigEdgeSec : 1;  ///< Secondary (RPM2) Trigger Edge (See RPM1)
-  byte fuelPumpPin : 6;  ///< Fuel pump pin (copied as override to pinFuelPump, defaults to board default, See: init.ino)
+  byte fuelPumpPin : 6;  ///< Fuel pump pin (copied as override to FuelPump.pin, defaults to board default, See: init.ino)
   byte useResync : 1;
 
   byte sparkDur;               ///< Spark duration in ms * 10
@@ -1434,7 +1434,6 @@ extern byte pinO2_2;          //second O2 pin
 extern byte pinBat;           //Battery voltage pin
 extern byte pinDisplayReset;  // OLED reset pin
 extern byte pinTachOut;       //Tacho output
-extern byte pinFuelPump;      //Fuel pump on/off
 extern byte pinIdle1;         //Single wire idle control
 extern byte pinIdle2;         //2 wire idle control (Not currently used)
 extern byte pinIdleUp;        //Input for triggering Idle Up
@@ -1457,7 +1456,6 @@ extern byte pinSpareLOut2;    // spare low current output
 extern byte pinSpareLOut3;
 extern byte pinSpareLOut4;
 extern byte pinSpareLOut5;
-extern byte pinBoost;
 extern byte pinVVT_1;          // vvt output 1
 extern byte pinVVT_2;          // vvt output 2
 extern byte pinFan;            // Cooling fan output

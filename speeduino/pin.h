@@ -104,6 +104,8 @@ private:
 class IOAtomicWriteOutputPin
 {
 public:
+  byte pin = INVALID_PIN_NUMBER;
+
   /*
    * Assumes that port and mask have been assigned before control methods are
    * called.
@@ -119,7 +121,6 @@ public:
   bool is_configured(void);
 
 private:
-
   volatile PORT_TYPE * m_port = nullptr;
   PINMASK_TYPE m_mask = 0;
   bool m_is_configured = false;

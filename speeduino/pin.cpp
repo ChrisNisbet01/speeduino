@@ -201,8 +201,9 @@ void IOAtomicWriteOutputPin::toggle(void)
   pin_toggle(*m_port, m_mask);
 }
 
-void IOAtomicWriteOutputPin::configure(byte pin, byte initial_state, byte mode)
+void IOAtomicWriteOutputPin::configure(byte pin_, byte initial_state, byte mode)
 {
+  pin = pin_;
   m_port = portOutputRegister(digitalPinToPort(pin));
   m_mask = digitalPinToBitMask(pin);
 

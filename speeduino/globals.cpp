@@ -145,7 +145,6 @@ byte pinO2_2;     //second O2 pin
 byte pinBat;      //Battery voltage pin
 byte pinDisplayReset; // OLED reset pin
 byte pinTachOut;  //Tacho output
-byte pinFuelPump; //Fuel pump on/off
 byte pinIdle1;    //Single wire idle control
 byte pinIdle2;    //2 wire idle control (Not currently used)
 byte pinIdleUp;   //Input for triggering Idle Up
@@ -168,7 +167,6 @@ byte pinSpareLOut2; // spare low current output
 byte pinSpareLOut3;
 byte pinSpareLOut4;
 byte pinSpareLOut5;
-byte pinBoost;
 byte pinVVT_1;     ///< vvt (variable valve timing) output 1
 byte pinVVT_2;     ///< vvt (variable valve timing) output 2
 byte pinFan;       ///< Cooling fan output (on/off? See: auxiliaries.ino)
@@ -251,12 +249,12 @@ bool pinIsOutput(byte pin)
     used = true;
   }
   //Functions?
-  if (pin == pinFuelPump
+  if (pin == FuelPump.pin
   || (pin == pinFan && configPage2.fanEnable == 1)
   || (pin == pinVVT_1 && configPage6.vvtEnabled > 0)
   || (pin == pinVVT_1 && configPage10.wmiEnabled > 0)
   || (pin == pinVVT_2 && configPage10.vvt2Enabled > 0)
-  || (pin == pinBoost && configPage6.boostEnabled == 1)
+  || (pin == Boost.pin && configPage6.boostEnabled == 1)
   || (pin == pinIdle1 && isIdlePWM)
   || (pin == pinIdle2 && isIdlePWM && (configPage6.iacChannels == 1))
   || (pin == pinStepperEnable && isIdleSteper)

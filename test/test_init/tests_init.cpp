@@ -90,7 +90,7 @@ void test_initialisation_outputs_V03(void)
   strcpy_P(msg, PSTR("Tacho Out"));
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinTachOut), msg);
   strcpy_P(msg, PSTR("Fuel Pump"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinFuelPump), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(FuelPump.pin), msg);
   strcpy_P(msg, PSTR("Fan"));
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinFan), msg);
 }
@@ -121,7 +121,7 @@ void test_initialisation_outputs_V04(void)
   strcpy_P(msg, PSTR("Tacho Out"));
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinTachOut), msg);
   strcpy_P(msg, PSTR("Fuel Pump"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinFuelPump), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(FuelPump.pin), msg);
   strcpy_P(msg, PSTR("Fan"));
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinFan), msg);
   /*
@@ -138,7 +138,7 @@ void test_initialisation_outputs_V04(void)
   }
 
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinFan), "Fan");
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinBoost), "Boost");
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(Boost.pin), "Boost");
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinVVT_1), "VVT1");
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinVVT_2), "VVT2");
   */
@@ -171,7 +171,7 @@ void test_initialisation_outputs_MX5_8995(void)
   strcpy_P(msg, PSTR("Tacho Out"));
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinTachOut), msg);
   strcpy_P(msg, PSTR("Fuel Pump"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinFuelPump), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(FuelPump.pin), msg);
   strcpy_P(msg, PSTR("Fan"));
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinFan), msg);
 }
@@ -221,7 +221,7 @@ void test_initialisation_outputs_boost(void)
 
   char msg[32];
   strcpy_P(msg, PSTR("Boost"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinBoost), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(Boost.pin), msg);
 }
 
 void test_initialisation_outputs_VVT(void)
