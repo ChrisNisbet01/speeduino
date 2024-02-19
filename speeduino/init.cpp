@@ -1420,9 +1420,9 @@ void setPinMapping(byte boardID)
       pinCoil3 = 40; //Pin for coil 3
       pinCoil4 = 36; //Pin for coil 4
       pinCoil5 = 34; //Pin for coil 5 PLACEHOLDER value for now
-      pinTrigger = 20; //The CAS pin
-      pinTrigger2 = 21; //The Cam Sensor pin
-      pinTrigger3 = 3; //The Cam sensor 2 pin
+      Trigger.setPin(20); //The CAS pin
+      Trigger2.setPin(21); //The Cam Sensor pin
+      Trigger3.setPin(3); //The Cam sensor 2 pin
       pinTPS = A2; //TPS input pin
       pinMAP = A3; //MAP sensor pin
       pinIAT = A0; //IAT sensor pin
@@ -1454,9 +1454,9 @@ void setPinMapping(byte boardID)
       pinCoil3 = 40; //Pin for coil 3
       pinCoil4 = 36; //Pin for coil 4
       pinCoil5 = 34; //Pin for coil 5 PLACEHOLDER value for now
-      pinTrigger = 19; //The CAS pin
-      pinTrigger2 = 18; //The Cam Sensor pin
-      pinTrigger3 = 3; //The Cam sensor 2 pin
+      Trigger.setPin(19); //The CAS pin
+      Trigger2.setPin(18); //The Cam Sensor pin
+      Trigger3.setPin(3); //The Cam sensor 2 pin
       pinTPS = A2;//TPS input pin
       pinMAP = A3; //MAP sensor pin
       pinIAT = A0; //IAT sensor pin
@@ -1481,8 +1481,8 @@ void setPinMapping(byte boardID)
       pinBaro = A5;
       pinVSS = 20;
 
-      #if defined(CORE_TEENSY35)
-        pinTrigger = 23;
+#if defined(CORE_TEENSY35)
+        Trigger.setPin(23);
         pinStepperDir = 33;
         pinStepperStep = 34;
         pinCoil1 = 31;
@@ -1491,8 +1491,8 @@ void setPinMapping(byte boardID)
         pinCoil4 = 21;
         pinCoil3 = 30;
         pinO2 = A22;
-      #endif
-    #endif
+#endif
+#endif
       break;
 
     case 3:
@@ -1508,9 +1508,9 @@ void setPinMapping(byte boardID)
       pinCoil3 = 52; //Pin for coil 3
       pinCoil4 = 50; //Pin for coil 4
       pinCoil5 = 34; //Pin for coil 5 PLACEHOLDER value for now
-      pinTrigger = 19; //The CAS pin
-      pinTrigger2 = 18; //The Cam Sensor pin
-      pinTrigger3 = 3; //The Cam sensor 2 pin
+      Trigger.setPin(19); //The CAS pin
+      Trigger2.setPin(18); //The Cam Sensor pin
+      Trigger3.setPin(3); //The Cam sensor 2 pin
       pinTPS = A2;//TPS input pin
       pinMAP = A3; //MAP sensor pin
       pinIAT = A0; //IAT sensor pin
@@ -1538,11 +1538,11 @@ void setPinMapping(byte boardID)
       pinWMIIndicator = 44;
       pinWMIEnabled = 42;
 
-      #if defined(CORE_TEENSY35)
+#if defined(CORE_TEENSY35)
         pinInjector6 = 51;
 
-        pinTrigger = 23;
-        pinTrigger2 = 36;
+        Trigger.setPin(23);
+        Trigger2.setPin(36);
         pinStepperDir = 34;
         pinStepperStep = 35;
         pinCoil1 = 31;
@@ -1554,10 +1554,10 @@ void setPinMapping(byte boardID)
         pinO2 = A22;
 
         //Make sure the CAN pins aren't overwritten
-        pinTrigger3 = 54;
+        Trigger3.setPin(54);
         pinVVT_1 = 55;
 
-      #elif defined(CORE_TEENSY41)
+#elif defined(CORE_TEENSY41)
         //These are only to prevent lockups or weird behaviour on T4.1 when this board is used as the default
         pinBaro = A4;
         pinMAP = A5;
@@ -1571,9 +1571,9 @@ void setPinMapping(byte boardID)
         pinSpareTemp2 = A16; //WRONG! Needs updating!!
         pinSpareTemp2 = A17; //WRONG! Needs updating!!
 
-        pinTrigger = 20; //The CAS pin
-        pinTrigger2 = 21; //The Cam Sensor pin
-        pinTrigger3 = 23;
+        Trigger.setPin(20); //The CAS pin
+        Trigger2.setPin(21); //The Cam Sensor pin
+        Trigger3.setPin(23);
 
         pinStepperDir = 34;
         pinStepperStep = 35;
@@ -1589,7 +1589,7 @@ void setPinMapping(byte boardID)
         pinWMIEmpty = 34;
         pinWMIIndicator = 35;
         pinWMIEnabled = 36;
-      #elif defined(STM32F407xx)
+#elif defined(STM32F407xx)
      //Pin definitions for experimental board Tjeerd
         //Black F407VE wiki.stm32duino.com/index.php?title=STM32F407
 
@@ -1678,8 +1678,8 @@ void setPinMapping(byte boardID)
         //******************************************
         //******** PORTE CONNECTIONS ***************
         //******************************************
-        pinTrigger = PE0; //
-        pinTrigger2 = PE1; //
+        Trigger.setPin(PE0); //
+        Trigger2.setPin(PE1); //
         pinStepperEnable = PE2; //
         /* = PE3; */ //ONBOARD KEY1
         /* = PE4; */ //ONBOARD KEY2
@@ -1695,7 +1695,7 @@ void setPinMapping(byte boardID)
         /* = PE14; */ //
         /* = PE15; */ //
 
-      #elif defined(CORE_STM32)
+#elif defined(CORE_STM32)
         //https://github.com/stm32duino/Arduino_Core_STM32/blob/master/variants/Generic_F411Cx/variant.h#L28
         //pins PA12, PA11 are used for USB or CAN couldn't be used for GPIO
         //pins PB12, PB13, PB14 and PB15 are used to SPI FLASH
@@ -1725,9 +1725,9 @@ void setPinMapping(byte boardID)
         pinFan = PA5; //Pin for the fan output (Goes to ULN2803)
         //external interrupt enabled pins
         pinFlex = PC14; // Flex sensor (Must be external interrupt enabled)
-        pinTrigger = PC13; //The CAS pin also led pin so bad idea
-        pinTrigger2 = PC15; //The Cam Sensor pin
-      #endif
+        Trigger.setPin(PC13); //The CAS pin also led pin so bad idea
+        Trigger2.setPin(PC15); //The Cam Sensor pin
+#endif
       break;
 
     case 6:
@@ -1743,9 +1743,9 @@ void setPinMapping(byte boardID)
       pinCoil3 = 32; //Pin for coil 3
       pinCoil4 = 33; //Pin for coil 4
       pinCoil5 = 34; //Pin for coil 5 PLACEHOLDER value for now
-      pinTrigger = 19; //The CAS pin
-      pinTrigger2 = 18; //The Cam Sensor pin
-      pinTrigger3 = 2; //The Cam sensor 2 pin
+      Trigger.setPin(19); //The CAS pin
+      Trigger2.setPin(18); //The Cam Sensor pin
+      Trigger3.setPin(2); //The Cam sensor 2 pin
       pinTPS = A2;//TPS input pin
       pinMAP = A5; //MAP sensor pin
       pinIAT = A0; //IAT sensor pin
@@ -1770,8 +1770,8 @@ void setPinMapping(byte boardID)
       #endif
       //This is NOT correct. It has not yet been tested with this board
       #if defined(CORE_TEENSY35)
-        pinTrigger = 23;
-        pinTrigger2 = 36;
+        Trigger.setPin(23);
+        Trigger2.setPin(36);
         pinStepperDir = 34;
         pinStepperStep = 35;
         pinCoil1 = 33; //Done
@@ -1797,8 +1797,8 @@ void setPinMapping(byte boardID)
       pinCoil3 = 32; //Pin for coil 3
       pinCoil4 = 33; //Pin for coil 4
       pinCoil5 = 34; //Pin for coil 5 PLACEHOLDER value for now
-      pinTrigger = 19; //The CAS pin
-      pinTrigger2 = 18; //The Cam Sensor pin
+      Trigger.setPin(19); //The CAS pin
+      Trigger2.setPin(18); //The Cam Sensor pin
       pinTPS = A2;//TPS input pin
       pinMAP = A5; //MAP sensor pin
       pinIAT = A0; //IAT sensor pin
@@ -1821,8 +1821,8 @@ void setPinMapping(byte boardID)
 
       //This is NOT correct. It has not yet been tested with this board
       #if defined(CORE_TEENSY35)
-        pinTrigger = 23;
-        pinTrigger2 = 36;
+        Trigger.setPin(23);
+        Trigger2.setPin(36);
         pinStepperDir = 34;
         pinStepperStep = 35;
         pinCoil1 = 33; //Done
@@ -1849,8 +1849,8 @@ void setPinMapping(byte boardID)
       pinCoil3 = 32; //Pin for coil 3
       pinCoil4 = 33; //Pin for coil 4
       pinCoil5 = 34; //Pin for coil 5 PLACEHOLDER value for now
-      pinTrigger = 19; //The CAS pin
-      pinTrigger2 = 18; //The Cam Sensor pin
+      Trigger.setPin(19); //The CAS pin
+      Trigger2.setPin(18); //The Cam Sensor pin
       pinTPS = A2;//TPS input pin
       pinMAP = A5; //MAP sensor pin
       pinIAT = A0; //IAT sensor pin
@@ -1876,8 +1876,8 @@ void setPinMapping(byte boardID)
       pinCTPS = 47;
       #endif
       #if defined(CORE_TEENSY35)
-        pinTrigger = 23;
-        pinTrigger2 = 36;
+        Trigger.setPin(23);
+        Trigger2.setPin(36);
         pinStepperDir = 34;
         pinStepperStep = 35;
         pinCoil1 = 33; //Done
@@ -1906,8 +1906,8 @@ void setPinMapping(byte boardID)
       pinCoil3 = 36; //Pin for coil 3
       pinCoil4 = 40; //Pin for coil 4
       pinCoil5 = 34; //Pin for coil 5 PLACEHOLDER value for now
-      pinTrigger = 18; //The CAS pin
-      pinTrigger2 = 19; //The Cam Sensor pin
+      Trigger.setPin(18); //The CAS pin
+      Trigger2.setPin(19); //The Cam Sensor pin
       pinTPS = A2;//TPS input pin
       pinMAP = A3; //MAP sensor pin
       pinMAP2 = A8; //MAP2 sensor pin
@@ -1947,8 +1947,8 @@ void setPinMapping(byte boardID)
       pinSpareOut4 = 7; //Spare LSD Output 4(PWM)
       pinSpareOut5 = 50; //Spare LSD Output 5(digital)
       pinSpareOut6 = 52; //Spare LSD Output 6(digital)
-      pinTrigger = 20; //The CAS pin
-      pinTrigger2 = 21; //The Cam Sensor pin
+      Trigger.setPin(20); //The CAS pin
+      Trigger2.setPin(21); //The Cam Sensor pin
       pinSpareTemp2 = A15; //spare Analog input 2
       pinSpareTemp1 = A14; //spare Analog input 1
       pinO2 = A8; //O2 Sensor pin
@@ -1977,9 +1977,9 @@ void setPinMapping(byte boardID)
       pinCoil3 = 50; //Pin for coil 3
       pinCoil4 = 52; //Pin for coil 4
       pinCoil5 = 34; //Pin for coil 5 PLACEHOLDER value for now
-      pinTrigger = 19; //The CAS pin
-      pinTrigger2 = 18; //The Cam Sensor pin
-      pinTrigger3 = 17; // cam sensor 2 pin, pin17 isn't external trigger enabled in arduino mega??
+      Trigger.setPin(19); //The CAS pin
+      Trigger2.setPin(18); //The Cam Sensor pin
+      Trigger3.setPin(17); // cam sensor 2 pin, pin17 isn't external trigger enabled in arduino mega??
       pinTPS = A2;//TPS input pin
       pinMAP = A3; //MAP sensor pin
       pinIAT = A0; //IAT sensor pin
@@ -2025,9 +2025,9 @@ void setPinMapping(byte boardID)
       pinCoil6 = 34; //Pin for coil 6
       pinCoil7 = 46; //Pin for coil 7 (placeholder)
       pinCoil8 = 53; //Pin for coil 8 (placeholder)
-      pinTrigger = 19; //The CAS pin
-      pinTrigger2 = 18; //The Cam Sensor pin
-      pinTrigger3 = 20; //The Cam sensor 2 pin
+      Trigger.setPin(19); //The CAS pin
+      Trigger2.setPin(18); //The Cam Sensor pin
+      Trigger3.setPin(20); //The Cam sensor 2 pin
       pinTPS = A2;//TPS input pin
       pinMAP = A3; //MAP sensor pin
       pinEMAP = A15; //EMAP sensor pin
@@ -2074,8 +2074,8 @@ void setPinMapping(byte boardID)
       pinCoil6 = PE5; //Pin for coil 6
       pinCoil7 = PE0; //Pin for coil 7 (placeholder)
       pinCoil8 = PB9; //Pin for coil 8 (placeholder)
-      pinTrigger = PD3; //The CAS pin
-      pinTrigger2 = PD4; //The Cam Sensor pin
+      Trigger.setPin(PD3); //The CAS pin
+      Trigger2.setPin(PD4); //The Cam Sensor pin
       pinTPS = PA2;//TPS input pin
       pinMAP = PA3; //MAP sensor pin
       pinEMAP = PC5; //EMAP sensor pin
@@ -2121,9 +2121,9 @@ void setPinMapping(byte boardID)
       pinCoil3 = 2; //Pin for coil 3 - ONLY WITH DB2
       pinCoil4 = 3; //Pin for coil 4 - ONLY WITH DB2
       pinCoil5 = 46; //Placeholder only - NOT USED
-      pinTrigger = 19; //The CAS pin
-      pinTrigger2 = 18; //The Cam Sensor pin
-      pinTrigger3 = 21; //The Cam sensor 2 pin
+      Trigger.setPin(19); //The CAS pin
+      Trigger2.setPin(18); //The Cam Sensor pin
+      Trigger3.setPin(21); //The Cam sensor 2 pin
       pinTPS = A3; //TPS input pin
       pinMAP = A0; //MAP sensor pin
       pinIAT = A5; //IAT sensor pin
@@ -2166,9 +2166,9 @@ void setPinMapping(byte boardID)
       pinCoil3 = 33; //Pin for coil 3
       pinCoil4 = 34; //Pin for coil 4
       pinCoil5 = 44; //Pin for coil 5 PLACEHOLDER value for now
-      pinTrigger = 19; //The CAS pin
-      pinTrigger2 = 18; //The Cam Sensor pin
-      pinTrigger3 = 3; //The Cam sensor 2 pin
+      Trigger.setPin(19); //The CAS pin
+      Trigger2.setPin(18); //The Cam Sensor pin
+      Trigger3.setPin(3); //The Cam sensor 2 pin
       pinFlex = 20; // Flex sensor
       pinTPS = A3; //TPS input pin
       pinMAP = A0; //MAP sensor pin
@@ -2210,8 +2210,8 @@ void setPinMapping(byte boardID)
       pinCoil2 = 25; //Pin for coil 2
       pinCoil3 = 23; //Pin for coil 3
       pinCoil4 = 22; //Pin for coil 4
-      pinTrigger = 19; //The CRANK Sensor pin
-      pinTrigger2 = 18; //The Cam Sensor pin
+      Trigger.setPin(19); //The CRANK Sensor pin
+      Trigger2.setPin(18); //The Cam Sensor pin
       pinFlex = 20; // Flex sensor PLACEHOLDER value for now
       pinTPS = A0; //TPS input pin
       pinSpareTemp1 = A1; //LMM sensor pin
@@ -2250,9 +2250,9 @@ void setPinMapping(byte boardID)
       pinCoil3 = 28; //Pin for coil 3
       pinCoil4 = 27; //Pin for coil 4
       pinCoil5 = 26; //Placeholder  for coil 5
-      pinTrigger = 19; //The CAS pin
-      pinTrigger2 = 18; //The Cam Sensor pin
-      pinTrigger3 = 21;// The Cam sensor 2 pin
+      Trigger.setPin(19); //The CAS pin
+      Trigger2.setPin(18); //The Cam Sensor pin
+      Trigger3.setPin(21);// The Cam sensor 2 pin
       pinFlex = 20; // Flex sensor
       pinTPS = A3; //TPS input pin
       pinMAP = A2; //MAP sensor pin
@@ -2301,8 +2301,8 @@ void setPinMapping(byte boardID)
       pinCoil4 = 32; //Pin for coil 4 - ONLY WITH DB2
       //Placeholder only - NOT USED:
       //pinCoil5 = 46;
-      pinTrigger = 23; //The CAS pin
-      pinTrigger2 = 36; //The Cam Sensor pin
+      Trigger.setPin(23); //The CAS pin
+      Trigger2.setPin(36); //The Cam Sensor pin
       pinTPS = 16; //TPS input pin
       pinMAP = 17; //MAP sensor pin
       pinIAT = 14; //IAT sensor pin
@@ -2334,8 +2334,8 @@ void setPinMapping(byte boardID)
       pinCoil2 = 30; //Pin for coil 2
       pinCoil3 = 31; //Pin for coil 3 - ONLY WITH DB2
       pinCoil4 = 32; //Pin for coil 4 - ONLY WITH DB2
-      pinTrigger = 23; //The CAS pin
-      pinTrigger2 = 36; //The Cam Sensor pin
+      Trigger.setPin(23); //The CAS pin
+      Trigger2.setPin(36); //The Cam Sensor pin
       pinTPS = 16; //TPS input pin
       pinMAP = 17; //MAP sensor pin
       pinIAT = 14; //IAT sensor pin
@@ -2369,8 +2369,8 @@ void setPinMapping(byte boardID)
       pinCoil2 = 30; //Pin for coil 2
       pinCoil3 = 31; //Pin for coil 3
       pinCoil4 = 32; //Pin for coil 4
-      pinTrigger = 37; //The CAS pin
-      pinTrigger2 = 38; //The Cam Sensor pin - NOT USED
+      Trigger.setPin(37); //The CAS pin
+      Trigger2.setPin(38); //The Cam Sensor pin - NOT USED
       pinTPS = A2; //TPS input pin
       pinMAP = A7; //MAP sensor pin
       pinIAT = A1; //IAT sensor pin
@@ -2417,9 +2417,9 @@ void setPinMapping(byte boardID)
       pinCoil6 = 55;
       */
 
-      pinTrigger = 19; //The CAS pin
-      pinTrigger2 = 18; //The Cam Sensor pin
-      pinTrigger3 = 22; //Uses one of the protected spare digitial inputs. This must be set or Serial1 (Pin 0) gets broken
+      Trigger.setPin(19); //The CAS pin
+      Trigger2.setPin(18); //The Cam Sensor pin
+      Trigger3.setPin(22); //Uses one of the protected spare digitial inputs. This must be set or Serial1 (Pin 0) gets broken
       pinFlex = A16; // Flex sensor
       pinMAP = A1; //MAP sensor pin
       pinBaro = A0; //Baro sensor pin
@@ -2477,8 +2477,8 @@ void setPinMapping(byte boardID)
         pinSpareTemp1 = A16;
         pinSpareTemp2 = A17;
 
-        pinTrigger = 20; //The CAS pin
-        pinTrigger2 = 21; //The Cam Sensor pin
+        Trigger.setPin(20); //The CAS pin
+        Trigger2.setPin(21); //The Cam Sensor pin
 
         pinFuelPump = 5; //Fuel pump output
         pinTachOut = 8; //Tacho output pin
@@ -2532,8 +2532,8 @@ void setPinMapping(byte boardID)
       pinCoil3 = 4;
       pinCoil4 = 5;
 
-      pinTrigger = 20; //The CAS pin
-      pinTrigger2 = 21; //The Cam Sensor pin
+      Trigger.setPin(20); //The CAS pin
+      Trigger2.setPin(21); //The Cam Sensor pin
       pinFlex = 37; // Flex sensor
       pinMAP = A5; //MAP sensor pin
       pinBaro = A4; //Baro sensor pin
@@ -2658,8 +2658,8 @@ void setPinMapping(byte boardID)
         //******************************************
         //******** PORTE CONNECTIONS ***************
         //******************************************
-        pinTrigger = PE0; //
-        pinTrigger2 = PE1; //
+        Trigger.setPin(PE0); //
+        Trigger2.setPin(PE1); //
         pinStepperEnable = PE2; //
         pinFuelPump = PE3; //ONBOARD KEY1
         // = PE4;  //ONBOARD KEY2
@@ -2703,8 +2703,8 @@ void setPinMapping(byte boardID)
 
         //external interrupt enabled pins
         pinFlex = PC14; // Flex sensor (Must be external interrupt enabled)
-        pinTrigger = PC13; //The CAS pin also led pin so bad idea
-        pinTrigger2 = PC15; //The Cam Sensor pin
+        Trigger.setPin(PC13); //The CAS pin also led pin so bad idea
+        Trigger2.setPin(PC15); //The Cam Sensor pin
 
      #elif defined(CORE_STM32)
         //blue pill wiki.stm32duino.com/index.php?title=Blue_Pill
@@ -2741,8 +2741,8 @@ void setPinMapping(byte boardID)
         pinTachOut = PB10; //Tacho output pin
         //external interrupt enabled pins
         pinFlex = PB8; // Flex sensor (Must be external interrupt enabled)
-        pinTrigger = PA10; //The CAS pin
-        pinTrigger2 = PA13; //The Cam Sensor pin
+        Trigger.setPin(PA10); //The CAS pin
+        Trigger2.setPin(PA13); //The Cam Sensor pin
 
     #endif
       break;
@@ -2757,7 +2757,7 @@ void setPinMapping(byte boardID)
       pinTPS = PA2;
       // = PA3;
       // = PA4;
-      pinTrigger = PA5;
+      Trigger.setPin(PA5);
       // = PA6;
       // = PA7; // ALT crank
       // = PA8; // Thermocouple #3 /CS
@@ -2798,7 +2798,7 @@ void setPinMapping(byte boardID)
       pinO2 = PC3;
       pinBat = PC4;
       // = PC5;
-      pinTrigger2 = PC6;
+      Trigger2.setPin(PC6);
       pinCoil1 = PC7;
       /* = PC8; */ //(DO NOT USE FOR SPEEDUINO) - SDIO_D0
       pinCoil3 = PC9;
@@ -2943,8 +2943,8 @@ void setPinMapping(byte boardID)
         //******************************************
         //******** PORTE CONNECTIONS ***************
         //******************************************
-        pinTrigger = PE0; //
-        pinTrigger2 = PE1; //
+        Trigger.setPin(PE0); //
+        Trigger2.setPin(PE1); //
         pinStepperEnable = PE2; //
         /* = PE3; */ //ONBOARD KEY1
         /* = PE4; */ //ONBOARD KEY2
@@ -2972,8 +2972,8 @@ void setPinMapping(byte boardID)
         pinCoil3 = 40; //Pin for coil 3
         pinCoil4 = 36; //Pin for coil 4
         pinCoil5 = 34; //Pin for coil 5 PLACEHOLDER value for now
-        pinTrigger = 20; //The CAS pin
-        pinTrigger2 = 21; //The Cam Sensor pin
+        Trigger.setPin(20); //The CAS pin
+        Trigger2.setPin(21); //The Cam Sensor pin
         pinTPS = A2; //TPS input pin
         pinMAP = A3; //MAP sensor pin
         pinIAT = A0; //IAT sensor pin
@@ -3218,7 +3218,8 @@ void initialiseTriggers(void)
   byte triggerInterrupt3 = 2;
 
 #if defined(CORE_AVR)
-    switch (pinTrigger) {
+    switch (Trigger.getPin())
+    {
       //Arduino Mega 2560 mapping
       case 2:
         triggerInterrupt = 0; break;
@@ -3236,11 +3237,12 @@ void initialiseTriggers(void)
         triggerInterrupt = 0; break; //This should NEVER happen
     }
 #else
-    triggerInterrupt = pinTrigger;
+    triggerInterrupt = Trigger.getPin();
 #endif
 
 #if defined(CORE_AVR)
-    switch (pinTrigger2) {
+    switch (Trigger2.getPin())
+    {
       //Arduino Mega 2560 mapping
       case 2:
         triggerInterrupt2 = 0; break;
@@ -3258,11 +3260,12 @@ void initialiseTriggers(void)
         triggerInterrupt2 = 0; break; //This should NEVER happen
     }
 #else
-    triggerInterrupt2 = pinTrigger2;
+    triggerInterrupt2 = Trigger2.getPin();
 #endif
 
 #if defined(CORE_AVR)
-    switch (pinTrigger3) {
+    switch (Trigger3.getPin())
+    {
       //Arduino Mega 2560 mapping
       case 2:
         triggerInterrupt3 = 0; break;
@@ -3280,11 +3283,11 @@ void initialiseTriggers(void)
         triggerInterrupt3 = 0; break; //This should NEVER happen
     }
 #else
-    triggerInterrupt3 = pinTrigger3;
+    triggerInterrupt3 = Trigger3.getPin();
 #endif
-    Trigger.configure(pinTrigger, INPUT);
-    Trigger2.configure(pinTrigger2, INPUT);
-    Trigger3.configure(pinTrigger3, INPUT);
+  Trigger.configure(Trigger.getPin(), INPUT);
+  Trigger2.configure(Trigger2.getPin(), INPUT);
+  Trigger3.configure(Trigger3.getPin(), INPUT);
 
   detachInterrupt(triggerInterrupt);
   detachInterrupt(triggerInterrupt2);

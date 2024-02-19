@@ -84,6 +84,7 @@ bool IOPortMaskInputPin::read(void)
 
 void IOPortMaskInputPin::configure(byte pin, byte mode)
 {
+  m_pin = pin;
   m_port = portOutputRegister(digitalPinToPort(pin));
   m_mask = digitalPinToBitMask(pin);
   pinMode(pin, mode);
@@ -95,6 +96,15 @@ bool IOPortMaskInputPin::is_configured(void)
   return m_port != nullptr && m_is_configured;
 }
 
+byte IOPortMaskInputPin::getPin(void)
+{
+  return m_pin;
+}
+
+void IOPortMaskInputPin::setPin(byte pin)
+{
+  m_pin = pin;
+}
 
 void IODigitalWriteOutputPin::on(void)
 {
@@ -147,6 +157,16 @@ void IODigitalWriteOutputPin::configure(byte pin, byte initial_state, byte mode)
 bool IODigitalWriteOutputPin::is_configured(void)
 {
   return m_is_configured;
+}
+
+byte IODigitalReadInputPin::getPin(void)
+{
+  return m_pin;
+}
+
+void IODigitalReadInputPin::setPin(byte pin)
+{
+  m_pin = pin;
 }
 
 bool IODigitalReadInputPin::read(void)

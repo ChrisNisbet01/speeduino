@@ -513,13 +513,13 @@ void startToothLogger(void)
   toothHistoryIndex = 0U;
 
   //Disconnect the standard interrupt and add the logger version
-  detachInterrupt( digitalPinToInterrupt(pinTrigger) );
-  attachInterrupt( digitalPinToInterrupt(pinTrigger), loggerPrimaryISR, CHANGE );
+  detachInterrupt(digitalPinToInterrupt(Trigger.getPin()));
+  attachInterrupt(digitalPinToInterrupt(Trigger.getPin()), loggerPrimaryISR, CHANGE);
 
-  if(VSS_USES_RPM2() != true)
+  if (!VSS_USES_RPM2())
   {
-    detachInterrupt( digitalPinToInterrupt(pinTrigger2) );
-    attachInterrupt( digitalPinToInterrupt(pinTrigger2), loggerSecondaryISR, CHANGE );
+    detachInterrupt(digitalPinToInterrupt(Trigger2.getPin()));
+    attachInterrupt(digitalPinToInterrupt(Trigger2.getPin()), loggerSecondaryISR, CHANGE);
   }
 
 }
@@ -529,13 +529,13 @@ void stopToothLogger(void)
   currentStatus.toothLogEnabled = false;
 
   //Disconnect the logger interrupts and attach the normal ones
-  detachInterrupt( digitalPinToInterrupt(pinTrigger) );
-  attachInterrupt( digitalPinToInterrupt(pinTrigger), triggerHandler, primaryTriggerEdge );
+  detachInterrupt(digitalPinToInterrupt(Trigger.getPin()));
+  attachInterrupt(digitalPinToInterrupt(Trigger.getPin()), triggerHandler, primaryTriggerEdge);
 
-  if(VSS_USES_RPM2() != true)
+  if (!VSS_USES_RPM2())
   {
-    detachInterrupt( digitalPinToInterrupt(pinTrigger2) );
-    attachInterrupt( digitalPinToInterrupt(pinTrigger2), triggerSecondaryHandler, secondaryTriggerEdge );
+    detachInterrupt(digitalPinToInterrupt(Trigger2.getPin()));
+    attachInterrupt(digitalPinToInterrupt(Trigger2.getPin()), triggerSecondaryHandler, secondaryTriggerEdge);
   }
 }
 
@@ -547,13 +547,13 @@ void startCompositeLogger(void)
   toothHistoryIndex = 0U;
 
   //Disconnect the standard interrupt and add the logger version
-  detachInterrupt( digitalPinToInterrupt(pinTrigger) );
-  attachInterrupt( digitalPinToInterrupt(pinTrigger), loggerPrimaryISR, CHANGE );
+  detachInterrupt(digitalPinToInterrupt(Trigger.getPin()));
+  attachInterrupt(digitalPinToInterrupt(Trigger.getPin()), loggerPrimaryISR, CHANGE);
 
-  if( (VSS_USES_RPM2() != true) && (FLEX_USES_RPM2() != true) )
+  if (!VSS_USES_RPM2() && !FLEX_USES_RPM2())
   {
-    detachInterrupt( digitalPinToInterrupt(pinTrigger2) );
-    attachInterrupt( digitalPinToInterrupt(pinTrigger2), loggerSecondaryISR, CHANGE );
+    detachInterrupt(digitalPinToInterrupt(Trigger2.getPin()));
+    attachInterrupt(digitalPinToInterrupt(Trigger2.getPin()), loggerSecondaryISR, CHANGE);
   }
 }
 
@@ -562,13 +562,13 @@ void stopCompositeLogger(void)
   currentStatus.compositeTriggerUsed = 0U;
 
   //Disconnect the logger interrupts and attach the normal ones
-  detachInterrupt( digitalPinToInterrupt(pinTrigger) );
-  attachInterrupt( digitalPinToInterrupt(pinTrigger), triggerHandler, primaryTriggerEdge );
+  detachInterrupt(digitalPinToInterrupt(Trigger.getPin()));
+  attachInterrupt(digitalPinToInterrupt(Trigger.getPin()), triggerHandler, primaryTriggerEdge);
 
-  if( (VSS_USES_RPM2() != true) && (FLEX_USES_RPM2() != true) )
+  if (!VSS_USES_RPM2()  && !FLEX_USES_RPM2())
   {
-    detachInterrupt( digitalPinToInterrupt(pinTrigger2) );
-    attachInterrupt( digitalPinToInterrupt(pinTrigger2), triggerSecondaryHandler, secondaryTriggerEdge );
+    detachInterrupt(digitalPinToInterrupt(Trigger2.getPin()));
+    attachInterrupt(digitalPinToInterrupt(Trigger2.getPin()), triggerSecondaryHandler, secondaryTriggerEdge);
   }
 }
 
@@ -580,11 +580,11 @@ void startCompositeLoggerTertiary(void)
   toothHistoryIndex = 0U;
 
   //Disconnect the standard interrupt and add the logger version
-  detachInterrupt( digitalPinToInterrupt(pinTrigger) );
-  attachInterrupt( digitalPinToInterrupt(pinTrigger), loggerPrimaryISR, CHANGE );
+  detachInterrupt(digitalPinToInterrupt(Trigger.getPin()));
+  attachInterrupt(digitalPinToInterrupt(Trigger.getPin()), loggerPrimaryISR, CHANGE);
 
-  detachInterrupt( digitalPinToInterrupt(pinTrigger3) );
-  attachInterrupt( digitalPinToInterrupt(pinTrigger3), loggerTertiaryISR, CHANGE );
+  detachInterrupt(digitalPinToInterrupt(Trigger3.getPin()) );
+  attachInterrupt(digitalPinToInterrupt(Trigger3.getPin()), loggerTertiaryISR, CHANGE);
 }
 
 void stopCompositeLoggerTertiary(void)
@@ -592,11 +592,11 @@ void stopCompositeLoggerTertiary(void)
   currentStatus.compositeTriggerUsed = 0;
 
   //Disconnect the logger interrupts and attach the normal ones
-  detachInterrupt( digitalPinToInterrupt(pinTrigger) );
-  attachInterrupt( digitalPinToInterrupt(pinTrigger), triggerHandler, primaryTriggerEdge );
+  detachInterrupt(digitalPinToInterrupt(Trigger.getPin()));
+  attachInterrupt(digitalPinToInterrupt(Trigger.getPin()), triggerHandler, primaryTriggerEdge);
 
-  detachInterrupt( digitalPinToInterrupt(pinTrigger3) );
-  attachInterrupt( digitalPinToInterrupt(pinTrigger3), triggerTertiaryHandler, tertiaryTriggerEdge );
+  detachInterrupt(digitalPinToInterrupt(Trigger3.getPin()));
+  attachInterrupt(digitalPinToInterrupt(Trigger3.getPin()), triggerTertiaryHandler, tertiaryTriggerEdge);
 }
 
 
@@ -608,14 +608,14 @@ void startCompositeLoggerCams(void)
   toothHistoryIndex = 0;
 
   //Disconnect the standard interrupt and add the logger version
-  if( (VSS_USES_RPM2() != true) && (FLEX_USES_RPM2() != true) )
+  if (!VSS_USES_RPM2() && !FLEX_USES_RPM2())
   {
-    detachInterrupt( digitalPinToInterrupt(pinTrigger2) );
-    attachInterrupt( digitalPinToInterrupt(pinTrigger2), loggerSecondaryISR, CHANGE );
+    detachInterrupt(digitalPinToInterrupt(Trigger2.getPin()));
+    attachInterrupt(digitalPinToInterrupt(Trigger2.getPin()), loggerSecondaryISR, CHANGE);
   }
 
-  detachInterrupt( digitalPinToInterrupt(pinTrigger3) );
-  attachInterrupt( digitalPinToInterrupt(pinTrigger3), loggerTertiaryISR, CHANGE );
+  detachInterrupt(digitalPinToInterrupt(Trigger3.getPin()));
+  attachInterrupt(digitalPinToInterrupt(Trigger3.getPin()), loggerTertiaryISR, CHANGE);
 }
 
 void stopCompositeLoggerCams(void)
@@ -623,12 +623,12 @@ void stopCompositeLoggerCams(void)
   currentStatus.compositeTriggerUsed = false;
 
   //Disconnect the logger interrupts and attach the normal ones
-  if( (VSS_USES_RPM2() != true) && (FLEX_USES_RPM2() != true) )
+  if (!VSS_USES_RPM2() && !FLEX_USES_RPM2())
   {
-    detachInterrupt( digitalPinToInterrupt(pinTrigger2) );
-    attachInterrupt( digitalPinToInterrupt(pinTrigger2), triggerSecondaryHandler, secondaryTriggerEdge );
+    detachInterrupt(digitalPinToInterrupt(Trigger2.getPin()));
+    attachInterrupt(digitalPinToInterrupt(Trigger2.getPin()), triggerSecondaryHandler, secondaryTriggerEdge);
   }
 
-  detachInterrupt( digitalPinToInterrupt(pinTrigger3) );
-  attachInterrupt( digitalPinToInterrupt(pinTrigger3), triggerTertiaryHandler, tertiaryTriggerEdge );
+  detachInterrupt(digitalPinToInterrupt(Trigger3.getPin()));
+  attachInterrupt(digitalPinToInterrupt(Trigger3.getPin()), triggerTertiaryHandler, tertiaryTriggerEdge);
 }

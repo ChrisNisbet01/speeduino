@@ -310,13 +310,13 @@ void setTriggerHysteresis()
   const uint32_t padConfig = IOMUXC_PAD_DSE(1) | IOMUXC_PAD_PKE | IOMUXC_PAD_PUE | IOMUXC_PAD_SPEED(0) | IOMUXC_PAD_HYS;
 
   //Primary trigger
-  p = digital_pin_to_info_PGM + pinTrigger;
+  p = digital_pin_to_info_PGM + Trigger.getPin();
   *(p->reg + 1) &= ~(p->mask); // TODO: atomic
   *(p->pad) = padConfig;
   *(p->mux) = 5 | 0x10;
 
   //Secondary trigger
-  p = digital_pin_to_info_PGM + pinTrigger2;
+  p = digital_pin_to_info_PGM + Trigger2.getPin();
   *(p->reg + 1) &= ~(p->mask); // TODO: atomic
   *(p->pad) = padConfig;
   *(p->mux) = 5 | 0x10;

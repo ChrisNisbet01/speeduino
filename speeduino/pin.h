@@ -28,7 +28,6 @@ public:
   bool is_configured(void);
 
 private:
-
   volatile PORT_TYPE * m_port = nullptr;
   PINMASK_TYPE m_mask = 0;
   bool m_is_configured = false;
@@ -47,8 +46,12 @@ public:
 
   bool is_configured(void);
 
-private:
+  byte getPin(void);
 
+  void setPin(byte pin);
+
+private:
+  byte m_pin = INVALID_PIN_NUMBER;
   volatile PORT_TYPE * m_port = nullptr;
   PINMASK_TYPE m_mask = 0;
   bool m_is_configured = false;
@@ -70,7 +73,6 @@ public:
   bool is_configured(void);
 
 private:
-
   byte m_pin = INVALID_PIN_NUMBER;
   bool m_is_configured = false;
 };
@@ -85,8 +87,11 @@ public:
 
   bool is_configured(void);
 
-private:
+  byte getPin(void);
 
+  void setPin(byte pin);
+
+private:
   byte m_pin = INVALID_PIN_NUMBER;
   bool m_is_configured = false;
 };

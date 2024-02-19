@@ -133,9 +133,6 @@ byte pinCoil8; ///< Pin for coil 8
  */
 OUTPUT_CONTROL_TYPE ignitionOutputControl = OUTPUT_CONTROL_DIRECT;
 
-byte pinTrigger;  ///< RPM1 (Typically CAS=crankshaft angle sensor) pin
-byte pinTrigger2; ///< RPM2 (Typically the Cam Sensor) pin
-byte pinTrigger3;	///< the 2nd cam sensor pin
 byte pinTPS;      //TPS input pin
 byte pinMAP;      //MAP sensor pin
 byte pinEMAP;     //EMAP sensor pin
