@@ -4,7 +4,7 @@
 
 #if defined(CORE_TEENSY) || defined(CORE_STM32)
 
-extern IODigitalWriteOutputPin boost;
+extern IODigitalWriteOutputPin Boost;
 extern IODigitalWriteOutputPin FuelPump;
 extern IODigitalWriteOutputPin Fan;
 extern IODigitalWriteOutputPin VVT_1;
@@ -23,7 +23,7 @@ extern IODigitalWriteOutputPin NitrousStage2;
 
 #else
 
-extern IOAtomicWriteOutputPin boost;
+extern IOAtomicWriteOutputPin Boost;
 extern IOAtomicWriteOutputPin FuelPump;
 extern IOAtomicWriteOutputPin Fan;
 extern IOAtomicWriteOutputPin VVT_1;

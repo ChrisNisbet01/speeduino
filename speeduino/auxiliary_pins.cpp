@@ -2,7 +2,7 @@
 
 #if defined(CORE_TEENSY) || defined(CORE_STM32)
 
-IODigitalWriteOutputPin boost;
+IODigitalWriteOutputPin Boost;
 IODigitalWriteOutputPin FuelPump;
 IODigitalWriteOutputPin Fan;
 IODigitalWriteOutputPin VVT_1;
@@ -21,7 +21,7 @@ IODigitalWriteOutputPin NitrousStage2;
 
 #else
 
-IOAtomicWriteOutputPin boost;
+IOAtomicWriteOutputPin Boost;
 IOAtomicWriteOutputPin FuelPump;
 IOAtomicWriteOutputPin Fan;
 IOAtomicWriteOutputPin VVT_1;

@@ -82,9 +82,9 @@ bool IOPortMaskInputPin::read(void)
   return (*m_port & m_mask) != 0;
 }
 
-void IOPortMaskInputPin::configure(byte pin, byte mode)
+void IOPortMaskInputPin::configure(byte pin_, byte mode)
 {
-  m_pin = pin;
+  pin = pin_;
   m_port = portOutputRegister(digitalPinToPort(pin));
   m_mask = digitalPinToBitMask(pin);
   pinMode(pin, mode);
@@ -96,43 +96,38 @@ bool IOPortMaskInputPin::is_configured(void)
   return m_port != nullptr && m_is_configured;
 }
 
-byte IOPortMaskInputPin::getPin(void)
+void IOPortMaskInputPin::setPin(byte pin_)
 {
-  return m_pin;
-}
-
-void IOPortMaskInputPin::setPin(byte pin)
-{
-  m_pin = pin;
+  pin = pin_;
 }
 
 void IODigitalWriteOutputPin::on(void)
 {
-  digitalWrite(m_pin, HIGH);
+  digitalWrite(pin, HIGH);
 }
 
 void IODigitalWriteOutputPin::off(void)
 {
-  digitalWrite(m_pin, LOW);
+  digitalWrite(pin, LOW);
 }
 
 void IODigitalWriteOutputPin::write(byte value)
 {
-  digitalWrite(m_pin, value);
+  digitalWrite(pin, value);
 }
 
 void IODigitalWriteOutputPin::toggle(void)
 {
 #if defined(CORE_TEENSY) || defined(CORE_STM32)
-  digitalToggle(m_pin);
+  digitalToggle(pin);
 #else
-  write(!digitalRead(m_pin));
+  write(!digitalRead(pin));
 #endif
 }
 
-void IODigitalWriteOutputPin::configure(byte pin, byte initial_state, byte mode)
+void IODigitalWriteOutputPin::configure(byte pin_, byte initial_state, byte mode)
 {
-  m_pin = pin;
+  pin = pin_;
   /* Set the pin before configuring as an output. */
   if (mode == OUTPUT)
   {
@@ -150,7 +145,7 @@ void IODigitalWriteOutputPin::configure(byte pin, byte initial_state, byte mode)
     }
   }
 
-  pinMode(m_pin, mode);
+  pinMode(pin, mode);
   m_is_configured = true;
 }
 
@@ -159,26 +154,21 @@ bool IODigitalWriteOutputPin::is_configured(void)
   return m_is_configured;
 }
 
-byte IODigitalWriteOutputPin::getPin(void)
+void IODigitalWriteOutputPin::setPin(byte pin_)
 {
-  return m_pin;
-}
-
-void IODigitalWriteOutputPin::setPin(byte pin)
-{
-  m_pin = pin;
+  pin = pin_;
 }
 
 bool IODigitalReadInputPin::read(void)
 {
-  return digitalRead(m_pin);
+  return digitalRead(pin);
 }
 
-void IODigitalReadInputPin::configure(byte pin, byte mode)
+void IODigitalReadInputPin::configure(byte pin_, byte mode)
 {
-  m_pin = pin;
+  pin = pin_;
 
-  pinMode(m_pin, mode);
+  pinMode(pin, mode);
   m_is_configured = true;
 }
 
@@ -187,14 +177,9 @@ bool IODigitalReadInputPin::is_configured(void)
   return m_is_configured;
 }
 
-byte IODigitalReadInputPin::getPin(void)
+void IODigitalReadInputPin::setPin(byte pin_)
 {
-  return m_pin;
-}
-
-void IODigitalReadInputPin::setPin(byte pin)
-{
-  m_pin = pin;
+  pin = pin_;
 }
 
 #if defined(CORE_TEENSY) || defined(CORE_STM32)

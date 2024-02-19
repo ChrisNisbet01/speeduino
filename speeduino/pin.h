@@ -36,6 +36,8 @@ private:
 class IOPortMaskInputPin
 {
 public:
+  byte pin = INVALID_PIN_NUMBER;
+
   /*
    * Assumes that port and mask have been assigned before control methods are
    * called.
@@ -46,12 +48,9 @@ public:
 
   bool is_configured(void);
 
-  byte getPin(void);
-
   void setPin(byte pin);
 
 private:
-  byte m_pin = INVALID_PIN_NUMBER;
   volatile PORT_TYPE * m_port = nullptr;
   PINMASK_TYPE m_mask = 0;
   bool m_is_configured = false;
@@ -60,6 +59,8 @@ private:
 class IODigitalWriteOutputPin
 {
 public:
+  byte pin = INVALID_PIN_NUMBER;
+
   void on(void);
 
   void off(void);
@@ -72,12 +73,9 @@ public:
 
   bool is_configured(void);
 
-  byte getPin(void);
-
   void setPin(byte pin);
 
 private:
-  byte m_pin = INVALID_PIN_NUMBER;
   bool m_is_configured = false;
 };
 
@@ -85,18 +83,17 @@ class IODigitalReadInputPin
 {
 public:
 
+  byte pin = INVALID_PIN_NUMBER;
+
   bool read(void);
 
   void configure(byte pin, byte mode = INPUT);
 
   bool is_configured(void);
 
-  byte getPin(void);
-
   void setPin(byte pin);
 
 private:
-  byte m_pin = INVALID_PIN_NUMBER;
   bool m_is_configured = false;
 };
 

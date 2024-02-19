@@ -3029,7 +3029,7 @@ void setPinMapping(byte boardID)
   }
 
   //Finally, set the relevant pin modes for outputs
-  boost.configure(pinBoost);
+  Boost.configure(pinBoost);
   TachOut.configure(pinTachOut, HIGH); //Set the tacho output default state
 
   Idle1.configure(pinIdle1);
@@ -3039,7 +3039,7 @@ void setPinMapping(byte boardID)
   FuelPump.configure(pinFuelPump);
   Fan.configure(pinFan);
 
-  StepperDir.configure(StepperDir.getPin());
+  StepperDir.configure(StepperDir.pin);
   StepperStep.configure(pinStepperStep);
   StepperEnable.configure(pinStepperEnable);
 
@@ -3218,7 +3218,7 @@ void initialiseTriggers(void)
   byte triggerInterrupt3 = 2;
 
 #if defined(CORE_AVR)
-    switch (Trigger.getPin())
+    switch (Trigger.pin)
     {
       //Arduino Mega 2560 mapping
       case 2:
@@ -3237,11 +3237,11 @@ void initialiseTriggers(void)
         triggerInterrupt = 0; break; //This should NEVER happen
     }
 #else
-    triggerInterrupt = Trigger.getPin();
+    triggerInterrupt = Trigger.pin;
 #endif
 
 #if defined(CORE_AVR)
-    switch (Trigger2.getPin())
+    switch (Trigger2.pin)
     {
       //Arduino Mega 2560 mapping
       case 2:
@@ -3260,11 +3260,11 @@ void initialiseTriggers(void)
         triggerInterrupt2 = 0; break; //This should NEVER happen
     }
 #else
-    triggerInterrupt2 = Trigger2.getPin();
+    triggerInterrupt2 = Trigger2.pin;
 #endif
 
 #if defined(CORE_AVR)
-    switch (Trigger3.getPin())
+    switch (Trigger3.pin)
     {
       //Arduino Mega 2560 mapping
       case 2:
@@ -3283,11 +3283,11 @@ void initialiseTriggers(void)
         triggerInterrupt3 = 0; break; //This should NEVER happen
     }
 #else
-    triggerInterrupt3 = Trigger3.getPin();
+    triggerInterrupt3 = Trigger3.pin;
 #endif
-  Trigger.configure(Trigger.getPin(), INPUT);
-  Trigger2.configure(Trigger2.getPin(), INPUT);
-  Trigger3.configure(Trigger3.getPin(), INPUT);
+  Trigger.configure(Trigger.pin, INPUT);
+  Trigger2.configure(Trigger2.pin, INPUT);
+  Trigger3.configure(Trigger3.pin, INPUT);
 
   detachInterrupt(triggerInterrupt);
   detachInterrupt(triggerInterrupt2);

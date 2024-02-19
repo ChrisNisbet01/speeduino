@@ -30,8 +30,8 @@ void wmiControl(void);
 #define N2O_STAGE2_PIN_LOW() NitrousStage2.off()
 #define N2O_STAGE2_PIN_HIGH() NitrousStage2.on()
 
-#define BOOST_PIN_LOW() boost.off()
-#define BOOST_PIN_HIGH() boost.on()
+#define BOOST_PIN_LOW() Boost.off()
+#define BOOST_PIN_HIGH() Boost.on()
 
 #define AIRCON_PIN_LOW() AirConComp.off()
 #define AIRCON_PIN_HIGH() AirConComp.on()
