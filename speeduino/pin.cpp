@@ -111,12 +111,14 @@ void IODigitalWriteOutputPin::write(byte value)
   digitalWrite(m_pin, value);
 }
 
-#if defined(CORE_TEENSY) || defined(CORE_STM32)
 void IODigitalWriteOutputPin::toggle(void)
 {
+#if defined(CORE_TEENSY) || defined(CORE_STM32)
   digitalToggle(m_pin);
-}
+#else
+  write(!digitalRead(m_pin));
 #endif
+}
 
 void IODigitalWriteOutputPin::configure(byte pin, byte initial_state, byte mode)
 {

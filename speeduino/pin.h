@@ -63,9 +63,7 @@ public:
 
   void write(byte value);
 
-#if defined(CORE_TEENSY) || defined(CORE_STM32)
   void toggle(void);
-#endif
 
   void configure(byte pin, byte initial_state = LOW, byte mode = OUTPUT);
 

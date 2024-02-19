@@ -429,7 +429,7 @@ void loop(void)
       if (BIT_CHECK(currentStatus.status4, BIT_STATUS4_WMI_EMPTY))
       {
         // flash with 1sec interval
-        WMIIndicator.write(!digitalRead(pinWMIIndicator));
+        WMIIndicator.toggle();
       }
       else
       {
@@ -1618,14 +1618,7 @@ void checkLaunchAndFlatShift(void)
   //Only check for pinLaunch if any function using it is enabled. Else pins might break starting a board
   if (configPage6.flatSEnable || configPage6.launchEnabled)
   {
-    if (configPage6.launchHiLo > 0)
-    {
-      currentStatus.clutchTrigger = digitalRead(pinLaunch);
-    }
-    else
-    {
-      currentStatus.clutchTrigger = !digitalRead(pinLaunch);
-    }
+    currentStatus.clutchTrigger = (configPage6.launchHiLo == 0) ^ digitalRead(pinLaunch);
   }
 
   //Check whether the clutch has been engaged or disengaged and store the
