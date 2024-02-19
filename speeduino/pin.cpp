@@ -149,12 +149,12 @@ bool IODigitalWriteOutputPin::is_configured(void)
   return m_is_configured;
 }
 
-bool IODigitalWriteInputPin::read(void)
+bool IODigitalReadInputPin::read(void)
 {
   return digitalRead(m_pin);
 }
 
-void IODigitalWriteInputPin::configure(byte pin, byte mode)
+void IODigitalReadInputPin::configure(byte pin, byte mode)
 {
   m_pin = pin;
 
@@ -162,7 +162,7 @@ void IODigitalWriteInputPin::configure(byte pin, byte mode)
   m_is_configured = true;
 }
 
-bool IODigitalWriteInputPin::is_configured(void)
+bool IODigitalReadInputPin::is_configured(void)
 {
   return m_is_configured;
 }

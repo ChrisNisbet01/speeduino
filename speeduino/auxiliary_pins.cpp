@@ -10,9 +10,9 @@ IODigitalWriteOutputPin VVT_2;
 IODigitalWriteOutputPin AirConComp;
 IODigitalWriteOutputPin AirConFan;
 
-IODigitalWriteInputPin Trigger;
-IODigitalWriteInputPin Trigger2;
-IODigitalWriteInputPin Trigger3;
+IODigitalReadInputPin Trigger;
+IODigitalReadInputPin Trigger2;
+IODigitalReadInputPin Trigger3;
 
 IODigitalWriteOutputPin Flex;
 

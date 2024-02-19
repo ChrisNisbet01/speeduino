@@ -12,9 +12,9 @@ extern IODigitalWriteOutputPin VVT_2;
 extern IODigitalWriteOutputPin AirConComp;
 extern IODigitalWriteOutputPin AirConFan;
 
-extern IODigitalWriteInputPin Trigger;
-extern IODigitalWriteInputPin Trigger2;
-extern IODigitalWriteInputPin Trigger3;
+extern IODigitalReadInputPin Trigger;
+extern IODigitalReadInputPin Trigger2;
+extern IODigitalReadInputPin Trigger3;
 
 extern IODigitalWriteOutputPin Flex;
 

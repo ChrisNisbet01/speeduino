@@ -2,7 +2,7 @@
 
 #include "globals.h"
 
-#define INVALID_PIN_NUMBER 0xff
+#define INVALID_PIN_NUMBER 0
 /*
  * Probably don't need all these classes - simply wanted to make them equivalent
  * to what's already there.
@@ -75,7 +75,7 @@ private:
   bool m_is_configured = false;
 };
 
-class IODigitalWriteInputPin
+class IODigitalReadInputPin
 {
 public:
 
