@@ -521,7 +521,7 @@ extern volatile byte LOOP_TIMER;
 //These functions all do checks on a pin to determine if it is already in use by another (higher importance) function
 #define pinIsInjector(pin) (((pin) == pinInjector1) || ((pin) == pinInjector2) || ((pin) == pinInjector3) || ((pin) == pinInjector4) || ((pin) == pinInjector5) || ((pin) == pinInjector6) || ((pin) == pinInjector7) || ((pin) == pinInjector8))
 #define pinIsIgnition(pin) (((pin) == pinCoil1) || ((pin) == pinCoil2) || ((pin) == pinCoil3) || ((pin) == pinCoil4) || ((pin) == pinCoil5) || ((pin) == pinCoil6) || ((pin) == pinCoil7) || ((pin) == pinCoil8))
-//#define pinIsOutput(pin)    ( pinIsInjector((pin)) || pinIsIgnition((pin)) || ((pin) == FuelPump.pin) || ((pin) == Fan.pin) || ((pin) == AirConComp.pin) || ((pin) == AirConFan.pin)|| ((pin) == VVT_1.pin) || ((pin) == VVT_2.pin) || ( ((pin) == Boost.pin) && configPage6.boostEnabled) || ((pin) == Idle1.pin) || ((pin) == Idle2.pin) || ((pin) == TachOut.pin) || ((pin) == pinStepperEnable) || ((pin) == pinStepperStep) )
+//#define pinIsOutput(pin)    ( pinIsInjector((pin)) || pinIsIgnition((pin)) || ((pin) == FuelPump.pin) || ((pin) == Fan.pin) || ((pin) == AirConComp.pin) || ((pin) == AirConFan.pin)|| ((pin) == VVT_1.pin) || ((pin) == VVT_2.pin) || ( ((pin) == Boost.pin) && configPage6.boostEnabled) || ((pin) == Idle1.pin) || ((pin) == Idle2.pin) || ((pin) == TachOut.pin) || ((pin) == StepperEnable.pin) || ((pin) == StepperStep.pin) )
 #define pinIsSensor(pin) (((pin) == pinCLT) || ((pin) == pinIAT) || ((pin) == pinMAP) || ((pin) == pinTPS) || ((pin) == pinO2) || ((pin) == pinBat) || (((pin) == Flex.pin) && (configPage2.flexEnabled != 0)))
 //#define pinIsUsed(pin)      ( pinIsSensor((pin)) || pinIsOutput((pin)) || pinIsReserved((pin)) )
 
@@ -1434,7 +1434,6 @@ extern byte pinO2_2;          //second O2 pin
 extern byte pinBat;           //Battery voltage pin
 extern byte pinDisplayReset;  // OLED reset pin
 extern byte pinIdleUp;        //Input for triggering Idle Up
-extern byte pinIdleUpOutput;  //Output that follows (normal or inverted) the idle up pin
 extern byte pinCTPS;          //Input for triggering closed throttle state
 extern byte pinFuel2Input;    //Input for switching to the 2nd fuel table
 extern byte pinSpark2Input;   //Input for switching to the 2nd ignition table
@@ -1453,8 +1452,6 @@ extern byte pinSpareLOut2;    // spare low current output
 extern byte pinSpareLOut3;
 extern byte pinSpareLOut4;
 extern byte pinSpareLOut5;
-extern byte pinStepperStep;    //Step pin for the stepper motor driver
-extern byte pinStepperEnable;  //Turning the DRV8825 driver on/off
 extern byte pinLaunch;
 extern byte pinIgnBypass;  //The pin used for an ignition bypass (Optional)
 extern byte pinVSS;

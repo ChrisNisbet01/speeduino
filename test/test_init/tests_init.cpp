@@ -133,8 +133,8 @@ void test_initialisation_outputs_V04(void)
   else if (isIdleStepper)
   {
     TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(StepperDir.pin), "Stepper Dir");
-    TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinStepperStep), "Stepper Step");
-    TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinStepperEnable), "Stepper Enable");
+    TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(StepperStep.pin), "Stepper Step");
+    TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(StepperEnable.pin), "Stepper Enable");
   }
 
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(Fan.pin), "Fan");
@@ -209,9 +209,9 @@ void test_initialisation_outputs_stepper_idle(void)
   strcpy_P(msg, PSTR("Stepper Dir"));
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(StepperDir.pin), msg);
   strcpy_P(msg, PSTR("Stepper Step"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinStepperStep), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(StepperStep.pin), msg);
   strcpy_P(msg, PSTR("Stepper Enable"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinStepperEnable), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(StepperEnable.pin), msg);
 }
 
 void test_initialisation_outputs_boost(void)

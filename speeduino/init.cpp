@@ -1434,7 +1434,7 @@ void setPinMapping(byte boardID)
       Idle1.pin = 30; //Single wire idle control
       Idle2.pin = 31; //2 wire idle control
       StepperDir.setPin(16); //Direction pin  for DRV8825 driver
-      pinStepperStep = 17; //Step pin for DRV8825 driver
+      StepperStep.pin = 17; //Step pin for DRV8825 driver
       Fan.pin = 47; //Pin for the fan output
       FuelPump.pin = 4; //Fuel pump output
       Flex.pin = 2; // Flex sensor (Must be external interrupt enabled)
@@ -1472,8 +1472,8 @@ void setPinMapping(byte boardID)
       VVT_2.pin = 48; //Default VVT2 output
       FuelPump.pin = 4; //Fuel pump output
       StepperDir.setPin(16); //Direction pin  for DRV8825 driver
-      pinStepperStep = 17; //Step pin for DRV8825 driver
-      pinStepperEnable = 26; //Enable pin for DRV8825
+      StepperStep.pin = 17; //Step pin for DRV8825 driver
+      StepperEnable.pin = 26; //Enable pin for DRV8825
       Fan.pin = A13; //Pin for the fan output
       pinLaunch = 51; //Can be overwritten below
       Flex.pin = 2; // Flex sensor (Must be external interrupt enabled)
@@ -1484,7 +1484,7 @@ void setPinMapping(byte boardID)
 #if defined(CORE_TEENSY35)
         Trigger.setPin(23);
         StepperDir.setPin(33);
-        pinStepperStep = 34;
+        StepperStep.pin = 34;
         pinCoil1 = 31;
         TachOut.pin = 28;
         Fan.pin = 27;
@@ -1526,8 +1526,8 @@ void setPinMapping(byte boardID)
       VVT_2.pin = 48; //Default VVT2 output
       FuelPump.pin = 45; //Fuel pump output  (Goes to ULN2803)
       StepperDir.setPin(16); //Direction pin  for DRV8825 driver
-      pinStepperStep = 17; //Step pin for DRV8825 driver
-      pinStepperEnable = 24; //Enable pin for DRV8825
+      StepperStep.pin = 17; //Step pin for DRV8825 driver
+      StepperEnable.pin = 24; //Enable pin for DRV8825
       Fan.pin = 47; //Pin for the fan output (Goes to ULN2803)
       pinLaunch = 51; //Can be overwritten below
       Flex.pin = 2; // Flex sensor (Must be external interrupt enabled)
@@ -1544,7 +1544,7 @@ void setPinMapping(byte boardID)
         Trigger.setPin(23);
         Trigger2.setPin(36);
         StepperDir.setPin(34);
-        pinStepperStep = 35;
+        StepperStep.pin = 35;
         pinCoil1 = 31;
         pinCoil2 = 32;
         TachOut.pin = 28;
@@ -1576,7 +1576,7 @@ void setPinMapping(byte boardID)
         Trigger3.setPin(23);
 
         StepperDir.setPin(34);
-        pinStepperStep = 35;
+        StepperStep.pin = 35;
 
         pinCoil1 = 31;
         pinCoil2 = 32;
@@ -1680,10 +1680,10 @@ void setPinMapping(byte boardID)
         //******************************************
         Trigger.setPin(PE0); //
         Trigger2.setPin(PE1); //
-        pinStepperEnable = PE2; //
+        StepperEnable.pin = PE2; //
         /* = PE3; */ //ONBOARD KEY1
         /* = PE4; */ //ONBOARD KEY2
-        pinStepperStep = PE5; //
+        StepperStep.pin = PE5; //
         Fan.pin = PE6; //
         StepperDir.setPin(PE7); //
         /* = PE8; */ //
@@ -1720,7 +1720,7 @@ void setPinMapping(byte boardID)
         Idle2.pin = PB10; //2 wire idle control
         Boost.pin = PA6; //Boost control
         StepperDir.setPin(PB10); //Direction pin  for DRV8825 driver
-        pinStepperStep = PB2; //Step pin for DRV8825 driver
+        StepperStep.pin = PB2; //Step pin for DRV8825 driver
         FuelPump.pin = PA8; //Fuel pump output
         Fan.pin = PA5; //Pin for the fan output (Goes to ULN2803)
         //external interrupt enabled pins
@@ -1761,8 +1761,8 @@ void setPinMapping(byte boardID)
       Idle2.pin = 4; //2 wire idle control (Note this is shared with boost!!!)
       FuelPump.pin = 40; //Fuel pump output
       StepperDir.setPin(16); //Direction pin  for DRV8825 driver
-      pinStepperStep = 17; //Step pin for DRV8825 driver
-      pinStepperEnable = 24;
+      StepperStep.pin = 17; //Step pin for DRV8825 driver
+      StepperEnable.pin = 24;
       Fan.pin = 41; //Pin for the fan output
       pinLaunch = 12; //Can be overwritten below
       Flex.pin = 3; // Flex sensor (Must be external interrupt enabled)
@@ -1773,7 +1773,7 @@ void setPinMapping(byte boardID)
         Trigger.setPin(23);
         Trigger2.setPin(36);
         StepperDir.setPin(34);
-        pinStepperStep = 35;
+        StepperStep.pin = 35;
         pinCoil1 = 33; //Done
         pinCoil2 = 24; //Done
         pinCoil3 = 51; //Won't work (No mapping for pin 32)
@@ -1812,8 +1812,8 @@ void setPinMapping(byte boardID)
       Idle2.pin = 4; //2 wire idle control (Note this is shared with boost!!!)
       FuelPump.pin = 49; //Fuel pump output
       StepperDir.setPin(16); //Direction pin  for DRV8825 driver
-      pinStepperStep = 17; //Step pin for DRV8825 driver
-      pinStepperEnable = 24;
+      StepperStep.pin = 17; //Step pin for DRV8825 driver
+      StepperEnable.pin = 24;
       Fan.pin = 35; //Pin for the fan output
       pinLaunch = 37; //Can be overwritten below
       Flex.pin = 3; // Flex sensor (Must be external interrupt enabled)
@@ -1824,7 +1824,7 @@ void setPinMapping(byte boardID)
         Trigger.setPin(23);
         Trigger2.setPin(36);
         StepperDir.setPin(34);
-        pinStepperStep = 35;
+        StepperStep.pin = 35;
         pinCoil1 = 33; //Done
         pinCoil2 = 24; //Done
         pinCoil3 = 51; //Won't work (No mapping for pin 32)
@@ -1864,9 +1864,9 @@ void setPinMapping(byte boardID)
       Idle2.pin = 4; //2 wire idle control (Note this is shared with boost!!!)
       FuelPump.pin = 37; //Fuel pump output
       //Note that there is no stepper driver output on the PNP boards. These pins are unconnected and remain here just to prevent issues with random pin numbers occurring
-      pinStepperEnable = 15; //Enable pin for the DRV8825
+      StepperEnable.pin = 15; //Enable pin for the DRV8825
       StepperDir.setPin(16); //Direction pin  for DRV8825 driver
-      pinStepperStep = 17; //Step pin for DRV8825 driver
+      StepperStep.pin = 17; //Step pin for DRV8825 driver
       Fan.pin = 35; //Pin for the fan output
       pinLaunch = 12; //Can be overwritten below
       Flex.pin = 3; // Flex sensor (Must be external interrupt enabled)
@@ -1879,7 +1879,7 @@ void setPinMapping(byte boardID)
         Trigger.setPin(23);
         Trigger2.setPin(36);
         StepperDir.setPin(34);
-        pinStepperStep = 35;
+        StepperStep.pin = 35;
         pinCoil1 = 33; //Done
         pinCoil2 = 24; //Done
         pinCoil3 = 51; //Won't work (No mapping for pin 32)
@@ -1992,7 +1992,7 @@ void setPinMapping(byte boardID)
       Idle1.pin = 5; //Single wire idle control
       FuelPump.pin = 45; //Fuel pump output
       StepperDir.setPin(20); //Direction pin  for DRV8825 driver
-      pinStepperStep = 21; //Step pin for DRV8825 driver
+      StepperStep.pin = 21; //Step pin for DRV8825 driver
       pinSpareHOut1 = 4; // high current output spare1
       pinSpareHOut2 = 6; // high current output spare2
       Boost.pin = 7;
@@ -2045,8 +2045,8 @@ void setPinMapping(byte boardID)
       VVT_2.pin = 26; //VVT2 output (exhaust vanos)
       FuelPump.pin = 45; //Fuel pump output  (Goes to ULN2003)
       StepperDir.setPin(16); //Stepper valve isn't used with these
-      pinStepperStep = 17; //Stepper valve isn't used with these
-      pinStepperEnable = 24; //Stepper valve isn't used with these
+      StepperStep.pin = 17; //Stepper valve isn't used with these
+      StepperEnable.pin = 24; //Stepper valve isn't used with these
       Fan.pin = 47; //Pin for the fan output (Goes to ULN2003)
       pinLaunch = 51; //Launch control pin
       Flex.pin = 2; // Flex sensor
@@ -2093,8 +2093,8 @@ void setPinMapping(byte boardID)
       VVT_2.pin = PC7; //VVT2 output (exhaust vanos)
       FuelPump.pin = PE11; //Fuel pump output  (Goes to ULN2003)
       StepperDir.setPin(PB10); //Stepper valve isn't used with these
-      pinStepperStep = PB11; //Stepper valve isn't used with these
-      pinStepperEnable = PA15; //Stepper valve isn't used with these
+      StepperStep.pin = PB11; //Stepper valve isn't used with these
+      StepperEnable.pin = PA15; //Stepper valve isn't used with these
       Fan.pin = PE9; //Pin for the fan output (Goes to ULN2003)
       pinLaunch = PB8; //Launch control pin
       Flex.pin = PD7; // Flex sensor
@@ -2141,8 +2141,8 @@ void setPinMapping(byte boardID)
       VVT_2.pin = 48; //Default VVT2 output
       FuelPump.pin = 4; //Fuel pump output
       StepperDir.setPin(25); //Direction pin for DRV8825 driver
-      pinStepperStep = 24; //Step pin for DRV8825 driver
-      pinStepperEnable = 27; //Enable pin for DRV8825 driver
+      StepperStep.pin = 24; //Step pin for DRV8825 driver
+      StepperEnable.pin = 27; //Enable pin for DRV8825 driver
       pinLaunch = 10; //Can be overwritten below
       Flex.pin = 20; // Flex sensor (Must be external interrupt enabled) - ONLY WITH DB
       Fan.pin = 30; //Pin for the fan output - ONLY WITH DB
@@ -2188,8 +2188,8 @@ void setPinMapping(byte boardID)
       VVT_1.pin = 11; //Default VVT output
       VVT_2.pin = 48; //Default VVT2 output
       StepperDir.setPin(32); //Direction pin  for DRV8825 driver
-      pinStepperStep = 31; //Step pin for DRV8825 driver
-      pinStepperEnable = 30; //Enable pin for DRV8825 driver
+      StepperStep.pin = 31; //Step pin for DRV8825 driver
+      StepperEnable.pin = 30; //Enable pin for DRV8825 driver
       Boost.pin = 12; //Boost control
       pinSpareLOut1 = 26; //low current output spare1
       pinSpareLOut2 = 27; //low current output spare2
@@ -2272,8 +2272,8 @@ void setPinMapping(byte boardID)
       VVT_1.pin = 44; //Default VVT output
       VVT_2.pin = 48; //Default VVT2 output
       StepperDir.setPin(32); //Direction pin  for DRV8825 driver
-      pinStepperStep = 31; //Step pin for DRV8825 driver
-      pinStepperEnable = 30; //Enable pin for DRV8825 driver
+      StepperStep.pin = 31; //Step pin for DRV8825 driver
+      StepperEnable.pin = 30; //Enable pin for DRV8825 driver
       Boost.pin = 45; //Boost control
       pinSpareLOut1 = 37; //low current output spare1
       pinSpareLOut2 = 36; //low current output spare2
@@ -2315,8 +2315,8 @@ void setPinMapping(byte boardID)
       Boost.pin = 11; //Boost control
       FuelPump.pin = 38; //Fuel pump output
       StepperDir.setPin(34); //Direction pin for DRV8825 driver
-      pinStepperStep = 35; //Step pin for DRV8825 driver
-      pinStepperEnable = 33; //Enable pin for DRV8825 driver
+      StepperStep.pin = 35; //Step pin for DRV8825 driver
+      StepperEnable.pin = 33; //Enable pin for DRV8825 driver
       pinLaunch = 26; //Can be overwritten below
       Fan.pin = 37; //Pin for the fan output - ONLY WITH DB
       pinSpareHOut1 = 8; // high current output spare1
@@ -2348,8 +2348,8 @@ void setPinMapping(byte boardID)
       Boost.pin = 11; //Boost control
       FuelPump.pin = 38; //Fuel pump output
       StepperDir.setPin(34); //Direction pin for DRV8825 driver
-      pinStepperStep = 35; //Step pin for DRV8825 driver
-      pinStepperEnable = 33; //Enable pin for DRV8825 driver
+      StepperStep.pin = 35; //Step pin for DRV8825 driver
+      StepperEnable.pin = 33; //Enable pin for DRV8825 driver
       pinLaunch = 26; //Can be overwritten below
       Fan.pin = 37; //Pin for the fan output - ONLY WITH DB
       pinSpareHOut1 = 8; // high current output spare1
@@ -2383,8 +2383,8 @@ void setPinMapping(byte boardID)
       Boost.pin = 11; //Boost control - NOT USED
       FuelPump.pin = 24; //Fuel pump output
       StepperDir.setPin(3); //Direction pin for DRV8825 driver - NOT USED
-      pinStepperStep = 4; //Step pin for DRV8825 driver - NOT USED
-      pinStepperEnable = 6; //Enable pin for DRV8825 driver - NOT USED
+      StepperStep.pin = 4; //Step pin for DRV8825 driver - NOT USED
+      StepperEnable.pin = 6; //Enable pin for DRV8825 driver - NOT USED
       pinLaunch = 26; //Can be overwritten below
       Fan.pin = 25; //Pin for the fan output
       pinSpareHOut1 = 26; // high current output spare1
@@ -2432,8 +2432,8 @@ void setPinMapping(byte boardID)
       FuelPump.pin = 8; //Fuel pump output
       VVT_1.pin = 28; //Default VVT output
       StepperDir.setPin(32); //Direction pin  for DRV8825 driver
-      pinStepperStep = 31; //Step pin for DRV8825 driver
-      pinStepperEnable = 30; //Enable pin for DRV8825 driver
+      StepperStep.pin = 31; //Step pin for DRV8825 driver
+      StepperEnable.pin = 30; //Enable pin for DRV8825 driver
       Boost.pin = 24; //Boost control
       pinSpareLOut1 = 29; //low current output spare1
       pinSpareLOut2 = 26; //low current output spare2
@@ -2552,8 +2552,8 @@ void setPinMapping(byte boardID)
       FuelPump.pin = 10; //Fuel pump output
       VVT_1.pin = 28; //Default VVT output
       StepperDir.setPin(32); //Direction pin  for DRV8825 driver
-      pinStepperStep = 31; //Step pin for DRV8825 driver
-      pinStepperEnable = 30; //Enable pin for DRV8825 driver
+      StepperStep.pin = 31; //Step pin for DRV8825 driver
+      StepperEnable.pin = 30; //Enable pin for DRV8825 driver
       Boost.pin = 24; //Boost control
       pinSpareLOut1 = 29; //low current output spare1
       pinSpareLOut2 = 26; //low current output spare2
@@ -2660,10 +2660,10 @@ void setPinMapping(byte boardID)
         //******************************************
         Trigger.setPin(PE0); //
         Trigger2.setPin(PE1); //
-        pinStepperEnable = PE2; //
+        StepperEnable.pin = PE2; //
         FuelPump.pin = PE3; //ONBOARD KEY1
         // = PE4;  //ONBOARD KEY2
-        pinStepperStep = PE5; //
+        StepperStep.pin = PE5; //
         Fan.pin = PE6; //
         StepperDir.setPin(PE7); //
         // = PE8;  //
@@ -2697,7 +2697,7 @@ void setPinMapping(byte boardID)
         Idle2.pin = PB10; //2 wire idle control
         Boost.pin = PA6; //Boost control
         StepperDir.setPin(PB10); //Direction pin  for DRV8825 driver
-        pinStepperStep = PB2; //Step pin for DRV8825 driver
+        StepperStep.pin = PB2; //Step pin for DRV8825 driver
         FuelPump.pin = PA8; //Fuel pump output
         Fan.pin = PA5; //Pin for the fan output (Goes to ULN2803)
 
@@ -2733,8 +2733,8 @@ void setPinMapping(byte boardID)
         VVT_1.pin = PA0; //Default VVT output
         VVT_2.pin = PA2; //Default VVT2 output
         StepperDir.setPin(PC15); //Direction pin  for DRV8825 driver
-        pinStepperStep = PC14; //Step pin for DRV8825 driver
-        pinStepperEnable = PC13; //Enable pin for DRV8825
+        StepperStep.pin = PC14; //Step pin for DRV8825 driver
+        StepperEnable.pin = PC13; //Enable pin for DRV8825
         pinDisplayReset = PB2; // OLED reset pin
         Fan.pin = PB1; //Pin for the fan output
         FuelPump.pin = PB11; //Fuel pump output
@@ -2945,10 +2945,10 @@ void setPinMapping(byte boardID)
         //******************************************
         Trigger.setPin(PE0); //
         Trigger2.setPin(PE1); //
-        pinStepperEnable = PE2; //
+        StepperEnable.pin = PE2; //
         /* = PE3; */ //ONBOARD KEY1
         /* = PE4; */ //ONBOARD KEY2
-        pinStepperStep = PE5; //
+        StepperStep.pin = PE5; //
         Fan.pin = PE6; //
         StepperDir.setPin(PE7); //
         /* = PE8; */ //
@@ -2983,7 +2983,7 @@ void setPinMapping(byte boardID)
         #endif
         pinBat = A4; //Battery reference voltage pin
         StepperDir.setPin(16); //Direction pin  for DRV8825 driver
-        pinStepperStep = 17; //Step pin for DRV8825 driver
+        StepperStep.pin = 17; //Step pin for DRV8825 driver
         pinDisplayReset = 48; // OLED reset pin
         Fan.pin = 47; //Pin for the fan output
         FuelPump.pin = 4; //Fuel pump output
@@ -3004,7 +3004,7 @@ void setPinMapping(byte boardID)
   pinIdleUp = pinTranslate(configPage2.idleUpPin);
 
   //Currently there's no default pin for Idle Up Output
-  pinIdleUpOutput = pinTranslate(configPage2.idleUpOutputPin);
+  IdleUpOutput.pin = pinTranslate(configPage2.idleUpOutputPin);
 
   //Currently there's no default pin for closed throttle position sensor
   pinCTPS = pinTranslate(configPage2.CTPSPin);
@@ -3034,14 +3034,14 @@ void setPinMapping(byte boardID)
 
   Idle1.configure(Idle1.pin);
   Idle2.configure(Idle2.pin);
-  IdleUpOutput.configure(pinIdleUpOutput);
+  IdleUpOutput.configure(IdleUpOutput.pin);
 
   FuelPump.configure(FuelPump.pin);
   Fan.configure(Fan.pin);
 
   StepperDir.configure(StepperDir.pin);
-  StepperStep.configure(pinStepperStep);
-  StepperEnable.configure(pinStepperEnable);
+  StepperStep.configure(StepperStep.pin);
+  StepperEnable.configure(StepperEnable.pin);
 
   VVT_1.configure(VVT_1.pin);
   VVT_2.configure(VVT_2.pin);

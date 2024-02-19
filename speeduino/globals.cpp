@@ -145,7 +145,6 @@ byte pinO2_2;     //second O2 pin
 byte pinBat;      //Battery voltage pin
 byte pinDisplayReset; // OLED reset pin
 byte pinIdleUp;   //Input for triggering Idle Up
-byte pinIdleUpOutput; //Output that follows (normal or inverted) the idle up pin
 byte pinCTPS;     //Input for triggering closed throttle state
 byte pinFuel2Input;  //Input for switching to the 2nd fuel table
 byte pinSpark2Input; //Input for switching to the 2nd ignition table
@@ -164,8 +163,6 @@ byte pinSpareLOut2; // spare low current output
 byte pinSpareLOut3;
 byte pinSpareLOut4;
 byte pinSpareLOut5;
-byte pinStepperStep; //Step pin for the stepper motor driver
-byte pinStepperEnable; //Turning the DRV8825 driver on/off
 byte pinLaunch;
 byte pinIgnBypass; //The pin used for an ignition bypass (Optional)
 byte pinVSS;  // VSS (Vehicle speed sensor) Pin
@@ -248,8 +245,8 @@ bool pinIsOutput(byte pin)
   || (pin == Boost.pin && configPage6.boostEnabled == 1)
   || (pin == Idle1.pin && isIdlePWM)
   || (pin == Idle2.pin && isIdlePWM && (configPage6.iacChannels == 1))
-  || (pin == pinStepperEnable && isIdleSteper)
-  || (pin == pinStepperStep && isIdleSteper)
+  || (pin == StepperEnable.pin && isIdleSteper)
+  || (pin == StepperStep.pin && isIdleSteper)
   || (pin == StepperDir.pin && isIdleSteper)
   || (pin == TachOut.pin)
   || (pin == AirConComp.pin && configPage15.airConEnable > 0)
