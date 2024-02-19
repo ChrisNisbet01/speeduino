@@ -34,7 +34,6 @@ void setup()
   test_status_pending_to_running();
   test_status_running_to_pending();
   test_status_running_to_off();
-
   test_accuracy_timeout();
   test_accuracy_duration();
 

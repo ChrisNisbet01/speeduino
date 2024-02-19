@@ -12,9 +12,9 @@ extern IODigitalWriteOutputPin VVT_2;
 extern IODigitalWriteOutputPin AirConComp;
 extern IODigitalWriteOutputPin AirConFan;
 
-extern IODigitalWriteOutputPin Trigger;
-extern IODigitalWriteOutputPin Trigger2;
-extern IODigitalWriteOutputPin Trigger3;
+extern IODigitalWriteInputPin Trigger;
+extern IODigitalWriteInputPin Trigger2;
+extern IODigitalWriteInputPin Trigger3;
 
 extern IODigitalWriteOutputPin Flex;
 
@@ -31,11 +31,11 @@ extern IOAtomicWriteOutputPin VVT_2;
 extern IOAtomicWriteOutputPin AirConComp;
 extern IOAtomicWriteOutputPin AirConFan;
 
-extern IOPortMaskOutputPin Trigger;
-extern IOPortMaskOutputPin Trigger2;
-extern IOPortMaskOutputPin Trigger3;
+extern IOPortMaskInputPin Trigger;
+extern IOPortMaskInputPin Trigger2;
+extern IOPortMaskInputPin Trigger3;
 
-extern IOPortMaskOutputPin Flex;
+extern IOPortMaskInputPin Flex;
 
 extern IOPortMaskOutputPin NitrousStage1;
 extern IOPortMaskOutputPin NitrousStage2;
@@ -45,7 +45,7 @@ extern IOPortMaskOutputPin NitrousStage2;
 extern IOPortMaskOutputPin TachOut;
 extern IOPortMaskOutputPin Idle1;
 extern IOPortMaskOutputPin Idle2;
-extern IODigitalWriteOutputPin IdleUpOutput;
+extern IOPortMaskOutputPin IdleUpOutput;
 
 extern IODigitalWriteOutputPin StepperDir;
 extern IODigitalWriteOutputPin StepperStep;
@@ -56,7 +56,7 @@ extern IODigitalWriteOutputPin IgnBypass;
 extern IODigitalWriteOutputPin WMIEnabled;
 extern IODigitalWriteOutputPin WMIIndicator;
 
-extern IOPortMaskOutputPin NitrousArming;
+extern IOPortMaskInputPin NitrousArming;
 
-extern IOPortMaskOutputPin AirConRequest;
+extern IOPortMaskInputPin AirConRequest;
 

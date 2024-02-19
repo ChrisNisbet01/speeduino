@@ -3084,8 +3084,8 @@ void setPinMapping(byte boardID)
 // #endif
 
   //And for inputs
-  #if defined(CORE_STM32)
-    #ifdef INPUT_ANALOG
+#if defined(CORE_STM32)
+#ifdef INPUT_ANALOG
       pinMode(pinMAP, INPUT_ANALOG);
       pinMode(pinO2, INPUT_ANALOG);
       pinMode(pinO2_2, INPUT_ANALOG);
@@ -3094,7 +3094,7 @@ void setPinMapping(byte boardID)
       pinMode(pinCLT, INPUT_ANALOG);
       pinMode(pinBat, INPUT_ANALOG);
       pinMode(pinBaro, INPUT_ANALOG);
-    #else
+#else
       pinMode(pinMAP, INPUT);
       pinMode(pinO2, INPUT);
       pinMode(pinO2_2, INPUT);
@@ -3103,15 +3103,15 @@ void setPinMapping(byte boardID)
       pinMode(pinCLT, INPUT);
       pinMode(pinBat, INPUT);
       pinMode(pinBaro, INPUT);
-    #endif
-  #endif
+#endif
+#endif
 
   //Each of the below are only set when their relevant function is enabled. This can help prevent pin conflicts that users aren't aware of with unused functions
   if (configPage2.flexEnabled > 0 && !pinIsOutput(pinFlex))
   {
     //Standard GM / Continental flex sensor requires pullup, but this should be onboard.
     //The internal pullup will not work (Requires ~3.3k)!
-    Flex.configure(pinFlex, LOW, INPUT);
+    Flex.configure(pinFlex);
   }
 
   if (configPage2.vssMode > 1 && !pinIsOutput(pinVSS)) //Pin mode 1 for VSS is CAN
@@ -3119,75 +3119,47 @@ void setPinMapping(byte boardID)
     pinMode(pinVSS, INPUT);
   }
 
-  if( (configPage6.launchEnabled > 0) && (!pinIsOutput(pinLaunch)) )
+  if (configPage6.launchEnabled > 0 && !pinIsOutput(pinLaunch))
   {
-    if (configPage6.lnchPullRes)
-    {
-      pinMode(pinLaunch, INPUT_PULLUP);
-    }
-    else
-    {
-      //If Launch Pull Resistor is not set make input float.
-      pinMode(pinLaunch, INPUT);
-    }
+    byte const input_type = configPage6.lnchPullRes ? INPUT_PULLUP : INPUT;
+
+    pinMode(pinLaunch, input_type);
   }
 
   if (configPage2.idleUpEnabled > 0 && !pinIsOutput(pinIdleUp))
   {
-    if (configPage2.idleUpPolarity == 0) //Normal setting
-    {
-      pinMode(pinIdleUp, INPUT_PULLUP);
-    }
-    else //inverted setting
-    {
-      pinMode(pinIdleUp, INPUT);
-    }
+    byte const input_type = (configPage2.idleUpPolarity == 0) ? INPUT_PULLUP : INPUT;
+
+    pinMode(pinIdleUp, input_type);
   }
 
   if (configPage2.CTPSEnabled > 0 && !pinIsOutput(pinCTPS))
   {
-    if (configPage2.CTPSPolarity == 0) //Normal setting
-    {
-      pinMode(pinCTPS, INPUT_PULLUP);
-    }
-    else //inverted setting
-    {
-      pinMode(pinCTPS, INPUT);
-    }
+    byte const input_type = (configPage2.CTPSPolarity == 0) ? INPUT_PULLUP : INPUT;
+
+    pinMode(pinCTPS, input_type);
   }
   if( (configPage10.fuel2Mode == FUEL2_MODE_INPUT_SWITCH) && (!pinIsOutput(pinFuel2Input)) )
   {
-    if (configPage10.fuel2InputPullup)
-    {
-      //With pullup
-      pinMode(pinFuel2Input, INPUT_PULLUP);
-    }
-    else
-    {
-      //Normal input
-      pinMode(pinFuel2Input, INPUT);
-    }
+    byte const input_type = configPage10.fuel2InputPullup ? INPUT_PULLUP : INPUT;
+
+    pinMode(pinFuel2Input, input_type);
   }
   if (configPage10.spark2Mode == SPARK2_MODE_INPUT_SWITCH && !pinIsOutput(pinSpark2Input))
   {
-    if (configPage10.spark2InputPullup)
-    {
-      pinMode(pinSpark2Input, INPUT_PULLUP);
-    } //With pullup
-    else
-    {
-      pinMode(pinSpark2Input, INPUT);
-    } //Normal input
+    byte const input_type = configPage10.spark2InputPullup ? INPUT_PULLUP : INPUT;
+
+    pinMode(pinSpark2Input, input_type);
   }
-  if( (configPage10.fuelPressureEnable > 0)  && (!pinIsOutput(pinFuelPressure)) )
+  if (configPage10.fuelPressureEnable > 0  && !pinIsOutput(pinFuelPressure))
   {
     pinMode(pinFuelPressure, INPUT);
   }
-  if( (configPage10.oilPressureEnable > 0) && (!pinIsOutput(pinOilPressure)) )
+  if (configPage10.oilPressureEnable > 0 && !pinIsOutput(pinOilPressure))
   {
     pinMode(pinOilPressure, INPUT);
   }
-  if( (configPage13.onboard_log_trigger_Epin > 0) && (!pinIsOutput(pinSDEnable)) )
+  if (configPage13.onboard_log_trigger_Epin > 0 && !pinIsOutput(pinSDEnable))
   {
     pinMode(pinSDEnable, INPUT);
   }
@@ -3202,20 +3174,13 @@ void setPinMapping(byte boardID)
     }
     if (configPage10.wmiEmptyEnabled > 0 && !pinIsOutput(pinWMIEmpty))
     {
-      if (configPage10.wmiEmptyPolarity == 0)
-      {
-        //Normal setting
-        pinMode(pinWMIEmpty, INPUT_PULLUP);
-      }
-      else
-      {
-        //inverted setting
-        pinMode(pinWMIEmpty, INPUT);
-      }
+      byte const input_type = (configPage10.wmiEmptyPolarity == 0) ? INPUT_PULLUP : INPUT;
+
+      pinMode(pinWMIEmpty, input_type);
     }
   }
 
-  if (configPage15.airConEnable == 1 )
+  if (configPage15.airConEnable == 1)
   {
     if (pinAirConComp > 0)
     {
@@ -3226,14 +3191,14 @@ void setPinMapping(byte boardID)
     {
       pinAirConRequest = 0;
     }
-    if (pinAirConRequest > 0)
+    if (pinAirConRequest != 0)
     {
       byte const input_mode = (configPage15.airConReqPol == 1) ? INPUT : INPUT_PULLUP;
 
-      AirConRequest.configure(pinAirConRequest, LOW, input_mode);
+      AirConRequest.configure(pinAirConRequest, input_mode);
     }
 
-    if(pinAirConFan > 0 && configPage15.airConFanEnabled == 1)
+    if (pinAirConFan > 0 && configPage15.airConFanEnabled == 1)
     {
       AirConFan.configure(pinAirConFan);
     }
@@ -3317,9 +3282,9 @@ void initialiseTriggers(void)
 #else
     triggerInterrupt3 = pinTrigger3;
 #endif
-    Trigger.configure(pinTrigger, LOW, INPUT);
-    Trigger2.configure(pinTrigger, LOW, INPUT);
-    Trigger3.configure(pinTrigger, LOW, INPUT);
+    Trigger.configure(pinTrigger, INPUT);
+    Trigger2.configure(pinTrigger2, INPUT);
+    Trigger3.configure(pinTrigger3, INPUT);
 
   detachInterrupt(triggerInterrupt);
   detachInterrupt(triggerInterrupt2);

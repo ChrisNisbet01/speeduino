@@ -23,19 +23,38 @@ public:
 
   bool read(void);
 
+  void write(byte val);
+
   void configure(byte pin, byte initial_state = LOW, byte mode = OUTPUT);
 
   bool is_configured(void);
 
 private:
 
-  bool m_inverted;
-  byte m_pin = INVALID_PIN_NUMBER;
   volatile PORT_TYPE * m_port = nullptr;
   PINMASK_TYPE m_mask = 0;
   bool m_is_configured = false;
 };
 
+class IOPortMaskInputPin
+{
+public:
+  /*
+   * Assumes that port and mask have been assigned before control methods are
+   * called.
+   */
+  bool read(void);
+
+  void configure(byte pin, byte mode = INPUT);
+
+  bool is_configured(void);
+
+private:
+
+  volatile PORT_TYPE * m_port = nullptr;
+  PINMASK_TYPE m_mask = 0;
+  bool m_is_configured = false;
+};
 
 class IODigitalWriteOutputPin
 {
@@ -46,6 +65,8 @@ public:
 
   void write(byte value);
 
+  bool read(void);
+
 #if defined(CORE_TEENSY) || defined(CORE_STM32)
   void toggle(void);
 #endif
@@ -54,11 +75,24 @@ public:
 
   bool is_configured(void);
 
+private:
+
+  byte m_pin = INVALID_PIN_NUMBER;
+  bool m_is_configured = false;
+};
+
+class IODigitalWriteInputPin
+{
+public:
+
   bool read(void);
+
+  void configure(byte pin, byte mode = INPUT);
+
+  bool is_configured(void);
 
 private:
 
-  bool m_inverted;
   byte m_pin = INVALID_PIN_NUMBER;
   bool m_is_configured = false;
 };
@@ -86,7 +120,6 @@ public:
 
 private:
 
-  byte m_pin = INVALID_PIN_NUMBER;
   volatile PORT_TYPE * m_port = nullptr;
   PINMASK_TYPE m_mask = 0;
   bool m_is_configured = false;
