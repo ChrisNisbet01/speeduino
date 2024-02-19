@@ -43,11 +43,6 @@ void IOPortMaskOutputPin::toggle(void)
   *m_port ^= m_mask;
 }
 
-bool IOPortMaskOutputPin::read(void)
-{
-  return (*m_port & m_mask) != 0;
-}
-
 void IOPortMaskOutputPin:: write(byte val)
 {
   val ? on() : off();
@@ -114,11 +109,6 @@ void IODigitalWriteOutputPin::off(void)
 void IODigitalWriteOutputPin::write(byte value)
 {
   digitalWrite(m_pin, value);
-}
-
-bool IODigitalWriteOutputPin::read(void)
-{
-  return digitalRead(m_pin);
 }
 
 #if defined(CORE_TEENSY) || defined(CORE_STM32)

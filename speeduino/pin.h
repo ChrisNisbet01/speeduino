@@ -21,8 +21,6 @@ public:
 
   void toggle(void);
 
-  bool read(void);
-
   void write(byte val);
 
   void configure(byte pin, byte initial_state = LOW, byte mode = OUTPUT);
@@ -64,8 +62,6 @@ public:
   void off(void);
 
   void write(byte value);
-
-  bool read(void);
 
 #if defined(CORE_TEENSY) || defined(CORE_STM32)
   void toggle(void);
