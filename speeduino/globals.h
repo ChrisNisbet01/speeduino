@@ -521,7 +521,7 @@ extern volatile byte LOOP_TIMER;
 //These functions all do checks on a pin to determine if it is already in use by another (higher importance) function
 #define pinIsInjector(pin) (((pin) == pinInjector1) || ((pin) == pinInjector2) || ((pin) == pinInjector3) || ((pin) == pinInjector4) || ((pin) == pinInjector5) || ((pin) == pinInjector6) || ((pin) == pinInjector7) || ((pin) == pinInjector8))
 #define pinIsIgnition(pin) (((pin) == pinCoil1) || ((pin) == pinCoil2) || ((pin) == pinCoil3) || ((pin) == pinCoil4) || ((pin) == pinCoil5) || ((pin) == pinCoil6) || ((pin) == pinCoil7) || ((pin) == pinCoil8))
-//#define pinIsOutput(pin)    ( pinIsInjector((pin)) || pinIsIgnition((pin)) || ((pin) == FuelPump.pin) || ((pin) == pinFan) || ((pin) == pinAirConComp) || ((pin) == pinAirConFan)|| ((pin) == pinVVT_1) || ((pin) == pinVVT_2) || ( ((pin) == Boost.pin) && configPage6.boostEnabled) || ((pin) == pinIdle1) || ((pin) == pinIdle2) || ((pin) == pinTachOut) || ((pin) == pinStepperEnable) || ((pin) == pinStepperStep) )
+//#define pinIsOutput(pin)    ( pinIsInjector((pin)) || pinIsIgnition((pin)) || ((pin) == FuelPump.pin) || ((pin) == Fan.pin) || ((pin) == AirConComp.pin) || ((pin) == pinAirConFan)|| ((pin) == VVT_1.pin) || ((pin) == VVT_2.pin) || ( ((pin) == Boost.pin) && configPage6.boostEnabled) || ((pin) == pinIdle1) || ((pin) == pinIdle2) || ((pin) == pinTachOut) || ((pin) == pinStepperEnable) || ((pin) == pinStepperStep) )
 #define pinIsSensor(pin) (((pin) == pinCLT) || ((pin) == pinIAT) || ((pin) == pinMAP) || ((pin) == pinTPS) || ((pin) == pinO2) || ((pin) == pinBat) || (((pin) == pinFlex) && (configPage2.flexEnabled != 0)))
 //#define pinIsUsed(pin)      ( pinIsSensor((pin)) || pinIsOutput((pin)) || pinIsReserved((pin)) )
 
@@ -1456,9 +1456,6 @@ extern byte pinSpareLOut2;    // spare low current output
 extern byte pinSpareLOut3;
 extern byte pinSpareLOut4;
 extern byte pinSpareLOut5;
-extern byte pinVVT_1;          // vvt output 1
-extern byte pinVVT_2;          // vvt output 2
-extern byte pinFan;            // Cooling fan output
 extern byte pinStepperStep;    //Step pin for the stepper motor driver
 extern byte pinStepperEnable;  //Turning the DRV8825 driver on/off
 extern byte pinLaunch;
@@ -1478,7 +1475,6 @@ extern byte pinSDEnable;  //Input for manually enabling SD logging
 #ifdef USE_SPI_EEPROM
 extern byte pinSPIFlash_CS;
 #endif
-extern byte pinAirConComp;     // Air conditioning compressor output
 extern byte pinAirConFan;      // Stand-alone air conditioning fan output
 extern byte pinAirConRequest;  // Air conditioning request input
 

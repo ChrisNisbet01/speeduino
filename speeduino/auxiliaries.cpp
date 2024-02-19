@@ -70,7 +70,7 @@ void initialiseAirCon(void)
 {
   if (configPage15.airConEnable == 1
       && pinAirConRequest != 0
-      && pinAirConComp != 0)
+      && AirConComp.pin != 0)
   {
     // Hold the A/C off until a few seconds after cranking
     acAfterEngineStartDelay = 0;

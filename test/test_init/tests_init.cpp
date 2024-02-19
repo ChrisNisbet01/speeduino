@@ -92,7 +92,7 @@ void test_initialisation_outputs_V03(void)
   strcpy_P(msg, PSTR("Fuel Pump"));
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(FuelPump.pin), msg);
   strcpy_P(msg, PSTR("Fan"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinFan), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(Fan.pin), msg);
 }
 
 //Test that all mandatory output pins have their mode correctly set to output
@@ -123,7 +123,7 @@ void test_initialisation_outputs_V04(void)
   strcpy_P(msg, PSTR("Fuel Pump"));
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(FuelPump.pin), msg);
   strcpy_P(msg, PSTR("Fan"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinFan), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(Fan.pin), msg);
   /*
   if(isIdlePWM)
   {
@@ -137,10 +137,10 @@ void test_initialisation_outputs_V04(void)
     TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinStepperEnable), "Stepper Enable");
   }
 
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinFan), "Fan");
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(Fan.pin), "Fan");
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(Boost.pin), "Boost");
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinVVT_1), "VVT1");
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinVVT_2), "VVT2");
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(VVT_1.pin), "VVT1");
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(VVT_2.pin), "VVT2");
   */
 
 }
@@ -173,7 +173,7 @@ void test_initialisation_outputs_MX5_8995(void)
   strcpy_P(msg, PSTR("Fuel Pump"));
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(FuelPump.pin), msg);
   strcpy_P(msg, PSTR("Fan"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinFan), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(Fan.pin), msg);
 }
 
 void test_initialisation_outputs_PWM_idle(void)
@@ -231,9 +231,9 @@ void test_initialisation_outputs_VVT(void)
 
   char msg[32];
   strcpy_P(msg, PSTR("VVT1"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinVVT_1), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(VVT_1.pin), msg);
   strcpy_P(msg, PSTR("VVT2"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinVVT_2), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(VVT_2.pin), msg);
 }
 
 void test_initialisation_outputs_reset_control_use_board_default(void)
