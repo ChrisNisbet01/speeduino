@@ -1450,11 +1450,14 @@ void setPinMapping(byte boardID)
     case 2:
     #ifndef SMALL_FLASH_MODE //No support for bluepill here anyway
       //Pin mappings as per the v0.3 shield
-      pinInjector1 = 8; //Output pin injector 1 is on
-      pinInjector2 = 9; //Output pin injector 2 is on
-      pinInjector3 = 10; //Output pin injector 3 is on
-      pinInjector4 = 11; //Output pin injector 4 is on
-      pinInjector5 = 12; //Output pin injector 5 is on
+      inj1.pin = 8; //Output pin injector 1 is on
+      inj2.pin = 9; //Output pin injector 2 is on
+      inj3.pin = 10; //Output pin injector 3 is on
+      inj4.pin = 11; //Output pin injector 4 is on
+#if INJ_CHANNELS >= 5
+      inj5.pin = 12; //Output pin injector 5 is on
+#endif
+
       ign1.pin = 28; //Pin for coil 1
       ign2.pin = 24; //Pin for coil 2
       ign3.pin = 40; //Pin for coil 3
@@ -1505,12 +1508,17 @@ void setPinMapping(byte boardID)
 
     case 3:
       //Pin mappings as per the v0.4 shield
-      pinInjector1 = 8; //Output pin injector 1 is on
-      pinInjector2 = 9; //Output pin injector 2 is on
-      pinInjector3 = 10; //Output pin injector 3 is on
-      pinInjector4 = 11; //Output pin injector 4 is on
-      pinInjector5 = 12; //Output pin injector 5 is on
-      pinInjector6 = 50; //CAUTION: Uses the same as Coil 4 below.
+      inj1.pin = 8; //Output pin injector 1 is on
+      inj2.pin = 9; //Output pin injector 2 is on
+      inj3.pin = 10; //Output pin injector 3 is on
+      inj4.pin = 11; //Output pin injector 4 is on
+#if INJ_CHANNELS >= 5
+      inj5.pin = 12; //Output pin injector 5 is on
+#endif
+#if INJ_CHANNELS >= 6
+      inj6.pin = 50; //CAUTION: Uses the same as Coil 4 below.
+#endif
+
       ign1.pin = 40; //Pin for coil 1
       ign2.pin = 38; //Pin for coil 2
       ign3.pin = 52; //Pin for coil 3
@@ -1549,7 +1557,9 @@ void setPinMapping(byte boardID)
       WMIEnabled.pin = 42;
 
 #if defined(CORE_TEENSY35)
-        pinInjector6 = 51;
+#if INJ_CHANNELS >= 6
+        inj6.pin = 51;
+#endif
 
         Trigger.setPin(23);
         Trigger2.setPin(36);
@@ -1680,10 +1690,10 @@ void setPinMapping(byte boardID)
         ign5.pin = PD9;//
         /* = PD10; */ //
         /* = PD11; */ //
-        pinInjector1 = PD12; //
-        pinInjector2 = PD13; //
-        pinInjector3 = PD14; //
-        pinInjector4 = PD15; //
+        inj1.pin = PD12; //
+        inj2.pin = PD13; //
+        inj3.pin = PD14; //
+        inj4.pin = PD15; //
 
         //******************************************
         //******** PORTE CONNECTIONS ***************
@@ -1699,8 +1709,12 @@ void setPinMapping(byte boardID)
         /* = PE8; */ //
         /* = PE9; */ //
         /* = PE10; */ //
-        pinInjector5 = PE11; //
-        pinInjector6 = PE12; //
+#if INJ_CHANNELS >= 5
+        inj5.pin = PE11; //
+#endif
+#if INJ_CHANNELS >= 6
+        inj6.pin = PE12; //
+#endif
         /* = PE13; */ //
         /* = PE14; */ //
         /* = PE15; */ //
@@ -1710,10 +1724,10 @@ void setPinMapping(byte boardID)
         //pins PA12, PA11 are used for USB or CAN couldn't be used for GPIO
         //pins PB12, PB13, PB14 and PB15 are used to SPI FLASH
         //PB2 can't be used as input because it's the BOOT pin
-        pinInjector1 = PB7; //Output pin injector 1 is on
-        pinInjector2 = PB6; //Output pin injector 2 is on
-        pinInjector3 = PB5; //Output pin injector 3 is on
-        pinInjector4 = PB4; //Output pin injector 4 is on
+        inj1.pin = PB7; //Output pin injector 1 is on
+        inj2.pin = PB6; //Output pin injector 2 is on
+        inj3.pin = PB5; //Output pin injector 3 is on
+        inj4.pin = PB4; //Output pin injector 4 is on
         ign1.pin = PB9; //Pin for coil 1
         ign2.pin = PB8; //Pin for coil 2
         ign3.pin = PB3; //Pin for coil 3
@@ -1743,11 +1757,14 @@ void setPinMapping(byte boardID)
     case 6:
       #ifndef SMALL_FLASH_MODE
       //Pin mappings as per the 2001-05 MX5 PNP shield
-      pinInjector1 = 44; //Output pin injector 1 is on
-      pinInjector2 = 46; //Output pin injector 2 is on
-      pinInjector3 = 47; //Output pin injector 3 is on
-      pinInjector4 = 45; //Output pin injector 4 is on
-      pinInjector5 = 14; //Output pin injector 5 is on
+      inj1.pin = 44; //Output pin injector 1 is on
+      inj2.pin = 46; //Output pin injector 2 is on
+      inj3.pin = 47; //Output pin injector 3 is on
+      inj4.pin = 45; //Output pin injector 4 is on
+#if INJ_CHANNELS >= 5
+      inj5.pin = 14; //Output pin injector 5 is on
+#endif
+
       ign1.pin = 42; //Pin for coil 1
       ign2.pin = 43; //Pin for coil 2
       ign3.pin = 32; //Pin for coil 3
@@ -1799,11 +1816,14 @@ void setPinMapping(byte boardID)
     case 8:
       #ifndef SMALL_FLASH_MODE
       //Pin mappings as per the 1996-97 MX5 PNP shield
-      pinInjector1 = 11; //Output pin injector 1 is on
-      pinInjector2 = 10; //Output pin injector 2 is on
-      pinInjector3 = 9; //Output pin injector 3 is on
-      pinInjector4 = 8; //Output pin injector 4 is on
-      pinInjector5 = 14; //Output pin injector 5 is on
+      inj1.pin = 11; //Output pin injector 1 is on
+      inj2.pin = 10; //Output pin injector 2 is on
+      inj3.pin = 9; //Output pin injector 3 is on
+      inj4.pin = 8; //Output pin injector 4 is on
+#if INJ_CHANNELS >= 5
+      inj5.pin = 14; //Output pin injector 5 is on
+#endif
+
       ign1.pin = 39; //Pin for coil 1
       ign2.pin = 41; //Pin for coil 2
       ign3.pin = 32; //Pin for coil 3
@@ -1853,11 +1873,14 @@ void setPinMapping(byte boardID)
     case 9:
      #ifndef SMALL_FLASH_MODE
       //Pin mappings as per the 89-95 MX5 PNP shield
-      pinInjector1 = 11; //Output pin injector 1 is on
-      pinInjector2 = 10; //Output pin injector 2 is on
-      pinInjector3 = 9; //Output pin injector 3 is on
-      pinInjector4 = 8; //Output pin injector 4 is on
-      pinInjector5 = 14; //Output pin injector 5 is on
+      inj1.pin = 11; //Output pin injector 1 is on
+      inj2.pin = 10; //Output pin injector 2 is on
+      inj3.pin = 9; //Output pin injector 3 is on
+      inj4.pin = 8; //Output pin injector 4 is on
+#if INJ_CHANNELS >= 5
+      inj5.pin = 14; //Output pin injector 5 is on
+#endif
+
       ign1.pin = 39; //Pin for coil 1
       ign2.pin = 41; //Pin for coil 2
       ign3.pin = 32; //Pin for coil 3
@@ -1909,14 +1932,22 @@ void setPinMapping(byte boardID)
     case 10:
     #ifndef SMALL_FLASH_MODE //No support for bluepill here anyway
       //Pin mappings for user turtanas PCB
-      pinInjector1 = 4; //Output pin injector 1 is on
-      pinInjector2 = 5; //Output pin injector 2 is on
-      pinInjector3 = 6; //Output pin injector 3 is on
-      pinInjector4 = 7; //Output pin injector 4 is on
-      pinInjector5 = 8; //Placeholder only - NOT USED
-      pinInjector6 = 9; //Placeholder only - NOT USED
-      pinInjector7 = 10; //Placeholder only - NOT USED
-      pinInjector8 = 11; //Placeholder only - NOT USED
+      inj1.pin = 4; //Output pin injector 1 is on
+      inj2.pin = 5; //Output pin injector 2 is on
+      inj3.pin = 6; //Output pin injector 3 is on
+      inj4.pin = 7; //Output pin injector 4 is on
+#if INJ_CHANNELS >= 5
+      inj5.pin = 8; //Placeholder only - NOT USED
+#endif
+#if INJ_CHANNELS >= 6
+      inj6.pin = 9; //Placeholder only - NOT USED
+#endif
+#if INJ_CHANNELS >= 7
+      inj7.pin = 10; //Placeholder only - NOT USED
+#endif
+#if INJ_CHANNELS >= 8
+      inj8.pin = 11; //Placeholder only - NOT USED
+#endif
       ign1.pin = 24; //Pin for coil 1
       ign2.pin = 28; //Pin for coil 2
       ign3.pin = 36; //Pin for coil 3
@@ -1949,11 +1980,14 @@ void setPinMapping(byte boardID)
     case 20:
     #if defined(CORE_AVR) && !defined(SMALL_FLASH_MODE) //No support for bluepill here anyway
       //Pin mappings as per the Plazomat In/Out shields Rev 0.1
-      pinInjector1 = 8; //Output pin injector 1 is on
-      pinInjector2 = 9; //Output pin injector 2 is on
-      pinInjector3 = 10; //Output pin injector 3 is on
-      pinInjector4 = 11; //Output pin injector 4 is on
-      pinInjector5 = 12; //Output pin injector 5 is on
+      inj1.pin = 8; //Output pin injector 1 is on
+      inj2.pin = 9; //Output pin injector 2 is on
+      inj3.pin = 10; //Output pin injector 3 is on
+      inj4.pin = 11; //Output pin injector 4 is on
+#if INJ_CHANNELS >= 5
+      inj5.pin = 12; //Output pin injector 5 is on
+#endif
+
       ign1.pin = 28; //Pin for coil 1
       ign2.pin = 24; //Pin for coil 2
       ign3.pin = 40; //Pin for coil 3
@@ -1987,11 +2021,14 @@ void setPinMapping(byte boardID)
     case 30:
     #ifndef SMALL_FLASH_MODE //No support for bluepill here anyway
       //Pin mappings as per the dazv6 shield
-      pinInjector1 = 8; //Output pin injector 1 is on
-      pinInjector2 = 9; //Output pin injector 2 is on
-      pinInjector3 = 10; //Output pin injector 3 is on
-      pinInjector4 = 11; //Output pin injector 4 is on
-      pinInjector5 = 12; //Output pin injector 5 is on
+      inj1.pin = 8; //Output pin injector 1 is on
+      inj2.pin = 9; //Output pin injector 2 is on
+      inj3.pin = 10; //Output pin injector 3 is on
+      inj4.pin = 11; //Output pin injector 4 is on
+#if INJ_CHANNELS >= 5
+      inj5.pin = 12; //Output pin injector 5 is on
+#endif
+
       ign1.pin = 40; //Pin for coil 1
       ign2.pin = 38; //Pin for coil 2
       ign3.pin = 50; //Pin for coil 3
@@ -2031,14 +2068,22 @@ void setPinMapping(byte boardID)
       //Pin mappings for the BMW PnP PCBs by pazi88.
       #if defined(CORE_AVR)
       //This is the regular MEGA2560 pin mapping
-      pinInjector1 = 8; //Output pin injector 1
-      pinInjector2 = 9; //Output pin injector 2
-      pinInjector3 = 10; //Output pin injector 3
-      pinInjector4 = 11; //Output pin injector 4
-      pinInjector5 = 12; //Output pin injector 5
-      pinInjector6 = 50; //Output pin injector 6
-      pinInjector7 = 39; //Output pin injector 7 (placeholder)
-      pinInjector8 = 42; //Output pin injector 8 (placeholder)
+      inj1.pin = 8; //Output pin injector 1
+      inj2.pin = 9; //Output pin injector 2
+      inj3.pin = 10; //Output pin injector 3
+      inj4.pin = 11; //Output pin injector 4
+#if INJ_CHANNELS >= 5
+      inj5.pin = 12; //Output pin injector 5
+#endif
+#if INJ_CHANNELS >= 6
+      inj6.pin = 50; //Output pin injector 6
+#endif
+#if INJ_CHANNELS >= 7
+      inj7.pin = 39; //Output pin injector 7 (placeholder)
+#endif
+#if INJ_CHANNELS >= 8
+      inj8.pin = 42; //Output pin injector 8 (placeholder)
+#endif
       ign1.pin = 40; //Pin for coil 1
       ign2.pin = 38; //Pin for coil 2
       ign3.pin = 52; //Pin for coil 3
@@ -2088,14 +2133,22 @@ void setPinMapping(byte boardID)
       pinIdleUp = 37; //(placeholder)
       pinCTPS = A6; //(placeholder)
      #elif defined(STM32F407xx)
-      pinInjector1 = PB15; //Output pin injector 1
-      pinInjector2 = PB14; //Output pin injector 2
-      pinInjector3 = PB12; //Output pin injector 3
-      pinInjector4 = PB13; //Output pin injector 4
-      pinInjector5 = PA8; //Output pin injector 5
-      pinInjector6 = PE7; //Output pin injector 6
-      pinInjector7 = PE13; //Output pin injector 7 (placeholder)
-      pinInjector8 = PE10; //Output pin injector 8 (placeholder)
+      inj1.pin = PB15; //Output pin injector 1
+      inj2.pin = PB14; //Output pin injector 2
+      inj3.pin = PB12; //Output pin injector 3
+      inj4.pin = PB13; //Output pin injector 4
+#if INJ_CHANNELS >= 5
+      inj5.pin = PA8; //Output pin injector 5
+#endif
+#if INJ_CHANNELS >= 6
+      inj6.pin = PE7; //Output pin injector 6
+#endif
+#if INJ_CHANNELS >= 7
+      inj7.pin = PE13; //Output pin injector 7 (placeholder)
+#endif
+#if INJ_CHANNELS >= 8
+      inj8.pin = PE10; //Output pin injector 8 (placeholder)
+#endif
       ign1.pin = PE2; //Pin for coil 1
       ign2.pin = PE3; //Pin for coil 2
       ign3.pin = PC13; //Pin for coil 3
@@ -2149,11 +2202,14 @@ void setPinMapping(byte boardID)
     case 40:
      #ifndef SMALL_FLASH_MODE
       //Pin mappings as per the NO2C shield
-      pinInjector1 = 8; //Output pin injector 1 is on
-      pinInjector2 = 9; //Output pin injector 2 is on
-      pinInjector3 = 11; //Output pin injector 3 is on - NOT USED
-      pinInjector4 = 12; //Output pin injector 4 is on - NOT USED
-      pinInjector5 = 13; //Placeholder only - NOT USED
+      inj1.pin = 8; //Output pin injector 1 is on
+      inj2.pin = 9; //Output pin injector 2 is on
+      inj3.pin = 11; //Output pin injector 3 is on - NOT USED
+      inj4.pin = 12; //Output pin injector 4 is on - NOT USED
+#if INJ_CHANNELS >= 5
+      inj5.pin = 13; //Placeholder only - NOT USED
+#endif
+
       ign1.pin = 23; //Pin for coil 1
       ign2.pin = 22; //Pin for coil 2
       ign3.pin = 2; //Pin for coil 3 - ONLY WITH DB2
@@ -2196,11 +2252,14 @@ void setPinMapping(byte boardID)
     case 41:
     #ifndef SMALL_FLASH_MODE //No support for bluepill here anyway
       //Pin mappings as per the UA4C shield
-      pinInjector1 = 8; //Output pin injector 1 is on
-      pinInjector2 = 7; //Output pin injector 2 is on
-      pinInjector3 = 6; //Output pin injector 3 is on
-      pinInjector4 = 5; //Output pin injector 4 is on
-      pinInjector5 = 45; //Output pin injector 5 is on PLACEHOLDER value for now
+      inj1.pin = 8; //Output pin injector 1 is on
+      inj2.pin = 7; //Output pin injector 2 is on
+      inj3.pin = 6; //Output pin injector 3 is on
+      inj4.pin = 5; //Output pin injector 4 is on
+#if INJ_CHANNELS >= 5
+      inj5.pin = 45; //Output pin injector 5 is on PLACEHOLDER value for now
+#endif
+
       ign1.pin = 35; //Pin for coil 1
       ign2.pin = 36; //Pin for coil 2
       ign3.pin = 33; //Pin for coil 3
@@ -2244,10 +2303,10 @@ void setPinMapping(byte boardID)
 
     case 42:
       //Pin mappings for all BlitzboxBL49sp variants
-      pinInjector1 = 6; //Output pin injector 1
-      pinInjector2 = 7; //Output pin injector 2
-      pinInjector3 = 8; //Output pin injector 3
-      pinInjector4 = 9; //Output pin injector 4
+      inj1.pin = 6; //Output pin injector 1
+      inj2.pin = 7; //Output pin injector 2
+      inj3.pin = 8; //Output pin injector 3
+      inj4.pin = 9; //Output pin injector 4
       ign1.pin = 24; //Pin for coil 1
       ign2.pin = 25; //Pin for coil 2
       ign3.pin = 23; //Pin for coil 3
@@ -2283,10 +2342,10 @@ void setPinMapping(byte boardID)
     #ifndef SMALL_FLASH_MODE //No support for bluepill here anyway
       //Pin mappings for the DIY-EFI CORE4 Module. This is an AVR only module
       #if defined(CORE_AVR)
-      pinInjector1 = 10; //Output pin injector 1 is on
-      pinInjector2 = 11; //Output pin injector 2 is on
-      pinInjector3 = 12; //Output pin injector 3 is on
-      pinInjector4 = 9; //Output pin injector 4 is on
+      inj1.pin = 10; //Output pin injector 1 is on
+      inj2.pin = 11; //Output pin injector 2 is on
+      inj3.pin = 12; //Output pin injector 3 is on
+      inj4.pin = 9; //Output pin injector 4 is on
       ign1.pin = 39; //Pin for coil 1
       ign2.pin = 29; //Pin for coil 2
       ign3.pin = 28; //Pin for coil 3
@@ -2322,8 +2381,12 @@ void setPinMapping(byte boardID)
       pinSpareLOut1 = 37; //low current output spare1
       pinSpareLOut2 = 36; //low current output spare2
       pinSpareLOut3 = 35; //low current output spare3
-      pinInjector5 = 33; //Output pin injector 5 is on
-      pinInjector6 = 34; //Output pin injector 6 is on
+#if INJ_CHANNELS >= 5
+      inj5.pin = 33; //Output pin injector 5 is on
+#endif
+#if INJ_CHANNELS >= 6
+      inj6.pin = 34; //Output pin injector 6 is on
+#endif
       Fan.pin = 40; //Pin for the fan output
       pinResetControl = 46; //Reset control output PLACEHOLDER value for now
       #endif
@@ -2333,12 +2396,11 @@ void setPinMapping(byte boardID)
     #if defined(CORE_TEENSY35)
     case 50:
       //Pin mappings as per the teensy rev A shield
-      pinInjector1 = 2; //Output pin injector 1 is on
-      pinInjector2 = 10; //Output pin injector 2 is on
-      pinInjector3 = 6; //Output pin injector 3 is on
-      pinInjector4 = 9; //Output pin injector 4 is on
-      //Placeholder only - NOT USED:
-      //pinInjector5 = 13;
+      inj1.pin = 2; //Output pin injector 1 is on
+      inj2.pin = 10; //Output pin injector 2 is on
+      inj3.pin = 6; //Output pin injector 3 is on
+      inj4.pin = 9; //Output pin injector 4 is on
+
       ign1.pin = 29; //Pin for coil 1
       ign2.pin = 30; //Pin for coil 2
       ign3.pin = 31; //Pin for coil 3 - ONLY WITH DB2
@@ -2368,10 +2430,10 @@ void setPinMapping(byte boardID)
 
     case 51:
       //Pin mappings as per the teensy revB board shield
-      pinInjector1 = 2; //Output pin injector 1 is on
-      pinInjector2 = 10; //Output pin injector 2 is on
-      pinInjector3 = 6; //Output pin injector 3 is on - NOT USED
-      pinInjector4 = 9; //Output pin injector 4 is on - NOT USED
+      inj1.pin = 2; //Output pin injector 1 is on
+      inj2.pin = 10; //Output pin injector 2 is on
+      inj3.pin = 6; //Output pin injector 3 is on - NOT USED
+      inj4.pin = 9; //Output pin injector 4 is on - NOT USED
       ign1.pin = 29; //Pin for coil 1
       ign2.pin = 30; //Pin for coil 2
       ign3.pin = 31; //Pin for coil 3 - ONLY WITH DB2
@@ -2403,10 +2465,10 @@ void setPinMapping(byte boardID)
     #if defined(CORE_TEENSY35)
     case 53:
       //Pin mappings for the Juice Box (ignition only board)
-      pinInjector1 = 2; //Output pin injector 1 is on - NOT USED
-      pinInjector2 = 56; //Output pin injector 2 is on - NOT USED
-      pinInjector3 = 6; //Output pin injector 3 is on - NOT USED
-      pinInjector4 = 50; //Output pin injector 4 is on - NOT USED
+      inj1.pin = 2; //Output pin injector 1 is on - NOT USED
+      inj2.pin = 56; //Output pin injector 2 is on - NOT USED
+      inj3.pin = 6; //Output pin injector 3 is on - NOT USED
+      inj4.pin = 50; //Output pin injector 4 is on - NOT USED
       ign1.pin = 29; //Pin for coil 1
       ign2.pin = 30; //Pin for coil 2
       ign3.pin = 31; //Pin for coil 3
@@ -2442,12 +2504,16 @@ void setPinMapping(byte boardID)
       ignitionControlMethodAssign(OUTPUT_CONTROL_MC33810);
 
       //The injector pins below are not used directly as the control is via SPI through the MC33810s, however the pin numbers are set to be the SPI pins (SCLK, MOSI, MISO and CS) so that nothing else will set them as inputs
-      pinInjector1 = 13; //SCLK
-      pinInjector2 = 11; //MOSI
-      pinInjector3 = 12; //MISO
-      pinInjector4 = 10; //CS for MC33810 1
-      pinInjector5 = 9; //CS for MC33810 2
-      pinInjector6 = 9; //CS for MC33810 3
+      inj1.pin = 13; //SCLK
+      inj2.pin = 11; //MOSI
+      inj3.pin = 12; //MISO
+      inj4.pin = 10; //CS for MC33810 1
+#if INJ_CHANNELS >= 5
+      inj5.pin = 9; //CS for MC33810 2
+#endif
+#if INJ_CHANNELS >= 6
+      inj6.pin = 9; //CS for MC33810 3
+#endif
 
       //Dummy pins, without thes pin 0 (Serial1 RX) gets overwritten
       ign1.pin = 40;
@@ -2558,11 +2624,14 @@ void setPinMapping(byte boardID)
     case 56:
       #if defined(CORE_TEENSY)
       //Pin mappings for the Bear Cub (Teensy 4.1)
-      pinInjector1 = 6;
-      pinInjector2 = 7;
-      pinInjector3 = 9;
-      pinInjector4 = 8;
-      pinInjector5 = 0; //Not used
+      inj1.pin = 6;
+      inj2.pin = 7;
+      inj3.pin = 9;
+      inj4.pin = 8;
+#if INJ_CHANNELS >= 5
+      inj5.pin = 0; //Not used
+#endif
+
       ign1.pin = 2;
       ign2.pin = 3;
       ign3.pin = 4;
@@ -2690,10 +2759,10 @@ void setPinMapping(byte boardID)
 #endif
         ign4.pin = PD10;//
         // = PD11;  //
-        pinInjector1 = PD12; //
-        pinInjector2 = PD13; //
-        pinInjector3 = PD14; //
-        pinInjector4 = PD15; //
+        inj1.pin = PD12; //
+        inj2.pin = PD13; //
+        inj3.pin = PD14; //
+        inj4.pin = PD15; //
 
         //******************************************
         //******** PORTE CONNECTIONS ***************
@@ -2707,20 +2776,28 @@ void setPinMapping(byte boardID)
         Fan.pin = PE6; //
         StepperDir.setPin(PE7); //
         // = PE8;  //
-        pinInjector5 = PE9; //
+#if INJ_CHANNELS >= 5
+        inj5.pin = PE9; //
+#endif
         // = PE10;  //
-        pinInjector6 = PE11; //
+#if INJ_CHANNELS >= 6
+        inj6.pin = PE11; //
+#endif
         // = PE12; //
-        pinInjector8 = PE13; //
-        pinInjector7 = PE14; //
+#if INJ_CHANNELS >= 8
+        inj8.pin = PE13; //
+#endif
+#if INJ_CHANNELS >= 7
+        inj7.pin = PE14; //
+#endif
         // = PE15;  //
      #elif (defined(STM32F411xE) || defined(STM32F401xC))
         //pins PA12, PA11 are used for USB or CAN couldn't be used for GPIO
         //PB2 can't be used as input because is BOOT pin
-        pinInjector1 = PB7; //Output pin injector 1 is on
-        pinInjector2 = PB6; //Output pin injector 2 is on
-        pinInjector3 = PB5; //Output pin injector 3 is on
-        pinInjector4 = PB4; //Output pin injector 4 is on
+        inj1.pin = PB7; //Output pin injector 1 is on
+        inj2.pin = PB6; //Output pin injector 2 is on
+        inj3.pin = PB5; //Output pin injector 3 is on
+        inj4.pin = PB4; //Output pin injector 4 is on
         ign1.pin = PB9; //Pin for coil 1
         ign2.pin = PB8; //Pin for coil 2
         ign3.pin = PB3; //Pin for coil 3
@@ -2751,10 +2828,10 @@ void setPinMapping(byte boardID)
         //Maple mini wiki.stm32duino.com/index.php?title=Maple_Mini
         //pins PA12, PA11 are used for USB or CAN couldn't be used for GPIO
         //PB2 can't be used as input because is BOOT pin
-        pinInjector1 = PB7; //Output pin injector 1 is on
-        pinInjector2 = PB6; //Output pin injector 2 is on
-        pinInjector3 = PB5; //Output pin injector 3 is on
-        pinInjector4 = PB4; //Output pin injector 4 is on
+        inj1.pin = PB7; //Output pin injector 1 is on
+        inj2.pin = PB6; //Output pin injector 2 is on
+        inj3.pin = PB5; //Output pin injector 3 is on
+        inj4.pin = PB4; //Output pin injector 4 is on
         ign1.pin = PB3; //Pin for coil 1
         ign2.pin = PA15; //Pin for coil 2
         ign3.pin = PA14; //Pin for coil 3
@@ -2847,7 +2924,7 @@ void setPinMapping(byte boardID)
       /* = PC10; */ // USART TX
       /* = PC11; */ // USART RX
       /* = PC12; */ //(DO NOT USE FOR SPEEDUINO) - SDIO_SCK
-      pinInjector4 = PC13;
+      inj4.pin = PC13;
       /* = PC14; */ //(DO NOT USE FOR SPEEDUINO) - OSC32_IN
       /* = PC15; */ //(DO NOT USE FOR SPEEDUINO) - OSC32_OUT
 
@@ -2857,11 +2934,13 @@ void setPinMapping(byte boardID)
       /* = PD0; */ //CANRX
       /* = PD1; */ //CANTX
       /* = PD2; */ //(DO NOT USE FOR SPEEDUINO) - SDIO_CMD
-      pinInjector7 = PD3;
+#if INJ_CHANNELS >= 7
+      inj7.pin = PD3;
+#endif
       /* = PD4; */ // USB SD /CS
       // = PD5; // Injector 10
       // = PD6;
-      pinInjector3 = PD7; //
+      inj3.pin = PD7; //
 #if IGN_CHANNELS >= 7
       ign7.pin = PD8;
 #endif
@@ -2880,11 +2959,17 @@ void setPinMapping(byte boardID)
       //******************************************
       // = PE0; //
       // = PE1; //
-      pinInjector8 = PE2;
-      pinInjector5 = PE3;
-      pinInjector6 = PE4;
-      pinInjector2 = PE5;
-      pinInjector1 = PE6;
+#if INJ_CHANNELS >= 8
+      inj8.pin = PE2;
+#endif
+#if INJ_CHANNELS >= 5
+      inj5.pin = PE3;
+#endif
+#if INJ_CHANNELS >= 6
+      inj6.pin = PE4;
+#endif
+      inj2.pin = PE5;
+      inj1.pin = PE6;
       // = PE7; //
 #if IGN_CHANNELS >= 5
       ign5.pin = PE8;
@@ -2987,10 +3072,10 @@ void setPinMapping(byte boardID)
 #endif
         /* = PD10; */ //
         /* = PD11; */ //
-        pinInjector1 = PD12; //
-        pinInjector2 = PD13; //
-        pinInjector3 = PD14; //
-        pinInjector4 = PD15; //
+        inj1.pin = PD12; //
+        inj2.pin = PD13; //
+        inj3.pin = PD14; //
+        inj4.pin = PD15; //
 
         //******************************************
         //******** PORTE CONNECTIONS ***************
@@ -3006,19 +3091,26 @@ void setPinMapping(byte boardID)
         /* = PE8; */ //
         /* = PE9; */ //
         /* = PE10; */ //
-        pinInjector5 = PE11; //
-        pinInjector6 = PE12; //
+#if INJ_CHANNELS >= 5
+        inj5.pin = PE11; //
+#endif
+#if INJ_CHANNELS >= 6
+        inj6.pin = PE12; //
+#endif
         /* = PE13; */ //
         /* = PE14; */ //
         /* = PE15; */ //
-      #else
-        #ifndef SMALL_FLASH_MODE //No support for bluepill here anyway
+#else
+#ifndef SMALL_FLASH_MODE //No support for bluepill here anyway
         //Pin mappings as per the v0.2 shield
-        pinInjector1 = 8; //Output pin injector 1 is on
-        pinInjector2 = 9; //Output pin injector 2 is on
-        pinInjector3 = 10; //Output pin injector 3 is on
-        pinInjector4 = 11; //Output pin injector 4 is on
-        pinInjector5 = 12; //Output pin injector 5 is on
+        inj1.pin = 8; //Output pin injector 1 is on
+        inj2.pin = 9; //Output pin injector 2 is on
+        inj3.pin = 10; //Output pin injector 3 is on
+        inj4.pin = 11; //Output pin injector 4 is on
+#if INJ_CHANNELS >= 5
+        inj5.pin = 12; //Output pin injector 5 is on
+#endif
+
         ign1.pin = 28; //Pin for coil 1
         ign2.pin = 24; //Pin for coil 2
         ign3.pin = 40; //Pin for coil 3

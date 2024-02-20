@@ -265,21 +265,21 @@ static injector_control_st const injector_control_direct[injector_id_COUNT] = {
 
 static void init_direct_injectors(void)
 {
-  inj1.configure(pinInjector1);
-  inj2.configure(pinInjector2);
-  inj3.configure(pinInjector3);
-  inj4.configure(pinInjector4);
+  inj1.configure(inj1.pin);
+  inj2.configure(inj2.pin);
+  inj3.configure(inj3.pin);
+  inj4.configure(inj4.pin);
 #if (INJ_CHANNELS >= 5)
-  inj5.configure(pinInjector5);
+  inj5.configure(inj5.pin);
 #endif
 #if (INJ_CHANNELS >= 6)
-  inj6.configure(pinInjector6);
+  inj6.configure(inj6.pin);
 #endif
 #if (INJ_CHANNELS >= 7)
-  inj7.configure(pinInjector7);
+  inj7.configure(inj7.pin);
 #endif
 #if (INJ_CHANNELS >= 8)
-  inj8.configure(pinInjector8);
+  inj8.configure(inj8.pin);
 #endif
 }
 
