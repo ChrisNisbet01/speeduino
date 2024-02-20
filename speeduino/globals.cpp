@@ -5,6 +5,8 @@
 #include "scheduler.h"
 #include "ignition_contexts.h"
 #include "auxiliary_pins.h"
+#include "ignition_pins.h"
+#include "injector_pins.h"
 
 const char TSfirmwareVersion[] PROGMEM = "Speeduino";
 

@@ -519,37 +519,6 @@ extern volatile byte TIMER_mask;
 extern volatile byte LOOP_TIMER;
 
 //These functions all do checks on a pin to determine if it is already in use by another (higher importance) function
-#define pinIsInjector(pin) ( \
-    (pin) == pinInjector1 || (pin) == pinInjector2 || (pin) == pinInjector3 || (pin) == pinInjector4 \
-#if INJ_CHANNELS >= 5
-    || (pin) == pinInjector5 \
-#endif
-#if INJ_CHANNELS >= 6
-    || (pin) == pinInjector6 \
-#endif
-#if INJ_CHANNELS >= 7
-    || (pin) == pinInjector7 \
-#endif
-#if INJ_CHANNELS >= 8
-    || ((pin) == pinInjector8) \
-#endif
-    )
-
-#define pinIsIgnition(pin) ( \
-    (pin) == ign1.pin || (pin) == ign2.pin || (pin) == ign3.pin || (pin) == ign4.pin \
-#if IGN_CHANNELS >= 5
-    || (pin) == ign5.pin \
-#endif
-#if IGN_CHANNELS >= 6
-    || (pin) == ign6.pin \
-#endif
-#if IGN_CHANNELS >= 7
-    || (pin) == ign7.pin \
-#endif
-#if IGN_CHANNELS >= 8
-    || (pin) == ign8.pin \
-#endif
-    )
 
 #define pinIsSensor(pin) (((pin) == pinCLT) || ((pin) == pinIAT) || ((pin) == pinMAP) || ((pin) == pinTPS) || ((pin) == pinO2) || ((pin) == pinBat) || (((pin) == Flex.pin) && (configPage2.flexEnabled != 0)))
 

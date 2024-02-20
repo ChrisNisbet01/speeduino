@@ -24,7 +24,7 @@ public:
 
   void write(byte val);
 
-  void configure(byte pin, byte initial_state = LOW, byte mode = OUTPUT);
+  void configure(byte initial_state = LOW, byte mode = OUTPUT);
 
   bool is_configured(void);
 
@@ -45,7 +45,7 @@ public:
    */
   bool read(void);
 
-  void configure(byte pin, byte mode = INPUT);
+  void configure(byte mode = INPUT);
 
   bool is_configured(void);
 
@@ -70,7 +70,7 @@ public:
 
   void toggle(void);
 
-  void configure(byte pin, byte initial_state = LOW, byte mode = OUTPUT);
+  void configure(byte initial_state = LOW, byte mode = OUTPUT);
 
   bool is_configured(void);
 
@@ -88,7 +88,7 @@ public:
 
   bool read(void);
 
-  void configure(byte pin, byte mode = INPUT);
+  void configure(byte mode = INPUT);
 
   bool is_configured(void);
 
@@ -117,7 +117,7 @@ public:
 
   void toggle(void);
 
-  void configure(byte pin, byte initial_state = LOW, byte mode = OUTPUT);
+  void configure(byte initial_state = LOW, byte mode = OUTPUT);
 
   bool is_configured(void);
 

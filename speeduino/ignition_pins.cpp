@@ -18,3 +18,21 @@ IOPortMaskOutputPin ign7;
 IOPortMaskOutputPin ign8;
 #endif
 
+static inline bool pinIsIgnition(byte const pin)
+{
+  return pin == ign1.pin || pin == ign2.pin || pin == ign3.pin || pin == ign4.pin
+#if IGN_CHANNELS >= 5
+         || pin == ign5.pin
+#endif
+#if IGN_CHANNELS >= 6
+         || pin == ign6.pin
+#endif
+#if IGN_CHANNELS >= 7
+         || pin == ign7.pin
+#endif
+#if IGN_CHANNELS >= 8
+         || pin == ign8.pin
+#endif
+    ;
+}
+
