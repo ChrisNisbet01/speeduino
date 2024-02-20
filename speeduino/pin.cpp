@@ -48,9 +48,8 @@ void IOPortMaskOutputPin:: write(byte val)
   val ? on() : off();
 }
 
-void IOPortMaskOutputPin::configure(byte pin_, byte initial_state, byte mode)
+void IOPortMaskOutputPin::configure(byte initial_state, byte mode)
 {
-  pin = pin_;
   m_port = portOutputRegister(digitalPinToPort(pin));
   m_mask = digitalPinToBitMask(pin);
   /* Set the pin before configuring as an output. */
@@ -83,9 +82,8 @@ bool IOPortMaskInputPin::read(void)
   return (*m_port & m_mask) != 0;
 }
 
-void IOPortMaskInputPin::configure(byte pin_, byte mode)
+void IOPortMaskInputPin::configure(byte mode)
 {
-  pin = pin_;
   m_port = portOutputRegister(digitalPinToPort(pin));
   m_mask = digitalPinToBitMask(pin);
   pinMode(pin, mode);
@@ -126,9 +124,8 @@ void IODigitalWriteOutputPin::toggle(void)
 #endif
 }
 
-void IODigitalWriteOutputPin::configure(byte pin_, byte initial_state, byte mode)
+void IODigitalWriteOutputPin::configure(byte initial_state, byte mode)
 {
-  pin = pin_;
   /* Set the pin before configuring as an output. */
   if (mode == OUTPUT)
   {
@@ -165,10 +162,8 @@ bool IODigitalReadInputPin::read(void)
   return digitalRead(pin);
 }
 
-void IODigitalReadInputPin::configure(byte pin_, byte mode)
+void IODigitalReadInputPin::configure(byte mode)
 {
-  pin = pin_;
-
   pinMode(pin, mode);
   m_is_configured = true;
 }
@@ -202,9 +197,8 @@ void IOAtomicWriteOutputPin::toggle(void)
   pin_toggle(*m_port, m_mask);
 }
 
-void IOAtomicWriteOutputPin::configure(byte pin_, byte initial_state, byte mode)
+void IOAtomicWriteOutputPin::configure(byte initial_state, byte mode)
 {
-  pin = pin_;
   m_port = portOutputRegister(digitalPinToPort(pin));
   m_mask = digitalPinToBitMask(pin);
 

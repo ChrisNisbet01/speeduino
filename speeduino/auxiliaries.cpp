@@ -427,12 +427,15 @@ void initialiseAuxPWM(void)
   if (configPage10.n2o_enable > 0)
   {
     //The pin modes are only set if the if n2o is enabled to prevent them conflicting with other outputs.
-    NitrousStage1.configure(configPage10.n2o_stage1_pin);
-    NitrousStage2.configure(configPage10.n2o_stage2_pin);
+    NitrousStage1.pin = configPage10.n2o_stage1_pin;
+    NitrousStage1.configure();
+    NitrousStage2.pin = configPage10.n2o_stage2_pin;
+    NitrousStage2.configure();
 
     byte const input_type = (configPage10.n2o_pin_polarity == 1) ? INPUT_PULLUP : INPUT;
 
-    NitrousArming.configure(configPage10.n2o_arming_pin, input_type);
+    NitrousArming.pin = configPage10.n2o_arming_pin;
+    NitrousArming.configure(input_type);
   }
 
   boostPID.SetOutputLimits(configPage2.boostMinDuty, configPage2.boostMaxDuty);

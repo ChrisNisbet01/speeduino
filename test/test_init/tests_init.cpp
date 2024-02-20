@@ -72,13 +72,13 @@ void test_initialisation_outputs_V03(void)
 
   char msg[32];
   strcpy_P(msg, PSTR("Coil1"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinCoil1), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(ign1.pin), msg);
   strcpy_P(msg, PSTR("Coil2"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinCoil2), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(ign2.pin), msg);
   strcpy_P(msg, PSTR("Coil3"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinCoil3), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(ign3.pin), msg);
   strcpy_P(msg, PSTR("Coil4"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinCoil4), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(ign4.pin), msg);
   strcpy_P(msg, PSTR("Injector 1"));
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinInjector1), msg);
   strcpy_P(msg, PSTR("Injector 2"));
@@ -103,13 +103,13 @@ void test_initialisation_outputs_V04(void)
 
   char msg[32];
   strcpy_P(msg, PSTR("Coil1"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinCoil1), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(ign1.pin), msg);
   strcpy_P(msg, PSTR("Coil2"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinCoil2), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(ign2.pin), msg);
   strcpy_P(msg, PSTR("Coil3"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinCoil3), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(ign3.pin), msg);
   strcpy_P(msg, PSTR("Coil4"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinCoil4), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(ign4.pin), msg);
   strcpy_P(msg, PSTR("Injector 1"));
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinInjector1), msg);
   strcpy_P(msg, PSTR("Injector 2"));
@@ -153,13 +153,13 @@ void test_initialisation_outputs_MX5_8995(void)
 
   char msg[32];
   strcpy_P(msg, PSTR("Coil1"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinCoil1), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(ign1.pin), msg);
   strcpy_P(msg, PSTR("Coil2"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinCoil2), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(ign2.pin), msg);
   strcpy_P(msg, PSTR("Coil3"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinCoil3), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(ign3.pin), msg);
   strcpy_P(msg, PSTR("Coil4"));
-  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinCoil4), msg);
+  TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(ign4.pin), msg);
   strcpy_P(msg, PSTR("Injector 1"));
   TEST_ASSERT_EQUAL_MESSAGE(OUTPUT, getPinMode(pinInjector1), msg);
   strcpy_P(msg, PSTR("Injector 2"));

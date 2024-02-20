@@ -519,11 +519,39 @@ extern volatile byte TIMER_mask;
 extern volatile byte LOOP_TIMER;
 
 //These functions all do checks on a pin to determine if it is already in use by another (higher importance) function
-#define pinIsInjector(pin) (((pin) == pinInjector1) || ((pin) == pinInjector2) || ((pin) == pinInjector3) || ((pin) == pinInjector4) || ((pin) == pinInjector5) || ((pin) == pinInjector6) || ((pin) == pinInjector7) || ((pin) == pinInjector8))
-#define pinIsIgnition(pin) (((pin) == pinCoil1) || ((pin) == pinCoil2) || ((pin) == pinCoil3) || ((pin) == pinCoil4) || ((pin) == pinCoil5) || ((pin) == pinCoil6) || ((pin) == pinCoil7) || ((pin) == pinCoil8))
-//#define pinIsOutput(pin)    ( pinIsInjector((pin)) || pinIsIgnition((pin)) || ((pin) == FuelPump.pin) || ((pin) == Fan.pin) || ((pin) == AirConComp.pin) || ((pin) == AirConFan.pin)|| ((pin) == VVT_1.pin) || ((pin) == VVT_2.pin) || ( ((pin) == Boost.pin) && configPage6.boostEnabled) || ((pin) == Idle1.pin) || ((pin) == Idle2.pin) || ((pin) == TachOut.pin) || ((pin) == StepperEnable.pin) || ((pin) == StepperStep.pin) )
+#define pinIsInjector(pin) ( \
+    (pin) == pinInjector1 || (pin) == pinInjector2 || (pin) == pinInjector3 || (pin) == pinInjector4 \
+#if INJ_CHANNELS >= 5
+    || (pin) == pinInjector5 \
+#endif
+#if INJ_CHANNELS >= 6
+    || (pin) == pinInjector6 \
+#endif
+#if INJ_CHANNELS >= 7
+    || (pin) == pinInjector7 \
+#endif
+#if INJ_CHANNELS >= 8
+    || ((pin) == pinInjector8) \
+#endif
+    )
+
+#define pinIsIgnition(pin) ( \
+    (pin) == ign1.pin || (pin) == ign2.pin || (pin) == ign3.pin || (pin) == ign4.pin \
+#if IGN_CHANNELS >= 5
+    || (pin) == ign5.pin \
+#endif
+#if IGN_CHANNELS >= 6
+    || (pin) == ign6.pin \
+#endif
+#if IGN_CHANNELS >= 7
+    || (pin) == ign7.pin \
+#endif
+#if IGN_CHANNELS >= 8
+    || (pin) == ign8.pin \
+#endif
+    )
+
 #define pinIsSensor(pin) (((pin) == pinCLT) || ((pin) == pinIAT) || ((pin) == pinMAP) || ((pin) == pinTPS) || ((pin) == pinO2) || ((pin) == pinBat) || (((pin) == Flex.pin) && (configPage2.flexEnabled != 0)))
-//#define pinIsUsed(pin)      ( pinIsSensor((pin)) || pinIsOutput((pin)) || pinIsReserved((pin)) )
 
 
 /** The status struct with current values for all 'live' variables.
@@ -1403,26 +1431,10 @@ struct config15 {
 } __attribute__((__packed__));  //The 32 bit systems require all structs to be fully packed
 #endif
 
-extern byte pinInjector1;  //Output pin injector 1
-extern byte pinInjector2;  //Output pin injector 2
-extern byte pinInjector3;  //Output pin injector 3
-extern byte pinInjector4;  //Output pin injector 4
-extern byte pinInjector5;  //Output pin injector 5
-extern byte pinInjector6;  //Output pin injector 6
-extern byte pinInjector7;  //Output pin injector 7
-extern byte pinInjector8;  //Output pin injector 8
-
 extern OUTPUT_CONTROL_TYPE injectorOutputControl;
 
-extern byte pinCoil1;  //Pin for coil 1
-extern byte pinCoil2;  //Pin for coil 2
-extern byte pinCoil3;  //Pin for coil 3
-extern byte pinCoil4;  //Pin for coil 4
-extern byte pinCoil5;  //Pin for coil 5
-extern byte pinCoil6;  //Pin for coil 6
-extern byte pinCoil7;  //Pin for coil 7
-extern byte pinCoil8;  //Pin for coil 8
 extern OUTPUT_CONTROL_TYPE ignitionOutputControl;
+
 extern byte pinTPS;           //TPS input pin
 extern byte pinMAP;           //MAP sensor pin
 extern byte pinEMAP;          //EMAP sensor pin

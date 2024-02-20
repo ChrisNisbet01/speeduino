@@ -262,21 +262,21 @@ static ignition_control_st const ignition_control_direct[ignition_id_COUNT] = {
 
 static void init_direct_ignition(void)
 {
-  ign1.configure(pinCoil1);
-  ign2.configure(pinCoil2);
-  ign3.configure(pinCoil3);
-  ign4.configure(pinCoil4);
+  ign1.configure();
+  ign2.configure();
+  ign3.configure();
+  ign4.configure();
 #if IGN_CHANNELS >= 5
-  ign5.configure(pinCoil5);
+  ign5.configure();
 #endif
 #if IGN_CHANNELS >= 6
-  ign6.configure(pinCoil6);
+  ign6.configure();
 #endif
 #if IGN_CHANNELS >= 7
-  ign7.configure(pinCoil7);
+  ign7.configure();
 #endif
 #if IGN_CHANNELS >= 8
-  ign8.configure(pinCoil8);
+  ign8.configure();
 #endif
 }
 

@@ -104,29 +104,11 @@ byte resetControl = RESET_CONTROL_DISABLED;
 volatile byte TIMER_mask;
 volatile byte LOOP_TIMER;
 
-/// Various pin numbering (Injectors, Ign outputs, CAS, Cam, Sensors. etc.) assignments
-byte pinInjector1; ///< Output pin injector 1
-byte pinInjector2; ///< Output pin injector 2
-byte pinInjector3; ///< Output pin injector 3
-byte pinInjector4; ///< Output pin injector 4
-byte pinInjector5; ///< Output pin injector 5
-byte pinInjector6; ///< Output pin injector 6
-byte pinInjector7; ///< Output pin injector 7
-byte pinInjector8; ///< Output pin injector 8
-
 /**< Specifies whether the injectors are controlled directly (Via an IO pin)
  *   or using something like the MC33810.
  */
 OUTPUT_CONTROL_TYPE injectorOutputControl = OUTPUT_CONTROL_DIRECT;
 
-byte pinCoil1; ///< Pin for coil 1
-byte pinCoil2; ///< Pin for coil 2
-byte pinCoil3; ///< Pin for coil 3
-byte pinCoil4; ///< Pin for coil 4
-byte pinCoil5; ///< Pin for coil 5
-byte pinCoil6; ///< Pin for coil 6
-byte pinCoil7; ///< Pin for coil 7
-byte pinCoil8; ///< Pin for coil 8
 /**< Specifies whether the coils are controlled directly (via an IO pin)
  *   or using something like the MC33810.
  *   0 = Direct (OUTPUT_CONTROL_DIRECT),
@@ -209,26 +191,45 @@ bool pinIsOutput(byte pin)
     && (configPage6.iacAlgorithm <= 3 || configPage6.iacAlgorithm == 6);
   bool isIdleSteper = configPage6.iacAlgorithm > 3 && configPage6.iacAlgorithm != 6;
   //Injector?
-  if (pin == pinInjector1
-  || (pin == pinInjector2 && configPage2.nInjectors > 1)
-  || (pin == pinInjector3 && configPage2.nInjectors > 2)
-  || (pin == pinInjector4 && configPage2.nInjectors > 3)
-  || (pin == pinInjector5 && configPage2.nInjectors > 4)
-  || (pin == pinInjector6 && configPage2.nInjectors > 5)
-  || (pin == pinInjector7 && configPage2.nInjectors > 6)
-  || (pin == pinInjector8 && configPage2.nInjectors > 7))
+  if (pin == inj1.pin
+  || (pin == inj2.pin && configPage2.nInjectors > 1)
+  || (pin == inj3.pin && configPage2.nInjectors > 2)
+  || (pin == inj4.pin && configPage2.nInjectors > 3)
+#if INJ_CHANNELS >= 5
+  || (pin == inj5.pin && configPage2.nInjectors > 4)
+#endif
+#if INJ_CHANNELS >= 6
+  || (pin == inj6.pin && configPage2.nInjectors > 5)
+#endif
+#if INJ_CHANNELS >= 7
+  || (pin == inj7.pin && configPage2.nInjectors > 6)
+#endif
+#if INJ_CHANNELS >= 8
+  || (pin == inj8.pin && configPage2.nInjectors > 7)
+#endif
+  )
   {
     used = true;
   }
+
   //Ignition?
-  if (pin == pinCoil1
-  || (pin == pinCoil2 && ignitions.maxOutputs > 1)
-  || (pin == pinCoil3 && ignitions.maxOutputs > 2)
-  || (pin == pinCoil4 && ignitions.maxOutputs > 3)
-  || (pin == pinCoil5 && ignitions.maxOutputs > 4)
-  || (pin == pinCoil6 && ignitions.maxOutputs > 5)
-  || (pin == pinCoil7 && ignitions.maxOutputs > 6)
-  || (pin == pinCoil8 && ignitions.maxOutputs > 7))
+  if (pin == ign1.pin
+  || (pin == ign2.pin && ignitions.maxOutputs > 1)
+  || (pin == ign3.pin && ignitions.maxOutputs > 2)
+  || (pin == ign4.pin && ignitions.maxOutputs > 3)
+#if IGN_CHANNELS >= 5
+  || (pin == ign5.pin && ignitions.maxOutputs > 4)
+#endif
+#if IGN_CHANNELS >= 6
+  || (pin == ign6.pin && ignitions.maxOutputs > 5)
+#endif
+#if IGN_CHANNELS >= 7
+  || (pin == ign7.pin && ignitions.maxOutputs > 6)
+#endif
+#if IGN_CHANNELS >= 8
+  || (pin == ign8.pin && ignitions.maxOutputs > 7)
+#endif
+  )
   {
     used = true;
   }

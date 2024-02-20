@@ -1410,16 +1410,20 @@ void setPinMapping(byte boardID)
     case 1:
     #ifndef SMALL_FLASH_MODE //No support for bluepill here anyway
       //Pin mappings as per the v0.2 shield
-      pinInjector1 = 8; //Output pin injector 1 is on
-      pinInjector2 = 9; //Output pin injector 2 is on
-      pinInjector3 = 10; //Output pin injector 3 is on
-      pinInjector4 = 11; //Output pin injector 4 is on
-      pinInjector5 = 12; //Output pin injector 5 is on
-      pinCoil1 = 28; //Pin for coil 1
-      pinCoil2 = 24; //Pin for coil 2
-      pinCoil3 = 40; //Pin for coil 3
-      pinCoil4 = 36; //Pin for coil 4
-      pinCoil5 = 34; //Pin for coil 5 PLACEHOLDER value for now
+      inj1.pin = 8; //Output pin injector 1 is on
+      inj2.pin = 9; //Output pin injector 2 is on
+      inj3.pin = 10; //Output pin injector 3 is on
+      inj4.pin = 11; //Output pin injector 4 is on
+#if INJ_CHANNELS >= 5
+      inj5.pin = 12; //Output pin injector 5 is on
+#endif
+      ign1.pin = 28; //Pin for coil 1
+      ign2.pin = 24; //Pin for coil 2
+      ign3.pin = 40; //Pin for coil 3
+      ign4.pin = 36; //Pin for coil 4
+#if IGN_CHANNELS >= 5
+      ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
+#endif
       Trigger.setPin(20); //The CAS pin
       Trigger2.setPin(21); //The Cam Sensor pin
       Trigger3.setPin(3); //The Cam sensor 2 pin
@@ -1449,11 +1453,13 @@ void setPinMapping(byte boardID)
       pinInjector3 = 10; //Output pin injector 3 is on
       pinInjector4 = 11; //Output pin injector 4 is on
       pinInjector5 = 12; //Output pin injector 5 is on
-      pinCoil1 = 28; //Pin for coil 1
-      pinCoil2 = 24; //Pin for coil 2
-      pinCoil3 = 40; //Pin for coil 3
-      pinCoil4 = 36; //Pin for coil 4
-      pinCoil5 = 34; //Pin for coil 5 PLACEHOLDER value for now
+      ign1.pin = 28; //Pin for coil 1
+      ign2.pin = 24; //Pin for coil 2
+      ign3.pin = 40; //Pin for coil 3
+      ign4.pin = 36; //Pin for coil 4
+#if IGN_CHANNELS >= 5
+      ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
+#endif
       Trigger.setPin(19); //The CAS pin
       Trigger2.setPin(18); //The Cam Sensor pin
       Trigger3.setPin(3); //The Cam sensor 2 pin
@@ -1485,11 +1491,11 @@ void setPinMapping(byte boardID)
         Trigger.setPin(23);
         StepperDir.setPin(33);
         StepperStep.pin = 34;
-        pinCoil1 = 31;
+        ign1.pin = 31;
         TachOut.pin = 28;
         Fan.pin = 27;
-        pinCoil4 = 21;
-        pinCoil3 = 30;
+        ign4.pin = 21;
+        ign3.pin = 30;
         pinO2 = A22;
 #endif
 #endif
@@ -1503,11 +1509,13 @@ void setPinMapping(byte boardID)
       pinInjector4 = 11; //Output pin injector 4 is on
       pinInjector5 = 12; //Output pin injector 5 is on
       pinInjector6 = 50; //CAUTION: Uses the same as Coil 4 below.
-      pinCoil1 = 40; //Pin for coil 1
-      pinCoil2 = 38; //Pin for coil 2
-      pinCoil3 = 52; //Pin for coil 3
-      pinCoil4 = 50; //Pin for coil 4
-      pinCoil5 = 34; //Pin for coil 5 PLACEHOLDER value for now
+      ign1.pin = 40; //Pin for coil 1
+      ign2.pin = 38; //Pin for coil 2
+      ign3.pin = 52; //Pin for coil 3
+      ign4.pin = 50; //Pin for coil 4
+#if IGN_CHANNELS >= 5
+      ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
+#endif
       Trigger.setPin(19); //The CAS pin
       Trigger2.setPin(18); //The Cam Sensor pin
       Trigger3.setPin(3); //The Cam sensor 2 pin
@@ -1545,12 +1553,12 @@ void setPinMapping(byte boardID)
         Trigger2.setPin(36);
         StepperDir.setPin(34);
         StepperStep.pin = 35;
-        pinCoil1 = 31;
-        pinCoil2 = 32;
+        ign1.pin = 31;
+        ign2.pin = 32;
         TachOut.pin = 28;
         Fan.pin = 27;
-        pinCoil4 = 29;
-        pinCoil3 = 30;
+        ign4.pin = 29;
+        ign3.pin = 30;
         pinO2 = A22;
 
         //Make sure the CAN pins aren't overwritten
@@ -1578,10 +1586,10 @@ void setPinMapping(byte boardID)
         StepperDir.setPin(34);
         StepperStep.pin = 35;
 
-        pinCoil1 = 31;
-        pinCoil2 = 32;
-        pinCoil4 = 29;
-        pinCoil3 = 30;
+        ign1.pin = 31;
+        ign2.pin = 32;
+        ign4.pin = 29;
+        ign3.pin = 30;
 
         TachOut.pin = 28;
         Fan.pin = 27;
@@ -1604,7 +1612,7 @@ void setPinMapping(byte boardID)
         /* = PA5; */ //ADC12
         /* = PA6; */ //ADC12 LED_BUILTIN_1
         FuelPump.pin = PA7; //ADC12 LED_BUILTIN_2
-        pinCoil3 = PA8;
+        ign3.pin = PA8;
         /* = PA9 */ //TXD1
         /* = PA10 */ //RXD1
         /* = PA11 */ //(DO NOT USE FOR SPEEDUINO) USB
@@ -1625,9 +1633,9 @@ void setPinMapping(byte boardID)
         /* = PB6; */ //NRF_CE
         /* = PB7; */ //NRF_CS
         /* = PB8; */ //NRF_IRQ
-        pinCoil2 = PB9; //
+        ign2.pin = PB9; //
         /* = PB9; */ //
-        pinCoil4 = PB10; //TXD3
+        ign4.pin = PB10; //TXD3
         Idle1.pin = PB11; //RXD3
         Idle2.pin = PB12; //
         Boost.pin = PB12; //
@@ -1665,9 +1673,9 @@ void setPinMapping(byte boardID)
         Flex.pin = PD4;
         /* = PD5;*/ //TXD2
         /* = PD6; */ //RXD2
-        pinCoil1 = PD7; //
+        ign1.pin = PD7; //
         /* = PD8; */ //
-        pinCoil5 = PD9;//
+        ign5.pin = PD9;//
         /* = PD10; */ //
         /* = PD11; */ //
         pinInjector1 = PD12; //
@@ -1704,10 +1712,10 @@ void setPinMapping(byte boardID)
         pinInjector2 = PB6; //Output pin injector 2 is on
         pinInjector3 = PB5; //Output pin injector 3 is on
         pinInjector4 = PB4; //Output pin injector 4 is on
-        pinCoil1 = PB9; //Pin for coil 1
-        pinCoil2 = PB8; //Pin for coil 2
-        pinCoil3 = PB3; //Pin for coil 3
-        pinCoil4 = PA15; //Pin for coil 4
+        ign1.pin = PB9; //Pin for coil 1
+        ign2.pin = PB8; //Pin for coil 2
+        ign3.pin = PB3; //Pin for coil 3
+        ign4.pin = PA15; //Pin for coil 4
         pinTPS = A2;//TPS input pin
         pinMAP = A3; //MAP sensor pin
         pinIAT = A0; //IAT sensor pin
@@ -1738,11 +1746,13 @@ void setPinMapping(byte boardID)
       pinInjector3 = 47; //Output pin injector 3 is on
       pinInjector4 = 45; //Output pin injector 4 is on
       pinInjector5 = 14; //Output pin injector 5 is on
-      pinCoil1 = 42; //Pin for coil 1
-      pinCoil2 = 43; //Pin for coil 2
-      pinCoil3 = 32; //Pin for coil 3
-      pinCoil4 = 33; //Pin for coil 4
-      pinCoil5 = 34; //Pin for coil 5 PLACEHOLDER value for now
+      ign1.pin = 42; //Pin for coil 1
+      ign2.pin = 43; //Pin for coil 2
+      ign3.pin = 32; //Pin for coil 3
+      ign4.pin = 33; //Pin for coil 4
+#if IGN_CHANNELS >= 5
+      ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
+#endif
       Trigger.setPin(19); //The CAS pin
       Trigger2.setPin(18); //The Cam Sensor pin
       Trigger3.setPin(2); //The Cam sensor 2 pin
@@ -1774,10 +1784,10 @@ void setPinMapping(byte boardID)
         Trigger2.setPin(36);
         StepperDir.setPin(34);
         StepperStep.pin = 35;
-        pinCoil1 = 33; //Done
-        pinCoil2 = 24; //Done
-        pinCoil3 = 51; //Won't work (No mapping for pin 32)
-        pinCoil4 = 52; //Won't work (No mapping for pin 33)
+        ign1.pin = 33; //Done
+        ign2.pin = 24; //Done
+        ign3.pin = 51; //Won't work (No mapping for pin 32)
+        ign4.pin = 52; //Won't work (No mapping for pin 33)
         FuelPump.pin = 26; //Requires PVT4 adapter or above
         Fan.pin = 50; //Won't work (No mapping for pin 35)
         TachOut.pin = 28; //Done
@@ -1792,11 +1802,13 @@ void setPinMapping(byte boardID)
       pinInjector3 = 9; //Output pin injector 3 is on
       pinInjector4 = 8; //Output pin injector 4 is on
       pinInjector5 = 14; //Output pin injector 5 is on
-      pinCoil1 = 39; //Pin for coil 1
-      pinCoil2 = 41; //Pin for coil 2
-      pinCoil3 = 32; //Pin for coil 3
-      pinCoil4 = 33; //Pin for coil 4
-      pinCoil5 = 34; //Pin for coil 5 PLACEHOLDER value for now
+      ign1.pin = 39; //Pin for coil 1
+      ign2.pin = 41; //Pin for coil 2
+      ign3.pin = 32; //Pin for coil 3
+      ign4.pin = 33; //Pin for coil 4
+#if IGN_CHANNELS >= 5
+      ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
+#endif
       Trigger.setPin(19); //The CAS pin
       Trigger2.setPin(18); //The Cam Sensor pin
       pinTPS = A2;//TPS input pin
@@ -1825,10 +1837,10 @@ void setPinMapping(byte boardID)
         Trigger2.setPin(36);
         StepperDir.setPin(34);
         StepperStep.pin = 35;
-        pinCoil1 = 33; //Done
-        pinCoil2 = 24; //Done
-        pinCoil3 = 51; //Won't work (No mapping for pin 32)
-        pinCoil4 = 52; //Won't work (No mapping for pin 33)
+        ign1.pin = 33; //Done
+        ign2.pin = 24; //Done
+        ign3.pin = 51; //Won't work (No mapping for pin 32)
+        ign4.pin = 52; //Won't work (No mapping for pin 33)
         FuelPump.pin = 26; //Requires PVT4 adapter or above
         Fan.pin = 50; //Won't work (No mapping for pin 35)
         TachOut.pin = 28; //Done
@@ -1844,11 +1856,13 @@ void setPinMapping(byte boardID)
       pinInjector3 = 9; //Output pin injector 3 is on
       pinInjector4 = 8; //Output pin injector 4 is on
       pinInjector5 = 14; //Output pin injector 5 is on
-      pinCoil1 = 39; //Pin for coil 1
-      pinCoil2 = 41; //Pin for coil 2
-      pinCoil3 = 32; //Pin for coil 3
-      pinCoil4 = 33; //Pin for coil 4
-      pinCoil5 = 34; //Pin for coil 5 PLACEHOLDER value for now
+      ign1.pin = 39; //Pin for coil 1
+      ign2.pin = 41; //Pin for coil 2
+      ign3.pin = 32; //Pin for coil 3
+      ign4.pin = 33; //Pin for coil 4
+#if IGN_CHANNELS >= 5
+      ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
+#endif
       Trigger.setPin(19); //The CAS pin
       Trigger2.setPin(18); //The Cam Sensor pin
       pinTPS = A2;//TPS input pin
@@ -1880,10 +1894,10 @@ void setPinMapping(byte boardID)
         Trigger2.setPin(36);
         StepperDir.setPin(34);
         StepperStep.pin = 35;
-        pinCoil1 = 33; //Done
-        pinCoil2 = 24; //Done
-        pinCoil3 = 51; //Won't work (No mapping for pin 32)
-        pinCoil4 = 52; //Won't work (No mapping for pin 33)
+        ign1.pin = 33; //Done
+        ign2.pin = 24; //Done
+        ign3.pin = 51; //Won't work (No mapping for pin 32)
+        ign4.pin = 52; //Won't work (No mapping for pin 33)
         FuelPump.pin = 26; //Requires PVT4 adapter or above
         Fan.pin = 50; //Won't work (No mapping for pin 35)
         TachOut.pin = 28; //Done
@@ -1901,11 +1915,13 @@ void setPinMapping(byte boardID)
       pinInjector6 = 9; //Placeholder only - NOT USED
       pinInjector7 = 10; //Placeholder only - NOT USED
       pinInjector8 = 11; //Placeholder only - NOT USED
-      pinCoil1 = 24; //Pin for coil 1
-      pinCoil2 = 28; //Pin for coil 2
-      pinCoil3 = 36; //Pin for coil 3
-      pinCoil4 = 40; //Pin for coil 4
-      pinCoil5 = 34; //Pin for coil 5 PLACEHOLDER value for now
+      ign1.pin = 24; //Pin for coil 1
+      ign2.pin = 28; //Pin for coil 2
+      ign3.pin = 36; //Pin for coil 3
+      ign4.pin = 40; //Pin for coil 4
+#if IGN_CHANNELS >= 5
+      ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
+#endif
       Trigger.setPin(18); //The CAS pin
       Trigger2.setPin(19); //The Cam Sensor pin
       pinTPS = A2;//TPS input pin
@@ -1936,11 +1952,13 @@ void setPinMapping(byte boardID)
       pinInjector3 = 10; //Output pin injector 3 is on
       pinInjector4 = 11; //Output pin injector 4 is on
       pinInjector5 = 12; //Output pin injector 5 is on
-      pinCoil1 = 28; //Pin for coil 1
-      pinCoil2 = 24; //Pin for coil 2
-      pinCoil3 = 40; //Pin for coil 3
-      pinCoil4 = 36; //Pin for coil 4
-      pinCoil5 = 34; //Pin for coil 5 PLACEHOLDER value for now
+      ign1.pin = 28; //Pin for coil 1
+      ign2.pin = 24; //Pin for coil 2
+      ign3.pin = 40; //Pin for coil 3
+      ign4.pin = 36; //Pin for coil 4
+#if IGN_CHANNELS >= 5
+      ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
+#endif
       pinSpareOut1 = 4; //Spare LSD Output 1(PWM)
       pinSpareOut2 = 5; //Spare LSD Output 2(PWM)
       pinSpareOut3 = 6; //Spare LSD Output 3(PWM)
@@ -1972,11 +1990,13 @@ void setPinMapping(byte boardID)
       pinInjector3 = 10; //Output pin injector 3 is on
       pinInjector4 = 11; //Output pin injector 4 is on
       pinInjector5 = 12; //Output pin injector 5 is on
-      pinCoil1 = 40; //Pin for coil 1
-      pinCoil2 = 38; //Pin for coil 2
-      pinCoil3 = 50; //Pin for coil 3
-      pinCoil4 = 52; //Pin for coil 4
-      pinCoil5 = 34; //Pin for coil 5 PLACEHOLDER value for now
+      ign1.pin = 40; //Pin for coil 1
+      ign2.pin = 38; //Pin for coil 2
+      ign3.pin = 50; //Pin for coil 3
+      ign4.pin = 52; //Pin for coil 4
+#if IGN_CHANNELS >= 5
+      ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
+#endif
       Trigger.setPin(19); //The CAS pin
       Trigger2.setPin(18); //The Cam Sensor pin
       Trigger3.setPin(17); // cam sensor 2 pin, pin17 isn't external trigger enabled in arduino mega??
@@ -2017,14 +2037,22 @@ void setPinMapping(byte boardID)
       pinInjector6 = 50; //Output pin injector 6
       pinInjector7 = 39; //Output pin injector 7 (placeholder)
       pinInjector8 = 42; //Output pin injector 8 (placeholder)
-      pinCoil1 = 40; //Pin for coil 1
-      pinCoil2 = 38; //Pin for coil 2
-      pinCoil3 = 52; //Pin for coil 3
-      pinCoil4 = 48; //Pin for coil 4
-      pinCoil5 = 36; //Pin for coil 5
-      pinCoil6 = 34; //Pin for coil 6
-      pinCoil7 = 46; //Pin for coil 7 (placeholder)
-      pinCoil8 = 53; //Pin for coil 8 (placeholder)
+      ign1.pin = 40; //Pin for coil 1
+      ign2.pin = 38; //Pin for coil 2
+      ign3.pin = 52; //Pin for coil 3
+      ign4.pin = 48; //Pin for coil 4
+#if IGN_CHANNELS >= 5
+      ign5.pin = 36; //Pin for coil 5
+#endif
+#if IGN_CHANNELS >= 6
+      ign6.pin = 34; //Pin for coil 6
+#endif
+#if IGN_CHANNELS >= 7
+      ign7.pin = 46; //Pin for coil 7 (placeholder)
+#endif
+#if IGN_CHANNELS >= 8
+      ign8.pin = 53; //Pin for coil 8 (placeholder)
+#endif
       Trigger.setPin(19); //The CAS pin
       Trigger2.setPin(18); //The Cam Sensor pin
       Trigger3.setPin(20); //The Cam sensor 2 pin
@@ -2066,14 +2094,22 @@ void setPinMapping(byte boardID)
       pinInjector6 = PE7; //Output pin injector 6
       pinInjector7 = PE13; //Output pin injector 7 (placeholder)
       pinInjector8 = PE10; //Output pin injector 8 (placeholder)
-      pinCoil1 = PE2; //Pin for coil 1
-      pinCoil2 = PE3; //Pin for coil 2
-      pinCoil3 = PC13; //Pin for coil 3
-      pinCoil4 = PE6; //Pin for coil 4
-      pinCoil5 = PE4; //Pin for coil 5
-      pinCoil6 = PE5; //Pin for coil 6
-      pinCoil7 = PE0; //Pin for coil 7 (placeholder)
-      pinCoil8 = PB9; //Pin for coil 8 (placeholder)
+      ign1.pin = PE2; //Pin for coil 1
+      ign2.pin = PE3; //Pin for coil 2
+      ign3.pin = PC13; //Pin for coil 3
+      ign4.pin = PE6; //Pin for coil 4
+#if IGN_CHANNELS >= 5
+      ign5.pin = PE4; //Pin for coil 5
+#endif
+#if IGN_CHANNELS >= 6
+      ign6.pin = PE5; //Pin for coil 6
+#endif
+#if IGN_CHANNELS >= 7
+      ign7.pin = PE0; //Pin for coil 7 (placeholder)
+#endif
+#if IGN_CHANNELS >= 8
+      ign8.pin = PB9; //Pin for coil 8 (placeholder)
+#endif
       Trigger.setPin(PD3); //The CAS pin
       Trigger2.setPin(PD4); //The Cam Sensor pin
       pinTPS = PA2;//TPS input pin
@@ -2116,11 +2152,13 @@ void setPinMapping(byte boardID)
       pinInjector3 = 11; //Output pin injector 3 is on - NOT USED
       pinInjector4 = 12; //Output pin injector 4 is on - NOT USED
       pinInjector5 = 13; //Placeholder only - NOT USED
-      pinCoil1 = 23; //Pin for coil 1
-      pinCoil2 = 22; //Pin for coil 2
-      pinCoil3 = 2; //Pin for coil 3 - ONLY WITH DB2
-      pinCoil4 = 3; //Pin for coil 4 - ONLY WITH DB2
-      pinCoil5 = 46; //Placeholder only - NOT USED
+      ign1.pin = 23; //Pin for coil 1
+      ign2.pin = 22; //Pin for coil 2
+      ign3.pin = 2; //Pin for coil 3 - ONLY WITH DB2
+      ign4.pin = 3; //Pin for coil 4 - ONLY WITH DB2
+#if IGN_CHANNELS >= 5
+      ign5.pin = 46; //Placeholder only - NOT USED
+#endif
       Trigger.setPin(19); //The CAS pin
       Trigger2.setPin(18); //The Cam Sensor pin
       Trigger3.setPin(21); //The Cam sensor 2 pin
@@ -2161,11 +2199,13 @@ void setPinMapping(byte boardID)
       pinInjector3 = 6; //Output pin injector 3 is on
       pinInjector4 = 5; //Output pin injector 4 is on
       pinInjector5 = 45; //Output pin injector 5 is on PLACEHOLDER value for now
-      pinCoil1 = 35; //Pin for coil 1
-      pinCoil2 = 36; //Pin for coil 2
-      pinCoil3 = 33; //Pin for coil 3
-      pinCoil4 = 34; //Pin for coil 4
-      pinCoil5 = 44; //Pin for coil 5 PLACEHOLDER value for now
+      ign1.pin = 35; //Pin for coil 1
+      ign2.pin = 36; //Pin for coil 2
+      ign3.pin = 33; //Pin for coil 3
+      ign4.pin = 34; //Pin for coil 4
+#if IGN_CHANNELS >= 5
+      ign5.pin = 44; //Pin for coil 5 PLACEHOLDER value for now
+#endif
       Trigger.setPin(19); //The CAS pin
       Trigger2.setPin(18); //The Cam Sensor pin
       Trigger3.setPin(3); //The Cam sensor 2 pin
@@ -2206,10 +2246,10 @@ void setPinMapping(byte boardID)
       pinInjector2 = 7; //Output pin injector 2
       pinInjector3 = 8; //Output pin injector 3
       pinInjector4 = 9; //Output pin injector 4
-      pinCoil1 = 24; //Pin for coil 1
-      pinCoil2 = 25; //Pin for coil 2
-      pinCoil3 = 23; //Pin for coil 3
-      pinCoil4 = 22; //Pin for coil 4
+      ign1.pin = 24; //Pin for coil 1
+      ign2.pin = 25; //Pin for coil 2
+      ign3.pin = 23; //Pin for coil 3
+      ign4.pin = 22; //Pin for coil 4
       Trigger.setPin(19); //The CRANK Sensor pin
       Trigger2.setPin(18); //The Cam Sensor pin
       Flex.pin = 20; // Flex sensor PLACEHOLDER value for now
@@ -2245,11 +2285,13 @@ void setPinMapping(byte boardID)
       pinInjector2 = 11; //Output pin injector 2 is on
       pinInjector3 = 12; //Output pin injector 3 is on
       pinInjector4 = 9; //Output pin injector 4 is on
-      pinCoil1 = 39; //Pin for coil 1
-      pinCoil2 = 29; //Pin for coil 2
-      pinCoil3 = 28; //Pin for coil 3
-      pinCoil4 = 27; //Pin for coil 4
-      pinCoil5 = 26; //Placeholder  for coil 5
+      ign1.pin = 39; //Pin for coil 1
+      ign2.pin = 29; //Pin for coil 2
+      ign3.pin = 28; //Pin for coil 3
+      ign4.pin = 27; //Pin for coil 4
+#if IGN_CHANNELS >= 5
+      ign5.pin = 26; //Placeholder  for coil 5
+#endif
       Trigger.setPin(19); //The CAS pin
       Trigger2.setPin(18); //The Cam Sensor pin
       Trigger3.setPin(21);// The Cam sensor 2 pin
@@ -2295,12 +2337,10 @@ void setPinMapping(byte boardID)
       pinInjector4 = 9; //Output pin injector 4 is on
       //Placeholder only - NOT USED:
       //pinInjector5 = 13;
-      pinCoil1 = 29; //Pin for coil 1
-      pinCoil2 = 30; //Pin for coil 2
-      pinCoil3 = 31; //Pin for coil 3 - ONLY WITH DB2
-      pinCoil4 = 32; //Pin for coil 4 - ONLY WITH DB2
-      //Placeholder only - NOT USED:
-      //pinCoil5 = 46;
+      ign1.pin = 29; //Pin for coil 1
+      ign2.pin = 30; //Pin for coil 2
+      ign3.pin = 31; //Pin for coil 3 - ONLY WITH DB2
+      ign4.pin = 32; //Pin for coil 4 - ONLY WITH DB2
       Trigger.setPin(23); //The CAS pin
       Trigger2.setPin(36); //The Cam Sensor pin
       pinTPS = 16; //TPS input pin
@@ -2330,10 +2370,10 @@ void setPinMapping(byte boardID)
       pinInjector2 = 10; //Output pin injector 2 is on
       pinInjector3 = 6; //Output pin injector 3 is on - NOT USED
       pinInjector4 = 9; //Output pin injector 4 is on - NOT USED
-      pinCoil1 = 29; //Pin for coil 1
-      pinCoil2 = 30; //Pin for coil 2
-      pinCoil3 = 31; //Pin for coil 3 - ONLY WITH DB2
-      pinCoil4 = 32; //Pin for coil 4 - ONLY WITH DB2
+      ign1.pin = 29; //Pin for coil 1
+      ign2.pin = 30; //Pin for coil 2
+      ign3.pin = 31; //Pin for coil 3 - ONLY WITH DB2
+      ign4.pin = 32; //Pin for coil 4 - ONLY WITH DB2
       Trigger.setPin(23); //The CAS pin
       Trigger2.setPin(36); //The Cam Sensor pin
       pinTPS = 16; //TPS input pin
@@ -2365,10 +2405,10 @@ void setPinMapping(byte boardID)
       pinInjector2 = 56; //Output pin injector 2 is on - NOT USED
       pinInjector3 = 6; //Output pin injector 3 is on - NOT USED
       pinInjector4 = 50; //Output pin injector 4 is on - NOT USED
-      pinCoil1 = 29; //Pin for coil 1
-      pinCoil2 = 30; //Pin for coil 2
-      pinCoil3 = 31; //Pin for coil 3
-      pinCoil4 = 32; //Pin for coil 4
+      ign1.pin = 29; //Pin for coil 1
+      ign2.pin = 30; //Pin for coil 2
+      ign3.pin = 31; //Pin for coil 3
+      ign4.pin = 32; //Pin for coil 4
       Trigger.setPin(37); //The CAS pin
       Trigger2.setPin(38); //The Cam Sensor pin - NOT USED
       pinTPS = A2; //TPS input pin
@@ -2408,14 +2448,8 @@ void setPinMapping(byte boardID)
       pinInjector6 = 9; //CS for MC33810 3
 
       //Dummy pins, without thes pin 0 (Serial1 RX) gets overwritten
-      pinCoil1 = 40;
-      pinCoil2 = 41;
-      /*
-      pinCoil3 = 55;
-      pinCoil4 = 55;
-      pinCoil5 = 55;
-      pinCoil6 = 55;
-      */
+      ign1.pin = 40;
+      ign2.pin = 41;
 
       Trigger.setPin(19); //The CAS pin
       Trigger2.setPin(18); //The Cam Sensor pin
@@ -2527,10 +2561,12 @@ void setPinMapping(byte boardID)
       pinInjector3 = 9;
       pinInjector4 = 8;
       pinInjector5 = 0; //Not used
-      pinCoil1 = 2;
-      pinCoil2 = 3;
-      pinCoil3 = 4;
-      pinCoil4 = 5;
+      ign1.pin = 2;
+      ign2.pin = 3;
+      ign3.pin = 4;
+#if IGN_CHANNELS >= 5
+      ign4.pin = 5;
+#endif
 
       Trigger.setPin(20); //The CAS pin
       Trigger2.setPin(21); //The Cam Sensor pin
@@ -2583,7 +2619,7 @@ void setPinMapping(byte boardID)
         // = PA5; //ADC12
         // = PA6; //ADC12 LED_BUILTIN_1
         // = PA7; //ADC12 LED_BUILTIN_2
-        pinCoil3 = PA8;
+        ign3.pin = PA8;
         // = PA9;  //TXD1=Bluetooth module
         // = PA10; //RXD1=Bluetooth module
         // = PA11; //(DO NOT USE FOR SPEEDUINO) USB
@@ -2604,7 +2640,7 @@ void setPinMapping(byte boardID)
         // = PB6;  //NRF_CE
         // = PB7;  //NRF_CS
         // = PB8;  //NRF_IRQ
-        pinCoil2 = PB9; //
+        ign2.pin = PB9; //
         // = PB9;  //
         // = PB10; //TXD3
         // = PB11; //RXD3
@@ -2644,11 +2680,13 @@ void setPinMapping(byte boardID)
         Flex.pin = PD4;
         // = PD5; //TXD2
         // = PD6;  //RXD2
-        pinCoil1 = PD7; //
+        ign1.pin = PD7; //
         // = PD7;  //
         // = PD8;  //
-        pinCoil5 = PD9;//
-        pinCoil4 = PD10;//
+#if IGN_CHANNELS >= 5
+        ign5.pin = PD9;//
+#endif
+        ign4.pin = PD10;//
         // = PD11;  //
         pinInjector1 = PD12; //
         pinInjector2 = PD13; //
@@ -2681,10 +2719,10 @@ void setPinMapping(byte boardID)
         pinInjector2 = PB6; //Output pin injector 2 is on
         pinInjector3 = PB5; //Output pin injector 3 is on
         pinInjector4 = PB4; //Output pin injector 4 is on
-        pinCoil1 = PB9; //Pin for coil 1
-        pinCoil2 = PB8; //Pin for coil 2
-        pinCoil3 = PB3; //Pin for coil 3
-        pinCoil4 = PA15; //Pin for coil 4
+        ign1.pin = PB9; //Pin for coil 1
+        ign2.pin = PB8; //Pin for coil 2
+        ign3.pin = PB3; //Pin for coil 3
+        ign4.pin = PA15; //Pin for coil 4
         pinTPS = A2;//TPS input pin
         pinMAP = A3; //MAP sensor pin
         pinIAT = A0; //IAT sensor pin
@@ -2715,11 +2753,13 @@ void setPinMapping(byte boardID)
         pinInjector2 = PB6; //Output pin injector 2 is on
         pinInjector3 = PB5; //Output pin injector 3 is on
         pinInjector4 = PB4; //Output pin injector 4 is on
-        pinCoil1 = PB3; //Pin for coil 1
-        pinCoil2 = PA15; //Pin for coil 2
-        pinCoil3 = PA14; //Pin for coil 3
-        pinCoil4 = PA9; //Pin for coil 4
-        pinCoil5 = PA8; //Pin for coil 5
+        ign1.pin = PB3; //Pin for coil 1
+        ign2.pin = PA15; //Pin for coil 2
+        ign3.pin = PA14; //Pin for coil 3
+        ign4.pin = PA9; //Pin for coil 4
+#if IGN_CHANNELS >= 5
+        ign5.pin = PA8; //Pin for coil 5
+#endif
         pinTPS = A0; //TPS input pin
         pinMAP = A1; //MAP sensor pin
         pinIAT = A2; //IAT sensor pin
@@ -2799,9 +2839,9 @@ void setPinMapping(byte boardID)
       pinBat = PC4;
       // = PC5;
       Trigger2.setPin(PC6);
-      pinCoil1 = PC7;
+      ign1.pin = PC7;
       /* = PC8; */ //(DO NOT USE FOR SPEEDUINO) - SDIO_D0
-      pinCoil3 = PC9;
+      ign3.pin = PC9;
       /* = PC10; */ // USART TX
       /* = PC11; */ // USART RX
       /* = PC12; */ //(DO NOT USE FOR SPEEDUINO) - SDIO_SCK
@@ -2820,8 +2860,12 @@ void setPinMapping(byte boardID)
       // = PD5; // Injector 10
       // = PD6;
       pinInjector3 = PD7; //
-      pinCoil7 = PD8;
-      pinCoil8 = PD9;
+#if IGN_CHANNELS >= 7
+      ign7.pin = PD8;
+#endif
+#if IGN_CHANNELS >= 8
+      ign8.pin = PD9;
+#endif
       /* = PD10; */ //
       /* = PD11; */ //
       /* = PD12; */ // Thermocouple #1 /CS
@@ -2840,13 +2884,17 @@ void setPinMapping(byte boardID)
       pinInjector2 = PE5;
       pinInjector1 = PE6;
       // = PE7; //
-      pinCoil5 = PE8;
+#if IGN_CHANNELS >= 5
+      ign5.pin = PE8;
+#endif
       /* = PE9; */ //
-      pinCoil6 = PE10;
+#if IGN_CHANNELS >= 6
+      ign6.pin = PE10;
+#endif
       // = PE11;
-      pinCoil4 = PE12;
+      ign4.pin = PE12;
       /* = PE13; */ //
-      pinCoil2 = PE14;
+      ign2.pin = PE14;
       /* = PE15; */ //
 #endif
       break;
@@ -2867,7 +2915,7 @@ void setPinMapping(byte boardID)
         /* = PA5; */ //ADC12
         FuelPump.pin = PA6; //ADC12 LED_BUILTIN_1
         /* = PA7; */ //ADC12 LED_BUILTIN_2
-        pinCoil3 = PA8;
+        ign3.pin = PA8;
         /* = PA9 */ //TXD1
         /* = PA10 */ //RXD1
         /* = PA11 */ //(DO NOT USE FOR SPEEDUINO) USB
@@ -2888,9 +2936,9 @@ void setPinMapping(byte boardID)
         /* = PB6; */ //NRF_CE
         /* = PB7; */ //NRF_CS
         /* = PB8; */ //NRF_IRQ
-        pinCoil2 = PB9; //
+        ign2.pin = PB9; //
         /* = PB9; */ //
-        pinCoil4 = PB10; //TXD3
+        ign4.pin = PB10; //TXD3
         Idle1.pin = PB11; //RXD3
         Idle2.pin = PB12; //
         /* Boost.pin = PB12; */ //
@@ -2929,10 +2977,12 @@ void setPinMapping(byte boardID)
         Flex.pin = PD4;
         /* = PD5;*/ //TXD2
         /* = PD6; */ //RXD2
-        pinCoil1 = PD7; //
+        ign1.pin = PD7; //
         /* = PD7; */ //
         /* = PD8; */ //
-        pinCoil5 = PD9;//
+#if IGN_CHANNELS >= 5
+        ign5.pin = PD9;//
+#endif
         /* = PD10; */ //
         /* = PD11; */ //
         pinInjector1 = PD12; //
@@ -2967,11 +3017,13 @@ void setPinMapping(byte boardID)
         pinInjector3 = 10; //Output pin injector 3 is on
         pinInjector4 = 11; //Output pin injector 4 is on
         pinInjector5 = 12; //Output pin injector 5 is on
-        pinCoil1 = 28; //Pin for coil 1
-        pinCoil2 = 24; //Pin for coil 2
-        pinCoil3 = 40; //Pin for coil 3
-        pinCoil4 = 36; //Pin for coil 4
-        pinCoil5 = 34; //Pin for coil 5 PLACEHOLDER value for now
+        ign1.pin = 28; //Pin for coil 1
+        ign2.pin = 24; //Pin for coil 2
+        ign3.pin = 40; //Pin for coil 3
+        ign4.pin = 36; //Pin for coil 4
+#if IGN_CHANNELS >= 5
+        ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
+#endif
         Trigger.setPin(20); //The CAS pin
         Trigger2.setPin(21); //The Cam Sensor pin
         pinTPS = A2; //TPS input pin
@@ -3029,26 +3081,26 @@ void setPinMapping(byte boardID)
   }
 
   //Finally, set the relevant pin modes for outputs
-  Boost.configure(Boost.pin);
-  TachOut.configure(TachOut.pin, HIGH); //Set the tacho output default state
+  Boost.configure();
+  TachOut.configure(HIGH); //Set the tacho output default state
 
-  Idle1.configure(Idle1.pin);
-  Idle2.configure(Idle2.pin);
-  IdleUpOutput.configure(IdleUpOutput.pin);
+  Idle1.configure();
+  Idle2.configure();
+  IdleUpOutput.configure();
 
-  FuelPump.configure(FuelPump.pin);
-  Fan.configure(Fan.pin);
+  FuelPump.configure();
+  Fan.configure();
 
-  StepperDir.configure(StepperDir.pin);
-  StepperStep.configure(StepperStep.pin);
-  StepperEnable.configure(StepperEnable.pin);
+  StepperDir.configure();
+  StepperStep.configure();
+  StepperEnable.configure();
 
-  VVT_1.configure(VVT_1.pin);
-  VVT_2.configure(VVT_2.pin);
+  VVT_1.configure();
+  VVT_2.configure();
 
   if (configPage4.ignBypassEnabled > 0)
   {
-    IgnBypass.configure(IgnBypass.pin);
+    IgnBypass.configure();
   }
 
   //This is a legacy mode option to revert the MAP reading behaviour to match
@@ -3111,7 +3163,7 @@ void setPinMapping(byte boardID)
   {
     //Standard GM / Continental flex sensor requires pullup, but this should be onboard.
     //The internal pullup will not work (Requires ~3.3k)!
-    Flex.configure(Flex.pin);
+    Flex.configure();
   }
 
   if (configPage2.vssMode > 1 && !pinIsOutput(pinVSS)) //Pin mode 1 for VSS is CAN
@@ -3165,12 +3217,12 @@ void setPinMapping(byte boardID)
   }
   if(configPage10.wmiEnabled > 0)
   {
-    WMIEnabled.configure(WMIEnabled.pin);
+    WMIEnabled.configure();
     if (configPage10.wmiIndicatorEnabled > 0)
     {
       byte const initial_state = (configPage10.wmiIndicatorPolarity > 0) ? HIGH : LOW;
 
-      WMIIndicator.configure(WMIIndicator.pin, initial_state);
+      WMIIndicator.configure(initial_state);
     }
     if (configPage10.wmiEmptyEnabled > 0 && !pinIsOutput(pinWMIEmpty))
     {
@@ -3184,7 +3236,7 @@ void setPinMapping(byte boardID)
   {
     if (AirConComp.pin > 0)
     {
-      AirConComp.configure(AirConComp.pin);
+      AirConComp.configure();
     }
 
     if (pinIsOutput(AirConRequest.pin))
@@ -3195,12 +3247,12 @@ void setPinMapping(byte boardID)
     {
       byte const input_mode = (configPage15.airConReqPol == 1) ? INPUT : INPUT_PULLUP;
 
-      AirConRequest.configure(AirConRequest.pin, input_mode);
+      AirConRequest.configure(input_mode);
     }
 
     if (AirConFan.pin > 0 && configPage15.airConFanEnabled == 1)
     {
-      AirConFan.configure(AirConFan.pin);
+      AirConFan.configure();
     }
   }
 }
@@ -3285,9 +3337,9 @@ void initialiseTriggers(void)
 #else
     triggerInterrupt3 = Trigger3.pin;
 #endif
-  Trigger.configure(Trigger.pin, INPUT);
-  Trigger2.configure(Trigger2.pin, INPUT);
-  Trigger3.configure(Trigger3.pin, INPUT);
+  Trigger.configure(INPUT);
+  Trigger2.configure(INPUT);
+  Trigger3.configure(INPUT);
 
   detachInterrupt(triggerInterrupt);
   detachInterrupt(triggerInterrupt2);
