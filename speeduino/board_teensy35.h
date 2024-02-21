@@ -33,7 +33,7 @@
 
   #define micros_safe() micros() //timer5 method is not used on anything but AVR, the micros_safe() macro is simply an alias for the normal micros()
   #define PWM_FAN_AVAILABLE
-  #define pinIsReserved(pin)  ( ((pin) == 0) || ((pin) == 1) || ((pin) == 3) || ((pin) == 4) ) //Forbidden pins like USB
+  #define pinIsReserved(pin)  ((pin) == 0 || (pin) == 1 || (pin) == 3 || (pin) == 4) //Forbidden pins like USB
 
 /*
 ***********************************************************************************************************
@@ -124,7 +124,7 @@
 
   #define ENABLE_VVT_TIMER()    FTM1_C1SC |= FTM_CSC_CHIE
   #define DISABLE_VVT_TIMER()   FTM1_C1SC &= ~FTM_CSC_CHIE
-  
+
   #define ENABLE_FAN_TIMER()    FTM2_C1SC |= FTM_CSC_CHIE
   #define DISABLE_FAN_TIMER()   FTM2_C1SC &= ~FTM_CSC_CHIE
 
@@ -162,12 +162,12 @@
   #include <FlexCAN_T4.h>
   /*
   //These are declared locally in comms_CAN now due to this issue: https://github.com/tonton81/FlexCAN_T4/issues/67
-#if defined(__MK64FX512__)         // use for Teensy 3.5 only 
+#if defined(__MK64FX512__)         // use for Teensy 3.5 only
   extern FlexCAN_T4<CAN0, RX_SIZE_256, TX_SIZE_16> Can0;
   FlexCAN_T4<CAN0, RX_SIZE_256, TX_SIZE_16> Can0;
 #elif defined(__MK66FX1M0__)         // use for Teensy 3.6 only
   extern FlexCAN_T4<CAN0, RX_SIZE_256, TX_SIZE_16> Can0;
-  extern FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1; 
+  extern FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can1;
 #endif
 */
   #define NATIVE_CAN_AVAILABLE

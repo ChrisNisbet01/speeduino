@@ -112,35 +112,33 @@ void jumpToBootloader();
 
 #if defined(ARDUINO_BLUEPILL_F103C8) || defined(ARDUINO_BLUEPILL_F103CB) \
  || defined(ARDUINO_BLACKPILL_F401CC) || defined(ARDUINO_BLACKPILL_F411CE)
-  #define pinIsReserved(pin)  ( ((pin) == PA11) || ((pin) == PA12) || ((pin) == PC14) || ((pin) == PC15) )
+#define pinIsReserved(pin)  ((pin) == PA11 || (pin) == PA12 || (pin) == PC14 || (pin) == PC15)
 
-  #ifndef PB11 //Hack for F4 BlackPills
-    #define PB11 PB10
-  #endif
-  //Hack to allow compilation on small STM boards
-  #ifndef A10
-    #define A10  PA0
-    #define A11  PA1
-    #define A12  PA2
-    #define A13  PA3
-    #define A14  PA4
-    #define A15  PA5
-  #endif
+#ifndef PB11 //Hack for F4 BlackPills
+#define PB11 PB10
+#endif
+//Hack to allow compilation on small STM boards
+#ifndef A10
+#define A10  PA0
+#define A11  PA1
+#define A12  PA2
+#define A13  PA3
+#define A14  PA4
+#define A15  PA5
+#endif
 #elif defined(ARDUINO_DISCO_F407VG)
-  // TODO: Assign the reserved pins.
-  #define pinIsReserved(pin)  (pin == PC8 || pin == PC12 || pin == PC14 || pin == PC15 || pin == PD2)
+// TODO: Assign the reserved pins.
+#define pinIsReserved(pin)  (pin == PC8 || pin == PC12 || pin == PC14 || pin == PC15 || pin == PD2)
 #else
-  #ifdef USE_SPI_EEPROM
-    #define pinIsReserved(pin)  ( ((pin) == PA11) || ((pin) == PA12) || ((pin) == PB3) || ((pin) == PB4) || ((pin) == PB5) || ((pin) == USE_SPI_EEPROM) ) //Forbidden pins like USB
-  #else
-    #define pinIsReserved(pin)  ( ((pin) == PA11) || ((pin) == PA12) || ((pin) == PB3) || ((pin) == PB4) || ((pin) == PB5) || ((pin) == PB0) ) //Forbidden pins like USB
-  #endif
+#ifdef USE_SPI_EEPROM
+#define pinIsReserved(pin) ((pin) == PA11 || (pin) == PA12 || (pin) == PB3 || (pin) == PB4 || (pin) == PB5 || (pin) == USE_SPI_EEPROM) //Forbidden pins like USB
+#else
+#define pinIsReserved(pin) ((pin) == PA11) || ((pin) == PA12) || ((pin) == PB3) || ((pin) == PB4) || ((pin) == PB5) || ((pin) == PB0) ) //Forbidden pins like USB
+#endif
 #endif
 
-//#define PWM_FAN_AVAILABLE
-
 #ifndef LED_BUILTIN
-  #define LED_BUILTIN PA7
+#define LED_BUILTIN PA7
 #endif
 
 /*

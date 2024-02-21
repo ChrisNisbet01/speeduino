@@ -520,7 +520,7 @@ extern volatile byte LOOP_TIMER;
 
 //These functions all do checks on a pin to determine if it is already in use by another (higher importance) function
 
-#define pinIsSensor(pin) (((pin) == pinCLT) || ((pin) == pinIAT) || ((pin) == pinMAP) || ((pin) == pinTPS) || ((pin) == pinO2) || ((pin) == pinBat) || (Flex.is_configured() && (pin) == Flex.pin))
+#define pinIsSensor(pin) ((pin) == pinCLT || (pin) == pinIAT || (pin) == pinMAP || (pin) == pinTPS || (pin) == pinO2 || (pin) == pinBat || (Flex.is_configured() && (pin) == Flex.pin))
 
 
 /** The status struct with current values for all 'live' variables.
@@ -1216,8 +1216,8 @@ struct config10 {
 
   byte crankingEnrichTaper;  //Byte 134
 
-  byte fuelPressureEnable : 1;  ///< Enable fuel pressure sensing from an analog pin (@ref pinFuelPressure)
-  byte oilPressureEnable : 1;   ///< Enable oil pressure sensing from an analog pin (@ref pinOilPressure)
+  byte fuelPressureEnable : 1;  ///< Enable fuel pressure sensing from an analog pin (@ref FuelPressure)
+  byte oilPressureEnable : 1;   ///< Enable oil pressure sensing from an analog pin (@ref OilPressure)
   byte oilPressureProtEnbl : 1;
   byte oilPressurePin : 5;
 
