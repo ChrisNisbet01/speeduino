@@ -1402,6 +1402,37 @@ setup_selectable_io(void)
 
 }
 
+static void setResetControlPinState(void)
+{
+  BIT_CLEAR(currentStatus.status3, BIT_STATUS3_RESET_PREVENT);
+
+  /* Setup reset control initial state */
+  switch (resetControl)
+  {
+    case RESET_CONTROL_PREVENT_WHEN_RUNNING:
+      /* Set the reset control pin LOW and change it to HIGH later when we get sync. */
+      ResetControl.configure(LOW);
+      BIT_CLEAR(currentStatus.status3, BIT_STATUS3_RESET_PREVENT);
+      break;
+    case RESET_CONTROL_PREVENT_ALWAYS:
+      /* Set the reset control pin HIGH and never touch it again. */
+      ResetControl.configure(HIGH);
+      BIT_SET(currentStatus.status3, BIT_STATUS3_RESET_PREVENT);
+      break;
+    case RESET_CONTROL_SERIAL_COMMAND:
+      /*
+       * Set the reset control pin HIGH. There currently isn't any practical difference
+       * between this and PREVENT_ALWAYS but it doesn't hurt anything to have them separate.
+       */
+      ResetControl.configure(HIGH);
+      BIT_CLEAR(currentStatus.status3, BIT_STATUS3_RESET_PREVENT);
+      break;
+    default:
+      // Do nothing - keep MISRA happy
+      break;
+  }
+}
+
 /** Set board / microcontroller specific pin mappings / assignments.
  * The boardID is switch-case compared against raw boardID integers (not enum or defined label, and probably no need for that either)
  * which are originated from tuning SW (e.g. TS) set values and are available in reference/speeduino.ini (See pinLayout, note also that
@@ -1451,7 +1482,7 @@ void setPinMapping(byte boardID)
       Fan.pin = 47; //Pin for the fan output
       FuelPump.pin = 4; //Fuel pump output
       Flex.pin = 2; // Flex sensor (Must be external interrupt enabled)
-      pinResetControl = 43; //Reset control output
+      ResetControl.pin = 43; //Reset control output
       break;
     #endif
     case 2:
@@ -1494,7 +1525,7 @@ void setPinMapping(byte boardID)
       Fan.pin = A13; //Pin for the fan output
       pinLaunch = 51; //Can be overwritten below
       Flex.pin = 2; // Flex sensor (Must be external interrupt enabled)
-      pinResetControl = 50; //Reset control output
+      ResetControl.pin = 50; //Reset control output
       pinBaro = A5;
       pinVSS = 20;
 
@@ -1554,7 +1585,7 @@ void setPinMapping(byte boardID)
       Fan.pin = 47; //Pin for the fan output (Goes to ULN2803)
       pinLaunch = 51; //Can be overwritten below
       Flex.pin = 2; // Flex sensor (Must be external interrupt enabled)
-      pinResetControl = 43; //Reset control output
+      ResetControl.pin = 43; //Reset control output
       pinBaro = A5;
       pinVSS = 20;
       pinWMIEmpty = 46;
@@ -1796,7 +1827,7 @@ void setPinMapping(byte boardID)
       Fan.pin = 41; //Pin for the fan output
       pinLaunch = 12; //Can be overwritten below
       Flex.pin = 3; // Flex sensor (Must be external interrupt enabled)
-      pinResetControl = 39; //Reset control output
+      ResetControl.pin = 39; //Reset control output
       #endif
       //This is NOT correct. It has not yet been tested with this board
       #if defined(CORE_TEENSY35)
@@ -1851,7 +1882,7 @@ void setPinMapping(byte boardID)
       Fan.pin = 35; //Pin for the fan output
       pinLaunch = 37; //Can be overwritten below
       Flex.pin = 3; // Flex sensor (Must be external interrupt enabled)
-      pinResetControl = 44; //Reset control output
+      ResetControl.pin = 44; //Reset control output
 
       //This is NOT correct. It has not yet been tested with this board
       #if defined(CORE_TEENSY35)
@@ -1908,7 +1939,7 @@ void setPinMapping(byte boardID)
       Fan.pin = 35; //Pin for the fan output
       pinLaunch = 12; //Can be overwritten below
       Flex.pin = 3; // Flex sensor (Must be external interrupt enabled)
-      pinResetControl = 44; //Reset control output
+      ResetControl.pin = 44; //Reset control output
       pinVSS = 20;
       pinIdleUp = 48;
       pinCTPS = 47;
@@ -1968,7 +1999,7 @@ void setPinMapping(byte boardID)
       Fan.pin = 47; //Pin for the fan output
       TachOut.pin = 49; //Tacho output pin
       Flex.pin = 2; // Flex sensor (Must be external interrupt enabled)
-      pinResetControl = 26; //Reset control output
+      ResetControl.pin = 26; //Reset control output
 
     #endif
       break;
@@ -2002,7 +2033,7 @@ void setPinMapping(byte boardID)
       Fan.pin = 47; //Pin for the fan output
       FuelPump.pin = 4; //Fuel pump output
       TachOut.pin = 49; //Tacho output pin
-      pinResetControl = 26; //Reset control output
+      ResetControl.pin = 26; //Reset control output
     #endif
       break;
 
@@ -2104,7 +2135,7 @@ void setPinMapping(byte boardID)
       Fan.pin = 47; //Pin for the fan output (Goes to ULN2003)
       pinLaunch = 51; //Launch control pin
       Flex.pin = 2; // Flex sensor
-      pinResetControl = 43; //Reset control output
+      ResetControl.pin = 43; //Reset control output
       pinVSS = 3; //VSS input pin
       pinWMIEmpty = 31; //(placeholder)
       WMIIndicator.pin = 33; //(placeholder)
@@ -2167,7 +2198,7 @@ void setPinMapping(byte boardID)
       Fan.pin = PE9; //Pin for the fan output (Goes to ULN2003)
       pinLaunch = PB8; //Launch control pin
       Flex.pin = PD7; // Flex sensor
-      pinResetControl = PB7; //Reset control output
+      ResetControl.pin = PB7; //Reset control output
       pinVSS = PB6; //VSS input pin
       pinWMIEmpty = PD15; //(placeholder)
       WMIIndicator.pin = PD13; //(placeholder)
@@ -2218,7 +2249,7 @@ void setPinMapping(byte boardID)
       pinLaunch = 10; //Can be overwritten below
       Flex.pin = 20; // Flex sensor (Must be external interrupt enabled) - ONLY WITH DB
       Fan.pin = 30; //Pin for the fan output - ONLY WITH DB
-      pinResetControl = 26; //Reset control output
+      ResetControl.pin = 26; //Reset control output
       #endif
       break;
 
@@ -2264,7 +2295,7 @@ void setPinMapping(byte boardID)
       StepperEnable.pin = 30; //Enable pin for DRV8825 driver
       Boost.pin = 12; //Boost control
       Fan.pin = 24; //Pin for the fan output
-      pinResetControl = 46; //Reset control output PLACEHOLDER value for now
+      ResetControl.pin = 46; //Reset control output PLACEHOLDER value for now
     #endif
       break;
 
@@ -2297,7 +2328,7 @@ void setPinMapping(byte boardID)
       VVT_1.pin = 15; //Default VVT output PLACEHOLDER value for now
       Boost.pin = 13; //Boost control
       Fan.pin = 12; //Pin for the fan output
-      pinResetControl = 46; //Reset control output PLACEHOLDER value for now
+      ResetControl.pin = 46; //Reset control output PLACEHOLDER value for now
     break;
 
     case 45:
@@ -2345,7 +2376,7 @@ void setPinMapping(byte boardID)
       inj6.pin = 34; //Output pin injector 6 is on
 #endif
       Fan.pin = 40; //Pin for the fan output
-      pinResetControl = 46; //Reset control output PLACEHOLDER value for now
+      ResetControl.pin = 46; //Reset control output PLACEHOLDER value for now
       #endif
     #endif
       break;
@@ -2485,14 +2516,9 @@ void setPinMapping(byte boardID)
       StepperEnable.pin = 30; //Enable pin for DRV8825 driver
       Boost.pin = 24; //Boost control
       Fan.pin = 25; //Pin for the fan output
-      pinResetControl = 46; //Reset control output PLACEHOLDER value for now
+      ResetControl.pin = 46; //Reset control output PLACEHOLDER value for now
 
-      //CS pin number is now set in a compile flag.
-      // #ifdef USE_SPI_EEPROM
-      //   pinSPIFlash_CS = 6;
-      // #endif
-
-      #if defined(CORE_TEENSY35)
+#if defined(CORE_TEENSY35)
         pinTPS = A22; //TPS input pin
         pinIAT = A19; //IAT sensor pin
         pinCLT = A20; //CLS sensor pin
@@ -2500,9 +2526,9 @@ void setPinMapping(byte boardID)
         pinO2_2 = A18; //Spare 2
 
         pSecondarySerial = &Serial1; //Header that is broken out on Dropbear boards is attached to Serial1
-      #endif
+#endif
 
-      #if defined(CORE_TEENSY41)
+#if defined(CORE_TEENSY41)
         pinTPS = A17; //TPS input pin
         pinIAT = A14; //IAT sensor pin
         pinCLT = A15; //CLS sensor pin
@@ -2526,14 +2552,9 @@ void setPinMapping(byte boardID)
         FuelPump.pin = 5; //Fuel pump output
         TachOut.pin = 8; //Tacho output pin
 
-        pinResetControl = 49; //PLaceholder only. Cannot use 42-47 as these are the SD card
+        ResetControl.pin = 49; //PLaceholder only. Cannot use 42-47 as these are the SD card
 
-        //CS pin number is now set in a compile flag.
-        // #ifdef USE_SPI_EEPROM
-        //   pinSPIFlash_CS = 33;
-        // #endif
-
-      #endif
+#endif
 
         pinMC33810_1_CS = 10;
         pinMC33810_2_CS = 9;
@@ -2602,7 +2623,7 @@ void setPinMapping(byte boardID)
       StepperEnable.pin = 30; //Enable pin for DRV8825 driver
       Boost.pin = 24; //Boost control
       Fan.pin = 25; //Pin for the fan output
-      pinResetControl = 46; //Reset control output PLACEHOLDER value for now
+      ResetControl.pin = 46; //Reset control output PLACEHOLDER value for now
 
       #endif
       break;
@@ -3069,7 +3090,7 @@ void setPinMapping(byte boardID)
         Flex.pin = 3; // Flex sensor (Must be external interrupt enabled)
         Boost.pin = 5;
         Idle1.pin = 6;
-        pinResetControl = 43; //Reset control output
+        ResetControl.pin = 43; //Reset control output
         #endif
       #endif
       break;
@@ -3099,11 +3120,10 @@ void setPinMapping(byte boardID)
   {
     if (configPage4.resetControlPin != 0U)
     {
-      pinResetControl = pinTranslate(configPage4.resetControlPin);
+      ResetControl.pin = pinTranslate(configPage4.resetControlPin);
     }
     resetControl = configPage4.resetControlConfig;
     setResetControlPinState();
-    pinMode(pinResetControl, OUTPUT);
   }
 
   //Finally, set the relevant pin modes for outputs

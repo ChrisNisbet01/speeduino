@@ -24,6 +24,7 @@ A full copy of the license may be found in the projects root directory
   #include "rtc_common.h"
 #endif
 #include "injector_contexts.h"
+#include "auxiliary_pins.h"
 
 static byte currentPage = 1;//Not the same as the speeduino config page numbers
 bool firstCommsRequest = true; /**< The number of times the A command has been issued. This is used to track whether a reset has recently been performed on the controller */
@@ -365,7 +366,7 @@ void legacySerialCommand(void)
         {
           /* Do nothing. */
         }
-        digitalWrite(pinResetControl, LOW);
+        ResetControl.write(LOW);
       }
       else
       {

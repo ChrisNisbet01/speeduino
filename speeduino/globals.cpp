@@ -148,14 +148,10 @@ bool OilPressureEnabled;
 byte pinWMIEmpty; // Water tank empty sensor
 bool WMIEmptyEnabled;
 
-byte pinResetControl; // Output pin used control resetting the Arduino
 byte pinMC33810_1_CS;
 byte pinMC33810_2_CS;
 byte pinSDEnable;
 bool SDEnableEnabled;
-#ifdef USE_SPI_EEPROM
-  byte pinSPIFlash_CS;
-#endif
 
 struct statuses currentStatus; /**< The master global "live" status struct. Contains all values that are updated frequently and used across modules */
 struct config2 configPage2;

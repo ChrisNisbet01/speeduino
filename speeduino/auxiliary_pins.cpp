@@ -58,3 +58,19 @@ IOPortMaskInputPin NitrousArming;
 
 IOPortMaskInputPin AirConRequest;
 
+IODigitalReadInputPin IdleUp;   //Input for triggering Idle Up
+IODigitalReadInputPin CTPS;     //Input for triggering closed throttle state
+IODigitalReadInputPin Fuel2Input;  //Input for switching to the 2nd fuel table
+IODigitalReadInputPin Spark2Input; //Input for switching to the 2nd ignition table
+IODigitalReadInputPin Launch;
+IODigitalReadInputPin VSS;  // VSS (Vehicle speed sensor) Pin
+IODigitalReadInputPin Baro; //Pin that an external barometric pressure sensor is attached to (If used)
+IODigitalReadInputPin FuelPressure;
+IODigitalReadInputPin OilPressure;
+IODigitalReadInputPin WMIEmpty; // Water tank empty sensor
+IODigitalReadInputPin MC33810_1_CS;
+IODigitalReadInputPin MC33810_2_CS;
+IODigitalReadInputPin SDEnable;
+
+IODigitalWriteOutputPin ResetControl; // Output pin used control resetting the Arduino
+

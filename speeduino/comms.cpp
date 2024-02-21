@@ -28,6 +28,7 @@ A full copy of the license may be found in the projects root directory
 #ifdef SD_LOGGING
   #include "SD_logger.h"
 #endif
+#include "auxiliary_pins.h"
 
 // Forward declarations
 
@@ -916,7 +917,7 @@ void processSerialCommand(void)
         {
           /* Do nothing. */
         }
-        digitalWrite(pinResetControl, LOW);
+        ResetControl.write(LOW);
       }
       else
       {

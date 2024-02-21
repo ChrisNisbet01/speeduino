@@ -24,7 +24,7 @@ public:
 
   void write(byte val);
 
-  void configure(byte initial_state = LOW, byte mode = OUTPUT);
+  void configure(byte initial_state = LOW);
 
   bool is_configured(void);
 
@@ -70,7 +70,7 @@ public:
 
   void toggle(void);
 
-  void configure(byte initial_state = LOW, byte mode = OUTPUT);
+  void configure(byte initial_state = LOW);
 
   bool is_configured(void);
 
@@ -117,7 +117,7 @@ public:
 
   void toggle(void);
 
-  void configure(byte initial_state = LOW, byte mode = OUTPUT);
+  void configure(byte initial_state = LOW);
 
   bool is_configured(void);
 

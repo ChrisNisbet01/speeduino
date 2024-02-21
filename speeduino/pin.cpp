@@ -48,7 +48,7 @@ void IOPortMaskOutputPin:: write(byte val)
   val ? on() : off();
 }
 
-void IOPortMaskOutputPin::configure(byte initial_state, byte mode)
+void IOPortMaskOutputPin::configure(byte initial_state)
 {
   if (pin == INVALID_PIN_NUMBER)
   {
@@ -57,22 +57,19 @@ void IOPortMaskOutputPin::configure(byte initial_state, byte mode)
   m_port = portOutputRegister(digitalPinToPort(pin));
   m_mask = digitalPinToBitMask(pin);
   /* Set the pin before configuring as an output. */
-  if (mode == OUTPUT)
+  if (initial_state == LOW)
   {
-    if (initial_state == LOW)
-    {
-      off();
-    }
-    else if (initial_state == HIGH)
-    {
-      on();
-    }
-    else
-    {
-      /* Do_nothing. */
-    }
+    off();
   }
-  pinMode(pin, mode);
+  else if (initial_state == HIGH)
+  {
+    on();
+  }
+  else
+  {
+    /* Do_nothing. */
+  }
+  pinMode(pin, OUTPUT);
   m_is_configured = true;
 }
 
@@ -132,30 +129,27 @@ void IODigitalWriteOutputPin::toggle(void)
 #endif
 }
 
-void IODigitalWriteOutputPin::configure(byte initial_state, byte mode)
+void IODigitalWriteOutputPin::configure(byte initial_state)
 {
   if (pin == INVALID_PIN_NUMBER)
   {
     return;
   }
   /* Set the pin before configuring as an output. */
-  if (mode == OUTPUT)
+  if (initial_state == LOW)
   {
-    if (initial_state == LOW)
-    {
-      off();
-    }
-    else if (initial_state == HIGH)
-    {
-      on();
-    }
-    else
-    {
-      /* Do_nothing. */
-    }
+    off();
+  }
+  else if (initial_state == HIGH)
+  {
+    on();
+  }
+  else
+  {
+    /* Do_nothing. */
   }
 
-  pinMode(pin, mode);
+  pinMode(pin, OUTPUT);
   m_is_configured = true;
 }
 
@@ -213,7 +207,7 @@ void IOAtomicWriteOutputPin::toggle(void)
   pin_toggle(*m_port, m_mask);
 }
 
-void IOAtomicWriteOutputPin::configure(byte initial_state, byte mode)
+void IOAtomicWriteOutputPin::configure(byte initial_state)
 {
   if (pin == INVALID_PIN_NUMBER)
   {
@@ -223,23 +217,20 @@ void IOAtomicWriteOutputPin::configure(byte initial_state, byte mode)
   m_mask = digitalPinToBitMask(pin);
 
   /* Set the pin before configuring as an output. */
-  if (mode == OUTPUT)
+  if (initial_state == LOW)
   {
-    if (initial_state == LOW)
-    {
-      off();
-    }
-    else if (initial_state == HIGH)
-    {
-      on();
-    }
-    else
-    {
-      /* Do_nothing. */
-    }
+    off();
+  }
+  else if (initial_state == HIGH)
+  {
+    on();
+  }
+  else
+  {
+    /* Do_nothing. */
   }
 
-  pinMode(pin, mode);
+  pinMode(pin, OUTPUT);
   m_is_configured = true;
 }
 

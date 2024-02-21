@@ -243,9 +243,9 @@ void test_initialisation_outputs_reset_control_use_board_default(void)
   configPage4.resetControlPin = 0; // Flags to use board default
   initialiseAll(); //Run the main initialise function
 
-  TEST_ASSERT_NOT_EQUAL(0, pinResetControl);
+  TEST_ASSERT_NOT_EQUAL(0, ResetControl.pin);
   TEST_ASSERT_EQUAL(resetControl, RESET_CONTROL_PREVENT_WHEN_RUNNING);
-  TEST_ASSERT_EQUAL(OUTPUT, getPinMode(pinResetControl));
+  TEST_ASSERT_EQUAL(OUTPUT, getPinMode(ResetControl.pin));
 }
 
 void test_initialisation_outputs_reset_control_override_board_default(void)
@@ -255,9 +255,9 @@ void test_initialisation_outputs_reset_control_override_board_default(void)
   configPage4.resetControlPin = 45; // Use a different pin
   initialiseAll(); //Run the main initialise function
 
-  TEST_ASSERT_EQUAL(45, pinResetControl);
+  TEST_ASSERT_EQUAL(45, ResetControl.pin);
   TEST_ASSERT_EQUAL(resetControl, RESET_CONTROL_PREVENT_WHEN_RUNNING);
-  TEST_ASSERT_EQUAL(OUTPUT, getPinMode(pinResetControl));
+  TEST_ASSERT_EQUAL(OUTPUT, getPinMode(ResetControl.pin));
 }
 
 void test_initialisation_user_pin_override_board_default(void)

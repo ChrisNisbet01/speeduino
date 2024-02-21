@@ -1435,19 +1435,12 @@ extern bool OilPressureEnabled;
 extern byte pinWMIEmpty;      // Water tank empty sensor
 extern bool WMIEmptyEnabled;
 
-extern byte pinResetControl;  // Output pin used control resetting the Arduino
 extern byte pinMC33810_1_CS;
 extern byte pinMC33810_2_CS;
 extern byte pinSDEnable;  //Input for manually enabling SD logging
 extern bool SDEnableEnabled;
-#ifdef USE_SPI_EEPROM
-extern byte pinSPIFlash_CS;
-#endif
 
 /* global variables */  // from speeduino.ino
-//#ifndef UNIT_TEST
-
-//#endif
 
 extern struct statuses currentStatus;  //The global status object
 extern struct config2 configPage2;
@@ -1457,9 +1450,6 @@ extern struct config9 configPage9;
 extern struct config10 configPage10;
 extern struct config13 configPage13;
 extern struct config15 configPage15;
-//extern byte cltCalibrationTable[CALIBRATION_TABLE_SIZE]; /**< An array containing the coolant sensor calibration values */
-//extern byte iatCalibrationTable[CALIBRATION_TABLE_SIZE]; /**< An array containing the inlet air temperature sensor calibration values */
-//extern byte o2CalibrationTable[CALIBRATION_TABLE_SIZE]; /**< An array containing the O2 sensor calibration values */
 
 extern uint16_t cltCalibration_bins[32];
 extern uint16_t cltCalibration_values[32];

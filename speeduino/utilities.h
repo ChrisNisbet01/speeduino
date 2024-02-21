@@ -7,8 +7,6 @@ These are some utility functions and variables used through the main code
 
 #include <Arduino.h>
 
-#define CONCATS(s1, s2) (s1" " s2) //needed for some reason. not defined correctly because of utils.h file of speeduino (same name as one in arduino core)
-
 #define COMPARATOR_EQUAL 0
 #define COMPARATOR_NOT_EQUAL 1
 #define COMPARATOR_GREATER 2
@@ -29,9 +27,7 @@ extern uint8_t ioOutDelay[sizeof(configPage13.outputPin)];
 extern uint8_t ioDelay[sizeof(configPage13.outputPin)];
 extern uint8_t pinIsValid;
 extern uint8_t currentRuleStatus;
-//uint8_t outputPin[sizeof(configPage13.outputPin)];
 
-void setResetControlPinState(void);
 byte pinTranslate(byte rawPin);
 byte pinTranslateAnalog(byte rawPin);
 void initialiseProgrammableIO(void);
