@@ -20,10 +20,8 @@ uint8_t MC33810_BIT_IGN6 = 6;
 uint8_t MC33810_BIT_IGN7 = 7;
 uint8_t MC33810_BIT_IGN8 = 8;
 
-volatile PORT_TYPE *mc33810_1_pin_port;
-volatile PINMASK_TYPE mc33810_1_pin_mask;
-volatile PORT_TYPE *mc33810_2_pin_port;
-volatile PINMASK_TYPE mc33810_2_pin_mask;
+IOPortMaskOutputPin MC33810_1_CS;
+IOPortMaskOutputPin MC33810_2_CS;
 
 static bool done_init = false;
 
@@ -36,19 +34,14 @@ void initMC33810(void)
   done_init = true;
 
   //Set pin port/masks
-  mc33810_1_pin_port = portOutputRegister(digitalPinToPort(pinMC33810_1_CS));
-  mc33810_1_pin_mask = digitalPinToBitMask(pinMC33810_1_CS);
-  mc33810_2_pin_port = portOutputRegister(digitalPinToPort(pinMC33810_2_CS));
-  mc33810_2_pin_mask = digitalPinToBitMask(pinMC33810_2_CS);
+  MC33810_1_CS.configure();
+  MC33810_1_CS.configure();
 
   //Set the output states of both ICs to be off to fuel and ignition
   mc33810_1_requestedState = 0;
   mc33810_2_requestedState = 0;
   mc33810_1_returnState = 0;
   mc33810_2_returnState = 0;
-
-  pinMode(pinMC33810_1_CS, OUTPUT);
-  pinMode(pinMC33810_2_CS, OUTPUT);
 
   SPI.begin();
   //These are the SPI settings per the datasheet

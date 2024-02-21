@@ -147,9 +147,6 @@ byte pinOilPressure;
 bool OilPressureEnabled;
 byte pinWMIEmpty; // Water tank empty sensor
 bool WMIEmptyEnabled;
-
-byte pinMC33810_1_CS;
-byte pinMC33810_2_CS;
 byte pinSDEnable;
 bool SDEnableEnabled;
 

@@ -68,8 +68,6 @@ IODigitalReadInputPin Baro; //Pin that an external barometric pressure sensor is
 IODigitalReadInputPin FuelPressure;
 IODigitalReadInputPin OilPressure;
 IODigitalReadInputPin WMIEmpty; // Water tank empty sensor
-IODigitalReadInputPin MC33810_1_CS;
-IODigitalReadInputPin MC33810_2_CS;
 IODigitalReadInputPin SDEnable;
 
 IODigitalWriteOutputPin ResetControl; // Output pin used control resetting the Arduino

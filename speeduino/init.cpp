@@ -2556,8 +2556,8 @@ void setPinMapping(byte boardID)
 
 #endif
 
-        pinMC33810_1_CS = 10;
-        pinMC33810_2_CS = 9;
+      MC33810_1_CS.pin= 10;
+      MC33810_2_CS.pin = 9;
 
       //Pin alignment to the MC33810 outputs
       MC33810_BIT_INJ1 = 3;

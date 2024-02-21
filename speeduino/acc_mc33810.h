@@ -3,12 +3,11 @@
 
 #include <SPI.h>
 #include "globals.h"
-#include BOARD_H //Note that this is not a real file, it is defined in globals.h. 
+#include BOARD_H //Note that this is not a real file, it is defined in globals.h.
+#include "pin.h"
 
-extern volatile PORT_TYPE *mc33810_1_pin_port;
-extern volatile PINMASK_TYPE mc33810_1_pin_mask;
-extern volatile PORT_TYPE *mc33810_2_pin_port;
-extern volatile PINMASK_TYPE mc33810_2_pin_mask;
+extern IOPortMaskOutputPin MC33810_1_CS;
+extern IOPortMaskOutputPin MC33810_2_CS;
 
 //#define MC33810_ONOFF_CMD   3
 static const uint8_t MC33810_ONOFF_CMD = 0x30; //48 in decimal
@@ -19,12 +18,12 @@ static volatile uint8_t mc33810_2_returnState; //Current binary state of the 2nd
 
 void initMC33810(void);
 
-#define MC33810_1_ACTIVE() (*mc33810_1_pin_port &= ~(mc33810_1_pin_mask))
-#define MC33810_1_INACTIVE() (*mc33810_1_pin_port |= (mc33810_1_pin_mask))
-#define MC33810_2_ACTIVE() (*mc33810_2_pin_port &= ~(mc33810_2_pin_mask))
-#define MC33810_2_INACTIVE() (*mc33810_2_pin_port |= (mc33810_2_pin_mask))
+#define MC33810_1_ACTIVE() MC33810_1_CS.off()
+#define MC33810_1_INACTIVE() MC33810_1_CS.on()
+#define MC33810_2_ACTIVE() MC33810_2_CS.off()
+#define MC33810_2_INACTIVE() MC33810_2_CS.on()
 
-//These are default values for which injector is attached to which output on the IC. 
+//These are default values for which injector is attached to which output on the IC.
 //They may (Probably will) be changed during init by the board specific config in init.ino
 extern uint8_t MC33810_BIT_INJ1;
 extern uint8_t MC33810_BIT_INJ2;

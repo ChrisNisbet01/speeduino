@@ -1434,9 +1434,6 @@ extern byte pinOilPressure;
 extern bool OilPressureEnabled;
 extern byte pinWMIEmpty;      // Water tank empty sensor
 extern bool WMIEmptyEnabled;
-
-extern byte pinMC33810_1_CS;
-extern byte pinMC33810_2_CS;
 extern byte pinSDEnable;  //Input for manually enabling SD logging
 extern bool SDEnableEnabled;
 
