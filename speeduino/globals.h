@@ -520,7 +520,7 @@ extern volatile byte LOOP_TIMER;
 
 //These functions all do checks on a pin to determine if it is already in use by another (higher importance) function
 
-#define pinIsSensor(pin) (((pin) == pinCLT) || ((pin) == pinIAT) || ((pin) == pinMAP) || ((pin) == pinTPS) || ((pin) == pinO2) || ((pin) == pinBat) || (((pin) == Flex.pin) && (configPage2.flexEnabled != 0)))
+#define pinIsSensor(pin) (((pin) == pinCLT) || ((pin) == pinIAT) || ((pin) == pinMAP) || ((pin) == pinTPS) || ((pin) == pinO2) || ((pin) == pinBat) || (Flex.is_configured() && (pin) == Flex.pin))
 
 
 /** The status struct with current values for all 'live' variables.
@@ -1413,36 +1413,33 @@ extern byte pinCLT;           //CLS sensor pin
 extern byte pinO2;            //O2 Sensor pin
 extern byte pinO2_2;          //second O2 pin
 extern byte pinBat;           //Battery voltage pin
-extern byte pinDisplayReset;  // OLED reset pin
+
 extern byte pinIdleUp;        //Input for triggering Idle Up
+extern bool IdleUpEnabled;
 extern byte pinCTPS;          //Input for triggering closed throttle state
+extern bool CTPSEnabled;
 extern byte pinFuel2Input;    //Input for switching to the 2nd fuel table
+extern bool Fuel2InputEnabled;
 extern byte pinSpark2Input;   //Input for switching to the 2nd ignition table
-extern byte pinSpareTemp1;    // Future use only
-extern byte pinSpareTemp2;    // Future use only
-extern byte pinSpareOut1;     //Generic output
-extern byte pinSpareOut2;     //Generic output
-extern byte pinSpareOut3;     //Generic output
-extern byte pinSpareOut4;     //Generic output
-extern byte pinSpareOut5;     //Generic output
-extern byte pinSpareOut6;     //Generic output
-extern byte pinSpareHOut1;    //spare high current output
-extern byte pinSpareHOut2;    // spare high current output
-extern byte pinSpareLOut1;    // spare low current output
-extern byte pinSpareLOut2;    // spare low current output
-extern byte pinSpareLOut3;
-extern byte pinSpareLOut4;
-extern byte pinSpareLOut5;
+extern bool spark2InputSwitchModeEnabled;
+
 extern byte pinLaunch;
+extern bool LaunchEnabled;
 extern byte pinVSS;
+extern bool VSSEnabled;
 extern byte pinBaro;          //Pin that an external barometric pressure sensor is attached to (If used)
-extern byte pinResetControl;  // Output pin used control resetting the Arduino
 extern byte pinFuelPressure;
+extern bool FuelPressureEnabled;
 extern byte pinOilPressure;
+extern bool OilPressureEnabled;
 extern byte pinWMIEmpty;      // Water tank empty sensor
+extern bool WMIEmptyEnabled;
+
+extern byte pinResetControl;  // Output pin used control resetting the Arduino
 extern byte pinMC33810_1_CS;
 extern byte pinMC33810_2_CS;
 extern byte pinSDEnable;  //Input for manually enabling SD logging
+extern bool SDEnableEnabled;
 #ifdef USE_SPI_EEPROM
 extern byte pinSPIFlash_CS;
 #endif

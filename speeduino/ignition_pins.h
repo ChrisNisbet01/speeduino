@@ -2,7 +2,7 @@
 
 #include "pin.h"
 
-//These are for the direct port manipulation of the ignition pins
+//These are for the direct port manipulation of the ignition coils.
 extern IOPortMaskOutputPin ign1;
 extern IOPortMaskOutputPin ign2;
 extern IOPortMaskOutputPin ign3;

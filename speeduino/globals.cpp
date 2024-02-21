@@ -127,36 +127,32 @@ byte pinCLT;      //CLS sensor pin
 byte pinO2;       //O2 Sensor pin
 byte pinO2_2;     //second O2 pin
 byte pinBat;      //Battery voltage pin
-byte pinDisplayReset; // OLED reset pin
+
 byte pinIdleUp;   //Input for triggering Idle Up
+bool IdleUpEnabled;
 byte pinCTPS;     //Input for triggering closed throttle state
+bool CTPSEnabled;
 byte pinFuel2Input;  //Input for switching to the 2nd fuel table
+bool Fuel2InputEnabled;
 byte pinSpark2Input; //Input for switching to the 2nd ignition table
-byte pinSpareTemp1;  // Future use only
-byte pinSpareTemp2;  // Future use only
-byte pinSpareOut1;  //Generic output
-byte pinSpareOut2;  //Generic output
-byte pinSpareOut3;  //Generic output
-byte pinSpareOut4;  //Generic output
-byte pinSpareOut5;  //Generic output
-byte pinSpareOut6;  //Generic output
-byte pinSpareHOut1; //spare high current output
-byte pinSpareHOut2; // spare high current output
-byte pinSpareLOut1; // spare low current output
-byte pinSpareLOut2; // spare low current output
-byte pinSpareLOut3;
-byte pinSpareLOut4;
-byte pinSpareLOut5;
+bool spark2InputSwitchModeEnabled;
 byte pinLaunch;
+bool LaunchEnabled;
 byte pinVSS;  // VSS (Vehicle speed sensor) Pin
-byte pinBaro; //Pin that an al barometric pressure sensor is attached to (If used)
-byte pinResetControl; // Output pin used control resetting the Arduino
+bool VSSEnabled;
+byte pinBaro; //Pin that an external barometric pressure sensor is attached to (If used)
 byte pinFuelPressure;
+bool FuelPressureEnabled;
 byte pinOilPressure;
+bool OilPressureEnabled;
 byte pinWMIEmpty; // Water tank empty sensor
+bool WMIEmptyEnabled;
+
+byte pinResetControl; // Output pin used control resetting the Arduino
 byte pinMC33810_1_CS;
 byte pinMC33810_2_CS;
 byte pinSDEnable;
+bool SDEnableEnabled;
 #ifdef USE_SPI_EEPROM
   byte pinSPIFlash_CS;
 #endif

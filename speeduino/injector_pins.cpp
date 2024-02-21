@@ -1,6 +1,5 @@
 #include "injector_pins.h"
 
-/// volatile inj*_pin_port and  inj*_pin_mask vars are for the direct port manipulation of the injectors, coils and aux outputs.
 IOPortMaskOutputPin inj1;
 IOPortMaskOutputPin inj2;
 IOPortMaskOutputPin inj3;

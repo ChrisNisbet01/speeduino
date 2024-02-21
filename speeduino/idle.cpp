@@ -472,7 +472,7 @@ static inline byte isStepperHomed(void)
 
 static void idleUpControl(void)
 {
-  if (configPage2.idleUpEnabled)
+  if (IdleUpEnabled)
   {
     /* Read input pin, taking configured polarity into account. */
     currentStatus.idleUpActive = (configPage2.idleUpPolarity == 0) ^ digitalRead(pinIdleUp);

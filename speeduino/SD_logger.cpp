@@ -624,22 +624,22 @@ void checkForSDStart()
     }
 
     //Check for engine protection based enable
-    if((configPage13.onboard_log_trigger_prot) && (SD_status == SD_STATUS_READY) )
+    if (configPage13.onboard_log_trigger_prot && SD_status == SD_STATUS_READY)
     {
-      if(currentStatus.engineProtectStatus > 0)
+      if (currentStatus.engineProtectStatus > 0)
       {
         beginSDLogging(); //Setup the log file, preallocation, header row
       }
     }
 
-    if( (configPage13.onboard_log_trigger_Vbat) && (SD_status == SD_STATUS_READY) )
+    if (configPage13.onboard_log_trigger_Vbat && SD_status == SD_STATUS_READY)
     {
 
     }
 
-    if((configPage13.onboard_log_trigger_Epin) && (SD_status == SD_STATUS_READY) )
+    if (SDEnableEnabled && SD_status == SD_STATUS_READY)
     {
-      if(digitalRead(pinSDEnable) == LOW)
+      if (digitalRead(pinSDEnable) == LOW)
       {
         beginSDLogging(); //Setup the log file, preallocation, header row
       }
@@ -691,7 +691,7 @@ void checkForSDStop()
     }
 
     //External Pin
-    if(configPage13.onboard_log_trigger_Epin)
+    if(SDEnableEnabled)
     {
       if(digitalRead(pinSDEnable) == LOW)
       {

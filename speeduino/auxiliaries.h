@@ -67,7 +67,7 @@ void wmiControl(void);
 #define VVT2_PIN_OFF() VVT_2.off()
 #define VVT_TIME_DELAY_MULTIPLIER  50
 
-#define WMI_TANK_IS_EMPTY() (configPage10.wmiEmptyEnabled ? (configPage10.wmiEmptyPolarity == 0) ^ digitalRead(pinWMIEmpty) : 1)
+#define WMI_TANK_IS_EMPTY() (WMIEmptyEnabled ? (configPage10.wmiEmptyPolarity == 0) ^ digitalRead(pinWMIEmpty) : 1)
 
 #if defined(PWM_FAN_AVAILABLE)//PWM fan not available on Arduino MEGA
 extern uint16_t fan_pwm_max_count; //Used for variable PWM frequency

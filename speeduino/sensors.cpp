@@ -677,7 +677,7 @@ void readTPS(bool useFilter)
   //Check whether the closed throttle position sensor is active
   /* Take configured polarity into account. */
   currentStatus.CTPSActive =
-    configPage2.CTPSEnabled && ((configPage2.CTPSPolarity == 0) ^ digitalRead(pinCTPS));
+    CTPSEnabled && ((configPage2.CTPSPolarity == 0) ^ digitalRead(pinCTPS));
 }
 
 void readCLT(bool useFilter)
@@ -1005,7 +1005,7 @@ byte getFuelPressure(void)
   int16_t tempFuelPressure = 0;
   uint16_t tempReading;
 
-  if (configPage10.fuelPressureEnable > 0)
+  if (FuelPressureEnabled)
   {
     //Perform ADC read
 #if defined(ANALOG_ISR)
@@ -1035,7 +1035,7 @@ byte getOilPressure(void)
   int16_t tempOilPressure = 0;
   uint16_t tempReading;
 
-  if (configPage10.oilPressureEnable > 0)
+  if (OilPressureEnabled)
   {
     //Perform ADC read
 #if defined(ANALOG_ISR)

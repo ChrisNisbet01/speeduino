@@ -59,7 +59,7 @@ void calculateSecondaryFuel(void)
       }
     }
   }
-  else if(configPage10.fuel2Mode == FUEL2_MODE_INPUT_SWITCH)
+  else if(Fuel2InputEnabled)
   {
     if(digitalRead(pinFuel2Input) == configPage10.fuel2InputPolarity)
     {
@@ -159,7 +159,7 @@ void calculateSecondarySpark(void)
         }
       }
     }
-    else if(configPage10.spark2Mode == SPARK2_MODE_INPUT_SWITCH)
+    else if(spark2InputSwitchModeEnabled)
     {
       if(digitalRead(pinSpark2Input) == configPage10.spark2InputPolarity)
       {

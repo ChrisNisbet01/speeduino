@@ -912,7 +912,10 @@ void processSerialCommand(void)
         if (serialStatusFlag == SERIAL_INACTIVE) { Serial.println(F("Comms halted. Next byte will reset the Arduino.")); }
       #endif
 
-        while (Serial.available() == 0) { }
+        while (Serial.available() == 0)
+        {
+          /* Do nothing. */
+        }
         digitalWrite(pinResetControl, LOW);
       }
       else
