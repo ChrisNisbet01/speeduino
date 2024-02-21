@@ -32,8 +32,6 @@ extern volatile byte flexCounter;
 extern volatile unsigned long flexStartTime;
 extern volatile unsigned long flexPulseWidth;
 
-#define READ_FLEX() Flex.read()
-
 #define ADMUX_DEFAULT_CONFIG  0x40 //AVCC reference, ADC0 input, right adjusted, ADC enabled
 
 extern volatile byte knockCounter;

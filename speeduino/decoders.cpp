@@ -167,15 +167,15 @@ static inline void addToothLogEntry(unsigned long toothTime, byte whichTooth)
       if (currentStatus.compositeTriggerUsed == 4)
       {
         // we want to display both cams so swap the values round to display primary as cam1 and secondary as cam2, include the crank in the data as the third output
-        if (READ_SEC_TRIGGER())
+        if (Trigger2.read())
         {
           BIT_SET(compositeLogHistory[toothHistoryIndex], COMPOSITE_LOG_PRI);
         }
-        if (READ_THIRD_TRIGGER())
+        if (Trigger3.read())
         {
           BIT_SET(compositeLogHistory[toothHistoryIndex], COMPOSITE_LOG_SEC);
         }
-        if (READ_PRI_TRIGGER())
+        if (Trigger.read())
         {
           BIT_SET(compositeLogHistory[toothHistoryIndex], COMPOSITE_LOG_THIRD);
         }
@@ -187,19 +187,19 @@ static inline void addToothLogEntry(unsigned long toothTime, byte whichTooth)
       else
       {
         // we want to display crank and one of the cams
-        if (READ_PRI_TRIGGER())
+        if (Trigger.read())
         {
           BIT_SET(compositeLogHistory[toothHistoryIndex], COMPOSITE_LOG_PRI);
         }
         if (currentStatus.compositeTriggerUsed == 3)
         {
           // display cam2 and also log data for cam 1
-          if (READ_THIRD_TRIGGER())
+          if (Trigger3.read())
           {
             // only the COMPOSITE_LOG_SEC value is visualised hence the swapping of the data
             BIT_SET(compositeLogHistory[toothHistoryIndex], COMPOSITE_LOG_SEC);
           }
-          if (READ_SEC_TRIGGER())
+          if (Trigger2.read())
           {
             BIT_SET(compositeLogHistory[toothHistoryIndex], COMPOSITE_LOG_THIRD);
           }
@@ -207,11 +207,11 @@ static inline void addToothLogEntry(unsigned long toothTime, byte whichTooth)
         else
         {
           // display cam1 and also log data for cam 2 - this is the historic composite view
-          if (READ_SEC_TRIGGER())
+          if (Trigger2.read())
           {
             BIT_SET(compositeLogHistory[toothHistoryIndex], COMPOSITE_LOG_SEC);
           }
-          if (READ_THIRD_TRIGGER())
+          if (Trigger3.read())
           {
             BIT_SET(compositeLogHistory[toothHistoryIndex], COMPOSITE_LOG_THIRD);
           }
@@ -271,7 +271,9 @@ void loggerPrimaryISR(void)
   2) If the primary trigger is FALLING, then check whether the primary is currently LOW
   If either of these are true, the primary decoder function is called
   */
-  if (((primaryTriggerEdge == RISING) && (READ_PRI_TRIGGER() == HIGH)) || ((primaryTriggerEdge == FALLING) && (READ_PRI_TRIGGER() == LOW)) || (primaryTriggerEdge == CHANGE))
+  if ((primaryTriggerEdge == RISING && Trigger.read() == HIGH)
+      || (primaryTriggerEdge == FALLING && Trigger.read() == LOW)
+      || primaryTriggerEdge == CHANGE)
   {
     triggerHandler();
     validEdge = true;
@@ -304,7 +306,9 @@ void loggerSecondaryISR(void)
   3) The secondary trigger is CHANGING
   If any of these are true, the primary decoder function is called
   */
-  if (((secondaryTriggerEdge == RISING) && (READ_SEC_TRIGGER() == HIGH)) || ((secondaryTriggerEdge == FALLING) && (READ_SEC_TRIGGER() == LOW)) || (secondaryTriggerEdge == CHANGE))
+  if ((secondaryTriggerEdge == RISING && Trigger2.read() == HIGH)
+      || (secondaryTriggerEdge == FALLING && Trigger2.read() == LOW)
+      || secondaryTriggerEdge == CHANGE)
   {
     triggerSecondaryHandler();
   }
@@ -331,12 +335,14 @@ void loggerTertiaryISR(void)
   */
 
 
-  if (((tertiaryTriggerEdge == RISING) && (READ_THIRD_TRIGGER() == HIGH)) || ((tertiaryTriggerEdge == FALLING) && (READ_THIRD_TRIGGER() == LOW)) || (tertiaryTriggerEdge == CHANGE))
+  if ((tertiaryTriggerEdge == RISING && Trigger3.read() == HIGH)
+      || (tertiaryTriggerEdge == FALLING && Trigger3.read() == LOW)
+      || tertiaryTriggerEdge == CHANGE)
   {
     triggerTertiaryHandler();
   }
   //No tooth logger for the secondary input
-  if ((currentStatus.compositeTriggerUsed > 0) && (BIT_CHECK(decoderState, BIT_DECODER_VALID_TRIGGER)))
+  if (currentStatus.compositeTriggerUsed > 0 && BIT_CHECK(decoderState, BIT_DECODER_VALID_TRIGGER))
   {
     //Composite logger adds an entry regardless of which edge it was
     addToothLogEntry(curGap3, TOOTH_CAM_TERTIARY);
@@ -604,9 +610,10 @@ void triggerPri_missingTooth(void)
           }
 
           toothCurrentCount = 1;
-          if (configPage4.trigPatternSec == SEC_TRIGGER_POLL) // at tooth one check if the cam sensor is high or low in poll level mode
+          // at tooth one check if the cam sensor is high or low in poll level mode
+          if (configPage4.trigPatternSec == SEC_TRIGGER_POLL)
           {
-            if (configPage4.PollLevelPolarity == READ_SEC_TRIGGER())
+            if (configPage4.PollLevelPolarity == Trigger2.read())
             {
               revolutionOne = 1;
             }
@@ -1861,9 +1868,9 @@ void triggerPri_4G63(void)
     {
       triggerSecFilterTime = 0;
       //New secondary method of determining sync
-      if (READ_PRI_TRIGGER())
+      if (Trigger.read())
       {
-        if (READ_SEC_TRIGGER())
+        if (Trigger2.read())
         {
           revolutionOne = true;
         }
@@ -1874,17 +1881,16 @@ void triggerPri_4G63(void)
       }
       else
       {
-        if (!READ_SEC_TRIGGER() && revolutionOne)
+        if (!Trigger2.read() && revolutionOne)
         {
           //Crank is low, cam is low and the crank pulse STARTED when the cam was high.
           if (configPage2.nCylinders == 4) //Means we're at 5* BTDC on a 4G63 4 cylinder
           {
             toothCurrentCount = 1;
           }
-          //else if(configPage2.nCylinders == 6) { toothCurrentCount = 8; }
         }
         //If sequential is ever enabled, the below toothCurrentCount will need to change:
-        else if (READ_SEC_TRIGGER() && revolutionOne)
+        else if (Trigger2.read() && revolutionOne)
         {
           //Crank is low, cam is high and the crank pulse STARTED when the cam was high.
           if (configPage2.nCylinders == 4) //Means we're at 5* BTDC on a 4G63 4 cylinder
@@ -1934,7 +1940,7 @@ void triggerSec_4G63(void)
 
       triggerFilterTime = 1500; //If this is removed, can have trouble getting sync again after the engine is turned off (but ECU not reset).
       triggerSecFilterTime = triggerSecFilterTime >> 1; //Divide the secondary filter time by 2 again, making it 25%. Only needed when cranking
-      if (READ_PRI_TRIGGER())
+      if (Trigger.read())
       {
         if (configPage2.nCylinders == 4)
         {
@@ -1971,7 +1977,7 @@ void triggerSec_4G63(void)
       if (currentStatus.hasSync && configPage2.nCylinders == 4)
       {
         triggerSecFilterTime_duration = (micros() - secondaryLastToothTime1) >> 1;
-        if (READ_PRI_TRIGGER())
+        if (Trigger.read())
         {
           //Whilst we're cranking and have sync, we need to watch for noise pulses.
           if (toothCurrentCount != 8)
@@ -3338,7 +3344,8 @@ void triggerSec_Nissan360(void)
     trigEdge = HIGH;
   }
 
-  if ((secondaryToothCount == 0) || (READ_SEC_TRIGGER() == trigEdge)) //This occurs on the first rotation upon powerup OR the start of a secondary window
+  //This occurs on the first rotation upon powerup OR the start of a secondary window
+  if (secondaryToothCount == 0 || Trigger2.read() == trigEdge)
   {
     secondaryToothCount = toothCurrentCount;
   }
@@ -4069,7 +4076,7 @@ void triggerPri_Harley(void)
   setFilter(curGap); // Filtering adjusted according to setting
   if (curGap > triggerFilterTime)
   {
-    if (READ_PRI_TRIGGER() == HIGH) // Has to be the same as in main() trigger-attach, for readability we do it this way.
+    if (Trigger.read() == HIGH) // Has to be the same as in main() trigger-attach, for readability we do it this way.
     {
       BIT_SET(decoderState, BIT_DECODER_VALID_TRIGGER); //Flag this pulse as being a valid trigger (ie that it passed filters)
       targetGap = lastGap; //Gap is the Time to next toothtrigger, so we know where we are
@@ -4695,7 +4702,7 @@ void triggerSec_420a(void)
 {
   //Secondary trigger is only on falling edge
 
-  if (READ_PRI_TRIGGER())
+  if (Trigger.read())
   {
     //Secondary signal is falling and primary signal is HIGH
     if (!currentStatus.hasSync)
@@ -5233,7 +5240,7 @@ void triggerPri_NGC(void)
 {
   curTime = micros();
   // We need to know the polarity of the missing tooth to determine position
-  if (READ_PRI_TRIGGER() == HIGH)
+  if (Trigger.read() == HIGH)
   {
     toothLastToothRisingTime = curTime;
     return;
@@ -5386,7 +5393,7 @@ void triggerSec_NGC4(void)
   curTime2 = micros();
 
   // We need to know the polarity of the missing tooth to determine position
-  if (READ_SEC_TRIGGER() == HIGH)
+  if (Trigger2.read() == HIGH)
   {
     toothLastSecToothRisingTime = curTime2;
     return;
@@ -5396,7 +5403,8 @@ void triggerSec_NGC4(void)
 
   if (curGap2 > triggerSecFilterTime)
   {
-    if (toothLastSecToothTime > 0 && toothLastMinusOneSecToothTime > 0) //Make sure we have enough tooth information to calculate tooth lengths
+    //Make sure we have enough tooth information to calculate tooth lengths
+    if (toothLastSecToothTime > 0 && toothLastMinusOneSecToothTime > 0)
     {
       if (secondaryToothCount > 0)
       {
@@ -5634,7 +5642,7 @@ void triggerSetup_Vmax(bool const initialisationComplete)
 void triggerPri_Vmax(void)
 {
   curTime = micros();
-  if (READ_PRI_TRIGGER() == primaryTriggerEdge) // Forwarded from the config page to setup the primary trigger edge (rising or falling). Inverting VR-conditioners require FALLING, non-inverting VR-conditioners require RISING in the Trigger edge setup.
+  if (Trigger.read() == primaryTriggerEdge) // Forwarded from the config page to setup the primary trigger edge (rising or falling). Inverting VR-conditioners require FALLING, non-inverting VR-conditioners require RISING in the Trigger edge setup.
   {
     curGap2 = curTime;
     curGap = curTime - toothLastToothTime;

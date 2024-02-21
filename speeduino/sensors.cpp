@@ -1068,7 +1068,7 @@ byte getOilPressure(void)
  */
 void flexPulse(void)
 {
-  if (READ_FLEX())
+  if (Flex.read())
   {
     unsigned long tempPW = (micros() - flexStartTime); //Calculate the pulse width
     flexPulseWidth = ADC_FILTER(tempPW, configPage4.FILTER_FLEX, flexPulseWidth);

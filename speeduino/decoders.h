@@ -3,10 +3,6 @@
 
 #include "globals.h"
 
-#define READ_PRI_TRIGGER() Trigger.read()
-#define READ_SEC_TRIGGER() Trigger2.read()
-#define READ_THIRD_TRIGGER() Trigger3.read()
-
 #define DECODER_MISSING_TOOTH     0
 #define DECODER_BASIC_DISTRIBUTOR 1
 #define DECODER_DUAL_WHEEL        2

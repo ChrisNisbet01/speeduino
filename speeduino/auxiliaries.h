@@ -59,12 +59,11 @@ void wmiControl(void);
   } while (0)
 
 
-#define READ_N2O_ARM_PIN() NitrousArming.read()
-
 #define VVT1_PIN_ON() VVT_1.on()
 #define VVT1_PIN_OFF() VVT_1.off()
 #define VVT2_PIN_ON() VVT_2.on()
 #define VVT2_PIN_OFF() VVT_2.off()
+
 #define VVT_TIME_DELAY_MULTIPLIER  50
 
 #define WMI_TANK_IS_EMPTY() (WMIEmpty.is_configured() ? (configPage10.wmiEmptyPolarity == 0) ^ WMIEmpty.read() : 1)

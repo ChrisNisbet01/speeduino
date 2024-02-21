@@ -1014,7 +1014,7 @@ void nitrousControl(void)
   {
     //If nitrous is active when pin is low, flip the reading
     //(n2o_pin_polarity = 0 = active when High)
-    bool const isArmed = READ_N2O_ARM_PIN() ^ (configPage10.n2o_pin_polarity != 0);
+    bool const isArmed = NitrousArming.read() ^ (configPage10.n2o_pin_polarity != 0);
 
     //Perform the main checks to see if nitrous is ready
     if (isArmed
