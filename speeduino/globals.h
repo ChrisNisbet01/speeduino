@@ -1414,28 +1414,11 @@ extern byte pinO2;            //O2 Sensor pin
 extern byte pinO2_2;          //second O2 pin
 extern byte pinBat;           //Battery voltage pin
 
-extern byte pinIdleUp;        //Input for triggering Idle Up
-extern bool IdleUpEnabled;
-extern byte pinCTPS;          //Input for triggering closed throttle state
-extern bool CTPSEnabled;
-extern byte pinFuel2Input;    //Input for switching to the 2nd fuel table
-extern bool Fuel2InputEnabled;
-extern byte pinSpark2Input;   //Input for switching to the 2nd ignition table
-extern bool spark2InputSwitchModeEnabled;
-
-extern byte pinLaunch;
-extern bool LaunchEnabled;
-extern byte pinVSS;
-extern bool VSSEnabled;
 extern byte pinBaro;          //Pin that an external barometric pressure sensor is attached to (If used)
 extern byte pinFuelPressure;
 extern bool FuelPressureEnabled;
 extern byte pinOilPressure;
 extern bool OilPressureEnabled;
-extern byte pinWMIEmpty;      // Water tank empty sensor
-extern bool WMIEmptyEnabled;
-extern byte pinSDEnable;  //Input for manually enabling SD logging
-extern bool SDEnableEnabled;
 
 /* global variables */  // from speeduino.ino
 

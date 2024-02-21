@@ -677,7 +677,7 @@ void readTPS(bool useFilter)
   //Check whether the closed throttle position sensor is active
   /* Take configured polarity into account. */
   currentStatus.CTPSActive =
-    CTPSEnabled && ((configPage2.CTPSPolarity == 0) ^ digitalRead(pinCTPS));
+    CTPS.is_configured() && ((configPage2.CTPSPolarity == 0) ^ CTPS.read());
 }
 
 void readCLT(bool useFilter)

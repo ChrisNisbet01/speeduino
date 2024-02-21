@@ -128,27 +128,11 @@ byte pinO2;       //O2 Sensor pin
 byte pinO2_2;     //second O2 pin
 byte pinBat;      //Battery voltage pin
 
-byte pinIdleUp;   //Input for triggering Idle Up
-bool IdleUpEnabled;
-byte pinCTPS;     //Input for triggering closed throttle state
-bool CTPSEnabled;
-byte pinFuel2Input;  //Input for switching to the 2nd fuel table
-bool Fuel2InputEnabled;
-byte pinSpark2Input; //Input for switching to the 2nd ignition table
-bool spark2InputSwitchModeEnabled;
-byte pinLaunch;
-bool LaunchEnabled;
-byte pinVSS;  // VSS (Vehicle speed sensor) Pin
-bool VSSEnabled;
 byte pinBaro; //Pin that an external barometric pressure sensor is attached to (If used)
 byte pinFuelPressure;
 bool FuelPressureEnabled;
 byte pinOilPressure;
 bool OilPressureEnabled;
-byte pinWMIEmpty; // Water tank empty sensor
-bool WMIEmptyEnabled;
-byte pinSDEnable;
-bool SDEnableEnabled;
 
 struct statuses currentStatus; /**< The master global "live" status struct. Contains all values that are updated frequently and used across modules */
 struct config2 configPage2;

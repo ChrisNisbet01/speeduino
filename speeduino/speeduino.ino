@@ -1616,9 +1616,9 @@ void checkLaunchAndFlatShift(void)
   //Check for launching/flat shift (clutch) based on the current and previous clutch states
   currentStatus.previousClutchTrigger = currentStatus.clutchTrigger;
   //Only check for pinLaunch if any function using it is enabled. Else pins might break starting a board
-  if ((configPage6.flatSEnable || configPage6.launchEnabled) && LaunchEnabled)
+  if ((configPage6.flatSEnable || configPage6.launchEnabled) && Launch.is_configured())
   {
-    currentStatus.clutchTrigger = (configPage6.launchHiLo == 0) ^ digitalRead(pinLaunch);
+    currentStatus.clutchTrigger = (configPage6.launchHiLo == 0) ^ Launch.read();
   }
 
   //Check whether the clutch has been engaged or disengaged and store the

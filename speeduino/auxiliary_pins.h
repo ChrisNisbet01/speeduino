@@ -66,9 +66,6 @@ extern IODigitalReadInputPin Fuel2Input;  //Input for switching to the 2nd fuel 
 extern IODigitalReadInputPin Spark2Input; //Input for switching to the 2nd ignition table
 extern IODigitalReadInputPin Launch;
 extern IODigitalReadInputPin VSS;  // VSS (Vehicle speed sensor) Pin
-extern IODigitalReadInputPin Baro; //Pin that an external barometric pressure sensor is attached to (If used)
-extern IODigitalReadInputPin FuelPressure;
-extern IODigitalReadInputPin OilPressure;
 extern IODigitalReadInputPin WMIEmpty; // Water tank empty sensor
 extern IODigitalReadInputPin SDEnable;
 

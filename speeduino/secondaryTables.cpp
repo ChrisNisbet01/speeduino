@@ -2,6 +2,7 @@
 #include "secondaryTables.h"
 #include "corrections.h"
 #include "engine_load_calcs.h"
+#include "auxiliary_pins.h"
 
 void calculateSecondaryFuel(void)
 {
@@ -10,58 +11,70 @@ void calculateSecondaryFuel(void)
   bool fuel2_is_active = false;
   bool use_base_ve2 = false;
 
-  if(configPage10.fuel2Mode == FUEL2_MODE_MULTIPLY)
+  if (configPage10.fuel2Mode == FUEL2_MODE_MULTIPLY)
   {
     fuel2_is_active = true;
     currentStatus.VE2 = getVE2();
     //Fuel 2 table is treated as a % value. Table 1 and 2 are multiplied together and divided by 100
     uint16_t combinedVE = ((uint16_t)currentStatus.VE1 * (uint16_t)currentStatus.VE2) / 100;
-    if(combinedVE <= 255) { currentStatus.VE = combinedVE; }
-    else { currentStatus.VE = 255; }
+    if (combinedVE <= 255)
+    {
+      currentStatus.VE = combinedVE;
+    }
+    else
+    {
+      currentStatus.VE = 255;
+    }
   }
-  else if(configPage10.fuel2Mode == FUEL2_MODE_ADD)
+  else if (configPage10.fuel2Mode == FUEL2_MODE_ADD)
   {
     fuel2_is_active = true;
     currentStatus.VE2 = getVE2();
     //Fuel tables are added together, but a check is made to make sure this won't overflow the 8-bit VE value
     uint16_t combinedVE = (uint16_t)currentStatus.VE1 + (uint16_t)currentStatus.VE2;
-    if(combinedVE <= 255) { currentStatus.VE = combinedVE; }
-    else { currentStatus.VE = 255; }
-  }
-  else if(configPage10.fuel2Mode == FUEL2_MODE_CONDITIONAL_SWITCH )
-  {
-    if(configPage10.fuel2SwitchVariable == FUEL2_CONDITION_RPM)
+    if (combinedVE <= 255)
     {
-      if(currentStatus.RPM > configPage10.fuel2SwitchValue)
-      {
-        use_base_ve2 = true;
-      }
+      currentStatus.VE = combinedVE;
     }
-    else if(configPage10.fuel2SwitchVariable == FUEL2_CONDITION_MAP)
+    else
     {
-      if(currentStatus.MAP > configPage10.fuel2SwitchValue)
-      {
-        use_base_ve2 = true;
-      }
-    }
-    else if(configPage10.fuel2SwitchVariable == FUEL2_CONDITION_TPS)
-    {
-      if(currentStatus.TPS > configPage10.fuel2SwitchValue)
-      {
-        use_base_ve2 = true;
-      }
-    }
-    else if(configPage10.fuel2SwitchVariable == FUEL2_CONDITION_ETH)
-    {
-      if(currentStatus.ethanolPct > configPage10.fuel2SwitchValue)
-      {
-        use_base_ve2 = true;
-      }
+      currentStatus.VE = 255;
     }
   }
-  else if(Fuel2InputEnabled)
+  else if (configPage10.fuel2Mode == FUEL2_MODE_CONDITIONAL_SWITCH )
   {
-    if(digitalRead(pinFuel2Input) == configPage10.fuel2InputPolarity)
+    if (configPage10.fuel2SwitchVariable == FUEL2_CONDITION_RPM)
+    {
+      if (currentStatus.RPM > configPage10.fuel2SwitchValue)
+      {
+        use_base_ve2 = true;
+      }
+    }
+    else if (configPage10.fuel2SwitchVariable == FUEL2_CONDITION_MAP)
+    {
+      if (currentStatus.MAP > configPage10.fuel2SwitchValue)
+      {
+        use_base_ve2 = true;
+      }
+    }
+    else if (configPage10.fuel2SwitchVariable == FUEL2_CONDITION_TPS)
+    {
+      if (currentStatus.TPS > configPage10.fuel2SwitchValue)
+      {
+        use_base_ve2 = true;
+      }
+    }
+    else if (configPage10.fuel2SwitchVariable == FUEL2_CONDITION_ETH)
+    {
+      if (currentStatus.ethanolPct > configPage10.fuel2SwitchValue)
+      {
+        use_base_ve2 = true;
+      }
+    }
+  }
+  else if (Fuel2Input.is_configured())
+  {
+    if (Fuel2Input.read() == configPage10.fuel2InputPolarity)
     {
       use_base_ve2 = true;
     }
@@ -88,13 +101,13 @@ void calculateSecondarySpark(void)
   //Same as above but for the secondary ignition table
   BIT_CLEAR(currentStatus.spark2, BIT_SPARK2_SPARK2_ACTIVE); //Clear the bit indicating that the 2nd spark table is in use.
 
-  if(configPage10.spark2Mode > 0)
+  if (configPage10.spark2Mode > 0)
   {
     bool spark2_is_active = false;
     int8_t advance = 0;
     bool spark2_advance_required = false;
 
-    if(configPage10.spark2Mode == SPARK2_MODE_MULTIPLY)
+    if (configPage10.spark2Mode == SPARK2_MODE_MULTIPLY)
     {
       currentStatus.advance2 = getAdvance2();
       //make sure we don't have a negative value in the multiplier table (sharing a signed 8 bit table)
@@ -102,7 +115,7 @@ void calculateSecondarySpark(void)
       //Spark 2 table is treated as a % value. Table 1 and 2 are multiplied together and divided by 100
       int16_t combinedAdvance = ((int16_t)currentStatus.advance1 * (int16_t)currentStatus.advance2) / 100;
       //make sure we don't overflow and accidentally set negative timing, currentStatus.advance can only hold a signed 8 bit value
-      if(combinedAdvance <= 127)
+      if (combinedAdvance <= 127)
       {
         advance = combinedAdvance;
       }
@@ -112,13 +125,13 @@ void calculateSecondarySpark(void)
       }
       spark2_is_active = true;
     }
-    else if(configPage10.spark2Mode == SPARK2_MODE_ADD)
+    else if (configPage10.spark2Mode == SPARK2_MODE_ADD)
     {
       currentStatus.advance2 = getAdvance2();
       //Spark tables are added together, but a check is made to make sure this won't overflow the 8-bit VE value
       int16_t combinedAdvance = (int16_t)currentStatus.advance1 + (int16_t)currentStatus.advance2;
       //make sure we don't overflow and accidentally set negative timing, currentStatus.advance can only hold a signed 8 bit value
-      if(combinedAdvance <= 127)
+      if (combinedAdvance <= 127)
       {
         advance = combinedAdvance;
       }
@@ -128,40 +141,40 @@ void calculateSecondarySpark(void)
       }
       spark2_is_active = true;
     }
-    else if(configPage10.spark2Mode == SPARK2_MODE_CONDITIONAL_SWITCH)
+    else if (configPage10.spark2Mode == SPARK2_MODE_CONDITIONAL_SWITCH)
     {
-      if(configPage10.spark2SwitchVariable == SPARK2_CONDITION_RPM)
+      if (configPage10.spark2SwitchVariable == SPARK2_CONDITION_RPM)
       {
-        if(currentStatus.RPM > configPage10.spark2SwitchValue)
+        if (currentStatus.RPM > configPage10.spark2SwitchValue)
         {
           spark2_advance_required = true;
         }
       }
-      else if(configPage10.spark2SwitchVariable == SPARK2_CONDITION_MAP)
+      else if (configPage10.spark2SwitchVariable == SPARK2_CONDITION_MAP)
       {
-        if(currentStatus.MAP > configPage10.spark2SwitchValue)
+        if (currentStatus.MAP > configPage10.spark2SwitchValue)
         {
           spark2_advance_required = true;
         }
       }
-      else if(configPage10.spark2SwitchVariable == SPARK2_CONDITION_TPS)
+      else if (configPage10.spark2SwitchVariable == SPARK2_CONDITION_TPS)
       {
-        if(currentStatus.TPS > configPage10.spark2SwitchValue)
+        if (currentStatus.TPS > configPage10.spark2SwitchValue)
         {
           spark2_advance_required = true;
         }
       }
-      else if(configPage10.spark2SwitchVariable == SPARK2_CONDITION_ETH)
+      else if (configPage10.spark2SwitchVariable == SPARK2_CONDITION_ETH)
       {
-        if(currentStatus.ethanolPct > configPage10.spark2SwitchValue)
+        if (currentStatus.ethanolPct > configPage10.spark2SwitchValue)
         {
           spark2_advance_required = true;
         }
       }
     }
-    else if(spark2InputSwitchModeEnabled)
+    else if (Spark2Input.is_configured())
     {
-      if(digitalRead(pinSpark2Input) == configPage10.spark2InputPolarity)
+      if (Spark2Input.read() == configPage10.spark2InputPolarity)
       {
         spark2_advance_required = true;
       }

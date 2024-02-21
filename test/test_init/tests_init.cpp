@@ -297,7 +297,7 @@ void test_initialisation_input_user_pin_does_not_override_outputpin(void)
 
   TEST_ASSERT_EQUAL(49, TachOut.pin);
   TEST_ASSERT_EQUAL(OUTPUT, getPinMode(TachOut.pin));
-  TEST_ASSERT_EQUAL(49, pinLaunch);
+  TEST_ASSERT_EQUAL(49, Launch.pin);
 }
 
 void testInitialisation()
