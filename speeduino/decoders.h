@@ -309,9 +309,12 @@ extern int16_t toothAngles[24];
 #define CRANK_SPEED 0U
 #define CAM_SPEED   1U
 
-#define TOOTH_CRANK 0
-#define TOOTH_CAM_SECONDARY 1
-#define TOOTH_CAM_TERTIARY  2
+typedef enum tooth_source_t
+{
+  TOOTH_CRANK,
+  TOOTH_CAM_SECONDARY,
+  TOOTH_CAM_TERTIARY,
+} tooth_source_t;
 
 // used by the ROVER MEMS pattern
 #define ID_TOOTH_PATTERN 0 // have we identified teeth to skip for calculating RPM?

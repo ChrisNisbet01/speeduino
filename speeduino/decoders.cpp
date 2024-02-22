@@ -81,49 +81,91 @@ volatile unsigned long curGap3;
 volatile unsigned long lastGap;
 volatile unsigned long targetGap;
 
-unsigned long MAX_STALL_TIME = MICROS_PER_SEC / 2U; //The maximum time (in uS) that the system will continue to function before the engine is considered stalled/stopped. This is unique to each decoder, depending on the number of teeth etc. 500000 (half a second) is used as the default value, most decoders will be much less.
-volatile uint16_t toothCurrentCount = 0; //The current number of teeth (Once sync has been achieved, this can never actually be 0
-volatile byte toothSystemCount = 0; //Used for decoders such as Audi 135 where not every tooth is used for calculating crank angle. This variable stores the actual number of teeth, not the number being used to calculate crank angle
-volatile unsigned long toothSystemLastToothTime = 0; //As below, but used for decoders where not every tooth count is used for calculation
-volatile unsigned long toothLastToothTime = 0; //The time (micros()) that the last tooth was registered
-volatile unsigned long toothLastSecToothTime = 0; //The time (micros()) that the last tooth was registered on the secondary input
-volatile unsigned long toothLastThirdToothTime = 0; //The time (micros()) that the last tooth was registered on the second cam input
-volatile unsigned long toothLastMinusOneToothTime = 0; //The time (micros()) that the tooth before the last tooth was registered
-volatile unsigned long toothLastMinusOneSecToothTime = 0; //The time (micros()) that the tooth before the last tooth was registered on secondary input
-volatile unsigned long toothLastToothRisingTime = 0; //The time (micros()) that the last tooth rose (used by special decoders to determine missing teeth polarity)
-volatile unsigned long toothLastSecToothRisingTime = 0; //The time (micros()) that the last tooth rose on the secondary input (used by special decoders to determine missing teeth polarity)
+//The maximum time (in uS) that the system will continue to function before the
+//engine is considered stalled/stopped. This is unique to each decoder,
+//depending on the number of teeth etc. 500000 (half a second) is used as the
+//default value, most decoders will be much less.
+unsigned long MAX_STALL_TIME = MICROS_PER_SEC / 2U;
+//The current number of teeth (Once sync has been achieved, this can never actually be 0)
+volatile uint16_t toothCurrentCount = 0;
+//Used for decoders such as Audi 135 where not every tooth is used for
+//calculating crank angle. This variable stores the actual number of teeth,
+//not the number being used to calculate crank angle
+volatile byte toothSystemCount = 0;
+//As below, but used for decoders where not every tooth count is used for calculation
+volatile unsigned long toothSystemLastToothTime = 0;
+//The time (micros()) that the last tooth was registered
+volatile unsigned long toothLastToothTime = 0;
+//The time (micros()) that the last tooth was registered on the secondary input
+volatile unsigned long toothLastSecToothTime = 0;
+//The time (micros()) that the last tooth was registered on the second cam input
+volatile unsigned long toothLastThirdToothTime = 0;
+//The time (micros()) that the tooth before the last tooth was registered
+volatile unsigned long toothLastMinusOneToothTime = 0;
+//The time (micros()) that the tooth before the last tooth was registered on secondary input
+volatile unsigned long toothLastMinusOneSecToothTime = 0;
+//The time (micros()) that the last tooth rose (used by special decoders to
+//determine missing teeth polarity)
+volatile unsigned long toothLastToothRisingTime = 0;
+//The time (micros()) that the last tooth rose on the secondary input (used by
+//special decoders to determine missing teeth polarity)
+volatile unsigned long toothLastSecToothRisingTime = 0;
 volatile unsigned long targetGap2;
 volatile unsigned long targetGap3;
-volatile unsigned long toothOneTime = 0; //The time (micros()) that tooth 1 last triggered
-volatile unsigned long toothOneMinusOneTime = 0; //The 2nd to last time (micros()) that tooth 1 last triggered
-volatile bool revolutionOne = 0; // For sequential operation, this tracks whether the current revolution is 1 or 2 (not 1)
-volatile bool revolutionLastOne = 0; // used to identify in the rover pattern which has a non unique primary trigger something unique - has the secondary tooth changed.
+//The time (micros()) that tooth 1 last triggered
+volatile unsigned long toothOneTime = 0;
+//The 2nd to last time (micros()) that tooth 1 last triggered
+volatile unsigned long toothOneMinusOneTime = 0;
+// For sequential operation, this tracks whether the current revolution is 1 or 2 (not 1)
+volatile bool revolutionOne = 0;
+// used to identify in the rover pattern which has a non unique primary trigger
+// something unique - has the secondary tooth changed.
+volatile bool revolutionLastOne = 0;
 
-volatile unsigned int secondaryToothCount; //Used for identifying the current secondary (Usually cam) tooth for patterns with multiple secondary teeth
-volatile unsigned int secondaryLastToothCount = 0; // used to identify in the rover pattern which has a non unique primary trigger something unique - has the secondary tooth changed.
-volatile unsigned long secondaryLastToothTime = 0; //The time (micros()) that the last tooth was registered (Cam input)
-volatile unsigned long secondaryLastToothTime1 = 0; //The time (micros()) that the last tooth was registered (Cam input)
+//Used for identifying the current secondary (Usually cam) tooth for patterns
+//with multiple secondary teeth
+volatile unsigned int secondaryToothCount;
+// used to identify in the rover pattern which has a non unique primary trigger
+// something unique - has the secondary tooth changed.
+volatile unsigned int secondaryLastToothCount = 0;
+//The time (micros()) that the last tooth was registered (Cam input)
+volatile unsigned long secondaryLastToothTime = 0;
+//The time (micros()) that the last tooth was registered (Cam input)
+volatile unsigned long secondaryLastToothTime1 = 0;
 
-volatile unsigned int thirdToothCount; //Used for identifying the current third (Usually exhaust cam - used for VVT2) tooth for patterns with multiple secondary teeth
-volatile unsigned long thirdLastToothTime = 0; //The time (micros()) that the last tooth was registered (Cam input)
-volatile unsigned long thirdLastToothTime1 = 0; //The time (micros()) that the last tooth was registered (Cam input)
+//Used for identifying the current third (Usually exhaust cam - used for VVT2) tooth for patterns with multiple secondary teeth
+volatile unsigned int thirdToothCount;
+//The time (micros()) that the last tooth was registered (Cam input)
+volatile unsigned long thirdLastToothTime = 0;
+//The time (micros()) that the last tooth was registered (Cam input)
+volatile unsigned long thirdLastToothTime1 = 0;
 
 uint16_t triggerActualTeeth;
-volatile unsigned long triggerFilterTime; // The shortest time (in uS) that pulses will be accepted (Used for debounce filtering)
-volatile unsigned long triggerSecFilterTime; // The shortest time (in uS) that pulses will be accepted (Used for debounce filtering) for the secondary input
-volatile unsigned long triggerThirdFilterTime; // The shortest time (in uS) that pulses will be accepted (Used for debounce filtering) for the Third input
+// The shortest time (in uS) that pulses will be accepted (Used for debounce filtering)
+volatile unsigned long triggerFilterTime;
+// The shortest time (in uS) that pulses will be accepted (Used for debounce filtering)
+// for the secondary input
+volatile unsigned long triggerSecFilterTime;
+// The shortest time (in uS) that pulses will be accepted (Used for debounce filtering)
+// for the Third input
+volatile unsigned long triggerThirdFilterTime;
 
 volatile uint8_t decoderState = 0;
 
 UQ24X8_t microsPerDegree;
 UQ1X15_t degreesPerMicro;
 
-unsigned int triggerSecFilterTime_duration; // The shortest valid time (in uS) pulse DURATION
-volatile uint16_t triggerToothAngle; //The number of crank degrees that elapse per tooth
-byte checkSyncToothCount; //How many teeth must've been seen on this revolution before we try to confirm sync (Useful for missing tooth type decoders)
+// The shortest valid time (in uS) pulse DURATION
+unsigned int triggerSecFilterTime_duration;
+//The number of crank degrees that elapse per tooth
+volatile uint16_t triggerToothAngle;
+//How many teeth must've been seen on this revolution before we try to confirm sync
+//(Useful for missing tooth type decoders)
+byte checkSyncToothCount;
 unsigned long elapsedTime;
 unsigned long lastCrankAngleCalc;
-unsigned long lastVVTtime; //The time between the vvt reference pulse and the last crank pulse
+//The time between the vvt reference pulse and the last crank pulse
+unsigned long lastVVTtime;
 
 //An array for storing fixed tooth angles. Currently sized at 24 for the GM 24X decoder,
 //but may grow later if there are other decoders that use this style
@@ -147,7 +189,8 @@ static libdivide::libdivide_s16_t divTriggerToothAngle;
  * @param toothTime - Tooth Time
  * @param whichTooth - 0 for Primary (Crank), 2 for Secondary (Cam) 3 for Tertiary (Cam)
  */
-static inline void addToothLogEntry(unsigned long toothTime, byte whichTooth)
+static inline void
+addToothLogEntry(unsigned long toothTime, tooth_source_t whichTooth)
 {
   if (BIT_CHECK(currentStatus.status1, BIT_STATUS1_TOOTHLOG1READY))
   {
@@ -171,7 +214,8 @@ static inline void addToothLogEntry(unsigned long toothTime, byte whichTooth)
       compositeLogHistory[toothHistoryIndex] = 0;
       if (currentStatus.compositeTriggerUsed == 4)
       {
-        // we want to display both cams so swap the values round to display primary as cam1 and secondary as cam2, include the crank in the data as the third output
+        // we want to display both cams so swap the values round to display primary
+        // as cam1 and secondary as cam2, include the crank in the data as the third output
         if (Trigger2.read())
         {
           BIT_SET(compositeLogHistory[toothHistoryIndex], COMPOSITE_LOG_PRI);
@@ -267,8 +311,10 @@ static inline void addToothLogEntry(unsigned long toothTime, byte whichTooth)
 */
 void loggerPrimaryISR(void)
 {
-  BIT_CLEAR(decoderState, BIT_DECODER_VALID_TRIGGER); //This value will be set to the return value of the decoder function, indicating whether or not this pulse passed the filters
-  bool validEdge = false; //This is set true below if the edge
+  //This value will be set to the return value of the decoder function,
+  //indicating whether or not this pulse passed the filters
+  BIT_CLEAR(decoderState, BIT_DECODER_VALID_TRIGGER);
+
   /*
   Need to still call the standard decoder trigger.
   Two checks here:
@@ -276,22 +322,27 @@ void loggerPrimaryISR(void)
   2) If the primary trigger is FALLING, then check whether the primary is currently LOW
   If either of these are true, the primary decoder function is called
   */
-  if ((primaryTriggerEdge == RISING && Trigger.read() == HIGH)
-      || (primaryTriggerEdge == FALLING && Trigger.read() == LOW)
-      || primaryTriggerEdge == CHANGE)
+  bool const trigger_state = Trigger.read();
+  bool const valid_edge =
+    (primaryTriggerEdge == RISING && trigger_state)
+    || (primaryTriggerEdge == FALLING && !trigger_state)
+    || primaryTriggerEdge == CHANGE;
+
+  if (valid_edge)
   {
     triggerHandler();
-    validEdge = true;
   }
-  if ((currentStatus.toothLogEnabled) && (BIT_CHECK(decoderState, BIT_DECODER_VALID_TRIGGER)))
+
+  if (currentStatus.toothLogEnabled
+      && BIT_CHECK(decoderState, BIT_DECODER_VALID_TRIGGER))
   {
     //Tooth logger only logs when the edge was correct
-    if (validEdge)
+    if (valid_edge)
     {
       addToothLogEntry(curGap, TOOTH_CRANK);
     }
   }
-  else if ((currentStatus.compositeTriggerUsed > 0))
+  else if (currentStatus.compositeTriggerUsed > 0)
   {
     //Composite logger adds an entry regardless of which edge it was
     addToothLogEntry(curGap, TOOTH_CRANK);
@@ -303,22 +354,30 @@ void loggerPrimaryISR(void)
 */
 void loggerSecondaryISR(void)
 {
-  BIT_CLEAR(decoderState, BIT_DECODER_VALID_TRIGGER); //This value will be set to the return value of the decoder function, indicating whether or not this pulse passed the filters
-  BIT_SET(decoderState, BIT_DECODER_VALID_TRIGGER); //This value will be set to the return value of the decoder function, indicating whether or not this pulse passed the filters
+  //This value will be set to the return value of the decoder function,
+  //indicating whether or not this pulse passed the filters
+  BIT_SET(decoderState, BIT_DECODER_VALID_TRIGGER);
+
   /* 3 checks here:
   1) If the primary trigger is RISING, then check whether the primary is currently HIGH
   2) If the primary trigger is FALLING, then check whether the primary is currently LOW
   3) The secondary trigger is CHANGING
   If any of these are true, the primary decoder function is called
   */
-  if ((secondaryTriggerEdge == RISING && Trigger2.read() == HIGH)
-      || (secondaryTriggerEdge == FALLING && Trigger2.read() == LOW)
-      || secondaryTriggerEdge == CHANGE)
+  bool const trigger_state = Trigger2.read();
+  bool const valid_edge =
+    (secondaryTriggerEdge == RISING && trigger_state)
+    || (secondaryTriggerEdge == FALLING && !trigger_state)
+    || secondaryTriggerEdge == CHANGE;
+
+  if (valid_edge)
   {
     triggerSecondaryHandler();
   }
+
   //No tooth logger for the secondary input
-  if ((currentStatus.compositeTriggerUsed > 0) && (BIT_CHECK(decoderState, BIT_DECODER_VALID_TRIGGER)))
+  if (currentStatus.compositeTriggerUsed > 0
+      && BIT_CHECK(decoderState, BIT_DECODER_VALID_TRIGGER))
   {
     //Composite logger adds an entry regardless of which edge it was
     addToothLogEntry(curGap2, TOOTH_CAM_SECONDARY);
@@ -330,8 +389,9 @@ void loggerSecondaryISR(void)
 */
 void loggerTertiaryISR(void)
 {
-  BIT_CLEAR(decoderState, BIT_DECODER_VALID_TRIGGER); //This value will be set to the return value of the decoder function, indicating whether or not this pulse passed the filters
-  BIT_SET(decoderState, BIT_DECODER_VALID_TRIGGER); //This value will be set to the return value of the decoder function, indicating whether or not this pulse passed the filters
+  //This value will be set to the return value of the decoder function,
+  //indicating whether or not this pulse passed the filters
+  BIT_SET(decoderState, BIT_DECODER_VALID_TRIGGER);
   /* 3 checks here:
   1) If the primary trigger is RISING, then check whether the primary is currently HIGH
   2) If the primary trigger is FALLING, then check whether the primary is currently LOW
@@ -339,15 +399,20 @@ void loggerTertiaryISR(void)
   If any of these are true, the primary decoder function is called
   */
 
+  bool const trigger_state = Trigger3.read();
+  bool const valid_edge =
+    (tertiaryTriggerEdge == RISING && trigger_state)
+    || (tertiaryTriggerEdge == FALLING && !trigger_state)
+    || tertiaryTriggerEdge == CHANGE;
 
-  if ((tertiaryTriggerEdge == RISING && Trigger3.read() == HIGH)
-      || (tertiaryTriggerEdge == FALLING && Trigger3.read() == LOW)
-      || tertiaryTriggerEdge == CHANGE)
+  if (valid_edge)
   {
     triggerTertiaryHandler();
   }
+
   //No tooth logger for the secondary input
-  if (currentStatus.compositeTriggerUsed > 0 && BIT_CHECK(decoderState, BIT_DECODER_VALID_TRIGGER))
+  if (currentStatus.compositeTriggerUsed > 0
+      && BIT_CHECK(decoderState, BIT_DECODER_VALID_TRIGGER))
   {
     //Composite logger adds an entry regardless of which edge it was
     addToothLogEntry(curGap3, TOOTH_CAM_TERTIARY);
@@ -364,51 +429,62 @@ static __attribute__((noinline))
 #endif
 bool SetRevolutionTime(uint32_t revTime)
 {
-  if (revTime != revolutionTime)
+  bool const revolution_time_changed = revTime != revolutionTime;
+
+  if (revolution_time_changed)
   {
     revolutionTime = revTime;
     microsPerDegree = div360(revolutionTime << microsPerDegree_Shift);
     degreesPerMicro = (uint16_t)UDIV_ROUND_CLOSEST((UINT32_C(360) << degreesPerMicro_Shift), revolutionTime, uint32_t);
-    return true;
   }
-  return false;
+
+  return revolution_time_changed;
 }
 
 static bool UpdateRevolutionTimeFromTeeth(bool isCamTeeth)
 {
   noInterrupts();
-  bool updatedRevTime = HasAnySync(currentStatus)
+
+  bool haveUpdatedRevTime = HasAnySync(currentStatus)
     && !IsCranking(currentStatus)
     && (toothOneMinusOneTime != UINT32_C(0))
     && (toothOneTime > toothOneMinusOneTime)
-    //The time in uS that one revolution would take at current speed (The time tooth 1 was last seen, minus the time it was seen prior to that)
+    //The time in uS that one revolution would take at current speed
+    //(The time tooth 1 was last seen, minus the time it was seen prior to that)
     && SetRevolutionTime((toothOneTime - toothOneMinusOneTime) >> (isCamTeeth ? 1U : 0U));
 
   interrupts();
 
-  return updatedRevTime;
+  return haveUpdatedRevTime;
 }
 
 static inline uint16_t clampRpm(uint16_t rpm)
 {
-  return rpm >= MAX_RPM ? currentStatus.RPM : rpm;
+  return (rpm >= MAX_RPM) ? currentStatus.RPM : rpm;
 }
 
 static inline uint16_t RpmFromRevolutionTimeUs(uint32_t revTime)
 {
+  uint16_t rpm;
+
   if (revTime < UINT16_MAX)
   {
-    return clampRpm(udiv_32_16_closest(MICROS_PER_MIN, revTime));
+    rpm = udiv_32_16_closest(MICROS_PER_MIN, revTime);
   }
   else
   {
-    return clampRpm((uint16_t)UDIV_ROUND_CLOSEST(MICROS_PER_MIN, revTime, uint32_t)); //Calc RPM based on last full revolution time (Faster as /)
+    //Calc RPM based on last full revolution time (Faster as /)
+    rpm = UDIV_ROUND_CLOSEST(MICROS_PER_MIN, revTime, uint32_t);
   }
+
+  return clampRpm(rpm);
 }
 
 /** Compute RPM.
-* As nearly all the decoders use a common method of determining RPM (The time the last full revolution took) A common function is simpler.
-* @param degreesOver - the number of crank degrees between tooth #1s. Some patterns have a tooth #1 every crank rev, others are every cam rev.
+* As nearly all the decoders use a common method of determining RPM
+* (The time the last full revolution took), a common function is simpler.
+* @param isCamTeeth - Indicates that this is a cam wheel tooth.
+* Some patterns have a tooth #1 every crank rev, others are every cam rev.
 * @return RPM
 */
 static __attribute__((noinline)) uint16_t stdGetRPM(bool isCamTeeth)
@@ -427,11 +503,7 @@ static __attribute__((noinline)) uint16_t stdGetRPM(bool isCamTeeth)
  */
 static inline void setFilter(unsigned long curGap)
 {
-  if (configPage4.triggerFilter == 0) //trigger filter is turned off.
-  {
-    triggerFilterTime = 0;
-  }
-  else if (configPage4.triggerFilter == 1) //Lite filter level is 25% of previous gap
+  if (configPage4.triggerFilter == 1) //Lite filter level is 25% of previous gap
   {
     triggerFilterTime = curGap >> 2;
   }
@@ -494,6 +566,7 @@ static inline void checkPerToothTiming(int16_t crankAngle, uint16_t currentTooth
     ignitions.adjustCrankAngle(crankAngle, currentTooth);
   }
 }
+
 /** @} */
 
 /** A (single) multi-tooth wheel with one of more 'missing' teeth.
@@ -530,7 +603,9 @@ void triggerSetup_missingTooth(void)
   thirdToothCount = 0;
   toothOneTime = 0;
   toothOneMinusOneTime = 0;
-  MAX_STALL_TIME = ((MICROS_PER_DEG_1_RPM / 50U) * triggerToothAngle * (configPage4.triggerMissingTeeth + 1U)); //Minimum 50rpm. (3333uS is the time per degree at 50rpm)
+  //Minimum 50rpm. (3333uS is the time per degree at 50rpm)
+  unsigned const minimum_rpm = 50;
+  MAX_STALL_TIME = ((MICROS_PER_DEG_1_RPM / minimum_rpm) * triggerToothAngle * (configPage4.triggerMissingTeeth + 1U));
 
   if (configPage4.TrigSpeed == CRANK_SPEED
       && (configPage4.sparkMode == IGN_MODE_SEQUENTIAL
@@ -551,7 +626,9 @@ void triggerPri_missingTooth(void)
 {
   curTime = micros();
   curGap = curTime - toothLastToothTime;
-  if (curGap < triggerFilterTime) //Pulses should never be less than triggerFilterTime, so if they are it means a false trigger. (A 36-1 wheel at 8000pm will have triggers approx. every 200uS)
+  //Pulses should never be less than triggerFilterTime, so if they are it means a false trigger.
+  //(A 36-1 wheel at 8000pm will have triggers approx. every 200uS)
+  if (curGap < triggerFilterTime)
   {
     return;
   }
@@ -618,14 +695,7 @@ void triggerPri_missingTooth(void)
           // at tooth one check if the cam sensor is high or low in poll level mode
           if (configPage4.trigPatternSec == SEC_TRIGGER_POLL)
           {
-            if (configPage4.PollLevelPolarity == Trigger2.read())
-            {
-              revolutionOne = 1;
-            }
-            else
-            {
-              revolutionOne = 0;
-            }
+            revolutionOne = configPage4.PollLevelPolarity == Trigger2.read();
           }
           else //Flip sequential revolution tracker if poll level is not used
           {
@@ -635,32 +705,44 @@ void triggerPri_missingTooth(void)
           toothOneTime = curTime;
 
           //if Sequential fuel or ignition is in use, further checks are needed before determining sync
-          if ((configPage4.sparkMode == IGN_MODE_SEQUENTIAL) || (configPage2.injLayout == INJ_SEQUENTIAL))
+          if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL || configPage2.injLayout == INJ_SEQUENTIAL)
           {
             //If either fuel or ignition is sequential, only declare sync if the cam tooth has been seen OR if the missing wheel is on the cam
-            if ((secondaryToothCount > 0) || (configPage4.TrigSpeed == CAM_SPEED) || (configPage4.trigPatternSec == SEC_TRIGGER_POLL) || (configPage2.strokes == TWO_STROKE))
+            if (secondaryToothCount > 0
+                || configPage4.TrigSpeed == CAM_SPEED
+                || configPage4.trigPatternSec == SEC_TRIGGER_POLL
+                || configPage2.strokes == TWO_STROKE)
             {
               currentStatus.hasSync = true;
               BIT_CLEAR(currentStatus.status3, BIT_STATUS3_HALFSYNC); //the engine is fully synced so clear the Half Sync bit
             }
-            else if (currentStatus.hasSync != true) //If there is primary trigger but no secondary we only have half sync.
+            else if (!currentStatus.hasSync) //If there is primary trigger but no secondary we only have half sync.
             {
               BIT_SET(currentStatus.status3, BIT_STATUS3_HALFSYNC);
             }
           }
           else //If nothing is using sequential, we have sync and also clear half sync bit
           {
-            currentStatus.hasSync = true;  BIT_CLEAR(currentStatus.status3, BIT_STATUS3_HALFSYNC);
+            currentStatus.hasSync = true;
+            BIT_CLEAR(currentStatus.status3, BIT_STATUS3_HALFSYNC);
           }
-          if (configPage4.trigPatternSec == SEC_TRIGGER_SINGLE || configPage4.trigPatternSec == SEC_TRIGGER_TOYOTA_3) //Reset the secondary tooth counter to prevent it overflowing, done outside of sequental as v6 & v8 engines could be batch firing with VVT that needs the cam resetting
+          //Reset the secondary tooth counter to prevent it overflowing,
+          //done outside of sequental as v6 & v8 engines could be batch firing
+          //with VVT that needs the cam resetting
+          if (configPage4.trigPatternSec == SEC_TRIGGER_SINGLE
+              || configPage4.trigPatternSec == SEC_TRIGGER_TOYOTA_3)
           {
             secondaryToothCount = 0;
           }
 
-          triggerFilterTime = 0; //This is used to prevent a condition where serious intermittent signals (Eg someone furiously plugging the sensor wire in and out) can leave the filter in an unrecoverable state
+          //This is used to prevent a condition where serious intermittent signals
+          //(e.g. someone furiously plugging the sensor wire in and out)
+          //can leave the filter in an unrecoverable state
+          triggerFilterTime = 0;
           toothLastMinusOneToothTime = toothLastToothTime;
           toothLastToothTime = curTime;
-          BIT_CLEAR(decoderState, BIT_DECODER_TOOTH_ANG_CORRECT); //The tooth angle is double at this point
+          //The tooth angle is double at this point
+          BIT_CLEAR(decoderState, BIT_DECODER_TOOTH_ANG_CORRECT);
         }
       }
     }
@@ -683,8 +765,7 @@ void triggerPri_missingTooth(void)
 
 
   //NEW IGNITION MODE
-  if (configPage2.perToothIgn
-      && !BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK))
+  if (configPage2.perToothIgn && !BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK))
   {
     int16_t crankAngle =
       ((toothCurrentCount - 1) * triggerToothAngle) + configPage4.triggerAngle;

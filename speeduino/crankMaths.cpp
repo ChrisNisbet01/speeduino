@@ -44,7 +44,8 @@ uint16_t timeToAngleDegPerMicroSec(uint32_t time_us, uint32_t const degrees_per_
 uint16_t timeToAngleIntervalTooth(uint32_t time)
 {
     noInterrupts();
-    //Still uses a last interval method (ie retrospective), but bases the interval on the gap between the 2 most recent teeth rather than the last full revolution
+    //Still uses a last interval method (ie retrospective), but bases the interval
+    //on the gap between the 2 most recent teeth rather than the last full revolution
     if(BIT_CHECK(decoderState, BIT_DECODER_TOOTH_ANG_CORRECT))
     {
       unsigned long toothTime = (toothLastToothTime - toothLastMinusOneToothTime);
