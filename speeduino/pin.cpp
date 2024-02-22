@@ -2,10 +2,18 @@
 #include "auxiliaries.h"
 #include "bit_macros.h"
 
+#if defined(CORE_TEENSY) || defined(CORE_STM32)
+#define HAVE_ATOMIC_BLOCK 0
+#else
+#define HAVE_ATOMIC_BLOCK 1
+#endif
+
 static inline void
 atomic_pin_set(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
 {
+#if HAVE_ATOMIC_BLOCK
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+#endif
   {
     port |= mask;
   }
@@ -14,7 +22,9 @@ atomic_pin_set(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
 static inline void
 atomic_pin_clear(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
 {
+#if HAVE_ATOMIC_BLOCK
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+#endif
   {
     port &= ~mask;
   }
@@ -23,7 +33,9 @@ atomic_pin_clear(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
 static inline void
 atomic_pin_toggle(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
 {
+#if HAVE_ATOMIC_BLOCK
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+#endif
   {
     port &= ~mask;
   }

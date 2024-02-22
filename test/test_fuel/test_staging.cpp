@@ -4,6 +4,7 @@
 #include "test_staging.h"
 #include "injector_contexts.h"
 #include "calculateInjectorStaging.h"
+#include "bit_macros.h"
 
 void testStaging(void)
 {

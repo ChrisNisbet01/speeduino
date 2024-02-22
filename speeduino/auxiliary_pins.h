@@ -16,7 +16,7 @@ extern IODigitalReadInputPin Trigger;
 extern IODigitalReadInputPin Trigger2;
 extern IODigitalReadInputPin Trigger3;
 
-extern IODigitalWriteOutputPin Flex;
+extern IODigitalReadInputPin Flex;
 
 extern IODigitalWriteOutputPin NitrousStage1;
 extern IODigitalWriteOutputPin NitrousStage2;

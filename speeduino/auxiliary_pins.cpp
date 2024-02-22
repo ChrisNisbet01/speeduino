@@ -14,7 +14,7 @@ IODigitalReadInputPin Trigger;
 IODigitalReadInputPin Trigger2;
 IODigitalReadInputPin Trigger3;
 
-IODigitalWriteOutputPin Flex;
+IODigitalReadInputPin Flex;
 
 IODigitalWriteOutputPin NitrousStage1;
 IODigitalWriteOutputPin NitrousStage2;
