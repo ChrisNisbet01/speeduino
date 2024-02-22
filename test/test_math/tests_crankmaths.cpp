@@ -1,7 +1,8 @@
 #include <unity.h>
-// #include "globals.h"
+
 #include "crankMaths.h"
 #include "decoders.h"
+#include "bit_macros.h"
 
 extern void SetRevolutionTime(uint32_t revTime);
 

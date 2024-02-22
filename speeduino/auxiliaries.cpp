@@ -11,6 +11,7 @@ A full copy of the license may be found in the projects root directory
 #include "timers.h"
 #include "injector_contexts.h"
 #include "auxiliary_pins.h"
+#include "bit_macros.h"
 
 static long vvt1_pwm_value;
 static long vvt2_pwm_value;

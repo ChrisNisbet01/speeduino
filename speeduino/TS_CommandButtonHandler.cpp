@@ -15,6 +15,7 @@
 #ifdef USE_MC33810
   #include "acc_mc33810.h"
 #endif
+#include "bit_macros.h"
 
 static bool commandRequiresStoppedEngine(uint16_t buttonCommand)
 {

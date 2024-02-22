@@ -1,8 +1,9 @@
 #include "pin.h"
 #include "auxiliaries.h"
+#include "bit_macros.h"
 
 static inline void
-pin_set(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
+atomic_pin_set(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
 {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
   {
@@ -11,7 +12,7 @@ pin_set(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
 }
 
 static inline void
-pin_clear(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
+atomic_pin_clear(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
 {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
   {
@@ -20,7 +21,7 @@ pin_clear(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
 }
 
 static inline void
-pin_toggle(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
+atomic_pin_toggle(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
 {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
   {
@@ -194,17 +195,17 @@ void IODigitalReadInputPin::setPin(byte pin_)
 
 void IOAtomicWriteOutputPin::on(void)
 {
-  pin_set(*m_port, m_mask);
+  atomic_pin_set(*m_port, m_mask);
 }
 
 void IOAtomicWriteOutputPin::off(void)
 {
-  pin_clear(*m_port, m_mask);
+  atomic_pin_clear(*m_port, m_mask);
 }
 
 void IOAtomicWriteOutputPin::toggle(void)
 {
-  pin_toggle(*m_port, m_mask);
+  atomic_pin_toggle(*m_port, m_mask);
 }
 
 void IOAtomicWriteOutputPin::configure(byte initial_state)

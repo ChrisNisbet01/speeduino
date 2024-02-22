@@ -24,6 +24,7 @@ sendcancommand is called when a command is to be sent either to serial3
 #include "comms_legacy.h"
 #include "logger.h"
 #include "page_crc.h"
+#include "bit_macros.h"
 #include BOARD_H
 
 uint8_t currentSecondaryCommand;

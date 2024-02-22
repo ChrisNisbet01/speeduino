@@ -7,6 +7,7 @@ A full copy of the license may be found in the projects root directory
 #include "maths.h"
 #include "timers.h"
 #include "src/PID_v1/PID_v1.h"
+#include "bit_macros.h"
 
 byte idleUpOutputHIGH = HIGH; // Used to invert the idle Up Output
 byte idleUpOutputLOW = LOW;   // Used to invert the idle Up Output

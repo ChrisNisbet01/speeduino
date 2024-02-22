@@ -2,6 +2,7 @@
 #include "globals.h"
 #include "engineProtection.h"
 #include "maths.h"
+#include "bit_macros.h"
 
 byte oilProtStartTime = 0;
 

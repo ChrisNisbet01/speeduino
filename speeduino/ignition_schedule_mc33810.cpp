@@ -1,6 +1,7 @@
 #include "ignition_schedule_mc33810.h"
 #include "globals.h"
 #include "acc_mc33810.h"
+#include "bit_macros.h"
 
 typedef void (*ignition_begin_charge_fn)(void);
 typedef void (*ignition_end_charge_fn)(void);

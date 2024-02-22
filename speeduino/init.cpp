@@ -37,6 +37,7 @@
 #include "auxiliary_pins.h"
 #include "ignition_pins.h"
 #include "injector_pins.h"
+#include "bit_macros.h"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 

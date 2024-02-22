@@ -3,6 +3,7 @@
 #include "corrections.h"
 #include "engine_load_calcs.h"
 #include "auxiliary_pins.h"
+#include "bit_macros.h"
 
 void calculateSecondaryFuel(void)
 {

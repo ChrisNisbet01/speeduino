@@ -32,6 +32,7 @@ There are 2 top level functions that call more detailed corrections for Fuel and
 #include "src/PID_v1/PID_v1.h"
 #include "tps_dot.h"
 #include "map_dot.h"
+#include "bit_macros.h"
 
 long PID_O2, PID_output, PID_AFRTarget;
 /** Instance of the PID object in case that algorithm is used (Always instantiated).

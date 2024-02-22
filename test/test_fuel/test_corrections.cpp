@@ -3,6 +3,7 @@
 #include <unity.h>
 #include "test_corrections.h"
 #include "tps_dot.h"
+#include "bit_macros.h"
 
 void testCorrections()
 {

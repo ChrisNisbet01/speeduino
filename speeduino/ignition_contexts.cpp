@@ -3,6 +3,7 @@
 #include "ignition_schedule.h"
 #include "ignition_control.h"
 #include "schedule_calcs.h"
+#include "bit_macros.h"
 
 bool ignition_context_st::
 adjustCrankAngle(int const crankAngle, uint16_t const currentTooth)
@@ -170,7 +171,7 @@ void ignition_contexts_st::setOff(ignitionChannelID_t ign)
 
 bool ignition_contexts_st::isOperational(ignitionChannelID_t ign)
 {
-  return ((1 << ign) & maxOutputMask & channelsOn) != 0;
+  return (BIT(ign) & maxOutputMask & channelsOn) != 0;
 }
 
 byte ignition_contexts_st::channelsOnMask(void)

@@ -25,6 +25,7 @@ A full copy of the license may be found in the projects root directory
 #endif
 #include "injector_contexts.h"
 #include "auxiliary_pins.h"
+#include "bit_macros.h"
 
 static byte currentPage = 1;//Not the same as the speeduino config page numbers
 bool firstCommsRequest = true; /**< The number of times the A command has been issued. This is used to track whether a reset has recently been performed on the controller */

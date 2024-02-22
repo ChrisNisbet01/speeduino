@@ -109,14 +109,6 @@
 //This can only be included after the above section
 #include BOARD_H  //Note that this is not a real file, it is defined in globals.h.
 
-//Handy bitsetting macros
-#define BIT(x) (1 << (x))
-#define BIT_SET(a, b) ((a) |= BIT((b)))
-#define BIT_CLEAR(a, b) ((a) &= ~BIT((b)))
-#define BIT_CHECK(var, pos) !!((var) & BIT((pos)))
-#define BIT_TOGGLE(var, pos) ((var) ^= BIT((pos)))
-#define BIT_WRITE(var, pos, bitvalue) ((bitvalue) ? BIT_SET((var), (pos)) : bitClear((var), (pos)))
-
 #if !defined(ARRAY_SIZE)
 #define ARRAY_SIZE(A) (sizeof(A)/sizeof(A[0]))
 #endif
@@ -647,10 +639,6 @@ struct statuses {
   byte TS_SD_Status;  //TunerStudios SD card status
   byte airConStatus;
 };
-
-static inline bool HasAnySync(const statuses &status) {
-  return status.hasSync || BIT_CHECK(status.status3, BIT_STATUS3_HALFSYNC);
-}
 
 /** Page 2 of the config - mostly variables that are required for fuel.
  * These are "non-live" EFI setting, engine and "system" variables that remain fixed once sent

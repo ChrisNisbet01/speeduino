@@ -10,6 +10,7 @@ A full copy of the license may be found in the projects root directory
  */
 #include "globals.h"
 #include "errors.h"
+#include "bit_macros.h"
 
 byte errorCount = 0;
 byte errorCodes[4];
@@ -57,7 +58,7 @@ byte getNextError(void)
   if(errorCount > 0)
   {
     //We alternate through the errors once per second
-    currentErrorNum = currentStatus.secl % errorCount; //Which error number will be returned. This changes once per second. 
+    currentErrorNum = currentStatus.secl % errorCount; //Which error number will be returned. This changes once per second.
 
     currentError.errorNum = currentErrorNum;
     currentError.errorID = errorCodes[currentErrorNum];

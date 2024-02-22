@@ -23,6 +23,7 @@ Timers are typically low resolution (Compared to Schedulers), with maximum frequ
 #include "comms.h"
 #include "maths.h"
 #include "fuel_pump.h"
+#include "bit_macros.h"
 
 #if defined(CORE_AVR)
   #include <avr/wdt.h>

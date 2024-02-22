@@ -1,5 +1,6 @@
 #include "injector_schedule_mc33810.h"
 #include "acc_mc33810.h"
+#include "bit_macros.h"
 
 typedef void (*open_injector_fn)(void);
 typedef void (*close_injector_fn)(void);

@@ -12,7 +12,7 @@ A full copy of the license may be found in the projects root directory
 #include "storage.h"
 #include "pages.h"
 #include "table3d_axis_io.h"
-
+#include "bit_macros.h"
 
 #define EEPROM_DATA_VERSION   0
 

@@ -1,6 +1,7 @@
 #include "injector_schedule_direct.h"
 #include "globals.h"
 #include "injector_pins.h"
+#include "bit_macros.h"
 
 typedef void (*open_injector_fn)(void);
 typedef void (*close_injector_fn)(void);

@@ -23,6 +23,7 @@ A full copy of the license may be found in the projects root directory
 #include "fuel_pump.h"
 #include "tps_dot.h"
 #include "map_dot.h"
+#include "bit_macros.h"
 
 uint32_t MAPcurRev; //Tracks which revolution we're sampling on
 unsigned int MAPcount; //Number of samples taken in the current MAP cycle

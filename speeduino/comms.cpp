@@ -29,6 +29,7 @@ A full copy of the license may be found in the projects root directory
   #include "SD_logger.h"
 #endif
 #include "auxiliary_pins.h"
+#include "bit_macros.h"
 
 // Forward declarations
 

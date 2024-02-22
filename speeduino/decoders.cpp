@@ -43,6 +43,11 @@ A full copy of the license may be found in the projects root directory
 #include "timers.h"
 #include "schedule_calcs.h"
 #include "ignition_contexts.h"
+#include "bit_macros.h"
+
+static inline bool HasAnySync(const statuses &status) {
+  return status.hasSync || BIT_CHECK(status.status3, BIT_STATUS3_HALFSYNC);
+}
 
 void nullTriggerHandler(void) //initialisation function for triggerhandlers, does exactly nothing
 {

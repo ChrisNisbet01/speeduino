@@ -2,6 +2,7 @@
 #include "globals.h"
 #include "maths.h"
 #include "injector_contexts.h"
+#include "bit_macros.h"
 
 extern uint16_t inj_opentime_uS;
 extern uint16_t staged_req_fuel_mult_pri;

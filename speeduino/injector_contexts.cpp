@@ -2,6 +2,7 @@
 #include "injector_control.h"
 #include "injector_schedule.h"
 #include "utilities.h"
+#include "bit_macros.h"
 
 injectors_context_st injectors;
 
@@ -94,7 +95,7 @@ void injectors_context_st::setOff(injectorChannelID_t inj)
 
 bool injectors_context_st::isOperational(injectorChannelID_t inj)
 {
-  return ((1 << inj) & maxOutputMask & channelsOn) != 0;
+  return (BIT(inj) & maxOutputMask & channelsOn) != 0;
 }
 
 byte injectors_context_st::channelsOnMask(void)
