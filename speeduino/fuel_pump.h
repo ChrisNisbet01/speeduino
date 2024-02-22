@@ -8,13 +8,13 @@ public:
   void turnOn(void)
   {
     m_state = true;
-    FUEL_PUMP_ON();
+    FuelPump.on();
   }
 
   void turnOff(void)
   {
     m_state = false;
-    FUEL_PUMP_OFF();
+    FuelPump.off();
   }
 
   bool isOn(void)

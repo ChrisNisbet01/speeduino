@@ -56,12 +56,12 @@ void initMC33810(void)
   //uint16_t cmd = 0b000111110000;
   uint16_t cmd = 0b0001111100000000;
   //IC1
-  MC33810_1_ACTIVE();
+  MC33810_1_CS.off();
   SPI.transfer16(cmd);
-  MC33810_1_INACTIVE();
+  MC33810_1_CS.on();
   //IC2
-  MC33810_2_ACTIVE();
+  MC33810_2_CS.off();
   SPI.transfer16(cmd);
-  MC33810_2_INACTIVE();
+  MC33810_2_CS.on();
 }
 

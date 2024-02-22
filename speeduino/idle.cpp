@@ -86,7 +86,7 @@ void initialiseIdle(bool forcehoming)
       //Case 1 is on/off idle control
       if ((currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) < configPage6.iacFastTemp)
       {
-        IDLE_PIN_HIGH();
+        Idle1.on();
         idleOn = true;
       }
       break;
@@ -520,14 +520,14 @@ void idleControl(void)
     //All temps are offset by 40 degrees
     if (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET < configPage6.iacFastTemp)
     {
-      IDLE_PIN_HIGH();
+      Idle1.on();
       idleOn = true;
       BIT_SET(currentStatus.spark, BIT_SPARK_IDLE); //Turn the idle control flag on
       currentStatus.idleLoad = 100;
     }
     else if (idleOn)
     {
-      IDLE_PIN_LOW();
+      Idle1.off();
       idleOn = false;
       BIT_CLEAR(currentStatus.spark, BIT_SPARK_IDLE); //Turn the idle control flag on
       currentStatus.idleLoad = 0;
@@ -1021,21 +1021,21 @@ void idleControl(void)
       if (configPage6.iacPWMdir == 0)
       {
         //Normal direction
-        IDLE_PIN_HIGH();  // Switch pin high
+        Idle1.on();
         //If 2 idle channels are in use, flip idle2 to be the opposite of idle1
         if (using_two_idle_channels)
         {
-          IDLE2_PIN_LOW();
+          Idle2.off();
         }
       }
       else
       {
         //Reversed direction
-        IDLE_PIN_LOW();  // Switch pin to low
+        Idle1.off();
         //If 2 idle channels are in use, flip idle2 to be the opposite of idle1
         if (using_two_idle_channels)
         {
-          IDLE2_PIN_HIGH();
+          Idle2.on();
         }
       }
     }
@@ -1063,21 +1063,21 @@ void disableIdle(void)
     if (configPage6.iacPWMdir == 0)
     {
       //Normal direction
-      IDLE_PIN_LOW(); // Switch pin to low
+      Idle1.off();
       //If 2 idle channels are in use, flip idle2 to be the opposite of idle1
       if (using_two_idle_channels)
       {
-        IDLE2_PIN_HIGH();
+        Idle2.on();
       }
     }
     else
     {
       //Reversed direction
-      IDLE_PIN_HIGH();  // Switch pin high
+      Idle1.on();
       //If 2 idle channels are in use, flip idle2 to be the opposite of idle1
       if (using_two_idle_channels)
       {
-        IDLE2_PIN_LOW();
+        Idle2.off();
       }
     }
   }
@@ -1117,17 +1117,17 @@ static inline void
 switch_idle_low(bool const using_two_idle_channels)
 {
 #if defined (CORE_TEENSY41) //PIT TIMERS count down and have opposite effect on PWM
-    IDLE_PIN_HIGH();
+    Idle1.on();
     if (using_two_idle_channels)
     {
-      IDLE2_PIN_LOW();
+      Idle2.off();
     }
 #else
-    IDLE_PIN_LOW();  // Switch pin to low (1 pin mode)
+    Idle1.off();
     //If 2 idle channels are in use, flip idle2 to be the opposite of idle1
     if (using_two_idle_channels)
     {
-      IDLE2_PIN_HIGH();
+      Idle2.on();
     }
 #endif
 }
@@ -1136,17 +1136,17 @@ static inline void
 switch_idle_high(bool const using_two_idle_channels)
 {
 #if defined (CORE_TEENSY41) //PIT TIMERS count down and have opposite effect on PWM
-    IDLE_PIN_LOW();
+    Idle1.off();
     if (using_two_idle_channels)
     {
-      IDLE2_PIN_HIGH();
+      Idle2.on();
     }
 #else
-    IDLE_PIN_HIGH();  // Switch pin high
+    Idle1.on();
     //If 2 idle channels are in use, flip idle2 to be the opposite of idle1
     if (using_two_idle_channels)
     {
-      IDLE2_PIN_LOW();
+      Idle2.off();
     }
 #endif
 }

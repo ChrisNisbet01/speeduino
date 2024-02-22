@@ -15,18 +15,21 @@ static ignition_st const * ignition = &ignition_direct;
 
 static void tachoOutputOn(void)
 {
-  if( configPage6.tachoMode ) {
-    TACHO_PULSE_LOW();
+  if (configPage6.tachoMode)
+  {
+    TachOut.off();
   }
-  else {
+  else
+  {
     tachoOutputFlag = READY;
   }
 }
 
 static void tachoOutputOff(void)
 {
-  if( configPage6.tachoMode ) {
-    TACHO_PULSE_HIGH();
+  if (configPage6.tachoMode)
+  {
+    TachOut.on();
   }
 }
 

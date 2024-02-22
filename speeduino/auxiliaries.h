@@ -25,44 +25,20 @@ void wmiControl(void);
 #define SIMPLE_BOOST_I  1
 #define SIMPLE_BOOST_D  1
 
-#define N2O_STAGE1_PIN_LOW() NitrousStage1.off()
-#define N2O_STAGE1_PIN_HIGH() NitrousStage1.on()
-#define N2O_STAGE2_PIN_LOW() NitrousStage2.off()
-#define N2O_STAGE2_PIN_HIGH() NitrousStage2.on()
+#define AIRCON_ON() { configPage15.airConCompPol==1 ? AirConComp.off() : AirConComp.on(); BIT_SET(currentStatus.airConStatus, BIT_AIRCON_COMPRESSOR); }
+#define AIRCON_OFF() { configPage15.airConCompPol==1 ? AirConComp.on() : AirConComp.off(); BIT_CLEAR(currentStatus.airConStatus, BIT_AIRCON_COMPRESSOR); }
 
-#define BOOST_PIN_LOW() Boost.off()
-#define BOOST_PIN_HIGH() Boost.on()
-
-#define AIRCON_PIN_LOW() AirConComp.off()
-#define AIRCON_PIN_HIGH() AirConComp.on()
-#define AIRCON_ON() { configPage15.airConCompPol==1 ? AIRCON_PIN_LOW() : AIRCON_PIN_HIGH(); BIT_SET(currentStatus.airConStatus, BIT_AIRCON_COMPRESSOR); }
-#define AIRCON_OFF() { configPage15.airConCompPol==1 ? AIRCON_PIN_HIGH() : AIRCON_PIN_LOW(); BIT_CLEAR(currentStatus.airConStatus, BIT_AIRCON_COMPRESSOR); }
-
-#define AIRCON_FAN_PIN_LOW() AirConFan.off()
-#define AIRCON_FAN_PIN_HIGH() AirConFan.on()
-
-#define AIRCON_FAN_ON() { configPage15.airConFanPol==1 ? AIRCON_FAN_PIN_LOW() : AIRCON_FAN_PIN_HIGH(); BIT_SET(currentStatus.airConStatus, BIT_AIRCON_FAN); }
-#define AIRCON_FAN_OFF() { configPage15.airConFanPol==1 ? AIRCON_FAN_PIN_HIGH() : AIRCON_FAN_PIN_LOW(); BIT_CLEAR(currentStatus.airConStatus, BIT_AIRCON_FAN); }
-
-#define FUEL_PUMP_ON() FuelPump.on()
-#define FUEL_PUMP_OFF() FuelPump.off()
-
-#define FAN_PIN_LOW() Fan.off()
-#define FAN_PIN_HIGH() Fan.on()
+#define AIRCON_FAN_ON() { configPage15.airConFanPol==1 ? AirConFan.off() : AirConFan.on(); BIT_SET(currentStatus.airConStatus, BIT_AIRCON_FAN); }
+#define AIRCON_FAN_OFF() { configPage15.airConFanPol==1 ? AirConFan.on() : AirConFan.off(); BIT_CLEAR(currentStatus.airConStatus, BIT_AIRCON_FAN); }
 
 #define FAN_ON() do { \
-  configPage6.fanInv ? FAN_PIN_LOW() : FAN_PIN_HIGH(); \
+  configPage6.fanInv ? Fan.off() : Fan.on(); \
   } while (0)
 
 #define FAN_OFF() do { \
-  configPage6.fanInv ? FAN_PIN_HIGH() : FAN_PIN_LOW(); \
+  configPage6.fanInv ? Fan.on() : Fan.off(); \
   } while (0)
 
-
-#define VVT1_PIN_ON() VVT_1.on()
-#define VVT1_PIN_OFF() VVT_1.off()
-#define VVT2_PIN_ON() VVT_2.on()
-#define VVT2_PIN_OFF() VVT_2.off()
 
 #define VVT_TIME_DELAY_MULTIPLIER  50
 

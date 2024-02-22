@@ -203,8 +203,8 @@ void loop(void)
       initialiseTriggers();
     }
 
-    VVT1_PIN_OFF();
-    VVT2_PIN_OFF();
+    VVT_1.off();
+    VVT_2.off();
     DISABLE_VVT_TIMER();
     boostDisable();
     if (configPage4.ignBypassEnabled > 0)

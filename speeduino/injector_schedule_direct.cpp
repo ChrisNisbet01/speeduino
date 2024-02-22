@@ -33,37 +33,25 @@ typedef struct injector_control_st
 #define injector4Toggle_DIRECT() { inj4.toggle(); }
 
 #if (INJ_CHANNELS >= 5)
-#define openInjector5_DIRECT() \
-  {                            \
-    inj5.on();                 \
-  }
+#define openInjector5_DIRECT() {inj5.on();}
 #define closeInjector5_DIRECT() { inj5.off(); }
 #define injector5Toggle_DIRECT() { inj5.toggle(); }
 
 #endif
 #if (INJ_CHANNELS >= 6)
-#define openInjector6_DIRECT() \
-  {                            \
-    inj6.on();                 \
-  }
+#define openInjector6_DIRECT() {inj6.on();}
 #define closeInjector6_DIRECT() { inj6.off(); }
 #define injector6Toggle_DIRECT() { inj6.toggle(); }
 
 #endif
 #if (INJ_CHANNELS >= 7)
-#define openInjector7_DIRECT() \
-  {                            \
-    inj7.on();                 \
-  }
+#define openInjector7_DIRECT() {inj7.on();}
 #define closeInjector7_DIRECT() { inj7.off(); }
 #define injector7Toggle_DIRECT(){ inj7.toggle(); }
 
 #endif
 #if (INJ_CHANNELS >= 8)
-#define openInjector8_DIRECT() \
-  {                            \
-    inj8.on();                 \
-  }
+#define openInjector8_DIRECT() {inj8.on();}
 #define closeInjector8_DIRECT() { inj8.off(); }
 #define injector8Toggle_DIRECT() { inj8.toggle(); }
 #endif

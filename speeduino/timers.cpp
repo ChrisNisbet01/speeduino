@@ -102,7 +102,7 @@ updateTacho(void)
     //Check for half speed tacho
     if (configPage2.tachoDiv == 0 || currentStatus.tachoAlt)
     {
-      TACHO_PULSE_LOW();
+      TachOut.off();
       //ms_counter is cast down to a byte as the tacho duration can only be in
       //the range of 1-6, so no extra resolution above that is required
       tachoEndTime = (uint8_t)ms_counter + configPage2.tachoDuration;
@@ -121,7 +121,7 @@ updateTacho(void)
     //If the tacho output is already active, check whether it's reached it's end time
     if((uint8_t)ms_counter == tachoEndTime)
     {
-      TACHO_PULSE_HIGH();
+      TachOut.on();
       tachoOutputFlag = TACHO_INACTIVE;
     }
   }

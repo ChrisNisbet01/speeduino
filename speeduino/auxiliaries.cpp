@@ -626,7 +626,7 @@ void boostControl(void)
       if (currentStatus.boostDuty == 0) //If boost duty is 0, shut everything down
       {
         DISABLE_BOOST_TIMER();
-        BOOST_PIN_LOW();
+        Boost.off();
       }
       else
       {
@@ -693,7 +693,7 @@ void boostControl(void)
           {
             //If boost duty is 0, shut everything down
             DISABLE_BOOST_TIMER();
-            BOOST_PIN_LOW();
+            Boost.off();
           }
           else if (PIDcomputed)
           {
@@ -729,7 +729,7 @@ void boostControl(void)
     if (currentStatus.boostDuty >= 10000)
     {
       DISABLE_BOOST_TIMER(); //Turn off the compare unit (ie turn off the interrupt) if boost duty is 100%
-      BOOST_PIN_HIGH(); //Turn on boost pin if duty is 100%
+      Boost.on(); //Turn on boost pin if duty is 100%
     }
     else if (currentStatus.boostDuty > 0)
     {
@@ -926,8 +926,8 @@ void vvtControl(void)
         if (currentStatus.vvt1Duty == 0 && currentStatus.vvt2Duty == 0)
         {
           //Make sure solenoid is off (0% duty)
-          VVT1_PIN_OFF();
-          VVT2_PIN_OFF();
+          VVT_1.off();
+          VVT_2.off();
           vvt1_pwm_state = false;
           vvt1_max_pwm = false;
           vvt2_pwm_state = false;
@@ -937,8 +937,8 @@ void vvtControl(void)
         else if (currentStatus.vvt1Duty >= 200 && currentStatus.vvt2Duty >= 200)
         {
           //Make sure solenoid is on (100% duty)
-          VVT1_PIN_ON();
-          VVT2_PIN_ON();
+          VVT_1.on();
+          VVT_2.on();
           vvt1_pwm_state = true;
           vvt1_max_pwm = true;
           vvt2_pwm_state = true;
@@ -964,14 +964,14 @@ void vvtControl(void)
         if (currentStatus.vvt1Duty == 0)
         {
           //Make sure solenoid is off (0% duty)
-          VVT1_PIN_OFF();
+          VVT_1.off();
           vvt1_pwm_state = false;
           vvt1_max_pwm = false;
         }
         else if (currentStatus.vvt1Duty >= 200)
         {
           //Make sure solenoid is on (100% duty)
-          VVT1_PIN_ON();
+          VVT_1.on();
           vvt1_pwm_state = true;
           vvt1_max_pwm = true;
         }
@@ -1039,7 +1039,7 @@ void nitrousControl(void)
       {
         currentStatus.nitrous_status += NITROUS_STAGE1;
         BIT_SET(currentStatus.status3, BIT_STATUS3_NITROUS);
-        N2O_STAGE1_PIN_HIGH();
+        NitrousStage1.on();
         nitrousOn = true;
       }
       if (configPage10.n2o_enable == NITROUS_STAGE2) //This is really just a sanity check
@@ -1048,7 +1048,7 @@ void nitrousControl(void)
         {
           currentStatus.nitrous_status += NITROUS_STAGE2;
           BIT_SET(currentStatus.status3, BIT_STATUS3_NITROUS);
-          N2O_STAGE2_PIN_HIGH();
+          NitrousStage2.on();
           nitrousOn = true;
         }
       }
@@ -1062,8 +1062,8 @@ void nitrousControl(void)
 
     if (configPage10.n2o_enable > 0)
     {
-      N2O_STAGE1_PIN_LOW();
-      N2O_STAGE2_PIN_LOW();
+      NitrousStage1.off();
+      NitrousStage2.off();
     }
   }
 }
@@ -1131,7 +1131,7 @@ void wmiControl(void)
     if (wmiPW == 0)
     {
       // Make sure water pump is off
-      VVT2_PIN_OFF();
+      VVT_2.off();
       vvt2_pwm_state = false;
       vvt2_max_pwm = false;
       if (configPage6.vvtEnabled == 0)
@@ -1146,7 +1146,7 @@ void wmiControl(void)
       if (wmiPW >= 200)
       {
         // Make sure water pump is on (100% duty)
-        VVT2_PIN_ON();
+        VVT_2.on();
         vvt2_pwm_state = true;
         vvt2_max_pwm = true;
         if (configPage6.vvtEnabled == 0)
@@ -1168,7 +1168,7 @@ void boostDisable(void)
   boostPID.Initialize(); //This resets the ITerm value to prevent rubber banding
   currentStatus.boostDuty = 0;
   DISABLE_BOOST_TIMER(); //Turn off timer
-  BOOST_PIN_LOW(); //Make sure solenoid is off (0% duty)
+  Boost.off(); //Make sure solenoid is off (0% duty)
 }
 
 //The interrupt to control the Boost PWM
@@ -1181,9 +1181,9 @@ void boostInterrupt(void) //Most ARM chips can simply call a function
   if (boost_pwm_state)
   {
 #if defined(CORE_TEENSY41) //PIT TIMERS count down and have opposite effect on PWM
-    BOOST_PIN_HIGH();
+    Boost.on();
 #else
-    BOOST_PIN_LOW();  // Switch pin to low
+    Boost.off();  // Switch pin to low
 #endif
     SET_COMPARE(BOOST_TIMER_COMPARE, BOOST_TIMER_COUNTER + (boost_pwm_max_count - boost_pwm_cur_value));
     boost_pwm_state = false;
@@ -1191,9 +1191,9 @@ void boostInterrupt(void) //Most ARM chips can simply call a function
   else
   {
 #if defined(CORE_TEENSY41) //PIT TIMERS count down and have opposite effect on PWM
-    BOOST_PIN_LOW();
+    Boost.off();
 #else
-    BOOST_PIN_HIGH();  // Switch pin high
+    Boost.on();  // Switch pin high
 #endif
     SET_COMPARE(BOOST_TIMER_COMPARE, BOOST_TIMER_COUNTER + boost_pwm_target_value);
     boost_pwm_cur_value = boost_pwm_target_value;
@@ -1213,18 +1213,18 @@ void vvtInterrupt(void) //Most ARM chips can simply call a function
     if (vvt1_pwm_value > 0 && !vvt1_max_pwm) //Don't toggle if at 0%
     {
 #if defined(CORE_TEENSY41)
-      VVT1_PIN_OFF();
+      VVT_1.off();
 #else
-      VVT1_PIN_ON();
+      VVT_1.on();
 #endif
       vvt1_pwm_state = true;
     }
     if (vvt2_pwm_value > 0 && !vvt2_max_pwm) //Don't toggle if at 0%
     {
 #if defined(CORE_TEENSY41)
-      VVT2_PIN_OFF();
+      VVT_2.off();
 #else
-      VVT2_PIN_ON();
+      VVT_2.on();
 #endif
       vvt2_pwm_state = true;
     }
@@ -1263,9 +1263,9 @@ void vvtInterrupt(void) //Most ARM chips can simply call a function
       if (vvt1_pwm_value < (long)vvt_pwm_max_count) //Don't toggle if at 100%
       {
 #if defined(CORE_TEENSY41)
-        VVT1_PIN_ON();
+        VVT_1.on();
 #else
-        VVT1_PIN_OFF();
+        VVT_1.off();
 #endif
         vvt1_pwm_state = false;
         vvt1_max_pwm = false;
@@ -1290,9 +1290,9 @@ void vvtInterrupt(void) //Most ARM chips can simply call a function
       if (vvt2_pwm_value < (long)vvt_pwm_max_count) //Don't toggle if at 100%
       {
 #if defined(CORE_TEENSY41)
-        VVT2_PIN_ON();
+        VVT_2.on();
 #else
-        VVT2_PIN_OFF();
+        VVT_2.off();
 #endif
         vvt2_pwm_state = false;
         vvt2_max_pwm = false;
@@ -1317,9 +1317,9 @@ void vvtInterrupt(void) //Most ARM chips can simply call a function
       if (vvt1_pwm_value < (long)vvt_pwm_max_count) //Don't toggle if at 100%
       {
 #if defined(CORE_TEENSY41)
-        VVT1_PIN_ON();
+        VVT_1.on();
 #else
-        VVT1_PIN_OFF();
+        VVT_1.off();
 #endif
         vvt1_pwm_state = false;
         vvt1_max_pwm = false;
@@ -1332,9 +1332,9 @@ void vvtInterrupt(void) //Most ARM chips can simply call a function
       if (vvt2_pwm_value < (long)vvt_pwm_max_count) //Don't toggle if at 100%
       {
 #if defined(CORE_TEENSY41)
-        VVT2_PIN_ON();
+        VVT_2.on();
 #else
-        VVT2_PIN_OFF();
+        VVT_2.off();
 #endif
         vvt2_pwm_state = false;
         vvt2_max_pwm = false;

@@ -14,11 +14,6 @@
 #define IAC_ALGORITHM_PWM_OLCL  6 //Openloop plus closedloop IAC control
 #define IAC_ALGORITHM_STEP_OLCL  7 //Openloop plus closedloop IAC control
 
-#define IDLE_PIN_LOW()  Idle1.off()
-#define IDLE_PIN_HIGH() Idle1.on()
-#define IDLE2_PIN_LOW() Idle2.off()
-#define IDLE2_PIN_HIGH() Idle2.on()
-
 #define STEPPER_FORWARD 0
 #define STEPPER_BACKWARD 1
 #define STEPPER_POWER_WHEN_ACTIVE 0
