@@ -3,7 +3,6 @@
 //initialisation function for triggerhandlers, does exactly nothing
 void nullTriggerHandler(void)
 {
-  return;
 }
 
 //initialisation function for getRpm, returns safe value of 0
@@ -18,4 +17,17 @@ int nullGetCrankAngle(void)
   return 0;
 }
 
+void nullSetEndTeeth(void)
+{
+}
+
+decoder_handler_st const null_trigger =
+{
+  .primaryToothHandler = nullTriggerHandler,
+  .secondaryToothHandler = nullTriggerHandler,
+  .tertiaryToothHandler = nullTriggerHandler,
+  .get_rpm = nullGetRPM,
+  .get_crank_angle = nullGetCrankAngle,
+  .set_end_teeth = nullSetEndTeeth,
+};
 

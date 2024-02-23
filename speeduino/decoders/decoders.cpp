@@ -44,6 +44,8 @@ A full copy of the license may be found in the projects root directory
 #include "bit_macros.h"
 #include "null_trigger.h"
 
+decoder_context_st decoder;
+
 static inline bool HasAnySync(const statuses &status)
 {
   return status.hasSync || BIT_CHECK(status.status3, BIT_STATUS3_HALFSYNC);
@@ -6449,10 +6451,8 @@ void triggerPri_Vmax(void)
       toothCurrentCount++;
     }
     lastGap = curGapLocal;
-
-    return;
   }
-  else if (!BIT_CHECK(decoderState, BIT_DECODER_VALID_TRIGGER))
+  else
   {
     //Reset this every time to ensure we only filter when needed.
     BIT_SET(decoderState, BIT_DECODER_VALID_TRIGGER);

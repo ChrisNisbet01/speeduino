@@ -1,5 +1,7 @@
 #pragma once
 
+#include "decoders.h"
+
 #include <stdint.h>
 
 void nullTriggerHandler(void);

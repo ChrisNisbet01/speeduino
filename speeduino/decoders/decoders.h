@@ -2,6 +2,7 @@
 #define DECODERS_H
 
 #include "globals.h"
+#include <stdint.h>
 
 #define DECODER_MISSING_TOOTH     0
 #define DECODER_BASIC_DISTRIBUTOR 1
@@ -240,6 +241,26 @@ uint16_t getRPM_SuzukiK6A(void);
 int getCrankAngle_SuzukiK6A(void);
 void triggerSetEndTeeth_SuzukiK6A(void);
 
+typedef void (*trigger_handler_fn)(void);
+typedef uint16_t (*trigger_get_rpm_fn)(void);
+typedef int (*trigger_get_crank_angle_fn)(void);
+typedef void (*trigger_set_end_teeth_fn)(void);
+
+typedef struct decoder_handler_st
+{
+  trigger_handler_fn primaryToothHandler;
+  trigger_handler_fn secondaryToothHandler;
+  trigger_handler_fn tertiaryToothHandler;
+
+  trigger_get_rpm_fn get_rpm;
+  trigger_get_crank_angle_fn get_crank_angle;
+  trigger_set_end_teeth_fn set_end_teeth;
+} decoder_handler_st;
+
+typedef struct decoder_context_st
+{
+  decoder_handler_st const * handler;
+} decoder_context_st;
 
 extern void (*triggerHandler)(void); //Pointer for the trigger function (Gets pointed to the relevant decoder)
 extern void (*triggerSecondaryHandler)(void); //Pointer for the secondary trigger function (Gets pointed to the relevant decoder)
