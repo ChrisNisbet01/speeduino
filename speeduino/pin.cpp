@@ -8,12 +8,11 @@
 #define HAVE_ATOMIC_BLOCK 1
 #endif
 
+#if HAVE_ATOMIC_BLOCK
 static inline void
 atomic_pin_set(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
 {
-#if HAVE_ATOMIC_BLOCK
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-#endif
   {
     port |= mask;
   }
@@ -22,9 +21,7 @@ atomic_pin_set(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
 static inline void
 atomic_pin_clear(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
 {
-#if HAVE_ATOMIC_BLOCK
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-#endif
   {
     port &= ~mask;
   }
@@ -33,13 +30,12 @@ atomic_pin_clear(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
 static inline void
 atomic_pin_toggle(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
 {
-#if HAVE_ATOMIC_BLOCK
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-#endif
   {
     port &= ~mask;
   }
 }
+#endif
 
 void IOPortMaskOutputPin::on(void)
 {
