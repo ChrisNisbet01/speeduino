@@ -1,7 +1,7 @@
 #include "globals.h"
 #include "logger.h"
 #include "errors.h"
-#include "decoders.h"
+#include "decoders/decoders.h"
 #include "init.h"
 #include "maths.h"
 #include "utilities.h"

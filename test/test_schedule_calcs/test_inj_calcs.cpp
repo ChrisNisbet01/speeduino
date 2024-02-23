@@ -3,16 +3,9 @@
 #include "test_calcs_common.h"
 #include "schedule_calcs.h"
 #include "crankMaths.h"
-#include "decoders.h"
+#include "decoders/decoders.h"
 
 #define _countof(x) (sizeof(x) / sizeof (x[0]))
-
-// void printFreeRam()
-// {
-//     char msg[128];
-//     sprintf(msg, "freeRam: %u", freeRam());
-//     TEST_MESSAGE(msg);
-// }
 
 struct inj_test_parameters
 {

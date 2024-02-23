@@ -1,6 +1,6 @@
-#include <decoders.h>
-#include <globals.h>
 #include <unity.h>
+#include "decoders/decoders.h"
+#include "globals.h"
 #include "dual_wheel.h"
 #include "schedule_calcs.h"
 #include "ignition_contexts.h"

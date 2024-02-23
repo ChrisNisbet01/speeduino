@@ -2,7 +2,7 @@
 
 #include "auxiliary_pins.h"
 #include "globals.h"
-#include "decoders.h"
+#include "decoders/decoders.h"
 #include "bit_macros.h"
 
 void initialiseAll(void);

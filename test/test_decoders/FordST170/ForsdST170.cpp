@@ -1,6 +1,6 @@
-#include <decoders.h>
-#include <globals.h>
 #include <unity.h>
+#include "decoders/decoders.h"
+#include "globals.h"
 #include "FordST170.h"
 #include "scheduler.h"
 #include "schedule_calcs.h"
