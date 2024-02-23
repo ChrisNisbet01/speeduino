@@ -1,5 +1,5 @@
 #include <unity.h>
-#include "decoders/decoders.h"
+#include "src/decoders/decoders.h"
 #include "globals.h"
 #include "test_ngc.h"
 #include "scheduler.h"

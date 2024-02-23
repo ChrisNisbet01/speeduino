@@ -12,7 +12,7 @@ A full copy of the license may be found in the projects root directory
 #include "storage.h"
 #include "maths.h"
 #include "utilities.h"
-#include "decoders/decoders.h"
+#include "src/decoders/decoders.h"
 #include "TS_CommandButtonHandler.h"
 #include "errors.h"
 #include "pages.h"

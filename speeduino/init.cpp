@@ -17,7 +17,7 @@
 #include "schedule_calcs.h"
 #include "auxiliaries.h"
 #include "sensors.h"
-#include "decoders/null_trigger.h"
+#include "src/decoders/null_trigger.h"
 #include "corrections.h"
 #include "idle.h"
 #include "table2d.h"
@@ -3314,89 +3314,24 @@ void setPinMapping(byte boardID)
  */
 void initialiseTriggers(void)
 {
-  byte triggerInterrupt = 0; // By default, use the first interrupt
-  byte triggerInterrupt2 = 1;
-  byte triggerInterrupt3 = 2;
+  byte triggerInterrupt = digitalPinToInterrupt(Trigger.pin);
+  byte triggerInterrupt2 = digitalPinToInterrupt(Trigger2.pin);
+  byte triggerInterrupt3 = digitalPinToInterrupt(Trigger3.pin);
 
-#if defined(CORE_AVR)
-    switch (Trigger.pin)
-    {
-      //Arduino Mega 2560 mapping
-      case 2:
-        triggerInterrupt = 0; break;
-      case 3:
-        triggerInterrupt = 1; break;
-      case 18:
-        triggerInterrupt = 5; break;
-      case 19:
-        triggerInterrupt = 4; break;
-      case 20:
-        triggerInterrupt = 3; break;
-      case 21:
-        triggerInterrupt = 2; break;
-      default:
-        triggerInterrupt = 0; break; //This should NEVER happen
-    }
-#else
-    triggerInterrupt = Trigger.pin;
-#endif
-
-#if defined(CORE_AVR)
-    switch (Trigger2.pin)
-    {
-      //Arduino Mega 2560 mapping
-      case 2:
-        triggerInterrupt2 = 0; break;
-      case 3:
-        triggerInterrupt2 = 1; break;
-      case 18:
-        triggerInterrupt2 = 5; break;
-      case 19:
-        triggerInterrupt2 = 4; break;
-      case 20:
-        triggerInterrupt2 = 3; break;
-      case 21:
-        triggerInterrupt2 = 2; break;
-      default:
-        triggerInterrupt2 = 0; break; //This should NEVER happen
-    }
-#else
-    triggerInterrupt2 = Trigger2.pin;
-#endif
-
-#if defined(CORE_AVR)
-    switch (Trigger3.pin)
-    {
-      //Arduino Mega 2560 mapping
-      case 2:
-        triggerInterrupt3 = 0; break;
-      case 3:
-        triggerInterrupt3 = 1; break;
-      case 18:
-        triggerInterrupt3 = 5; break;
-      case 19:
-        triggerInterrupt3 = 4; break;
-      case 20:
-        triggerInterrupt3 = 3; break;
-      case 21:
-        triggerInterrupt3 = 2; break;
-      default:
-        triggerInterrupt3 = 0; break; //This should NEVER happen
-    }
-#else
-    triggerInterrupt3 = Trigger3.pin;
-#endif
-  Trigger.configure(INPUT);
-  Trigger2.configure(INPUT);
-  Trigger3.configure(INPUT);
+  Trigger.configure();
+  Trigger2.configure();
+  Trigger3.configure();
 
   detachInterrupt(triggerInterrupt);
   detachInterrupt(triggerInterrupt2);
   detachInterrupt(triggerInterrupt3);
+
   //The default values for edges
   primaryTriggerEdge = 0; //This should ALWAYS be changed below
-  secondaryTriggerEdge = 0; //This is optional and may not be changed below, depending on the decoder in use
-  tertiaryTriggerEdge = 0; //This is even more optional and may not be changed below, depending on the decoder in use
+  //This is optional and may not be changed below, depending on the decoder in use
+  secondaryTriggerEdge = 0;
+  //This is even more optional and may not be changed below, depending on the decoder in use
+  tertiaryTriggerEdge = 0;
 
   //Set the trigger function based on the decoder in the config
   switch (configPage4.TrigPattern)
@@ -3445,7 +3380,7 @@ void initialiseTriggers(void)
       attachInterrupt(triggerInterrupt, triggerHandler, primaryTriggerEdge);
       break;
 
-    case 2:
+    case DECODER_DUAL_WHEEL:
       triggerSetup_DualWheel();
       triggerHandler = triggerPri_DualWheel;
       triggerSecondaryHandler = triggerSec_DualWheel;

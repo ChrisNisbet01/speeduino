@@ -16,7 +16,7 @@ A full copy of the license may be found in the projects root directory
 #include "errors.h"
 #include "corrections.h"
 #include "pages.h"
-#include "decoders/decoders.h"
+#include "src/decoders/decoders.h"
 #include "auxiliaries.h"
 #include "utilities.h"
 #include BOARD_H

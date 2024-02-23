@@ -7,7 +7,7 @@ A full copy of the license may be found in the projects root directory
 #include "auxiliaries.h"
 #include "maths.h"
 #include "src/PID_v1/PID_v1.h"
-#include "decoders/decoders.h"
+#include "src/decoders/decoders.h"
 #include "timers.h"
 #include "injector_contexts.h"
 #include "auxiliary_pins.h"

@@ -1,7 +1,7 @@
 #include "globals.h"
 #include "logger.h"
 #include "errors.h"
-#include "decoders/decoders.h"
+#include "src/decoders/decoders.h"
 #include "init.h"
 #include "maths.h"
 #include "utilities.h"
@@ -565,7 +565,7 @@ void stopCompositeLogger(void)
   detachInterrupt(digitalPinToInterrupt(Trigger.pin));
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerHandler, primaryTriggerEdge);
 
-  if (!VSS_USES_RPM2()  && !FLEX_USES_RPM2())
+  if (!VSS_USES_RPM2() && !FLEX_USES_RPM2())
   {
     detachInterrupt(digitalPinToInterrupt(Trigger2.pin));
     attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSecondaryHandler, secondaryTriggerEdge);

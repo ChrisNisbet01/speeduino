@@ -3,7 +3,7 @@
 #include "test_calcs_common.h"
 #include "schedule_calcs.h"
 #include "crankMaths.h"
-#include "decoders/decoders.h"
+#include "src/decoders/decoders.h"
 
 #define _countof(x) (sizeof(x) / sizeof (x[0]))
 

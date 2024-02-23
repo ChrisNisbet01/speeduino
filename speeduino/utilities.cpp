@@ -10,7 +10,7 @@
 #include <avr/pgmspace.h>
 #include "globals.h"
 #include "utilities.h"
-#include "decoders/decoders.h"
+#include "src/decoders/decoders.h"
 #include "comms.h"
 #include "logger.h"
 #include "scheduler.h"

@@ -1,5 +1,5 @@
 #include <unity.h>
-#include "decoders/decoders.h"
+#include "src/decoders/decoders.h"
 #include "globals.h"
 #include "missing_tooth.h"
 #include "schedule_calcs.h"

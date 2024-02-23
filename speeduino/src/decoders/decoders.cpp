@@ -46,6 +46,42 @@ A full copy of the license may be found in the projects root directory
 
 decoder_context_st decoder;
 
+static void primary_isr_handler(void)
+{
+  decoder.primaryToothHandler();
+}
+
+static void secondary_isr_handler(void)
+{
+  decoder.secondaryToothHandler();
+}
+
+static void tertiary_isr_handler(void)
+{
+  decoder.tertiaryToothHandler();
+}
+
+void decoder_context_st::
+attach_primary_interrupt(byte pin, trigger_handler_fn handler, interrupt_mode_t edge)
+{
+  primaryToothHandler = handler;
+  attachInterrupt(digitalPinToInterrupt(pin), primary_isr_handler, edge);
+}
+
+void decoder_context_st::
+attach_secondary_interrupt(byte pin, trigger_handler_fn handler, interrupt_mode_t edge)
+{
+  secondaryToothHandler = handler;
+  attachInterrupt(digitalPinToInterrupt(pin), secondary_isr_handler, edge);
+}
+
+void decoder_context_st::
+attach_tertiary_interrupt(byte pin, trigger_handler_fn handler, interrupt_mode_t edge)
+{
+  tertiaryToothHandler = handler;
+  attachInterrupt(digitalPinToInterrupt(pin), tertiary_isr_handler, edge);
+}
+
 static inline bool HasAnySync(const statuses &status)
 {
   return status.hasSync || BIT_CHECK(status.status3, BIT_STATUS3_HALFSYNC);

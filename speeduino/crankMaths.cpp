@@ -1,6 +1,6 @@
 #include "globals.h"
 #include "crankMaths.h"
-#include "decoders/decoders.h"
+#include "src/decoders/decoders.h"
 #include "bit_macros.h"
 
 #define SECOND_DERIV_ENABLED 0

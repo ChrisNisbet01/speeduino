@@ -241,6 +241,12 @@ uint16_t getRPM_SuzukiK6A(void);
 int getCrankAngle_SuzukiK6A(void);
 void triggerSetEndTeeth_SuzukiK6A(void);
 
+#if defined(CORE_SAMD21)
+typedef PinStatus interrupt_mode_t;
+#else
+typedef byte interrupt_mode_t;
+#endif
+
 typedef void (*trigger_handler_fn)(void);
 typedef uint16_t (*trigger_get_rpm_fn)(void);
 typedef int (*trigger_get_crank_angle_fn)(void);
@@ -260,7 +266,17 @@ typedef struct decoder_handler_st
 typedef struct decoder_context_st
 {
   decoder_handler_st const * handler;
+
+  trigger_handler_fn primaryToothHandler;
+  trigger_handler_fn secondaryToothHandler;
+  trigger_handler_fn tertiaryToothHandler;
+
+  void attach_primary_interrupt(byte pin, trigger_handler_fn handler, interrupt_mode_t edge);
+  void attach_secondary_interrupt(byte pin, trigger_handler_fn handler, interrupt_mode_t edge);
+  void attach_tertiary_interrupt(byte pin, trigger_handler_fn handler, interrupt_mode_t edge);
 } decoder_context_st;
+
+extern decoder_context_st decoder;
 
 extern void (*triggerHandler)(void); //Pointer for the trigger function (Gets pointed to the relevant decoder)
 extern void (*triggerSecondaryHandler)(void); //Pointer for the secondary trigger function (Gets pointed to the relevant decoder)
