@@ -17,7 +17,7 @@
 #include "schedule_calcs.h"
 #include "auxiliaries.h"
 #include "sensors.h"
-#include "decoders/decoders.h"
+#include "decoders/null_trigger.h"
 #include "corrections.h"
 #include "idle.h"
 #include "table2d.h"

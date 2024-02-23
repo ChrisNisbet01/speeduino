@@ -1,5 +1,3 @@
-#define MJR 1
-
 /*
 Speeduino - Simple engine management for the Arduino Mega 2560 platform
 Copyright (C) Josh Stewart
@@ -44,23 +42,11 @@ A full copy of the license may be found in the projects root directory
 #include "schedule_calcs.h"
 #include "ignition_contexts.h"
 #include "bit_macros.h"
+#include "null_trigger.h"
 
 static inline bool HasAnySync(const statuses &status)
 {
   return status.hasSync || BIT_CHECK(status.status3, BIT_STATUS3_HALFSYNC);
-}
-
-void nullTriggerHandler(void) //initialisation function for triggerhandlers, does exactly nothing
-{
-  return;
-}
-uint16_t nullGetRPM(void) //initialisation function for getRpm, returns safe value of 0
-{
-  return 0;
-}
-int nullGetCrankAngle(void) //initialisation function for getCrankAngle, returns safe value of 0
-{
-  return 0;
 }
 
 void (*triggerHandler)(void) = nullTriggerHandler; ///Pointer for the trigger function (Gets pointed to the relevant decoder)
