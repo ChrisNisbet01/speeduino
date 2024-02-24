@@ -3567,6 +3567,7 @@ void triggerPri_Daihatsu(void)
     toothLastToothTime = curTime;
   }
 }
+
 void triggerSec_Daihatsu(void) //Not required (Should never be called in the first place)
 {
   return;

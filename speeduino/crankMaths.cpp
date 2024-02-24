@@ -113,7 +113,7 @@ void doCrankSpeedCalcs(void)
 
           uint32_t toothDeltaV =
             (MICROS_PER_SEC * angle2 / toothHistory[toothHistoryIndex])
-          - (MICROS_PER_SEC * angle1 / toothHistory[toothHistoryIndex-1]);
+            - (MICROS_PER_SEC * angle1 / toothHistory[toothHistoryIndex-1]);
           uint32_t toothDeltaT = toothHistory[toothHistoryIndex];
           //long timeToLastTooth = micros() - toothLastToothTime;
 
