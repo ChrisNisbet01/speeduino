@@ -17,9 +17,9 @@ static inline int16_t ignitionLimits(int16_t angle)
 
 /**
  * @brief Makes one pass at nudging the angle to within [0,CRANK_ANGLE_MAX_INJ]
- * 
+ *
  * @param angle A crank angle in degrees
- * @return int16_t 
+ * @return int16_t
  */
 static inline int16_t injectorLimits(int16_t angle)
 {

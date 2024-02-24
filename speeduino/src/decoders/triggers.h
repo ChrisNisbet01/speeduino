@@ -1,0 +1,91 @@
+#pragma once
+
+#include "ignition_contexts.h"
+
+#ifdef USE_LIBDIVIDE
+#include "src/libdivide/libdivide.h"
+extern libdivide::libdivide_s16_t divTriggerToothAngle;
+#endif
+
+/**
+On decoders that are enabled for per-tooth based timing adjustments,
+this function performs the timer compare changes on the schedules themselves
+For each ignition channel, a check is made whether we're at the relevant
+tooth and whether that ignition schedule is currently running
+Only if both these conditions are met will the schedule be updated with the
+latest timing information.
+If it's the correct tooth, but the schedule is not yet started, calculate an
+end compare value (This situation occurs when both the start and end of the
+ignition pulse happen after the end tooth, but before the next tooth)
+*/
+static inline void checkPerToothTiming(int16_t crankAngle, uint16_t currentTooth)
+{
+  if (fixedCrankingOverride == 0 && currentStatus.RPM > 0)
+  {
+    ignitions.adjustCrankAngle(crankAngle, currentTooth);
+  }
+}
+
+/**
+ * Sets the new filter time based on the current settings.
+ * This ONLY works for even spaced decoders.
+ */
+static inline void setFilter(unsigned long curGap)
+{
+  if (configPage4.triggerFilter == 1)
+  {
+    //Lite filter level is 25% of previous gap
+    triggerFilterTime = curGap >> 2;
+  }
+  else if (configPage4.triggerFilter == 2)
+  {
+    //Medium filter level is 50% of previous gap
+    triggerFilterTime = curGap >> 1;
+  }
+  else if (configPage4.triggerFilter == 3)
+  {
+    //Aggressive filter level is 75% of previous gap
+    triggerFilterTime = (curGap * 3) >> 2;
+  }
+  else //trigger filter is turned off.
+  {
+    triggerFilterTime = 0;
+  }
+}
+
+/** @brief At 1 RPM, each degree of angular rotation takes this many microseconds */
+#define MICROS_PER_DEG_1_RPM INT32_C(166667)
+
+/** @brief The maximum rpm that the ECU will attempt to run at.
+ *
+ * It is NOT related to the rev limiter, but is instead dictates how fast certain operations will be
+ * allowed to run. Lower number gives better performance
+ **/
+#define MAX_RPM INT16_C(18000)
+
+/** @brief Absolute minimum RPM that the crank math (& therefore all of Speeduino) can be used with
+ *
+ * This is dictated by the use of uint16_t as the base type for storing
+ * angle<->time conversion factor (degreesPerMicro)
+*/
+#define MIN_RPM ((MICROS_PER_DEG_1_RPM/(UINT16_MAX/16UL))+1UL)
+
+static inline uint16_t clampToToothCount(int16_t toothNum, uint8_t toothAdder)
+{
+  int16_t toothRange = (int16_t)configPage4.triggerTeeth + (int16_t)toothAdder;
+
+  return (uint16_t)nudge(1, toothRange, toothNum, toothRange);
+}
+
+static inline uint16_t clampToActualTeeth(uint16_t toothNum, uint8_t toothAdder)
+{
+  if (toothNum > triggerActualTeeth && toothNum <= configPage4.triggerTeeth)
+  {
+    toothNum = triggerActualTeeth;
+  }
+  return min(toothNum, (uint16_t)(triggerActualTeeth + toothAdder));
+}
+
+extern volatile unsigned int thirdToothCount;
+extern volatile unsigned long triggerThirdFilterTime;
+

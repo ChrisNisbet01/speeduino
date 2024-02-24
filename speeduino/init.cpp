@@ -3353,16 +3353,17 @@ void initialiseTriggers(void)
       secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
       tertiaryTriggerEdge = (configPage10.TrigEdgeThrd == 0) ? RISING : FALLING;
 
-      attachInterrupt(triggerInterrupt, triggerHandler, primaryTriggerEdge);
+      decoder.attach_primary_interrupt(Trigger.pin, triggerHandler, primaryTriggerEdge);
 
       if (BIT_CHECK(decoderState, BIT_DECODER_HAS_SECONDARY))
       {
-        attachInterrupt(triggerInterrupt2, triggerSecondaryHandler, secondaryTriggerEdge);
+        decoder.attach_secondary_interrupt(Trigger2.pin, triggerSecondaryHandler, secondaryTriggerEdge);
       }
+
       if (configPage10.vvt2Enabled > 0)
       {
         // we only need this for vvt2, so not really needed if it's not used
-        attachInterrupt(triggerInterrupt3, triggerTertiaryHandler, tertiaryTriggerEdge);
+        decoder.attach_tertiary_interrupt(Trigger3.pin, triggerTertiaryHandler, tertiaryTriggerEdge);
       }
 
       break;

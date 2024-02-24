@@ -290,6 +290,8 @@ extern volatile unsigned long curTime;
 extern volatile unsigned long curGap;
 extern volatile unsigned long curTime2;
 extern volatile unsigned long curGap2;
+extern volatile unsigned long curTime3;
+extern volatile unsigned long curGap3;
 extern volatile unsigned long lastGap;
 extern volatile unsigned long targetGap;
 
@@ -360,4 +362,4 @@ typedef enum tooth_source_t
 #define SKIP_TOOTH3 3
 #define SKIP_TOOTH4 4
 
-#endif
+#endif /* decoders.h */

@@ -8,6 +8,26 @@
 #define HAVE_ATOMIC_BLOCK 1
 #endif
 
+#if 0
+/*
+  Need something like this to support ATOMIC_BLOCK on those platforms that don't
+  already support it.
+ */
+static uint32_t interrupts_disable_return_previous_state(void)
+{
+  uint32_t const old_primask = __get_PRIMASK();
+
+  __disable_irq();
+
+  return old_primask;
+}
+
+static void interrupts_state_restore(uint32_t previous_state)
+{
+  __set_PRIMASK(previous_state);
+}
+#endif
+
 #if HAVE_ATOMIC_BLOCK
 static inline void
 atomic_pin_set(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
