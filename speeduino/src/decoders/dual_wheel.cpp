@@ -3,6 +3,7 @@
 #include "triggers.h"
 #include "bit_macros.h"
 #include "crankMaths.h"
+#include "null_trigger.h"
 
 /** @} */
 
@@ -275,4 +276,15 @@ void triggerSetEndTeeth_DualWheel(void)
     calcEndTeeth_DualWheel(ignitions.ignition(ignChannel8).endAngle, toothAdder);
 #endif
 }
+
+decoder_handler_st const dual_wheel =
+{
+  .setup = triggerSetup_DualWheel,
+  .primaryToothHandler = triggerPri_DualWheel,
+  .secondaryToothHandler = triggerSec_DualWheel,
+  .tertiaryToothHandler = nullTriggerHandler,
+  .get_rpm = getRPM_DualWheel,
+  .get_crank_angle = getCrankAngle_DualWheel,
+  .set_end_teeth = triggerSetEndTeeth_DualWheel,
+};
 

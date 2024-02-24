@@ -230,6 +230,7 @@ typedef PinStatus interrupt_mode_t;
 typedef byte interrupt_mode_t;
 #endif
 
+typedef void (*trigger_setup_fn)(void);
 typedef void (*trigger_handler_fn)(void);
 typedef uint16_t (*trigger_get_rpm_fn)(void);
 typedef int (*trigger_get_crank_angle_fn)(void);
@@ -237,6 +238,7 @@ typedef void (*trigger_set_end_teeth_fn)(void);
 
 typedef struct decoder_handler_st
 {
+  trigger_setup_fn setup;
   trigger_handler_fn primaryToothHandler;
   trigger_handler_fn secondaryToothHandler;
   trigger_handler_fn tertiaryToothHandler;

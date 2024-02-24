@@ -21,8 +21,14 @@ void nullSetEndTeeth(void)
 {
 }
 
+static void nullSetup(void)
+{
+  /* Do nothing. */
+}
+
 decoder_handler_st const null_trigger =
 {
+  .setup = nullSetup,
   .primaryToothHandler = nullTriggerHandler,
   .secondaryToothHandler = nullTriggerHandler,
   .tertiaryToothHandler = nullTriggerHandler,

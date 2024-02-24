@@ -514,3 +514,14 @@ int getCrankAngle_missingTooth(void)
   return crankAngle;
 }
 
+decoder_handler_st const missing_tooth =
+{
+  .setup = triggerSetup_missingTooth,
+  .primaryToothHandler = triggerPri_missingTooth,
+  .secondaryToothHandler = triggerSec_missingTooth,
+  .tertiaryToothHandler = triggerThird_missingTooth,
+  .get_rpm = getRPM_missingTooth,
+  .get_crank_angle = getCrankAngle_missingTooth,
+  .set_end_teeth = triggerSetEndTeeth_missingTooth,
+};
+
