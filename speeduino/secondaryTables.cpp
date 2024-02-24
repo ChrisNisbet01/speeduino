@@ -227,7 +227,14 @@ byte getAdvance2(void)
   currentStatus.ignLoad2 = calculate_engine_load((load_source_t)configPage10.spark2Algorithm, currentStatus);
   //As for VE2, but for ignition advance
   byte tempAdvance = get3DTableValue(&ignitionTable2, currentStatus.ignLoad2, currentStatus.RPM) - OFFSET_IGNITION;
-  tempAdvance = correctionsIgn(tempAdvance);
+
+  //Perform the corrections calculation on the secondary advance value,
+  //only if it uses a switched mode
+  if (configPage10.spark2SwitchVariable == SPARK2_MODE_CONDITIONAL_SWITCH
+      || configPage10.spark2SwitchVariable == SPARK2_MODE_INPUT_SWITCH)
+  {
+    tempAdvance = correctionsIgn(tempAdvance);
+  }
 
   return tempAdvance;
 }
