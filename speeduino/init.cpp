@@ -17,7 +17,6 @@
 #include "schedule_calcs.h"
 #include "auxiliaries.h"
 #include "sensors.h"
-#include "src/decoders/null_trigger.h"
 #include "corrections.h"
 #include "idle.h"
 #include "table2d.h"
@@ -38,6 +37,9 @@
 #include "ignition_pins.h"
 #include "injector_pins.h"
 #include "bit_macros.h"
+#include "src/decoders/null_trigger.h"
+#include "src/decoders/missing_tooth.h"
+#include "src/decoders/dual_wheel.h"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 

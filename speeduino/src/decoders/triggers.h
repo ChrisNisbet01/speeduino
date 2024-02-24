@@ -1,11 +1,21 @@
 #pragma once
 
 #include "ignition_contexts.h"
+#include "bit_macros.h"
 
 #ifdef USE_LIBDIVIDE
 #include "src/libdivide/libdivide.h"
 extern libdivide::libdivide_s16_t divTriggerToothAngle;
 #endif
+
+extern volatile unsigned int thirdToothCount;
+extern volatile unsigned long triggerThirdFilterTime;
+
+//The current number of teeth
+//(Once sync has been achieved, this can never actually be 0)
+extern volatile uint16_t toothCurrentCount;
+
+bool UpdateRevolutionTimeFromTeeth(bool isCamTeeth);
 
 /**
 On decoders that are enabled for per-tooth based timing adjustments,
@@ -86,6 +96,80 @@ static inline uint16_t clampToActualTeeth(uint16_t toothNum, uint8_t toothAdder)
   return min(toothNum, (uint16_t)(triggerActualTeeth + toothAdder));
 }
 
-extern volatile unsigned int thirdToothCount;
-extern volatile unsigned long triggerThirdFilterTime;
+static inline uint16_t clampRpm(uint16_t rpm)
+{
+  return (rpm >= MAX_RPM) ? currentStatus.RPM : rpm;
+}
+
+__attribute__((noinline))
+bool SetRevolutionTime(uint32_t revTime);
+
+static inline uint16_t RpmFromRevolutionTimeUs(uint32_t revTime)
+{
+  uint16_t rpm;
+
+  if (revTime < UINT16_MAX)
+  {
+    rpm = udiv_32_16_closest(MICROS_PER_MIN, revTime);
+  }
+  else
+  {
+    //Calc RPM based on last full revolution time (Faster as /)
+    rpm = UDIV_ROUND_CLOSEST(MICROS_PER_MIN, revTime, uint32_t);
+  }
+
+  return clampRpm(rpm);
+}
+
+/** Compute RPM.
+* As nearly all the decoders use a common method of determining RPM
+* (The time the last full revolution took), a common function is simpler.
+* @param isCamTeeth - Indicates that this is a cam wheel tooth.
+* Some patterns have a tooth #1 every crank rev, others are every cam rev.
+* @return RPM
+*/
+static __attribute__((noinline)) uint16_t
+stdGetRPM(bool isCamTeeth)
+{
+  if (UpdateRevolutionTimeFromTeeth(isCamTeeth))
+  {
+    return RpmFromRevolutionTimeUs(revolutionTime);
+  }
+
+  return currentStatus.RPM;
+}
+
+/**
+This is a special case of RPM measure that is based on the time between the last
+2 teeth rather than the time of the last full revolution.
+This gives much more volatile reading, but is quite useful during cranking,
+particularly on low resolution patterns.
+It can only be used on patterns where the teeth are evenly spaced.
+It takes an argument of the full (COMPLETE) number of teeth per revolution.
+For a missing tooth wheel, this is the number if the tooth had NOT been missing (Eg 36-1 = 36)
+*/
+static __attribute__((noinline))int crankingGetRPM(byte totalTeeth, bool isCamTeeth)
+{
+  if (currentStatus.startRevolutions >= configPage4.StgCycles
+      && (currentStatus.hasSync || BIT_CHECK(currentStatus.status3, BIT_STATUS3_HALFSYNC)))
+  {
+    if (toothLastMinusOneToothTime > 0 && toothLastToothTime > toothLastMinusOneToothTime)
+    {
+      noInterrupts();
+
+      uint32_t const temp = ((toothLastToothTime - toothLastMinusOneToothTime) * totalTeeth) >> isCamTeeth;
+
+      bool newRevtime = SetRevolutionTime(temp);
+
+      interrupts();
+
+      if (newRevtime)
+      {
+        return RpmFromRevolutionTimeUs(revolutionTime);
+      }
+    }
+  }
+
+  return currentStatus.RPM;
+}
 

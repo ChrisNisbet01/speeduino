@@ -4,8 +4,6 @@
 #include "src/decoders/decoders.h"
 #include "bit_macros.h"
 
-extern void SetRevolutionTime(uint32_t revTime);
-
 struct crankmaths_rev_testdata {
   uint16_t rpm;
   unsigned long revolutionTime;

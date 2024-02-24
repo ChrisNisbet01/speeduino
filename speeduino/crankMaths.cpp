@@ -9,6 +9,7 @@
 #if SECOND_DERIV_ENABLED!=0
 byte deltaToothCount = 0; //The last tooth that was used with the deltaV calc
 int rpmDelta;
+distance = v0.t + 1/2.a(0).t^2 + 1/6.a(t).t^3
 #endif
 
 uint32_t angleToTimeMicroSecPerDegree(uint16_t angle) {

@@ -442,3 +442,75 @@ void triggerSetEndTeeth_missingTooth(void)
 #endif
 }
 
+uint16_t getRPM_missingTooth(void)
+{
+  uint16_t tempRPM = 0;
+
+  if (currentStatus.RPM < currentStatus.crankRPM)
+  {
+    if (toothCurrentCount != 1)
+    {
+       //Account for cam speed
+      tempRPM = crankingGetRPM(configPage4.triggerTeeth, configPage4.TrigSpeed == CAM_SPEED);
+    }
+    else //Can't do per tooth RPM if we're at tooth #1 as the missing tooth messes the calculation
+    {
+      tempRPM = currentStatus.RPM;
+    }
+  }
+  else
+  {
+    tempRPM = stdGetRPM(configPage4.TrigSpeed == CAM_SPEED); //Account for cam speed
+  }
+  return tempRPM;
+}
+
+int getCrankAngle_missingTooth(void)
+{
+  //This is the current angle ATDC the engine is at. This is the last known
+  //position based on what tooth was last 'seen'. It is only accurate to the
+  //resolution of the trigger wheel (Eg 36-1 is 10 degrees)
+  unsigned long tempToothLastToothTime;
+  int tempToothCurrentCount;
+  bool tempRevolutionOne;
+  //Grab some variables that are used in the trigger code and assign them to temp variables.
+  noInterrupts();
+
+  tempToothCurrentCount = toothCurrentCount;
+  tempRevolutionOne = revolutionOne;
+  tempToothLastToothTime = toothLastToothTime;
+
+  interrupts();
+
+  //Number of teeth that have passed since tooth 1, multiplied by the angle
+  //each tooth represents, plus the angle that tooth 1 is ATDC.
+  //This gives accuracy only to the nearest tooth.
+  int crankAngle = ((tempToothCurrentCount - 1) * triggerToothAngle)
+    + configPage4.triggerAngle;
+
+  //Sequential check (simply sets whether we're on the first or 2nd revolution of the cycle)
+  if (tempRevolutionOne && configPage4.TrigSpeed == CRANK_SPEED)
+  {
+    crankAngle += 360;
+  }
+
+  lastCrankAngleCalc = micros();
+  elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
+  crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
+
+  if (crankAngle >= 720)
+  {
+    crankAngle -= 720;
+  }
+  else if (crankAngle > CRANK_ANGLE_MAX)
+  {
+    crankAngle -= CRANK_ANGLE_MAX;
+  }
+  if (crankAngle < 0)
+  {
+    crankAngle += CRANK_ANGLE_MAX;
+  }
+
+  return crankAngle;
+}
+
