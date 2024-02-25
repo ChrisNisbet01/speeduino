@@ -62,10 +62,6 @@ void loggerTertiaryISR(void);
 
 __attribute__((noinline))int crankingGetRPM(byte totalTeeth, bool isCamTeeth);
 
-void triggerSetup_Renix(bool initialisationComplete = false);
-void triggerPri_Renix(void);
-void triggerSetEndTeeth_Renix(void);
-
 void triggerSetup_RoverMEMS(bool initialisationComplete = false);
 void triggerPri_RoverMEMS(void);
 void triggerSec_RoverMEMS(void);

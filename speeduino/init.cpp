@@ -62,6 +62,7 @@
 #include "src/decoders/drz400.h"
 #include "src/decoders/chrysler_ngc.h"
 #include "src/decoders/vmax.h"
+#include "src/decoders/renix.h"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 
