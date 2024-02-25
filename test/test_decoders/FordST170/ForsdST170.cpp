@@ -1,5 +1,6 @@
 #include <unity.h>
 #include "src/decoders/decoders.h"
+#include "src/decoders/ford_st170.h"
 #include "globals.h"
 #include "FordST170.h"
 #include "scheduler.h"

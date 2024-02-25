@@ -4,6 +4,7 @@
 #include "schedule_calcs.h"
 #include "crankMaths.h"
 #include "src/decoders/decoders.h"
+#include "src/decoders/triggers.h"
 
 #define _countof(x) (sizeof(x) / sizeof (x[0]))
 

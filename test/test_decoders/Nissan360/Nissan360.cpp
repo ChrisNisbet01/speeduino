@@ -1,5 +1,6 @@
 #include <unity.h>
 #include "src/decoders/decoders.h"
+#include "src/decoders/nissan_360.h"
 #include "globals.h"
 #include "Nissan360.h"
 #include "scheduler.h"

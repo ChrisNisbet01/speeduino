@@ -2,6 +2,7 @@
 
 #include "crankMaths.h"
 #include "src/decoders/decoders.h"
+#include "src/decoders/triggers.h"
 #include "bit_macros.h"
 
 struct crankmaths_rev_testdata {

@@ -1,5 +1,7 @@
 #include <unity.h>
 #include "src/decoders/decoders.h"
+#include "src/decoders/nissan_360.h"
+#include "src/decoders/missing_tooth.h"
 #include "globals.h"
 #include "missing_tooth.h"
 #include "schedule_calcs.h"

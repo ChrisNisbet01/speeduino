@@ -1,5 +1,7 @@
 #include <unity.h>
 #include "src/decoders/decoders.h"
+#include "src/decoders/dual_wheel.h"
+#include "src/decoders/missing_tooth.h"
 #include "globals.h"
 #include "dual_wheel.h"
 #include "schedule_calcs.h"

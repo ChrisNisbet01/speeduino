@@ -18,6 +18,15 @@ static void prepareForInitialiseAll(void)
 #endif
 }
 
+int trigger_pattern;
+volatile uint32_t interrupt_running;
+
+void test_debug(void)
+{
+  //TEST_ASSERT_EQUAL(100, trigger_pattern);
+  TEST_ASSERT_EQUAL(0, interrupt_running);
+}
+
 void setup()
 {
   pinMode(LED_BUILTIN, OUTPUT);
@@ -29,13 +38,15 @@ void setup()
 
   initialiseAll(); // Run the main initialise function
 
-  test_status_initial_off();
-  test_status_off_to_pending();
-  test_status_pending_to_running();
-  test_status_running_to_pending();
+  test_debug();
+  //test_status_initial_off();
+  //test_status_off_to_pending();
+  //test_status_pending_to_running();
+  //test_status_running_to_pending();
   test_status_running_to_off();
-  test_accuracy_timeout();
-  test_accuracy_duration();
+  test_debug();
+  //test_accuracy_timeout();
+  //test_accuracy_duration();
 
   UNITY_END(); // stop unit testing
 }

@@ -1,5 +1,6 @@
 #include <unity.h>
 #include "src/decoders/decoders.h"
+#include "src/decoders/renix.h"
 #include "globals.h"
 #include "renix.h"
 #include "schedule_calcs.h"

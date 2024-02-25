@@ -33,7 +33,7 @@ void test_status_initial_off_inj5(void)
     initialiseSchedulers();
     TEST_ASSERT_EQUAL(OFF, fuelSchedule5.Status);
 }
-#endif 
+#endif
 
 #if INJ_CHANNELS >= 6
 void test_status_initial_off_inj6(void)
@@ -41,7 +41,7 @@ void test_status_initial_off_inj6(void)
     initialiseSchedulers();
     TEST_ASSERT_EQUAL(OFF, fuelSchedule6.Status);
 }
-#endif 
+#endif
 
 #if INJ_CHANNELS >= 7
 void test_status_initial_off_inj7(void)
@@ -49,7 +49,7 @@ void test_status_initial_off_inj7(void)
     initialiseSchedulers();
     TEST_ASSERT_EQUAL(OFF, fuelSchedule7.Status);
 }
-#endif 
+#endif
 
 #if INJ_CHANNELS >= 8
 void test_status_initial_off_inj8(void)
@@ -57,7 +57,7 @@ void test_status_initial_off_inj8(void)
     initialiseSchedulers();
     TEST_ASSERT_EQUAL(OFF, fuelSchedule8.Status);
 }
-#endif 
+#endif
 
 
 void test_status_initial_off_ign1(void)
@@ -124,16 +124,16 @@ void test_status_initial_off(void)
     RUN_TEST(test_status_initial_off_inj4);
 #if INJ_CHANNELS >= 5
     RUN_TEST(test_status_initial_off_inj5);
-#endif 
+#endif
 #if INJ_CHANNELS >= 6
     RUN_TEST(test_status_initial_off_inj6);
-#endif 
+#endif
 #if INJ_CHANNELS >= 7
     RUN_TEST(test_status_initial_off_inj7);
-#endif 
+#endif
 #if INJ_CHANNELS >= 8
     RUN_TEST(test_status_initial_off_inj8);
-#endif 
+#endif
 
     RUN_TEST(test_status_initial_off_ign1);
     RUN_TEST(test_status_initial_off_ign2);
