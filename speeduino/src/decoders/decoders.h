@@ -62,15 +62,6 @@ void loggerTertiaryISR(void);
 
 __attribute__((noinline))int crankingGetRPM(byte totalTeeth, bool isCamTeeth);
 
-void triggerPri_Webber(void);
-void triggerSec_Webber(void);
-
-void triggerSetup_FordST170(bool initialisationComplete = false);
-void triggerSec_FordST170(void);
-uint16_t getRPM_FordST170(void);
-int getCrankAngle_FordST170(void);
-void triggerSetEndTeeth_FordST170(void);
-
 void triggerSetup_DRZ400(bool initialisationComplete = false);
 void triggerSec_DRZ400(void);
 

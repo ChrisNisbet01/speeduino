@@ -58,6 +58,7 @@
 #include "src/decoders/36_minus_21.h"
 #include "src/decoders/420a.h"
 #include "src/decoders/weber.h"
+#include "src/decoders/ford_st170.h"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 
