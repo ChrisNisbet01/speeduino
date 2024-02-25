@@ -61,6 +61,7 @@
 #include "src/decoders/ford_st170.h"
 #include "src/decoders/drz400.h"
 #include "src/decoders/chrysler_ngc.h"
+#include "src/decoders/vmax.h"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 
@@ -3736,7 +3737,7 @@ void initialiseTriggers(void)
       triggerHandler = triggerPri_Vmax;
       getRPM = getRPM_Vmax;
       getCrankAngle = getCrankAngle_Vmax;
-      triggerSetEndTeeth = triggerSetEndTeeth_Vmax;
+      triggerSetEndTeeth = nullSetEndTeeth;
 
       // set as boolean so we can directly use it in decoder.
       primaryTriggerEdge = (configPage4.TrigEdge == 0);

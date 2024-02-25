@@ -73,13 +73,6 @@ uint16_t getRPM_RoverMEMS(void);
 int getCrankAngle_RoverMEMS(void);
 void triggerSetEndTeeth_RoverMEMS(void);
 
-void triggerSetup_Vmax(bool initialisationComplete);
-void triggerPri_Vmax(void);
-void triggerSec_Vmax(void);
-uint16_t getRPM_Vmax(void);
-int getCrankAngle_Vmax(void);
-void triggerSetEndTeeth_Vmax(void);
-
 void triggerSetup_SuzukiK6A(bool initialisationComplete = false);
 void triggerPri_SuzukiK6A(void);
 void triggerSec_SuzukiK6A(void);
