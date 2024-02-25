@@ -10,3 +10,5 @@ uint16_t nullGetRPM(void);
 
 int nullGetCrankAngle(void);
 
+void nullSetEndTeeth(void);
+

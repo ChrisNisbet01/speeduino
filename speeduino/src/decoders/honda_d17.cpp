@@ -139,10 +139,6 @@ int getCrankAngle_HondaD17(void)
   return crankAngle;
 }
 
-void triggerSetEndTeeth_HondaD17(void)
-{
-}
-
 decoder_handler_st const trigger_honda_d17 =
 {
   .setup = triggerSetup_HondaD17,
@@ -151,6 +147,6 @@ decoder_handler_st const trigger_honda_d17 =
   .tertiaryToothHandler = nullTriggerHandler,
   .get_rpm = getRPM_HondaD17,
   .get_crank_angle = getCrankAngle_HondaD17,
-  .set_end_teeth = triggerSetEndTeeth_HondaD17,
+  .set_end_teeth = nullSetEndTeeth,
 };
 

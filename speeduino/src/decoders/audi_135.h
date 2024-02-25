@@ -12,5 +12,3 @@ uint16_t getRPM_Audi135(void);
 
 int getCrankAngle_Audi135(void);
 
-void triggerSetEndTeeth_Audi135(void);
-

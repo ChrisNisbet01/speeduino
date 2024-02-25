@@ -162,10 +162,6 @@ int getCrankAngle_Jeep2000(void)
   return crankAngle;
 }
 
-void triggerSetEndTeeth_Jeep2000(void)
-{
-}
-
 decoder_handler_st const trigger_jeep_2000 =
 {
   .setup = triggerSetup_Jeep2000,
@@ -174,6 +170,6 @@ decoder_handler_st const trigger_jeep_2000 =
   .tertiaryToothHandler = nullTriggerHandler,
   .get_rpm = getRPM_Jeep2000,
   .get_crank_angle = getCrankAngle_Jeep2000,
-  .set_end_teeth = triggerSetEndTeeth_Jeep2000,
+  .set_end_teeth = nullSetEndTeeth,
 };
 

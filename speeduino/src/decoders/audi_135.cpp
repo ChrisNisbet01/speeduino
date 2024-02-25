@@ -166,10 +166,6 @@ int getCrankAngle_Audi135(void)
   return crankAngle;
 }
 
-void triggerSetEndTeeth_Audi135(void)
-{
-}
-
 decoder_handler_st const trigger_audi_135 =
 {
   .setup = triggerSetup_Audi135,
@@ -178,6 +174,6 @@ decoder_handler_st const trigger_audi_135 =
   .tertiaryToothHandler = nullTriggerHandler,
   .get_rpm = getRPM_Audi135,
   .get_crank_angle = getCrankAngle_Audi135,
-  .set_end_teeth = triggerSetEndTeeth_Audi135,
+  .set_end_teeth = nullSetEndTeeth,
 };
 

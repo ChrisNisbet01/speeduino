@@ -214,11 +214,7 @@ int getCrankAngle_MazdaAU(void)
   return crankAngle;
 }
 
-void triggerSetEndTeeth_MazdaAU(void)
-{
-}
-
-decoder_handler_st const trigger_miata_au =
+decoder_handler_st const trigger_mazda_au =
 {
   .setup = triggerSetup_MazdaAU,
   .primaryToothHandler = triggerPri_MazdaAU,
@@ -226,6 +222,6 @@ decoder_handler_st const trigger_miata_au =
   .tertiaryToothHandler = nullTriggerHandler,
   .get_rpm = getRPM_MazdaAU,
   .get_crank_angle = getCrankAngle_MazdaAU,
-  .set_end_teeth = triggerSetEndTeeth_MazdaAU,
+  .set_end_teeth = nullSetEndTeeth,
 };
 

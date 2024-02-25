@@ -62,13 +62,6 @@ void loggerTertiaryISR(void);
 
 __attribute__((noinline))int crankingGetRPM(byte totalTeeth, bool isCamTeeth);
 
-void triggerSetup_non360(bool initialisationComplete = false);
-void triggerPri_non360(void);
-void triggerSec_non360(void);
-uint16_t getRPM_non360(void);
-int getCrankAngle_non360(void);
-void triggerSetEndTeeth_non360(void);
-
 void triggerSetup_Nissan360(bool initialisationComplete = false);
 void triggerPri_Nissan360(void);
 void triggerSec_Nissan360(void);

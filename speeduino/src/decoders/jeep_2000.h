@@ -12,5 +12,3 @@ uint16_t getRPM_Jeep2000(void);
 
 int getCrankAngle_Jeep2000(void);
 
-void triggerSetEndTeeth_Jeep2000(void);
-

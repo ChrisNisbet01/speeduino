@@ -176,10 +176,6 @@ int getCrankAngle_24X(void)
   return crankAngle;
 }
 
-void triggerSetEndTeeth_24X(void)
-{
-}
-
 decoder_handler_st const trigger_24X =
 {
   .setup = triggerSetup_24X,
@@ -188,6 +184,6 @@ decoder_handler_st const trigger_24X =
   .tertiaryToothHandler = nullTriggerHandler,
   .get_rpm = getRPM_24X,
   .get_crank_angle = getCrankAngle_24X,
-  .set_end_teeth = triggerSetEndTeeth_24X,
+  .set_end_teeth = nullSetEndTeeth,
 };
 

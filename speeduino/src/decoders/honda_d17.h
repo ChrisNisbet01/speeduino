@@ -12,5 +12,3 @@ uint16_t getRPM_HondaD17(void);
 
 int getCrankAngle_HondaD17(void);
 
-void triggerSetEndTeeth_HondaD17(void);
-

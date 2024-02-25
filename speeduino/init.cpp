@@ -49,6 +49,7 @@
 #include "src/decoders/honda_d17.h"
 #include "src/decoders/miata_9905.h"
 #include "src/decoders/mazda_au.h"
+#include "src/decoders/non_360.h"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 
@@ -3440,7 +3441,7 @@ void initialiseTriggers(void)
       triggerSecondaryHandler = triggerSec_24X;
       getRPM = getRPM_24X;
       getCrankAngle = getCrankAngle_24X;
-      triggerSetEndTeeth = triggerSetEndTeeth_24X;
+      triggerSetEndTeeth = nullSetEndTeeth;
 
       primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
       secondaryTriggerEdge = CHANGE; //Secondary is always on every change
@@ -3455,7 +3456,7 @@ void initialiseTriggers(void)
       triggerSecondaryHandler = triggerSec_Jeep2000;
       getRPM = getRPM_Jeep2000;
       getCrankAngle = getCrankAngle_Jeep2000;
-      triggerSetEndTeeth = triggerSetEndTeeth_Jeep2000;
+      triggerSetEndTeeth = nullSetEndTeeth;
 
       primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
       secondaryTriggerEdge = CHANGE;
@@ -3470,7 +3471,7 @@ void initialiseTriggers(void)
       triggerSecondaryHandler = triggerSec_Audi135;
       getRPM = getRPM_Audi135;
       getCrankAngle = getCrankAngle_Audi135;
-      triggerSetEndTeeth = triggerSetEndTeeth_Audi135;
+      triggerSetEndTeeth = nullSetEndTeeth;
 
       primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
       secondaryTriggerEdge = RISING; //always rising for this trigger
@@ -3485,7 +3486,7 @@ void initialiseTriggers(void)
       triggerSecondaryHandler = triggerSec_HondaD17;
       getRPM = getRPM_HondaD17;
       getCrankAngle = getCrankAngle_HondaD17;
-      triggerSetEndTeeth = triggerSetEndTeeth_HondaD17;
+      triggerSetEndTeeth = nullSetEndTeeth;
 
       primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
       secondaryTriggerEdge = CHANGE;
@@ -3516,7 +3517,7 @@ void initialiseTriggers(void)
       triggerSecondaryHandler = triggerSec_MazdaAU;
       getRPM = getRPM_MazdaAU;
       getCrankAngle = getCrankAngle_MazdaAU;
-      triggerSetEndTeeth = triggerSetEndTeeth_MazdaAU;
+      triggerSetEndTeeth = nullSetEndTeeth;
 
       primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
       secondaryTriggerEdge = FALLING;
@@ -3535,7 +3536,7 @@ void initialiseTriggers(void)
       triggerSecondaryHandler = triggerSec_DualWheel;
       getRPM = getRPM_non360;
       getCrankAngle = getCrankAngle_non360;
-      triggerSetEndTeeth = triggerSetEndTeeth_non360;
+      triggerSetEndTeeth = nullSetEndTeeth;
       // Attach the crank trigger wheel interrupt (Hall sensor drags to ground
       // when triggering)
       primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;

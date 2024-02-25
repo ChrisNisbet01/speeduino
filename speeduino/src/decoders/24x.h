@@ -12,5 +12,3 @@ uint16_t getRPM_24X(void);
 
 int getCrankAngle_24X(void);
 
-void triggerSetEndTeeth_24X(void);
-
