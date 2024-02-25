@@ -54,6 +54,7 @@
 #include "src/decoders/subaru_67.h"
 #include "src/decoders/daihatsu_plus1.h"
 #include "src/decoders/harley.h"
+#include "src/decoders/36_minus_222.h"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 
