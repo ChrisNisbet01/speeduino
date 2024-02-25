@@ -139,37 +139,3 @@ stdGetRPM(bool isCamTeeth)
   return currentStatus.RPM;
 }
 
-/**
-This is a special case of RPM measure that is based on the time between the last
-2 teeth rather than the time of the last full revolution.
-This gives much more volatile reading, but is quite useful during cranking,
-particularly on low resolution patterns.
-It can only be used on patterns where the teeth are evenly spaced.
-It takes an argument of the full (COMPLETE) number of teeth per revolution.
-For a missing tooth wheel, this is the number if the tooth had NOT been missing (Eg 36-1 = 36)
-*/
-static __attribute__((noinline))int crankingGetRPM(byte totalTeeth, bool isCamTeeth)
-{
-  if (currentStatus.startRevolutions >= configPage4.StgCycles
-      && (currentStatus.hasSync || BIT_CHECK(currentStatus.status3, BIT_STATUS3_HALFSYNC)))
-  {
-    if (toothLastMinusOneToothTime > 0 && toothLastToothTime > toothLastMinusOneToothTime)
-    {
-      noInterrupts();
-
-      uint32_t const temp = ((toothLastToothTime - toothLastMinusOneToothTime) * totalTeeth) >> isCamTeeth;
-
-      bool newRevtime = SetRevolutionTime(temp);
-
-      interrupts();
-
-      if (newRevtime)
-      {
-        return RpmFromRevolutionTimeUs(revolutionTime);
-      }
-    }
-  }
-
-  return currentStatus.RPM;
-}
-

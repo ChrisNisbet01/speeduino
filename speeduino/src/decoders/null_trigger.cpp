@@ -1,4 +1,5 @@
 #include "null_trigger.h"
+#include "utilities.h"
 
 //initialisation function for triggerhandlers, does exactly nothing
 void nullTriggerHandler(void)
@@ -21,8 +22,9 @@ void nullSetEndTeeth(void)
 {
 }
 
-static void nullSetup(void)
+static void nullSetup(bool initialisationComplete)
 {
+  UNUSED(initialisationComplete);
   /* Do nothing. */
 }
 

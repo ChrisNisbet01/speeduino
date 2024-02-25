@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-void triggerSetup_DualWheel(void);
+void triggerSetup_DualWheel(bool initialisationComplete = false);
 
 void triggerPri_DualWheel(void);
 

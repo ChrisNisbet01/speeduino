@@ -4,6 +4,7 @@
 #include "crankMaths.h"
 #include "bit_macros.h"
 #include "auxiliary_pins.h"
+#include "utilities.h"
 
 static inline void triggerRecordVVT1Angle(void)
 {
@@ -35,8 +36,9 @@ static inline void triggerRecordVVT1Angle(void)
 * @defgroup dec_miss Missing tooth wheel
 * @{
 */
-void triggerSetup_missingTooth(void)
+void triggerSetup_missingTooth(bool initialisationComplete)
 {
+  UNUSED(initialisationComplete);
   BIT_CLEAR(decoderState, BIT_DECODER_IS_SEQUENTIAL);
   //The number of degrees that passes from tooth to tooth
   triggerToothAngle = 360 / configPage4.triggerTeeth;

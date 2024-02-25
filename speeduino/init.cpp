@@ -40,6 +40,9 @@
 #include "src/decoders/null_trigger.h"
 #include "src/decoders/missing_tooth.h"
 #include "src/decoders/dual_wheel.h"
+#include "src/decoders/basic_distributer.h"
+#include "src/decoders/gm7x.h"
+#include "src/decoders/4g63.h"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 
@@ -3441,7 +3444,7 @@ void initialiseTriggers(void)
       break;
 
     case DECODER_JEEP2000:
-      triggerSetup_Jeep2000(!currentStatus.initialisationComplete);
+      triggerSetup_Jeep2000(currentStatus.initialisationComplete);
       triggerHandler = triggerPri_Jeep2000;
       triggerSecondaryHandler = triggerSec_Jeep2000;
       getRPM = getRPM_Jeep2000;

@@ -4,6 +4,7 @@
 #include "bit_macros.h"
 #include "crankMaths.h"
 #include "null_trigger.h"
+#include "utilities.h"
 
 /** @} */
 
@@ -16,8 +17,9 @@ Note: There can be no missing teeth on the primary wheel.
 /** Dual Wheel Setup.
  *
  * */
-void triggerSetup_DualWheel(void)
+void triggerSetup_DualWheel(bool initialisationComplete)
 {
+  UNUSED(initialisationComplete);
   //The number of degrees that passes from tooth to tooth
   triggerToothAngle = 360 / configPage4.triggerTeeth;
   if (configPage4.TrigSpeed == CAM_SPEED) //Account for cam speed

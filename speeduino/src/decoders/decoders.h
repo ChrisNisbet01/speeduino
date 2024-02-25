@@ -60,26 +60,7 @@ void loggerPrimaryISR(void);
 void loggerSecondaryISR(void);
 void loggerTertiaryISR(void);
 
-void triggerSetup_BasicDistributor(void);
-void triggerPri_BasicDistributor(void);
-void triggerSec_BasicDistributor(void);
-uint16_t getRPM_BasicDistributor(void);
-int getCrankAngle_BasicDistributor(void);
-void triggerSetEndTeeth_BasicDistributor(void);
-
-void triggerSetup_GM7X(void);
-void triggerPri_GM7X(void);
-void triggerSec_GM7X(void);
-uint16_t getRPM_GM7X(void);
-int getCrankAngle_GM7X(void);
-void triggerSetEndTeeth_GM7X(void);
-
-void triggerSetup_4G63(bool initialisationComplete);
-void triggerPri_4G63(void);
-void triggerSec_4G63(void);
-uint16_t getRPM_4G63(void);
-int getCrankAngle_4G63(void);
-void triggerSetEndTeeth_4G63(void);
+__attribute__((noinline))int crankingGetRPM(byte totalTeeth, bool isCamTeeth);
 
 void triggerSetup_24X(bool initialisationComplete);
 void triggerPri_24X(void);
@@ -95,14 +76,14 @@ uint16_t getRPM_Jeep2000(void);
 int getCrankAngle_Jeep2000(void);
 void triggerSetEndTeeth_Jeep2000(void);
 
-void triggerSetup_Audi135(void);
+void triggerSetup_Audi135(bool initialisationComplete = false);
 void triggerPri_Audi135(void);
 void triggerSec_Audi135(void);
 uint16_t getRPM_Audi135(void);
 int getCrankAngle_Audi135(void);
 void triggerSetEndTeeth_Audi135(void);
 
-void triggerSetup_HondaD17(void);
+void triggerSetup_HondaD17(bool initialisationComplete = false);
 void triggerPri_HondaD17(void);
 void triggerSec_HondaD17(void);
 uint16_t getRPM_HondaD17(void);
@@ -117,35 +98,35 @@ int getCrankAngle_Miata9905(void);
 void triggerSetEndTeeth_Miata9905(void);
 int getCamAngle_Miata9905(void);
 
-void triggerSetup_MazdaAU(void);
+void triggerSetup_MazdaAU(bool initialisationComplete = false);
 void triggerPri_MazdaAU(void);
 void triggerSec_MazdaAU(void);
 uint16_t getRPM_MazdaAU(void);
 int getCrankAngle_MazdaAU(void);
 void triggerSetEndTeeth_MazdaAU(void);
 
-void triggerSetup_non360(void);
+void triggerSetup_non360(bool initialisationComplete = false);
 void triggerPri_non360(void);
 void triggerSec_non360(void);
 uint16_t getRPM_non360(void);
 int getCrankAngle_non360(void);
 void triggerSetEndTeeth_non360(void);
 
-void triggerSetup_Nissan360(void);
+void triggerSetup_Nissan360(bool initialisationComplete = false);
 void triggerPri_Nissan360(void);
 void triggerSec_Nissan360(void);
 uint16_t getRPM_Nissan360(void);
 int getCrankAngle_Nissan360(void);
 void triggerSetEndTeeth_Nissan360(void);
 
-void triggerSetup_Subaru67(void);
+void triggerSetup_Subaru67(bool initialisationComplete = false);
 void triggerPri_Subaru67(void);
 void triggerSec_Subaru67(void);
 uint16_t getRPM_Subaru67(void);
 int getCrankAngle_Subaru67(void);
 void triggerSetEndTeeth_Subaru67(void);
 
-void triggerSetup_Daihatsu(void);
+void triggerSetup_Daihatsu(bool initialisationComplete = false);
 void triggerPri_Daihatsu(void);
 void triggerSec_Daihatsu(void);
 uint16_t getRPM_Daihatsu(void);
@@ -159,21 +140,21 @@ uint16_t getRPM_Harley(void);
 int getCrankAngle_Harley(void);
 void triggerSetEndTeeth_Harley(void);
 
-void triggerSetup_ThirtySixMinus222(void);
+void triggerSetup_ThirtySixMinus222(bool initialisationComplete = false);
 void triggerPri_ThirtySixMinus222(void);
 void triggerSec_ThirtySixMinus222(void);
 uint16_t getRPM_ThirtySixMinus222(void);
 int getCrankAngle_ThirtySixMinus222(void);
 void triggerSetEndTeeth_ThirtySixMinus222(void);
 
-void triggerSetup_ThirtySixMinus21(void);
+void triggerSetup_ThirtySixMinus21(bool initialisationComplete = false);
 void triggerPri_ThirtySixMinus21(void);
 void triggerSec_ThirtySixMinus21(void);
 uint16_t getRPM_ThirtySixMinus21(void);
 int getCrankAngle_ThirtySixMinus21(void);
 void triggerSetEndTeeth_ThirtySixMinus21(void);
 
-void triggerSetup_420a(void);
+void triggerSetup_420a(bool initialisationComplete = false);
 void triggerPri_420a(void);
 void triggerSec_420a(void);
 uint16_t getRPM_420a(void);
@@ -183,27 +164,27 @@ void triggerSetEndTeeth_420a(void);
 void triggerPri_Webber(void);
 void triggerSec_Webber(void);
 
-void triggerSetup_FordST170(void);
+void triggerSetup_FordST170(bool initialisationComplete = false);
 void triggerSec_FordST170(void);
 uint16_t getRPM_FordST170(void);
 int getCrankAngle_FordST170(void);
 void triggerSetEndTeeth_FordST170(void);
 
-void triggerSetup_DRZ400(void);
+void triggerSetup_DRZ400(bool initialisationComplete = false);
 void triggerSec_DRZ400(void);
 
-void triggerSetup_NGC(void);
+void triggerSetup_NGC(bool initialisationComplete = false);
 void triggerPri_NGC(void);
 void triggerSec_NGC4(void);
 void triggerSec_NGC68(void);
 uint16_t getRPM_NGC(void);
 void triggerSetEndTeeth_NGC(void);
 
-void triggerSetup_Renix(void);
+void triggerSetup_Renix(bool initialisationComplete = false);
 void triggerPri_Renix(void);
 void triggerSetEndTeeth_Renix(void);
 
-void triggerSetup_RoverMEMS(void);
+void triggerSetup_RoverMEMS(bool initialisationComplete = false);
 void triggerPri_RoverMEMS(void);
 void triggerSec_RoverMEMS(void);
 uint16_t getRPM_RoverMEMS(void);
@@ -217,7 +198,7 @@ uint16_t getRPM_Vmax(void);
 int getCrankAngle_Vmax(void);
 void triggerSetEndTeeth_Vmax(void);
 
-void triggerSetup_SuzukiK6A(void);
+void triggerSetup_SuzukiK6A(bool initialisationComplete = false);
 void triggerPri_SuzukiK6A(void);
 void triggerSec_SuzukiK6A(void);
 uint16_t getRPM_SuzukiK6A(void);
@@ -230,7 +211,7 @@ typedef PinStatus interrupt_mode_t;
 typedef byte interrupt_mode_t;
 #endif
 
-typedef void (*trigger_setup_fn)(void);
+typedef void (*trigger_setup_fn)(bool initialisationComplete);
 typedef void (*trigger_handler_fn)(void);
 typedef uint16_t (*trigger_get_rpm_fn)(void);
 typedef int (*trigger_get_crank_angle_fn)(void);

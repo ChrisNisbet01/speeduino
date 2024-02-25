@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-void triggerSetup_missingTooth(void);
+void triggerSetup_missingTooth(bool initialisationComplete = false);
 
 void triggerPri_missingTooth(void);
 
