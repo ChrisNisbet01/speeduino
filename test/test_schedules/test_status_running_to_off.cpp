@@ -14,10 +14,18 @@ static void emptyCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
     UNUSED(coil_id2);
 }
 
+bool fuel_enabled;
+
 void test_status_running_to_off_inj1(void)
 {
+  fuel_enabled = false;
     initialiseSchedulers();
     setFuelSchedule(fuelSchedule1, TIMEOUT, DURATION);
+    //TEST_ASSERT_EQUAL(0, &fuelSchedule1.pTimerEnable);
+    FUEL1_TIMER_ENABLE();
+    TEST_ASSERT_TRUE(fuel_enabled);
+    TEST_ASSERT_EQUAL((1 << OCIE3B), TIMSK3 & (1 << OCIE3B));
+    //TEST_ASSERT_EQUAL((1<<OCF3A), (TIFR3 & (1<<OCF3A)));
 
     uint32_t const micros_start = micros();
 
@@ -28,6 +36,8 @@ void test_status_running_to_off_inj1(void)
         break;
       }
     }
+    TEST_ASSERT_EQUAL((1 << OCIE3B), TIMSK3 & (1 << OCIE3B));
+    //TEST_ASSERT_EQUAL((1<<OCF3A), (TIFR3 & (1<<OCF3A)));
     TEST_ASSERT_EQUAL(OFF, fuelSchedule1.Status);
 }
 

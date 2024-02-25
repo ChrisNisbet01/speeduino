@@ -89,7 +89,13 @@ static inline unsigned long micros_safe(); //A version of micros() that is inter
   #define IGN8_COMPARE  OCR3B //Replaces injector 2
 
   //Note that the interrupt flag is reset BEFORE the interrupt is enabled
-static inline void FUEL1_TIMER_ENABLE(void) { TIFR3 |= (1<<OCF3A) ; TIMSK3 |= (1 << OCIE3A); } //Turn on the A compare unit (ie turn on the interrupt)
+static inline void FUEL1_TIMER_ENABLE(void) //Turn on the A compare unit (ie turn on the interrupt)
+{
+  extern bool fuel_enabled;
+  fuel_enabled = 1;
+  TIFR3 |= (1 << OCF3A);
+  TIMSK3 |= (1 << OCIE3A);
+}
 static inline void FUEL2_TIMER_ENABLE(void) { TIFR3 |= (1<<OCF3B); TIMSK3 |= (1 << OCIE3B); } //Turn on the B compare unit (ie turn on the interrupt)
 static inline void FUEL3_TIMER_ENABLE(void) { TIFR3 |= (1<<OCF3C); TIMSK3 |= (1 << OCIE3C); } //Turn on the C compare unit (ie turn on the interrupt)
 static inline void FUEL4_TIMER_ENABLE(void) { TIFR4 |= (1<<OCF4B); TIMSK4 |= (1 << OCIE4B); } //Turn on the B compare unit (ie turn on the interrupt)
