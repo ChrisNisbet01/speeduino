@@ -46,6 +46,7 @@
 #include "src/decoders/24x.h"
 #include "src/decoders/jeep_2000.h"
 #include "src/decoders/audi_135.h"
+#include "src/decoders/honda_d17.h"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 
