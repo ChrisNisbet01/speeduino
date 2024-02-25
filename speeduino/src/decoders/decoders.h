@@ -62,13 +62,6 @@ void loggerTertiaryISR(void);
 
 __attribute__((noinline))int crankingGetRPM(byte totalTeeth, bool isCamTeeth);
 
-void triggerSetup_RoverMEMS(bool initialisationComplete = false);
-void triggerPri_RoverMEMS(void);
-void triggerSec_RoverMEMS(void);
-uint16_t getRPM_RoverMEMS(void);
-int getCrankAngle_RoverMEMS(void);
-void triggerSetEndTeeth_RoverMEMS(void);
-
 void triggerSetup_SuzukiK6A(bool initialisationComplete = false);
 void triggerPri_SuzukiK6A(void);
 void triggerSec_SuzukiK6A(void);

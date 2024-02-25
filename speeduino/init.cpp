@@ -63,6 +63,7 @@
 #include "src/decoders/chrysler_ngc.h"
 #include "src/decoders/vmax.h"
 #include "src/decoders/renix.h"
+#include "src/decoders/rover_mems.h"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 
@@ -3767,11 +3768,10 @@ void initialiseTriggers(void)
       //Rover MEMs - covers multiple flywheel trigger combinations.
       triggerSetup_RoverMEMS();
       triggerHandler = triggerPri_RoverMEMS;
-      getRPM = getRPM_RoverMEMS;
-      triggerSetEndTeeth = triggerSetEndTeeth_RoverMEMS;
-
       triggerSecondaryHandler = triggerSec_RoverMEMS;
+      getRPM = getRPM_RoverMEMS;
       getCrankAngle = getCrankAngle_missingTooth;
+      triggerSetEndTeeth = triggerSetEndTeeth_RoverMEMS;
 
       primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
       secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
