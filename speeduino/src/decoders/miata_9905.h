@@ -1,6 +1,10 @@
 #pragma once
 
+#include "decoder_structs.h"
+
 #include <stdint.h>
+
+extern decoder_handler_st const trigger_miata_9905;
 
 void triggerSetup_Miata9905(bool initialisationComplete);
 

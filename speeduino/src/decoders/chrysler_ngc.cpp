@@ -516,7 +516,7 @@ decoder_handler_st const trigger_ngc_4 =
   .set_end_teeth = triggerSetEndTeeth_NGC,
 };
 
-decoder_handler_st const trigger_ngc68 =
+decoder_handler_st const trigger_ngc_68 =
 {
   .setup = triggerSetup_NGC,
   .primaryToothHandler = triggerPri_NGC,

@@ -1,6 +1,10 @@
 #pragma once
 
+#include "decoder_structs.h"
+
 #include <stdint.h>
+
+extern decoder_handler_st const trigger_daihatsu_plus1;
 
 void triggerSetup_Daihatsu(bool initialisationComplete = false);
 

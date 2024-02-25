@@ -1,6 +1,10 @@
 #pragma once
 
+#include "decoder_structs.h"
+
 #include <stdint.h>
+
+extern decoder_handler_st const trigger_36_minus_222;
 
 void triggerSetup_ThirtySixMinus222(bool initialisationComplete = false);
 

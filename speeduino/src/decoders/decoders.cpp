@@ -46,6 +46,35 @@ A full copy of the license may be found in the projects root directory
 #include "utilities.h"
 #include "null_trigger.h"
 #include "missing_tooth.h"
+#include "default.h"
+#include "null_trigger.h"
+#include "missing_tooth.h"
+#include "dual_wheel.h"
+#include "basic_distributor.h"
+#include "gm7x.h"
+#include "4g63.h"
+#include "24x.h"
+#include "jeep_2000.h"
+#include "audi_135.h"
+#include "honda_d17.h"
+#include "miata_9905.h"
+#include "mazda_au.h"
+#include "non_360.h"
+#include "nissan_360.h"
+#include "subaru_67.h"
+#include "daihatsu_plus1.h"
+#include "harley.h"
+#include "36_minus_222.h"
+#include "36_minus_21.h"
+#include "420a.h"
+#include "weber.h"
+#include "ford_st170.h"
+#include "drz400.h"
+#include "chrysler_ngc.h"
+#include "vmax.h"
+#include "renix.h"
+#include "rover_mems.h"
+#include "suzuki_k6a.h"
 
 decoder_context_st decoder;
 
@@ -83,6 +112,135 @@ attach_tertiary_interrupt(byte pin, trigger_handler_fn handler, interrupt_mode_t
 {
   tertiaryToothHandler = handler;
   attachInterrupt(digitalPinToInterrupt(pin), tertiary_isr_handler, edge);
+}
+
+void initialise_trigger_handler(byte const trigger_pattern)
+{
+  switch (trigger_pattern)
+  {
+  case DECODER_MISSING_TOOTH:
+    decoder.handler = &trigger_missing_tooth;
+    break;
+
+  case DECODER_BASIC_DISTRIBUTOR:
+    decoder.handler = &trigger_basic_distributor;
+    break;
+
+  case DECODER_DUAL_WHEEL:
+    decoder.handler = &trigger_dual_wheel;
+    break;
+
+  case DECODER_GM7X:
+    decoder.handler = &trigger_gm7x;
+    break;
+
+  case DECODER_4G63:
+    decoder.handler = &trigger_4G63;
+    break;
+
+  case DECODER_24X:
+    decoder.handler = &trigger_24X;
+    break;
+
+  case DECODER_JEEP2000:
+    decoder.handler = &trigger_jeep_2000;
+    break;
+
+  case DECODER_AUDI135:
+    decoder.handler = &trigger_audi_135;
+    break;
+
+  case DECODER_HONDA_D17:
+    decoder.handler = &trigger_honda_d17;
+    break;
+
+  case DECODER_MIATA_9905:
+    decoder.handler = &trigger_miata_9905;
+    break;
+
+  case DECODER_MAZDA_AU:
+    decoder.handler = &trigger_mazda_au;
+    break;
+
+  case DECODER_NON360:
+    decoder.handler = &trigger_non_360;
+    break;
+
+  case DECODER_NISSAN_360:
+    decoder.handler = &trigger_nissan_360;
+    break;
+
+  case DECODER_SUBARU_67:
+    decoder.handler = &trigger_subaru_67;
+    break;
+
+  case DECODER_DAIHATSU_PLUS1:
+    decoder.handler = &trigger_daihatsu_plus1;
+    break;
+
+  case DECODER_HARLEY:
+    decoder.handler = &trigger_harley;
+    break;
+
+  case DECODER_36_2_2_2:
+    decoder.handler = &trigger_36_minus_222;
+    break;
+
+  case DECODER_36_2_1:
+    decoder.handler = &trigger_36_minus_21;
+    break;
+
+  case DECODER_420A:
+    decoder.handler = &trigger_420a;
+    break;
+
+  case DECODER_WEBER:
+    decoder.handler = &trigger_weber;
+    break;
+
+  case DECODER_ST170:
+    decoder.handler = &trigger_st170;
+    break;
+
+  case DECODER_DRZ400:
+    decoder.handler = &trigger_drz400;
+    break;
+
+  case DECODER_NGC:
+    if (configPage2.nCylinders == 4)
+    {
+      decoder.handler = &trigger_ngc_4;
+    }
+    else
+    {
+      decoder.handler = &trigger_ngc_68;
+    }
+    break;
+
+  case DECODER_VMAX:
+    decoder.handler = &trigger_vmax;
+    break;
+
+  case DECODER_RENIX:
+    decoder.handler = &trigger_renix;
+    break;
+
+  case DECODER_ROVERMEMS:
+    decoder.handler = &trigger_rover_mems;
+    break;
+
+  case DECODER_SUZUKI_K6A:
+    decoder.handler = &trigger_suzuki_k6a;
+    break;
+
+  default:
+    decoder.handler = &trigger_default;
+    break;
+  }
+
+  decoder_handler_st const &handler = *decoder.handler;
+
+  handler.setup(currentStatus.initialisationComplete);
 }
 
 static inline bool HasAnySync(const statuses &status)

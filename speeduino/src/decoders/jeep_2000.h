@@ -1,6 +1,10 @@
 #pragma once
 
+#include "decoder_structs.h"
+
 #include <stdint.h>
+
+extern decoder_handler_st const trigger_jeep_2000;
 
 void triggerSetup_Jeep2000(bool initialisationComplete);
 

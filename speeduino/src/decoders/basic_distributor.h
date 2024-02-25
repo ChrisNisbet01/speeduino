@@ -1,6 +1,10 @@
 #pragma once
 
+#include "decoder_structs.h"
+
 #include <stdint.h>
+
+extern decoder_handler_st const trigger_basic_distributor;
 
 void triggerSetup_BasicDistributor(bool initialisationComplete = false);
 

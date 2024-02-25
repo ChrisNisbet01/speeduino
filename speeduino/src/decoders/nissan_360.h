@@ -1,6 +1,10 @@
 #pragma once
 
+#include "decoder_structs.h"
+
 #include <stdint.h>
+
+extern decoder_handler_st const trigger_nissan_360;
 
 void triggerSetup_Nissan360(bool initialisationComplete = false);
 

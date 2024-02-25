@@ -1,6 +1,10 @@
 #pragma once
 
+#include "decoder_structs.h"
+
 #include <stdint.h>
+
+extern decoder_handler_st const trigger_audi_135;
 
 void triggerSetup_Audi135(bool initialisationComplete = false);
 

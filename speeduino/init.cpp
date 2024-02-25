@@ -41,7 +41,7 @@
 #include "src/decoders/null_trigger.h"
 #include "src/decoders/missing_tooth.h"
 #include "src/decoders/dual_wheel.h"
-#include "src/decoders/basic_distributer.h"
+#include "src/decoders/basic_distributor.h"
 #include "src/decoders/gm7x.h"
 #include "src/decoders/4g63.h"
 #include "src/decoders/24x.h"

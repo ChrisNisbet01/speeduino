@@ -1,6 +1,10 @@
 #pragma once
 
+#include "decoder_structs.h"
+
 #include <stdint.h>
+
+extern decoder_handler_st const trigger_harley;
 
 void triggerSetup_Harley(bool initialisationComplete);
 

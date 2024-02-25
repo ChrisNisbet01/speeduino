@@ -1,6 +1,10 @@
 #pragma once
 
+#include "decoder_structs.h"
+
 #include <stdint.h>
+
+extern decoder_handler_st const trigger_suzuki_k6a;
 
 void triggerSetup_SuzukiK6A(bool initialisationComplete = false);
 

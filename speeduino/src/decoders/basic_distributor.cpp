@@ -1,4 +1,4 @@
-#include "basic_distributer.h"
+#include "basic_distributor.h"
 #include "decoders.h"
 #include "triggers.h"
 #include "bit_macros.h"
@@ -295,7 +295,7 @@ void triggerSetEndTeeth_BasicDistributor(void)
   }
 }
 
-decoder_handler_st const trigger_basic_distributer =
+decoder_handler_st const trigger_basic_distributor =
 {
   .setup = triggerSetup_BasicDistributor,
   .primaryToothHandler = triggerPri_BasicDistributor,

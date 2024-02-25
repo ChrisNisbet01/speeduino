@@ -1,6 +1,12 @@
 #pragma once
 
+#include "decoder_structs.h"
+
 #include <stdint.h>
+
+extern decoder_handler_st const trigger_ngc_4;
+
+extern decoder_handler_st const trigger_ngc_68;
 
 void triggerSetup_NGC(bool initialisationComplete = false);
 
