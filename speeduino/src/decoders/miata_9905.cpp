@@ -390,7 +390,7 @@ void triggerSetEndTeeth_Miata9905(void)
   }
 }
 
-decoder_handler_st const trigger_jeep_2000 =
+decoder_handler_st const trigger_miata_9905 =
 {
   .setup = triggerSetup_Miata9905,
   .primaryToothHandler = triggerPri_Miata9905,

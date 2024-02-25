@@ -189,7 +189,7 @@ void triggerSetEndTeeth_GM7X(void)
   }
 }
 
-decoder_handler_st const trigger_GM7X =
+decoder_handler_st const trigger_gm7x =
 {
   .setup = triggerSetup_GM7X,
   .primaryToothHandler = triggerPri_GM7X,

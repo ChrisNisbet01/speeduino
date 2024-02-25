@@ -170,7 +170,7 @@ void triggerSetEndTeeth_Audi135(void)
 {
 }
 
-decoder_handler_st const trigger_jeep_2000 =
+decoder_handler_st const trigger_audi_135 =
 {
   .setup = triggerSetup_Audi135,
   .primaryToothHandler = triggerPri_Audi135,

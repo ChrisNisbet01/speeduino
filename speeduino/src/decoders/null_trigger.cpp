@@ -28,7 +28,7 @@ static void nullSetup(bool initialisationComplete)
   /* Do nothing. */
 }
 
-decoder_handler_st const null_trigger =
+decoder_handler_st const trigger_null =
 {
   .setup = nullSetup,
   .primaryToothHandler = nullTriggerHandler,

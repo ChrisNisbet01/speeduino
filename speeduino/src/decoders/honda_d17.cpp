@@ -143,7 +143,7 @@ void triggerSetEndTeeth_HondaD17(void)
 {
 }
 
-decoder_handler_st const trigger_jeep_2000 =
+decoder_handler_st const trigger_honda_d17 =
 {
   .setup = triggerSetup_HondaD17,
   .primaryToothHandler = triggerPri_HondaD17,

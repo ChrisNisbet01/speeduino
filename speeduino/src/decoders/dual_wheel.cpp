@@ -279,7 +279,7 @@ void triggerSetEndTeeth_DualWheel(void)
 #endif
 }
 
-decoder_handler_st const dual_wheel =
+decoder_handler_st const trigger_dual_wheel =
 {
   .setup = triggerSetup_DualWheel,
   .primaryToothHandler = triggerPri_DualWheel,

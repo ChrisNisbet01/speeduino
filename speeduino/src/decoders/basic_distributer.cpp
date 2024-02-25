@@ -295,7 +295,7 @@ void triggerSetEndTeeth_BasicDistributor(void)
   }
 }
 
-decoder_handler_st const basic_distributer =
+decoder_handler_st const trigger_basic_distributer =
 {
   .setup = triggerSetup_BasicDistributor,
   .primaryToothHandler = triggerPri_BasicDistributor,
