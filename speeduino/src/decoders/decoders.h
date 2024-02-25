@@ -62,14 +62,6 @@ void loggerTertiaryISR(void);
 
 __attribute__((noinline))int crankingGetRPM(byte totalTeeth, bool isCamTeeth);
 
-void triggerSetup_Miata9905(bool initialisationComplete);
-void triggerPri_Miata9905(void);
-void triggerSec_Miata9905(void);
-uint16_t getRPM_Miata9905(void);
-int getCrankAngle_Miata9905(void);
-void triggerSetEndTeeth_Miata9905(void);
-int getCamAngle_Miata9905(void);
-
 void triggerSetup_MazdaAU(bool initialisationComplete = false);
 void triggerPri_MazdaAU(void);
 void triggerSec_MazdaAU(void);

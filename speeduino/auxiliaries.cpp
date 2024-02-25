@@ -12,6 +12,7 @@ A full copy of the license may be found in the projects root directory
 #include "injector_contexts.h"
 #include "auxiliary_pins.h"
 #include "bit_macros.h"
+#include "src/decoders/miata_9905.h"
 
 static long vvt1_pwm_value;
 static long vvt2_pwm_value;
@@ -760,7 +761,7 @@ void vvtControl(void)
     }
 
     //Calculate the current cam angle for miata trigger
-    if (configPage4.TrigPattern == 9)
+    if (configPage4.TrigPattern == DECODER_MIATA_9905)
     {
       currentStatus.vvt1Angle = getCamAngle_Miata9905();
     }
