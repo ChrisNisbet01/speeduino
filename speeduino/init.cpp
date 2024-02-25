@@ -64,6 +64,7 @@
 #include "src/decoders/vmax.h"
 #include "src/decoders/renix.h"
 #include "src/decoders/rover_mems.h"
+#include "src/decoders/suzuki_k6a.h"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 

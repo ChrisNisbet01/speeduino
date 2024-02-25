@@ -62,13 +62,6 @@ void loggerTertiaryISR(void);
 
 __attribute__((noinline))int crankingGetRPM(byte totalTeeth, bool isCamTeeth);
 
-void triggerSetup_SuzukiK6A(bool initialisationComplete = false);
-void triggerPri_SuzukiK6A(void);
-void triggerSec_SuzukiK6A(void);
-uint16_t getRPM_SuzukiK6A(void);
-int getCrankAngle_SuzukiK6A(void);
-void triggerSetEndTeeth_SuzukiK6A(void);
-
 #if defined(CORE_SAMD21)
 typedef PinStatus interrupt_mode_t;
 #else
