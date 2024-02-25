@@ -563,7 +563,17 @@ void triggerSetEndTeeth_RoverMEMS(void)
   ignition4.endTooth = tempIgnitionEndTooth[4];
 }
 
-decoder_handler_st const trigger_rover_mems =
+static void attach_interrupts(void)
+{
+  //Rover MEMs - covers multiple flywheel trigger combinations.
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  byte const secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_RoverMEMS, primaryTriggerEdge);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_RoverMEMS, secondaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_rover_mems PROGMEM =
 {
   .setup = triggerSetup_RoverMEMS,
   .primaryToothHandler = triggerPri_RoverMEMS,
@@ -572,5 +582,6 @@ decoder_handler_st const trigger_rover_mems =
   .get_rpm = getRPM_RoverMEMS,
   .get_crank_angle = getCrankAngle_missingTooth,
   .set_end_teeth = triggerSetEndTeeth_RoverMEMS,
+  .attach_interrupts = attach_interrupts,
 };
 

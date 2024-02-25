@@ -106,7 +106,18 @@ int getCrankAngle_non360(void)
   return crankAngle;
 }
 
-decoder_handler_st const trigger_non_360 =
+static void attach_interrupts(void)
+{
+  // Attach the crank trigger wheel interrupt (Hall sensor drags to ground
+  // when triggering)
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  byte const secondaryTriggerEdge = FALLING;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_DualWheel, primaryTriggerEdge);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_DualWheel, secondaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_non_360 PROGMEM =
 {
   .setup = triggerSetup_non360,
   .primaryToothHandler = triggerPri_DualWheel,
@@ -115,5 +126,6 @@ decoder_handler_st const trigger_non_360 =
   .get_rpm = getRPM_non360,
   .get_crank_angle = getCrankAngle_non360,
   .set_end_teeth = nullSetEndTeeth,
+  .attach_interrupts = attach_interrupts,
 };
 

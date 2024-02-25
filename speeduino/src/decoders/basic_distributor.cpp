@@ -6,6 +6,7 @@
 #include "null_trigger.h"
 #include "ignition_control.h"
 #include "utilities.h"
+#include "auxiliary_pins.h"
 
 /** @} */
 
@@ -295,7 +296,15 @@ void triggerSetEndTeeth_BasicDistributor(void)
   }
 }
 
-decoder_handler_st const trigger_basic_distributor =
+static void attach_interrupts(void)
+{
+  // Basic distributor
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_BasicDistributor, primaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_basic_distributor PROGMEM =
 {
   .setup = triggerSetup_BasicDistributor,
   .primaryToothHandler = triggerPri_BasicDistributor,
@@ -304,5 +313,6 @@ decoder_handler_st const trigger_basic_distributor =
   .get_rpm = getRPM_BasicDistributor,
   .get_crank_angle = getCrankAngle_BasicDistributor,
   .set_end_teeth = triggerSetEndTeeth_BasicDistributor,
+  .attach_interrupts = attach_interrupts,
 };
 

@@ -530,13 +530,12 @@ void stopToothLogger(void)
 
   //Disconnect the logger interrupts and attach the normal ones
   detachInterrupt(digitalPinToInterrupt(Trigger.pin));
-  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerHandler, primaryTriggerEdge);
 
   if (!VSS_USES_RPM2())
   {
     detachInterrupt(digitalPinToInterrupt(Trigger2.pin));
-    attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSecondaryHandler, secondaryTriggerEdge);
   }
+  decoder.handler.attach_interrupts();
 }
 
 void startCompositeLogger(void)
@@ -563,13 +562,12 @@ void stopCompositeLogger(void)
 
   //Disconnect the logger interrupts and attach the normal ones
   detachInterrupt(digitalPinToInterrupt(Trigger.pin));
-  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerHandler, primaryTriggerEdge);
 
   if (!VSS_USES_RPM2() && !FLEX_USES_RPM2())
   {
     detachInterrupt(digitalPinToInterrupt(Trigger2.pin));
-    attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSecondaryHandler, secondaryTriggerEdge);
   }
+  decoder.handler.attach_interrupts();
 }
 
 void startCompositeLoggerTertiary(void)
@@ -593,10 +591,9 @@ void stopCompositeLoggerTertiary(void)
 
   //Disconnect the logger interrupts and attach the normal ones
   detachInterrupt(digitalPinToInterrupt(Trigger.pin));
-  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerHandler, primaryTriggerEdge);
-
   detachInterrupt(digitalPinToInterrupt(Trigger3.pin));
-  attachInterrupt(digitalPinToInterrupt(Trigger3.pin), triggerTertiaryHandler, tertiaryTriggerEdge);
+
+  decoder.handler.attach_interrupts();
 }
 
 
@@ -626,9 +623,8 @@ void stopCompositeLoggerCams(void)
   if (!VSS_USES_RPM2() && !FLEX_USES_RPM2())
   {
     detachInterrupt(digitalPinToInterrupt(Trigger2.pin));
-    attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSecondaryHandler, secondaryTriggerEdge);
   }
 
   detachInterrupt(digitalPinToInterrupt(Trigger3.pin));
-  attachInterrupt(digitalPinToInterrupt(Trigger3.pin), triggerTertiaryHandler, tertiaryTriggerEdge);
+  decoder.handler.attach_interrupts();
 }

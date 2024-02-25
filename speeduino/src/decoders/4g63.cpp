@@ -545,7 +545,16 @@ void triggerSetEndTeeth_4G63(void)
   }
 }
 
-decoder_handler_st const trigger_4G63 =
+static void attach_interrupts(void)
+{
+  byte const primaryTriggerEdge = CHANGE;
+  byte const secondaryTriggerEdge = FALLING;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_4G63, primaryTriggerEdge);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_4G63, secondaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_4G63 PROGMEM =
 {
   .setup = triggerSetup_4G63,
   .primaryToothHandler = triggerPri_4G63,
@@ -554,5 +563,6 @@ decoder_handler_st const trigger_4G63 =
   .get_rpm = getRPM_4G63,
   .get_crank_angle = getCrankAngle_4G63,
   .set_end_teeth = triggerSetEndTeeth_4G63,
+  .attach_interrupts = attach_interrupts,
 };
 

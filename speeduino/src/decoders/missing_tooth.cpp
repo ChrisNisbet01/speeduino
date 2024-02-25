@@ -516,7 +516,29 @@ int getCrankAngle_missingTooth(void)
   return crankAngle;
 }
 
-decoder_handler_st const trigger_missing_tooth =
+static void attach_interrupts(void)
+{
+  // Attach the crank trigger wheel interrupt
+  // (Hall sensor drags to ground when triggering)
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_missingTooth, primaryTriggerEdge);
+
+  if (BIT_CHECK(decoderState, BIT_DECODER_HAS_SECONDARY))
+  {
+    byte const secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
+    attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_missingTooth, secondaryTriggerEdge);
+  }
+
+  if (configPage10.vvt2Enabled > 0)
+  {
+    // we only need this for vvt2, so not really needed if it's not used
+    byte const tertiaryTriggerEdge = (configPage10.TrigEdgeThrd == 0) ? RISING : FALLING;
+    attachInterrupt(digitalPinToInterrupt(Trigger3.pin), triggerThird_missingTooth, tertiaryTriggerEdge);
+  }
+}
+
+decoder_handler_st const trigger_missing_tooth PROGMEM =
 {
   .setup = triggerSetup_missingTooth,
   .primaryToothHandler = triggerPri_missingTooth,
@@ -525,5 +547,6 @@ decoder_handler_st const trigger_missing_tooth =
   .get_rpm = getRPM_missingTooth,
   .get_crank_angle = getCrankAngle_missingTooth,
   .set_end_teeth = triggerSetEndTeeth_missingTooth,
+  .attach_interrupts = attach_interrupts,
 };
 

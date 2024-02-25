@@ -78,169 +78,133 @@ A full copy of the license may be found in the projects root directory
 
 decoder_context_st decoder;
 
-static void primary_isr_handler(void)
+void decoder_context_st::initialise_trigger_handler(byte const trigger_pattern)
 {
-  decoder.primaryToothHandler();
-}
+  decoder_handler_st const * flash_ptr;
 
-static void secondary_isr_handler(void)
-{
-  decoder.secondaryToothHandler();
-}
-
-static void tertiary_isr_handler(void)
-{
-  decoder.tertiaryToothHandler();
-}
-
-void decoder_context_st::
-attach_primary_interrupt(byte pin, trigger_handler_fn handler, interrupt_mode_t edge)
-{
-  primaryToothHandler = handler;
-  attachInterrupt(digitalPinToInterrupt(pin), primary_isr_handler, edge);
-}
-
-void decoder_context_st::
-attach_secondary_interrupt(byte pin, trigger_handler_fn handler, interrupt_mode_t edge)
-{
-  secondaryToothHandler = handler;
-  attachInterrupt(digitalPinToInterrupt(pin), secondary_isr_handler, edge);
-}
-
-void decoder_context_st::
-attach_tertiary_interrupt(byte pin, trigger_handler_fn handler, interrupt_mode_t edge)
-{
-  tertiaryToothHandler = handler;
-  attachInterrupt(digitalPinToInterrupt(pin), tertiary_isr_handler, edge);
-}
-
-void initialise_trigger_handler(byte const trigger_pattern)
-{
   switch (trigger_pattern)
   {
   case DECODER_MISSING_TOOTH:
-    decoder.handler = &trigger_missing_tooth;
+    flash_ptr = &trigger_missing_tooth;
     break;
 
   case DECODER_BASIC_DISTRIBUTOR:
-    decoder.handler = &trigger_basic_distributor;
+    flash_ptr = &trigger_basic_distributor;
     break;
 
   case DECODER_DUAL_WHEEL:
-    decoder.handler = &trigger_dual_wheel;
+    flash_ptr = &trigger_dual_wheel;
     break;
 
   case DECODER_GM7X:
-    decoder.handler = &trigger_gm7x;
+    flash_ptr = &trigger_gm7x;
     break;
 
   case DECODER_4G63:
-    decoder.handler = &trigger_4G63;
+    flash_ptr = &trigger_4G63;
     break;
 
   case DECODER_24X:
-    decoder.handler = &trigger_24X;
+    flash_ptr = &trigger_24X;
     break;
 
   case DECODER_JEEP2000:
-    decoder.handler = &trigger_jeep_2000;
+    flash_ptr = &trigger_jeep_2000;
     break;
 
   case DECODER_AUDI135:
-    decoder.handler = &trigger_audi_135;
+    flash_ptr = &trigger_audi_135;
     break;
 
   case DECODER_HONDA_D17:
-    decoder.handler = &trigger_honda_d17;
+    flash_ptr = &trigger_honda_d17;
     break;
 
   case DECODER_MIATA_9905:
-    decoder.handler = &trigger_miata_9905;
+    flash_ptr = &trigger_miata_9905;
     break;
 
   case DECODER_MAZDA_AU:
-    decoder.handler = &trigger_mazda_au;
+    flash_ptr = &trigger_mazda_au;
     break;
 
   case DECODER_NON360:
-    decoder.handler = &trigger_non_360;
+    flash_ptr = &trigger_non_360;
     break;
 
   case DECODER_NISSAN_360:
-    decoder.handler = &trigger_nissan_360;
+    flash_ptr = &trigger_nissan_360;
     break;
 
   case DECODER_SUBARU_67:
-    decoder.handler = &trigger_subaru_67;
+    flash_ptr = &trigger_subaru_67;
     break;
 
   case DECODER_DAIHATSU_PLUS1:
-    decoder.handler = &trigger_daihatsu_plus1;
+    flash_ptr = &trigger_daihatsu_plus1;
     break;
 
   case DECODER_HARLEY:
-    decoder.handler = &trigger_harley;
+    flash_ptr = &trigger_harley;
     break;
 
   case DECODER_36_2_2_2:
-    decoder.handler = &trigger_36_minus_222;
+    flash_ptr = &trigger_36_minus_222;
     break;
 
   case DECODER_36_2_1:
-    decoder.handler = &trigger_36_minus_21;
+    flash_ptr = &trigger_36_minus_21;
     break;
 
   case DECODER_420A:
-    decoder.handler = &trigger_420a;
+    flash_ptr = &trigger_420a;
     break;
 
   case DECODER_WEBER:
-    decoder.handler = &trigger_weber;
+    flash_ptr = &trigger_weber;
     break;
 
   case DECODER_ST170:
-    decoder.handler = &trigger_st170;
+    flash_ptr = &trigger_st170;
     break;
 
   case DECODER_DRZ400:
-    decoder.handler = &trigger_drz400;
+    flash_ptr = &trigger_drz400;
     break;
 
   case DECODER_NGC:
     if (configPage2.nCylinders == 4)
     {
-      decoder.handler = &trigger_ngc_4;
+      flash_ptr = &trigger_ngc_4;
     }
     else
     {
-      decoder.handler = &trigger_ngc_68;
+      flash_ptr = &trigger_ngc_68;
     }
     break;
 
   case DECODER_VMAX:
-    decoder.handler = &trigger_vmax;
+    flash_ptr = &trigger_vmax;
     break;
 
   case DECODER_RENIX:
-    decoder.handler = &trigger_renix;
+    flash_ptr = &trigger_renix;
     break;
 
   case DECODER_ROVERMEMS:
-    decoder.handler = &trigger_rover_mems;
+    flash_ptr = &trigger_rover_mems;
     break;
 
   case DECODER_SUZUKI_K6A:
-    decoder.handler = &trigger_suzuki_k6a;
+    flash_ptr = &trigger_suzuki_k6a;
     break;
 
   default:
-    decoder.handler = &trigger_default;
+    flash_ptr = &trigger_default;
     break;
   }
 
-  decoder_handler_st const &handler = *decoder.handler;
-
-  handler.setup(currentStatus.initialisationComplete);
+  memcpy_P(&decoder.handler, flash_ptr, sizeof(decoder.handler));
 }
 
 static inline bool HasAnySync(const statuses &status)
@@ -580,6 +544,7 @@ void loggerTertiaryISR(void)
   */
 
   bool const trigger_state = Trigger3.read();
+  /* Fix me - need a way to get the trigger edge from the assigned decoder. */
   bool const valid_edge =
     (tertiaryTriggerEdge == RISING && trigger_state)
     || (tertiaryTriggerEdge == FALLING && !trigger_state)

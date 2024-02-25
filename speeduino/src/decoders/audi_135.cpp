@@ -166,7 +166,16 @@ int getCrankAngle_Audi135(void)
   return crankAngle;
 }
 
-decoder_handler_st const trigger_audi_135 =
+static void attach_interrupts(void)
+{
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  byte const secondaryTriggerEdge = RISING; //always rising for this trigger
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_Audi135, primaryTriggerEdge);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_Audi135, secondaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_audi_135 PROGMEM =
 {
   .setup = triggerSetup_Audi135,
   .primaryToothHandler = triggerPri_Audi135,
@@ -175,5 +184,6 @@ decoder_handler_st const trigger_audi_135 =
   .get_rpm = getRPM_Audi135,
   .get_crank_angle = getCrankAngle_Audi135,
   .set_end_teeth = nullSetEndTeeth,
+  .attach_interrupts = attach_interrupts,
 };
 

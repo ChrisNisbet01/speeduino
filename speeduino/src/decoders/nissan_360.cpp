@@ -299,7 +299,16 @@ void triggerSetEndTeeth_Nissan360(void)
   triggerSetEndTeeth_Nissan360_ignition(ignitions.ignition(ignChannel4));
 }
 
-decoder_handler_st const trigger_nissan_360 =
+static void attach_interrupts(void)
+{
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  byte const secondaryTriggerEdge = CHANGE;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_Nissan360, primaryTriggerEdge);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_Nissan360, secondaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_nissan_360 PROGMEM =
 {
   .setup = triggerSetup_Nissan360,
   .primaryToothHandler = triggerPri_Nissan360,
@@ -308,5 +317,6 @@ decoder_handler_st const trigger_nissan_360 =
   .get_rpm = getRPM_Nissan360,
   .get_crank_angle = getCrankAngle_Nissan360,
   .set_end_teeth = triggerSetEndTeeth_Nissan360,
+  .attach_interrupts = attach_interrupts,
 };
 

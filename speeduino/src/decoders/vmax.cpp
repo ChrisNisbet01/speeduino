@@ -9,6 +9,8 @@
 #include "utilities.h"
 #include "globals.h"
 
+static bool triggerEdge;
+
 /** Yamaha Vmax 1990+ with 6 uneven teeth, triggering on the wide lobe.
 Within the decoder code, the sync tooth is referred to as tooth #1.*
 *Derived from Harley and made to work on the Yamaha Vmax.
@@ -63,7 +65,7 @@ void triggerPri_Vmax(void)
   // Forwarded from the config page to setup the primary trigger edge (rising or falling).
   // Inverting VR-conditioners require FALLING, non-inverting VR-conditioners
   // require RISING in the Trigger edge setup.
-  if (Trigger.read() == primaryTriggerEdge)
+  if (Trigger.read() == triggerEdge)
   {
     curGap2 = curTime;
     curGap = curTime - toothLastToothTime;
@@ -269,7 +271,17 @@ int getCrankAngle_Vmax(void)
   return crankAngle;
 }
 
-decoder_handler_st const trigger_vmax =
+static void attach_interrupts(void)
+{
+  // set as boolean so we can directly use it in decoder.
+  triggerEdge = (configPage4.TrigEdge == 0);
+
+  //Hardcoded change, the primaryTriggerEdge will be used in the decoder to
+  //select if it`s an inverted or non-inverted signal.
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_Vmax, CHANGE);
+}
+
+decoder_handler_st const trigger_vmax PROGMEM =
 {
   .setup = triggerSetup_Vmax,
   .primaryToothHandler = triggerPri_Vmax,
@@ -278,5 +290,6 @@ decoder_handler_st const trigger_vmax =
   .get_rpm = getRPM_Vmax,
   .get_crank_angle = getCrankAngle_Vmax,
   .set_end_teeth = nullSetEndTeeth,
+  .attach_interrupts = attach_interrupts,
 };
 

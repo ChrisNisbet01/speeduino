@@ -350,7 +350,16 @@ void triggerSetEndTeeth_Subaru67(void)
   }
 }
 
-decoder_handler_st const trigger_subaru_67 =
+static void attach_interrupts(void)
+{
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  byte const secondaryTriggerEdge = FALLING;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_Subaru67, primaryTriggerEdge);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_Subaru67, secondaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_subaru_67 PROGMEM =
 {
   .setup = triggerSetup_Subaru67,
   .primaryToothHandler = triggerPri_Subaru67,
@@ -359,5 +368,6 @@ decoder_handler_st const trigger_subaru_67 =
   .get_rpm = getRPM_Subaru67,
   .get_crank_angle = getCrankAngle_Subaru67,
   .set_end_teeth = triggerSetEndTeeth_Subaru67,
+  .attach_interrupts = attach_interrupts,
 };
 

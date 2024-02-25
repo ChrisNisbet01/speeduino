@@ -139,7 +139,16 @@ int getCrankAngle_HondaD17(void)
   return crankAngle;
 }
 
-decoder_handler_st const trigger_honda_d17 =
+static void attach_interrupts(void)
+{
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  byte const secondaryTriggerEdge = CHANGE;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_HondaD17, primaryTriggerEdge);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_HondaD17, secondaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_honda_d17 PROGMEM =
 {
   .setup = triggerSetup_HondaD17,
   .primaryToothHandler = triggerPri_HondaD17,
@@ -148,5 +157,6 @@ decoder_handler_st const trigger_honda_d17 =
   .get_rpm = getRPM_HondaD17,
   .get_crank_angle = getCrankAngle_HondaD17,
   .set_end_teeth = nullSetEndTeeth,
+  .attach_interrupts = attach_interrupts,
 };
 

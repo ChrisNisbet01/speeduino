@@ -225,7 +225,15 @@ int getCrankAngle_Daihatsu(void)
   return crankAngle;
 }
 
-decoder_handler_st const trigger_daihatsu_plus1 =
+static void attach_interrupts(void)
+{
+  //No secondary input required for this pattern
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_Daihatsu, primaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_daihatsu_plus1 PROGMEM =
 {
   .setup = triggerSetup_Daihatsu,
   .primaryToothHandler = triggerPri_Daihatsu,
@@ -234,5 +242,6 @@ decoder_handler_st const trigger_daihatsu_plus1 =
   .get_rpm = getRPM_Daihatsu,
   .get_crank_angle = getCrankAngle_Daihatsu,
   .set_end_teeth = nullSetEndTeeth,
+  .attach_interrupts = attach_interrupts,
 };
 

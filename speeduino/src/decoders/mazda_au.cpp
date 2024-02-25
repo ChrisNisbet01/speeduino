@@ -214,7 +214,16 @@ int getCrankAngle_MazdaAU(void)
   return crankAngle;
 }
 
-decoder_handler_st const trigger_mazda_au =
+static void attach_interrupts(void)
+{
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  byte const secondaryTriggerEdge = FALLING;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_MazdaAU, primaryTriggerEdge);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_MazdaAU, secondaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_mazda_au PROGMEM =
 {
   .setup = triggerSetup_MazdaAU,
   .primaryToothHandler = triggerPri_MazdaAU,
@@ -223,5 +232,6 @@ decoder_handler_st const trigger_mazda_au =
   .get_rpm = getRPM_MazdaAU,
   .get_crank_angle = getCrankAngle_MazdaAU,
   .set_end_teeth = nullSetEndTeeth,
+  .attach_interrupts = attach_interrupts,
 };
 

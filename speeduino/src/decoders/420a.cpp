@@ -227,7 +227,17 @@ void triggerSetEndTeeth_420a(void)
   }
 }
 
-decoder_handler_st const trigger_420a =
+static void attach_interrupts(void)
+{
+  //DSM 420a
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  byte const secondaryTriggerEdge = FALLING; //Always falling edge
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_420a, primaryTriggerEdge);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_420a, secondaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_420a PROGMEM =
 {
   .setup = triggerSetup_420a,
   .primaryToothHandler = triggerPri_420a,
@@ -236,5 +246,6 @@ decoder_handler_st const trigger_420a =
   .get_rpm = getRPM_420a,
   .get_crank_angle = getCrankAngle_420a,
   .set_end_teeth = triggerSetEndTeeth_420a,
+  .attach_interrupts = attach_interrupts,
 };
 

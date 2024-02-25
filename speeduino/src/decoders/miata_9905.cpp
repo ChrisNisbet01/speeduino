@@ -390,7 +390,17 @@ void triggerSetEndTeeth_Miata9905(void)
   }
 }
 
-decoder_handler_st const trigger_miata_9905 =
+static void attach_interrupts(void)
+{
+  //These may both need to change, not sure
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  byte const secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerHandler, triggerPri_Miata9905);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSecondaryHandler, triggerSec_Miata9905);
+}
+
+decoder_handler_st const trigger_miata_9905 PROGMEM =
 {
   .setup = triggerSetup_Miata9905,
   .primaryToothHandler = triggerPri_Miata9905,
@@ -399,5 +409,6 @@ decoder_handler_st const trigger_miata_9905 =
   .get_rpm = getRPM_Miata9905,
   .get_crank_angle = getCrankAngle_Miata9905,
   .set_end_teeth = triggerSetEndTeeth_Miata9905,
+  .attach_interrupts = attach_interrupts,
 };
 

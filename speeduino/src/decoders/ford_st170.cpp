@@ -226,7 +226,17 @@ void triggerSetEndTeeth_FordST170(void)
   // Removed ign channels >4 as an ST170 engine is a 4 cylinder
 }
 
-decoder_handler_st const trigger_st170 =
+static void attach_interrupts(void)
+{
+  //Ford ST170
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  byte const secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_missingTooth, primaryTriggerEdge);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_FordST170, secondaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_st170 PROGMEM =
 {
   .setup = triggerSetup_FordST170,
   .primaryToothHandler = triggerPri_missingTooth,
@@ -235,5 +245,6 @@ decoder_handler_st const trigger_st170 =
   .get_rpm = getRPM_FordST170,
   .get_crank_angle = getCrankAngle_FordST170,
   .set_end_teeth = triggerSetEndTeeth_FordST170,
+  .attach_interrupts = attach_interrupts,
 };
 

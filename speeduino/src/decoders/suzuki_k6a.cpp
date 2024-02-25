@@ -481,7 +481,15 @@ void triggerSetEndTeeth_SuzukiK6A(void)
   ignitions.ignition(ignChannel1).endTooth = tempIgnitionEndTooth;
 }
 
-decoder_handler_st const trigger_suzuki_k6a =
+static void attach_interrupts(void)
+{
+  // Attach the crank trigger wheel interrupt (Hall sensor drags to ground when triggering)
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_SuzukiK6A, primaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_suzuki_k6a PROGMEM =
 {
   .setup = triggerSetup_SuzukiK6A,
   .primaryToothHandler = triggerPri_SuzukiK6A,
@@ -490,5 +498,6 @@ decoder_handler_st const trigger_suzuki_k6a =
   .get_rpm = getRPM_SuzukiK6A,
   .get_crank_angle = getCrankAngle_SuzukiK6A,
   .set_end_teeth = triggerSetEndTeeth_SuzukiK6A,
+  .attach_interrupts = attach_interrupts,
 };
 

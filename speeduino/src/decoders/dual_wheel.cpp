@@ -5,6 +5,7 @@
 #include "crankMaths.h"
 #include "null_trigger.h"
 #include "utilities.h"
+#include "auxiliary_pins.h"
 
 /** @} */
 
@@ -279,7 +280,16 @@ void triggerSetEndTeeth_DualWheel(void)
 #endif
 }
 
-decoder_handler_st const trigger_dual_wheel =
+static void attach_interrupts(void)
+{
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  byte const secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_DualWheel, primaryTriggerEdge);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_DualWheel, secondaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_dual_wheel PROGMEM =
 {
   .setup = triggerSetup_DualWheel,
   .primaryToothHandler = triggerPri_DualWheel,
@@ -288,5 +298,6 @@ decoder_handler_st const trigger_dual_wheel =
   .get_rpm = getRPM_DualWheel,
   .get_crank_angle = getCrankAngle_DualWheel,
   .set_end_teeth = triggerSetEndTeeth_DualWheel,
+  .attach_interrupts = attach_interrupts,
 };
 

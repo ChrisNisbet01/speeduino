@@ -158,7 +158,17 @@ void triggerSetEndTeeth_ThirtySixMinus21(void)
   ignitions.ignition(ignChannel2).endTooth = 28; // Arbitrarily picked  at 180°.
 }
 
-decoder_handler_st const trigger_36_minus21 =
+static void attach_interrupts(void)
+{
+  //36-2-1
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  byte const secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_ThirtySixMinus21, primaryTriggerEdge);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_missingTooth, secondaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_36_minus_21 PROGMEM =
 {
   .setup = triggerSetup_ThirtySixMinus21,
   .primaryToothHandler = triggerPri_ThirtySixMinus21,
@@ -167,5 +177,6 @@ decoder_handler_st const trigger_36_minus21 =
   .get_rpm = getRPM_ThirtySixMinus21,
   .get_crank_angle = getCrankAngle_missingTooth,
   .set_end_teeth = triggerSetEndTeeth_ThirtySixMinus21,
+  .attach_interrupts = attach_interrupts,
 };
 

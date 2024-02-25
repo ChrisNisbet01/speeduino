@@ -14,6 +14,7 @@ typedef void (*trigger_handler_fn)(void);
 typedef uint16_t (*trigger_get_rpm_fn)(void);
 typedef int (*trigger_get_crank_angle_fn)(void);
 typedef void (*trigger_set_end_teeth_fn)(void);
+typedef void (*trigger_attach_interrupts_fn)(void);
 
 typedef struct decoder_handler_st
 {
@@ -25,18 +26,13 @@ typedef struct decoder_handler_st
   trigger_get_rpm_fn get_rpm;
   trigger_get_crank_angle_fn get_crank_angle;
   trigger_set_end_teeth_fn set_end_teeth;
+  trigger_attach_interrupts_fn attach_interrupts;
 } decoder_handler_st;
 
 typedef struct decoder_context_st
 {
-  decoder_handler_st const * handler;
+  decoder_handler_st handler;
 
-  trigger_handler_fn primaryToothHandler;
-  trigger_handler_fn secondaryToothHandler;
-  trigger_handler_fn tertiaryToothHandler;
-
-  void attach_primary_interrupt(byte pin, trigger_handler_fn handler, interrupt_mode_t edge);
-  void attach_secondary_interrupt(byte pin, trigger_handler_fn handler, interrupt_mode_t edge);
-  void attach_tertiary_interrupt(byte pin, trigger_handler_fn handler, interrupt_mode_t edge);
+  void initialise_trigger_handler(byte trigger_pattern);
 } decoder_context_st;
 

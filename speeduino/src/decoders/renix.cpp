@@ -221,7 +221,15 @@ void triggerSetEndTeeth_Renix(void)
 #endif
 }
 
-decoder_handler_st const trigger_renix =
+static void attach_interrupts(void)
+{
+  //Renault 44 tooth decoder
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_Renix, primaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_renix PROGMEM =
 {
   .setup = triggerSetup_Renix,
   .primaryToothHandler = triggerPri_Renix,
@@ -230,5 +238,6 @@ decoder_handler_st const trigger_renix =
   .get_rpm = getRPM_missingTooth,
   .get_crank_angle = getCrankAngle_missingTooth,
   .set_end_teeth = triggerSetEndTeeth_Renix,
+  .attach_interrupts = attach_interrupts,
 };
 

@@ -162,7 +162,16 @@ int getCrankAngle_Jeep2000(void)
   return crankAngle;
 }
 
-decoder_handler_st const trigger_jeep_2000 =
+static void attach_interrupts(void)
+{
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  byte const secondaryTriggerEdge = CHANGE;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_Jeep2000, primaryTriggerEdge);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_Jeep2000, secondaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_jeep_2000 PROGMEM =
 {
   .setup = triggerSetup_Jeep2000,
   .primaryToothHandler = triggerPri_Jeep2000,
@@ -171,5 +180,6 @@ decoder_handler_st const trigger_jeep_2000 =
   .get_rpm = getRPM_Jeep2000,
   .get_crank_angle = getCrankAngle_Jeep2000,
   .set_end_teeth = nullSetEndTeeth,
+  .attach_interrupts = attach_interrupts,
 };
 

@@ -173,7 +173,14 @@ int getCrankAngle_Harley(void)
   return crankAngle;
 }
 
-decoder_handler_st const trigger_harley =
+static void attach_interrupts(void)
+{
+  byte const primaryTriggerEdge = RISING; //Always rising
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_Harley, primaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_harley PROGMEM =
 {
   .setup = triggerSetup_Harley,
   .primaryToothHandler = triggerPri_Harley,
@@ -182,5 +189,6 @@ decoder_handler_st const trigger_harley =
   .get_rpm = getRPM_Harley,
   .get_crank_angle = getCrankAngle_Harley,
   .set_end_teeth = nullSetEndTeeth,
+  .attach_interrupts = attach_interrupts,
 };
 

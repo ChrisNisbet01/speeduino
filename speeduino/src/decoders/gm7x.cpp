@@ -6,6 +6,7 @@
 #include "null_trigger.h"
 #include "ignition_control.h"
 #include "utilities.h"
+#include "auxiliary_pins.h"
 
 /** @} */
 
@@ -189,7 +190,14 @@ void triggerSetEndTeeth_GM7X(void)
   }
 }
 
-decoder_handler_st const trigger_gm7x =
+static void attach_interrupts(void)
+{
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_GM7X, primaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_gm7x PROGMEM =
 {
   .setup = triggerSetup_GM7X,
   .primaryToothHandler = triggerPri_GM7X,
@@ -198,5 +206,6 @@ decoder_handler_st const trigger_gm7x =
   .get_rpm = getRPM_GM7X,
   .get_crank_angle = getCrankAngle_GM7X,
   .set_end_teeth = triggerSetEndTeeth_GM7X,
+  .attach_interrupts = attach_interrupts,
 };
 

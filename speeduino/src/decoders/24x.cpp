@@ -176,7 +176,16 @@ int getCrankAngle_24X(void)
   return crankAngle;
 }
 
-decoder_handler_st const trigger_24X =
+static void attach_interrupts(void)
+{
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  byte const secondaryTriggerEdge = CHANGE; //Secondary is always on every change
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_24X, primaryTriggerEdge);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_24X, secondaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_24X PROGMEM =
 {
   .setup = triggerSetup_24X,
   .primaryToothHandler = triggerPri_24X,
@@ -185,5 +194,6 @@ decoder_handler_st const trigger_24X =
   .get_rpm = getRPM_24X,
   .get_crank_angle = getCrankAngle_24X,
   .set_end_teeth = nullSetEndTeeth,
+  .attach_interrupts = attach_interrupts,
 };
 

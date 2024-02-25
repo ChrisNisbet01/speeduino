@@ -505,7 +505,27 @@ void triggerSetEndTeeth_NGC(void)
 #endif
 }
 
-decoder_handler_st const trigger_ngc_4 =
+static void attach_interrupts_4(void)
+{
+  //Chrysler NGC - 4, 6 and 8 cylinder
+  byte const primaryTriggerEdge = CHANGE;
+  byte const secondaryTriggerEdge = CHANGE;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_NGC, primaryTriggerEdge);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_NGC4, secondaryTriggerEdge);
+}
+
+static void attach_interrupts_68(void)
+{
+  //Chrysler NGC - 4, 6 and 8 cylinder
+  byte const primaryTriggerEdge = CHANGE;
+  byte const secondaryTriggerEdge = FALLING;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_NGC, primaryTriggerEdge);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_NGC68, secondaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_ngc_4 PROGMEM =
 {
   .setup = triggerSetup_NGC,
   .primaryToothHandler = triggerPri_NGC,
@@ -514,9 +534,10 @@ decoder_handler_st const trigger_ngc_4 =
   .get_rpm = getRPM_NGC,
   .get_crank_angle = getCrankAngle_missingTooth,
   .set_end_teeth = triggerSetEndTeeth_NGC,
+  .attach_interrupts = attach_interrupts_4,
 };
 
-decoder_handler_st const trigger_ngc_68 =
+decoder_handler_st const trigger_ngc_68 PROGMEM =
 {
   .setup = triggerSetup_NGC,
   .primaryToothHandler = triggerPri_NGC,
@@ -525,5 +546,6 @@ decoder_handler_st const trigger_ngc_68 =
   .get_rpm = getRPM_NGC,
   .get_crank_angle = getCrankAngle_missingTooth,
   .set_end_teeth = triggerSetEndTeeth_NGC,
+  .attach_interrupts = attach_interrupts_68,
 };
 

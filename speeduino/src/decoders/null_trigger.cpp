@@ -28,7 +28,11 @@ static void nullSetup(bool initialisationComplete)
   /* Do nothing. */
 }
 
-decoder_handler_st const trigger_null =
+static void attach_interrupts(void)
+{
+}
+
+decoder_handler_st const trigger_null PROGMEM =
 {
   .setup = nullSetup,
   .primaryToothHandler = nullTriggerHandler,
@@ -37,5 +41,6 @@ decoder_handler_st const trigger_null =
   .get_rpm = nullGetRPM,
   .get_crank_angle = nullGetCrankAngle,
   .set_end_teeth = nullSetEndTeeth,
+  .attach_interrupts = attach_interrupts,
 };
 

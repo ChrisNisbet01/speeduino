@@ -63,7 +63,16 @@ void triggerSec_DRZ400(void)
   triggerSecFilterTime = (toothOneTime - toothOneMinusOneTime) >> 1; //Set filter at 50% of the current crank speed.
 }
 
-decoder_handler_st const trigger_drz400 =
+static void attach_interrupts(void)
+{
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  byte const secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_DualWheel, primaryTriggerEdge);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_DRZ400, secondaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_drz400 PROGMEM =
 {
   .setup = triggerSetup_DRZ400,
   .primaryToothHandler = triggerPri_DualWheel,
@@ -72,5 +81,6 @@ decoder_handler_st const trigger_drz400 =
   .get_rpm = getRPM_DualWheel,
   .get_crank_angle = getCrankAngle_DualWheel,
   .set_end_teeth = triggerSetEndTeeth_DualWheel,
+  .attach_interrupts = attach_interrupts,
 };
 

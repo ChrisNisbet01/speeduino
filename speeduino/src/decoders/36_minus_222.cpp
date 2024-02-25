@@ -292,7 +292,17 @@ void triggerSetEndTeeth_ThirtySixMinus222(void)
   }
 }
 
-decoder_handler_st const trigger_36_minus_222 =
+static void attach_interrupts(void)
+{
+  //36-2-2-2
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  byte const secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_ThirtySixMinus222, primaryTriggerEdge);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_ThirtySixMinus222, secondaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_36_minus_222 PROGMEM =
 {
   .setup = triggerSetup_ThirtySixMinus222,
   .primaryToothHandler = triggerPri_ThirtySixMinus222,
@@ -301,5 +311,6 @@ decoder_handler_st const trigger_36_minus_222 =
   .get_rpm = getRPM_ThirtySixMinus222,
   .get_crank_angle = getCrankAngle_missingTooth,
   .set_end_teeth = triggerSetEndTeeth_ThirtySixMinus222,
+  .attach_interrupts = attach_interrupts,
 };
 

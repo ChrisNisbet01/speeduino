@@ -141,7 +141,17 @@ void triggerSec_Webber(void)
   } //Trigger filter
 }
 
-decoder_handler_st const trigger_weber =
+static void attach_interrupts(void)
+{
+  //Weber-Marelli
+  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  byte const secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
+
+  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_Webber, primaryTriggerEdge);
+  attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_Webber, secondaryTriggerEdge);
+}
+
+decoder_handler_st const trigger_weber PROGMEM =
 {
   .setup = triggerSetup_DualWheel,
   .primaryToothHandler = triggerPri_Webber,
@@ -150,5 +160,6 @@ decoder_handler_st const trigger_weber =
   .get_rpm = getRPM_DualWheel,
   .get_crank_angle = getCrankAngle_DualWheel,
   .set_end_teeth = triggerSetEndTeeth_DualWheel,
+  .attach_interrupts = attach_interrupts,
 };
 
