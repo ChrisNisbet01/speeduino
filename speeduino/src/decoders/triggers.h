@@ -10,6 +10,10 @@ extern libdivide::libdivide_s16_t divTriggerToothAngle;
 
 extern volatile unsigned int thirdToothCount;
 extern volatile unsigned long triggerThirdFilterTime;
+extern volatile unsigned long toothLastToothRisingTime;
+//The time (micros()) that the last tooth rose on the secondary input (used by
+//special decoders to determine missing teeth polarity)
+extern volatile unsigned long toothLastSecToothRisingTime;
 
 //The current number of teeth
 //(Once sync has been achieved, this can never actually be 0)

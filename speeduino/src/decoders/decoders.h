@@ -62,13 +62,6 @@ void loggerTertiaryISR(void);
 
 __attribute__((noinline))int crankingGetRPM(byte totalTeeth, bool isCamTeeth);
 
-void triggerSetup_NGC(bool initialisationComplete = false);
-void triggerPri_NGC(void);
-void triggerSec_NGC4(void);
-void triggerSec_NGC68(void);
-uint16_t getRPM_NGC(void);
-void triggerSetEndTeeth_NGC(void);
-
 void triggerSetup_Renix(bool initialisationComplete = false);
 void triggerPri_Renix(void);
 void triggerSetEndTeeth_Renix(void);
