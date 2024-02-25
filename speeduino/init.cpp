@@ -37,6 +37,7 @@
 #include "ignition_pins.h"
 #include "injector_pins.h"
 #include "bit_macros.h"
+#include "src/decoders/default.h"
 #include "src/decoders/null_trigger.h"
 #include "src/decoders/missing_tooth.h"
 #include "src/decoders/dual_wheel.h"
