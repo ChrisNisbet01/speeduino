@@ -161,8 +161,8 @@ void triggerSetEndTeeth_ThirtySixMinus21(void)
 static void attach_interrupts(void)
 {
   //36-2-1
-  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
-  byte const secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
+  primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_ThirtySixMinus21, primaryTriggerEdge);
   attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_missingTooth, secondaryTriggerEdge);

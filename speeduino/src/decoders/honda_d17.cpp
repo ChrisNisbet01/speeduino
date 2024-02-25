@@ -141,8 +141,8 @@ int getCrankAngle_HondaD17(void)
 
 static void attach_interrupts(void)
 {
-  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
-  byte const secondaryTriggerEdge = CHANGE;
+  primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  secondaryTriggerEdge = CHANGE;
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_HondaD17, primaryTriggerEdge);
   attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_HondaD17, secondaryTriggerEdge);

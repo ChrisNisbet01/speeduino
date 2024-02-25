@@ -144,8 +144,8 @@ void triggerSec_Webber(void)
 static void attach_interrupts(void)
 {
   //Weber-Marelli
-  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
-  byte const secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
+  primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_Webber, primaryTriggerEdge);
   attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_Webber, secondaryTriggerEdge);

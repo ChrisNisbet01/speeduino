@@ -224,7 +224,7 @@ void triggerSetEndTeeth_Renix(void)
 static void attach_interrupts(void)
 {
   //Renault 44 tooth decoder
-  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_Renix, primaryTriggerEdge);
 }

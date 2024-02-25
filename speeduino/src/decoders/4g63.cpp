@@ -547,8 +547,8 @@ void triggerSetEndTeeth_4G63(void)
 
 static void attach_interrupts(void)
 {
-  byte const primaryTriggerEdge = CHANGE;
-  byte const secondaryTriggerEdge = FALLING;
+  primaryTriggerEdge = CHANGE;
+  secondaryTriggerEdge = FALLING;
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_4G63, primaryTriggerEdge);
   attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_4G63, secondaryTriggerEdge);

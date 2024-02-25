@@ -352,8 +352,8 @@ void triggerSetEndTeeth_Subaru67(void)
 
 static void attach_interrupts(void)
 {
-  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
-  byte const secondaryTriggerEdge = FALLING;
+  primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  secondaryTriggerEdge = FALLING;
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_Subaru67, primaryTriggerEdge);
   attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_Subaru67, secondaryTriggerEdge);

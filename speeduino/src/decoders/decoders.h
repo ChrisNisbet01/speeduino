@@ -64,14 +64,6 @@ __attribute__((noinline))int crankingGetRPM(byte totalTeeth, bool isCamTeeth);
 
 extern decoder_context_st decoder;
 
-extern void (*triggerHandler)(void); //Pointer for the trigger function (Gets pointed to the relevant decoder)
-extern void (*triggerSecondaryHandler)(void); //Pointer for the secondary trigger function (Gets pointed to the relevant decoder)
-extern void (*triggerTertiaryHandler)(void); //Pointer for the tertiary trigger function (Gets pointed to the relevant decoder)
-
-extern uint16_t (*getRPM)(void); //Pointer to the getRPM function (Gets pointed to the relevant decoder)
-extern int (*getCrankAngle)(void); //Pointer to the getCrank Angle function (Gets pointed to the relevant decoder)
-extern void (*triggerSetEndTeeth)(void); //Pointer to the triggerSetEndTeeth function of each decoder
-
 extern volatile unsigned long curTime;
 extern volatile unsigned long curGap;
 extern volatile unsigned long curTime2;

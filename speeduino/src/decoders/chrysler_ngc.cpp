@@ -508,8 +508,8 @@ void triggerSetEndTeeth_NGC(void)
 static void attach_interrupts_4(void)
 {
   //Chrysler NGC - 4, 6 and 8 cylinder
-  byte const primaryTriggerEdge = CHANGE;
-  byte const secondaryTriggerEdge = CHANGE;
+  primaryTriggerEdge = CHANGE;
+  secondaryTriggerEdge = CHANGE;
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_NGC, primaryTriggerEdge);
   attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_NGC4, secondaryTriggerEdge);
@@ -518,8 +518,8 @@ static void attach_interrupts_4(void)
 static void attach_interrupts_68(void)
 {
   //Chrysler NGC - 4, 6 and 8 cylinder
-  byte const primaryTriggerEdge = CHANGE;
-  byte const secondaryTriggerEdge = FALLING;
+  primaryTriggerEdge = CHANGE;
+  secondaryTriggerEdge = FALLING;
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_NGC, primaryTriggerEdge);
   attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_NGC68, secondaryTriggerEdge);

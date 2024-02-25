@@ -299,7 +299,7 @@ void triggerSetEndTeeth_BasicDistributor(void)
 static void attach_interrupts(void)
 {
   // Basic distributor
-  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_BasicDistributor, primaryTriggerEdge);
 }

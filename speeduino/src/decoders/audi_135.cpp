@@ -168,8 +168,8 @@ int getCrankAngle_Audi135(void)
 
 static void attach_interrupts(void)
 {
-  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
-  byte const secondaryTriggerEdge = RISING; //always rising for this trigger
+  primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  secondaryTriggerEdge = RISING; //always rising for this trigger
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_Audi135, primaryTriggerEdge);
   attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_Audi135, secondaryTriggerEdge);

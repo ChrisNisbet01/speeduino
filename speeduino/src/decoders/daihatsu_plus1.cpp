@@ -228,7 +228,7 @@ int getCrankAngle_Daihatsu(void)
 static void attach_interrupts(void)
 {
   //No secondary input required for this pattern
-  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_Daihatsu, primaryTriggerEdge);
 }

@@ -164,8 +164,8 @@ int getCrankAngle_Jeep2000(void)
 
 static void attach_interrupts(void)
 {
-  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
-  byte const secondaryTriggerEdge = CHANGE;
+  primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  secondaryTriggerEdge = CHANGE;
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_Jeep2000, primaryTriggerEdge);
   attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_Jeep2000, secondaryTriggerEdge);

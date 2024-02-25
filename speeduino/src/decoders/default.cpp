@@ -13,7 +13,7 @@ static void triggerSetup_default(bool initialisationComplete)
 
 static void attach_interrupts(void)
 {
-  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_missingTooth, primaryTriggerEdge);
 }
@@ -26,7 +26,7 @@ decoder_handler_st const trigger_default PROGMEM =
   .tertiaryToothHandler = nullTriggerHandler,
   .get_rpm = getRPM_missingTooth,
   .get_crank_angle = getCrankAngle_missingTooth,
-  .set_end_teeth = nullSetEndTeeth,
+  .set_end_teeth = triggerSetEndTeeth_missingTooth,
   .attach_interrupts = attach_interrupts,
 };
 

@@ -356,7 +356,7 @@ void triggerSec_RoverMEMS(void)
     {
       int16_t curAngle;
 
-      curAngle = getCrankAngle();
+      curAngle = decoder.handler.get_crank_angle();
       while (curAngle > 360)
       {
         curAngle -= 360;
@@ -566,8 +566,8 @@ void triggerSetEndTeeth_RoverMEMS(void)
 static void attach_interrupts(void)
 {
   //Rover MEMs - covers multiple flywheel trigger combinations.
-  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
-  byte const secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
+  primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_RoverMEMS, primaryTriggerEdge);
   attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_RoverMEMS, secondaryTriggerEdge);

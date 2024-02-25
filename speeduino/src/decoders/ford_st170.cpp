@@ -102,7 +102,7 @@ void triggerSec_FordST170(void)
     //cycle even when the VVT is at either end of its full swing.
     if (configPage6.vvtEnabled > 0 && revolutionOne && secondaryToothCount == 1)
     {
-      int16_t curAngle = getCrankAngle();
+      int16_t curAngle = decoder.handler.get_crank_angle();
 
       while (curAngle > 360)
       {
@@ -229,8 +229,8 @@ void triggerSetEndTeeth_FordST170(void)
 static void attach_interrupts(void)
 {
   //Ford ST170
-  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
-  byte const secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
+  primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_missingTooth, primaryTriggerEdge);
   attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_FordST170, secondaryTriggerEdge);

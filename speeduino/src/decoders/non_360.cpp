@@ -110,8 +110,8 @@ static void attach_interrupts(void)
 {
   // Attach the crank trigger wheel interrupt (Hall sensor drags to ground
   // when triggering)
-  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
-  byte const secondaryTriggerEdge = FALLING;
+  primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  secondaryTriggerEdge = FALLING;
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_DualWheel, primaryTriggerEdge);
   attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_DualWheel, secondaryTriggerEdge);

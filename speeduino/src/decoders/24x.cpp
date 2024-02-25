@@ -178,8 +178,8 @@ int getCrankAngle_24X(void)
 
 static void attach_interrupts(void)
 {
-  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
-  byte const secondaryTriggerEdge = CHANGE; //Secondary is always on every change
+  primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  secondaryTriggerEdge = CHANGE; //Secondary is always on every change
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_24X, primaryTriggerEdge);
   attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_24X, secondaryTriggerEdge);

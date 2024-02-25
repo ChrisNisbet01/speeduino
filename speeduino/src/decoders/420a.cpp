@@ -230,8 +230,8 @@ void triggerSetEndTeeth_420a(void)
 static void attach_interrupts(void)
 {
   //DSM 420a
-  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
-  byte const secondaryTriggerEdge = FALLING; //Always falling edge
+  primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  secondaryTriggerEdge = FALLING; //Always falling edge
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_420a, primaryTriggerEdge);
   attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_420a, secondaryTriggerEdge);

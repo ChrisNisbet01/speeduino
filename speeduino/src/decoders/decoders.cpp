@@ -212,13 +212,6 @@ static inline bool HasAnySync(const statuses &status)
   return status.hasSync || BIT_CHECK(status.status3, BIT_STATUS3_HALFSYNC);
 }
 
-void (*triggerHandler)(void) = nullTriggerHandler; ///Pointer for the trigger function (Gets pointed to the relevant decoder)
-void (*triggerSecondaryHandler)(void) = nullTriggerHandler; ///Pointer for the secondary trigger function (Gets pointed to the relevant decoder)
-void (*triggerTertiaryHandler)(void) = nullTriggerHandler; ///Pointer for the tertiary trigger function (Gets pointed to the relevant decoder)
-uint16_t (*getRPM)(void) = nullGetRPM; ///Pointer to the getRPM function (Gets pointed to the relevant decoder)
-int (*getCrankAngle)(void) = nullGetCrankAngle; ///Pointer to the getCrank Angle function (Gets pointed to the relevant decoder)
-void (*triggerSetEndTeeth)(void) = triggerSetEndTeeth_missingTooth; ///Pointer to the triggerSetEndTeeth function of each decoder
-
 volatile unsigned long curTime;
 volatile unsigned long curGap;
 volatile unsigned long curTime2;
@@ -474,7 +467,7 @@ void loggerPrimaryISR(void)
 
   if (valid_edge)
   {
-    triggerHandler();
+    decoder.handler.primaryToothHandler();
   }
 
   if (currentStatus.toothLogEnabled
@@ -516,7 +509,7 @@ void loggerSecondaryISR(void)
 
   if (valid_edge)
   {
-    triggerSecondaryHandler();
+    decoder.handler.secondaryToothHandler();
   }
 
   //No tooth logger for the secondary input
@@ -544,7 +537,6 @@ void loggerTertiaryISR(void)
   */
 
   bool const trigger_state = Trigger3.read();
-  /* Fix me - need a way to get the trigger edge from the assigned decoder. */
   bool const valid_edge =
     (tertiaryTriggerEdge == RISING && trigger_state)
     || (tertiaryTriggerEdge == FALLING && !trigger_state)
@@ -552,7 +544,7 @@ void loggerTertiaryISR(void)
 
   if (valid_edge)
   {
-    triggerTertiaryHandler();
+    decoder.handler.tertiaryToothHandler();
   }
 
   //No tooth logger for the secondary input

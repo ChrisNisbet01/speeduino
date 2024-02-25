@@ -175,7 +175,7 @@ int getCrankAngle_Harley(void)
 
 static void attach_interrupts(void)
 {
-  byte const primaryTriggerEdge = RISING; //Always rising
+  primaryTriggerEdge = RISING; //Always rising
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_Harley, primaryTriggerEdge);
 }

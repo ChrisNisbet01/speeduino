@@ -12,7 +12,7 @@ static inline void triggerRecordVVT1Angle(void)
   if (configPage6.vvtEnabled > 0 && revolutionOne)
   {
     int16_t curAngle;
-    curAngle = getCrankAngle();
+    curAngle = decoder.handler.get_crank_angle();
     while (curAngle > 360)
     {
       curAngle -= 360;
@@ -368,7 +368,7 @@ void triggerThird_missingTooth(void)
     //Next third filter is 25% the current gap
     triggerThirdFilterTime = curGap3 >> 2;
 
-    curAngle = getCrankAngle();
+    curAngle = decoder.handler.get_crank_angle();
     while (curAngle > 360)
     {
       curAngle -= 360;
@@ -520,20 +520,20 @@ static void attach_interrupts(void)
 {
   // Attach the crank trigger wheel interrupt
   // (Hall sensor drags to ground when triggering)
-  byte const primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
+  primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
 
   attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_missingTooth, primaryTriggerEdge);
 
   if (BIT_CHECK(decoderState, BIT_DECODER_HAS_SECONDARY))
   {
-    byte const secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
+    secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
     attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_missingTooth, secondaryTriggerEdge);
   }
 
   if (configPage10.vvt2Enabled > 0)
   {
     // we only need this for vvt2, so not really needed if it's not used
-    byte const tertiaryTriggerEdge = (configPage10.TrigEdgeThrd == 0) ? RISING : FALLING;
+    tertiaryTriggerEdge = (configPage10.TrigEdgeThrd == 0) ? RISING : FALLING;
     attachInterrupt(digitalPinToInterrupt(Trigger3.pin), triggerThird_missingTooth, tertiaryTriggerEdge);
   }
 }

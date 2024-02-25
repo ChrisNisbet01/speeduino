@@ -146,7 +146,7 @@ void loop(void)
   if (timeToLastTooth < MAX_STALL_TIME
       || toothLastToothTime > currentLoopTime)
   {
-    currentStatus.longRPM = getRPM(); //Long RPM is included here
+    currentStatus.longRPM = decoder.handler.get_rpm(); //Long RPM is included here
     currentStatus.RPM = currentStatus.longRPM;
     currentStatus.RPMdiv100 = div100(currentStatus.RPM);
     fuelPump.turnOn();
@@ -959,7 +959,7 @@ void loop(void)
     //This only needs to be run if the advance figure has changed, otherwise the end teeth will still be the same
     if (configPage2.perToothIgn)
     {
-      triggerSetEndTeeth();
+      decoder.handler.set_end_teeth();
     }
 
     //***********************************************************************************************
@@ -969,7 +969,7 @@ void loop(void)
     //This may potentially be called a number of times as we get closer and closer to the opening time
 
     //Determine the current crank angle
-    int crankAngle = injectorLimits(getCrankAngle());
+    int crankAngle = injectorLimits(decoder.handler.get_crank_angle());
 
     //Check for any of the engine protections or rev limiters being turned on
     uint16_t maxAllowedRPM = checkRevLimit(); //The maximum RPM allowed by all the potential limiters (Engine protection, 2-step, flat shift etc). Divided by 100. `checkRevLimit()` returns the current maximum RPM allow (divided by 100) based on either the fixed hard limit or the current coolant temp
@@ -1216,7 +1216,7 @@ void loop(void)
     if (ignitions.channelsOn != 0)
     {
       //Refresh the current crank angle info
-      crankAngle = ignitionLimits(getCrankAngle());
+      crankAngle = ignitionLimits(decoder.handler.get_crank_angle());
 
       ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
 
@@ -1233,7 +1233,7 @@ void loop(void)
         unsigned long uSToEnd = 0;
 
         //Refresh the crank angle info
-        crankAngle = ignitionLimits(getCrankAngle());
+        crankAngle = ignitionLimits(decoder.handler.get_crank_angle());
 
         //ONLY ONE OF THE BELOW SHOULD BE USED (PROBABLY THE FIRST):
         //*********
