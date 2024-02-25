@@ -8,7 +8,7 @@ A full copy of the license may be found in the projects root directory
  *
  * Crank and Cam decoders
  *
- * This file contains the various crank and cam wheel decoder functions.
+ * This directory contains the various crank and cam wheel decoder functions.
  * Each decoder must have the following 4 functions (Where xxxx is the decoder name):
  *
  * - **triggerSetup_xxxx** - Called once from within setup() and configures any required variables
