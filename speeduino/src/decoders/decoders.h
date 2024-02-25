@@ -62,9 +62,6 @@ void loggerTertiaryISR(void);
 
 __attribute__((noinline))int crankingGetRPM(byte totalTeeth, bool isCamTeeth);
 
-void triggerSetup_DRZ400(bool initialisationComplete = false);
-void triggerSec_DRZ400(void);
-
 void triggerSetup_NGC(bool initialisationComplete = false);
 void triggerPri_NGC(void);
 void triggerSec_NGC4(void);
