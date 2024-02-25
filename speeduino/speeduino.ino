@@ -917,7 +917,8 @@ void loop(void)
 #endif
       break;
 
-      //Will hit the default case on 1 cylinder or >8 cylinders. Do nothing in these cases
+      //Will hit the default case on 1 cylinder or >8 cylinders.
+      //Do nothing in these cases
     default:
       break;
     }
@@ -933,19 +934,19 @@ void loop(void)
     if (BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK))
     {
       //use cranking dwell
-      currentStatus.dwell =  (configPage4.dwellCrank * dwell_multiplier);
+      currentStatus.dwell = configPage4.dwellCrank * dwell_multiplier;
     }
     else
     {
       if (configPage2.useDwellMap)
       {
         //use running dwell from map
-        currentStatus.dwell = (get3DTableValue(&dwellTable, currentStatus.ignLoad, currentStatus.RPM) * dwell_multiplier);
+        currentStatus.dwell = get3DTableValue(&dwellTable, currentStatus.ignLoad, currentStatus.RPM) * dwell_multiplier;
       }
       else
       {
         //use fixed running dwell
-        currentStatus.dwell =  (configPage4.dwellRun * dwell_multiplier);
+        currentStatus.dwell =  configPage4.dwellRun * dwell_multiplier;
       }
     }
     currentStatus.dwell = correctionsDwell(currentStatus.dwell);
@@ -956,7 +957,8 @@ void loop(void)
     calculateIgnitionAngles(dwellAngle);
 
     //If ignition timing is being tracked per tooth, perform the calcs to get the end teeth
-    //This only needs to be run if the advance figure has changed, otherwise the end teeth will still be the same
+    //This only needs to be run if the advance figure has changed, otherwise the
+    //end teeth will still be the same
     if (configPage2.perToothIgn)
     {
       decoder.handler.set_end_teeth();
@@ -972,8 +974,13 @@ void loop(void)
     int crankAngle = injectorLimits(decoder.handler.get_crank_angle());
 
     //Check for any of the engine protections or rev limiters being turned on
-    uint16_t maxAllowedRPM = checkRevLimit(); //The maximum RPM allowed by all the potential limiters (Engine protection, 2-step, flat shift etc). Divided by 100. `checkRevLimit()` returns the current maximum RPM allow (divided by 100) based on either the fixed hard limit or the current coolant temp
-    //Check each of the functions that has an RPM limit. Update the max allowed RPM if the function is active and has a lower RPM than already set
+    //The maximum RPM allowed by all the potential limiters (Engine protection,
+    //2-step, flat shift etc). Divided by 100. `checkRevLimit()` returns the
+    //current maximum RPM allow (divided by 100) based on either the fixed hard
+    //limit or the current coolant temp
+    uint16_t maxAllowedRPM = checkRevLimit();
+    //Check each of the functions that has an RPM limit. Update the max allowed
+    //RPM if the function is active and has a lower RPM than already set
     if (checkEngineProtect() && (configPage4.engineProtectMaxRPM < maxAllowedRPM))
     {
       maxAllowedRPM = configPage4.engineProtectMaxRPM;
