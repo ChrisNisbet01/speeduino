@@ -292,7 +292,7 @@ void triggerSetEndTeeth_ThirtySixMinus222(void)
   }
 }
 
-decoder_handler_st const trigger_36_2_2_2 =
+decoder_handler_st const trigger_36_minus_222 =
 {
   .setup = triggerSetup_ThirtySixMinus222,
   .primaryToothHandler = triggerPri_ThirtySixMinus222,

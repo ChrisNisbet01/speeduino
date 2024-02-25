@@ -62,13 +62,6 @@ void loggerTertiaryISR(void);
 
 __attribute__((noinline))int crankingGetRPM(byte totalTeeth, bool isCamTeeth);
 
-void triggerSetup_ThirtySixMinus21(bool initialisationComplete = false);
-void triggerPri_ThirtySixMinus21(void);
-void triggerSec_ThirtySixMinus21(void);
-uint16_t getRPM_ThirtySixMinus21(void);
-int getCrankAngle_ThirtySixMinus21(void);
-void triggerSetEndTeeth_ThirtySixMinus21(void);
-
 void triggerSetup_420a(bool initialisationComplete = false);
 void triggerPri_420a(void);
 void triggerSec_420a(void);
