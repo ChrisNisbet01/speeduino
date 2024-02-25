@@ -43,6 +43,7 @@
 #include "src/decoders/basic_distributer.h"
 #include "src/decoders/gm7x.h"
 #include "src/decoders/4g63.h"
+#include "src/decoders/24x.h"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 

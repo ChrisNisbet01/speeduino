@@ -19,7 +19,6 @@ Tooth number one is at 355* ATDC.
 */
 void triggerSetup_4G63(bool const initialisationComplete)
 {
-  UNUSED(initialisationComplete);
   triggerToothAngle = 180; //The number of degrees that passes from tooth to tooth (primary)
   toothCurrentCount = 99; //Fake tooth count represents no sync
   BIT_CLEAR(decoderState, BIT_DECODER_2ND_DERIV);

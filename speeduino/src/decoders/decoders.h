@@ -62,13 +62,6 @@ void loggerTertiaryISR(void);
 
 __attribute__((noinline))int crankingGetRPM(byte totalTeeth, bool isCamTeeth);
 
-void triggerSetup_24X(bool initialisationComplete);
-void triggerPri_24X(void);
-void triggerSec_24X(void);
-uint16_t getRPM_24X(void);
-int getCrankAngle_24X(void);
-void triggerSetEndTeeth_24X(void);
-
 void triggerSetup_Jeep2000(bool initialisationComplete);
 void triggerPri_Jeep2000(void);
 void triggerSec_Jeep2000(void);
