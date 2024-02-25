@@ -62,20 +62,6 @@ void loggerTertiaryISR(void);
 
 __attribute__((noinline))int crankingGetRPM(byte totalTeeth, bool isCamTeeth);
 
-void triggerSetup_Nissan360(bool initialisationComplete = false);
-void triggerPri_Nissan360(void);
-void triggerSec_Nissan360(void);
-uint16_t getRPM_Nissan360(void);
-int getCrankAngle_Nissan360(void);
-void triggerSetEndTeeth_Nissan360(void);
-
-void triggerSetup_Subaru67(bool initialisationComplete = false);
-void triggerPri_Subaru67(void);
-void triggerSec_Subaru67(void);
-uint16_t getRPM_Subaru67(void);
-int getCrankAngle_Subaru67(void);
-void triggerSetEndTeeth_Subaru67(void);
-
 void triggerSetup_Daihatsu(bool initialisationComplete = false);
 void triggerPri_Daihatsu(void);
 void triggerSec_Daihatsu(void);

@@ -50,6 +50,8 @@
 #include "src/decoders/miata_9905.h"
 #include "src/decoders/mazda_au.h"
 #include "src/decoders/non_360.h"
+#include "src/decoders/nissan_360.h"
+#include "src/decoders/subaru_67.h"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 

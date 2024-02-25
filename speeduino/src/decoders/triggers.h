@@ -121,21 +121,5 @@ static inline uint16_t RpmFromRevolutionTimeUs(uint32_t revTime)
   return clampRpm(rpm);
 }
 
-/** Compute RPM.
-* As nearly all the decoders use a common method of determining RPM
-* (The time the last full revolution took), a common function is simpler.
-* @param isCamTeeth - Indicates that this is a cam wheel tooth.
-* Some patterns have a tooth #1 every crank rev, others are every cam rev.
-* @return RPM
-*/
-static __attribute__((noinline)) uint16_t
-stdGetRPM(bool isCamTeeth)
-{
-  if (UpdateRevolutionTimeFromTeeth(isCamTeeth))
-  {
-    return RpmFromRevolutionTimeUs(revolutionTime);
-  }
-
-  return currentStatus.RPM;
-}
+__attribute__((noinline)) uint16_t stdGetRPM(bool isCamTeeth);
 
