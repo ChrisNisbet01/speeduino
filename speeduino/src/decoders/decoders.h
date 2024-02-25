@@ -62,13 +62,6 @@ void loggerTertiaryISR(void);
 
 __attribute__((noinline))int crankingGetRPM(byte totalTeeth, bool isCamTeeth);
 
-void triggerSetup_Daihatsu(bool initialisationComplete = false);
-void triggerPri_Daihatsu(void);
-void triggerSec_Daihatsu(void);
-uint16_t getRPM_Daihatsu(void);
-int getCrankAngle_Daihatsu(void);
-void triggerSetEndTeeth_Daihatsu(void);
-
 void triggerSetup_Harley(bool initialisationComplete);
 void triggerPri_Harley(void);
 void triggerSec_Harley(void);
