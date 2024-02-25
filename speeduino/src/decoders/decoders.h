@@ -62,13 +62,6 @@ void loggerTertiaryISR(void);
 
 __attribute__((noinline))int crankingGetRPM(byte totalTeeth, bool isCamTeeth);
 
-void triggerSetup_Harley(bool initialisationComplete);
-void triggerPri_Harley(void);
-void triggerSec_Harley(void);
-uint16_t getRPM_Harley(void);
-int getCrankAngle_Harley(void);
-void triggerSetEndTeeth_Harley(void);
-
 void triggerSetup_ThirtySixMinus222(bool initialisationComplete = false);
 void triggerPri_ThirtySixMinus222(void);
 void triggerSec_ThirtySixMinus222(void);

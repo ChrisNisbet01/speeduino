@@ -53,6 +53,7 @@
 #include "src/decoders/nissan_360.h"
 #include "src/decoders/subaru_67.h"
 #include "src/decoders/daihatsu_plus1.h"
+#include "src/decoders/harley.h"
 
 static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to reference when changing to/from half sync. */
 
@@ -3595,10 +3596,9 @@ void initialiseTriggers(void)
     case DECODER_HARLEY:
       triggerSetup_Harley(currentStatus.initialisationComplete);
       triggerHandler = triggerPri_Harley;
-      //triggerSecondaryHandler = triggerSec_Harley;
       getRPM = getRPM_Harley;
       getCrankAngle = getCrankAngle_Harley;
-      triggerSetEndTeeth = triggerSetEndTeeth_Harley;
+      triggerSetEndTeeth = nullSetEndTeeth;
 
       primaryTriggerEdge = RISING; //Always rising
       attachInterrupt(triggerInterrupt, triggerHandler, primaryTriggerEdge);
@@ -3610,7 +3610,9 @@ void initialiseTriggers(void)
       triggerHandler = triggerPri_ThirtySixMinus222;
       triggerSecondaryHandler = triggerSec_ThirtySixMinus222;
       getRPM = getRPM_ThirtySixMinus222;
-      getCrankAngle = getCrankAngle_missingTooth; //This uses the same function as the missing tooth decoder, so no need to duplicate code
+      //This uses the same function as the missing tooth decoder,
+      //so no need to duplicate code
+      getCrankAngle = getCrankAngle_missingTooth;
       triggerSetEndTeeth = triggerSetEndTeeth_ThirtySixMinus222;
 
       primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
