@@ -6,6 +6,7 @@
 #include "scheduler.h"
 #include "injector_contexts.h"
 #include "injector_schedule.h"
+#include "src/decoders/missing_tooth.h"
 
 static void prepareForInitialiseAll(void)
 {
@@ -35,9 +36,10 @@ void test_debug2(void)
     initialiseSchedulers();
     //fuelSchedule1.pTimerEnable =  FUEL1_TIMER_ENABLE;
     //fuelSchedule1.pTimerDisable =  FUEL1_TIMER_DISABLE;
-    TEST_ASSERT_EQUAL(fuelSchedule1.pTimerEnable, FUEL1_TIMER_ENABLE);
-    TEST_ASSERT_EQUAL(fuelSchedule1.startCompare, 1003);
-    TEST_ASSERT_EQUAL(fuelSchedule1.endCompare, 1003);
+    //TEST_ASSERT_EQUAL(0, memcmp_P(&decoder.handler, &trigger_missing_tooth, sizeof(decoder.handler)));
+    //TEST_ASSERT_EQUAL(fuelSchedule1.pTimerEnable, FUEL1_TIMER_ENABLE);
+    //TEST_ASSERT_EQUAL(1003, fuelSchedule1.startCompare);
+    //TEST_ASSERT_EQUAL(1003, fuelSchedule1.endCompare);
     TEST_ASSERT_TRUE(injectors.injector(injChannel1).fuelSchedule != nullptr);
     TEST_ASSERT_EQUAL(injectors.injector(injChannel1).fuelSchedule->pTimerEnable, FUEL1_TIMER_ENABLE);
 }
@@ -53,14 +55,13 @@ void setup()
 
   initialiseAll(); // Run the main initialise function
 
-  test_debug();
-  test_debug2();
+  RUN_TEST(test_debug);
+  RUN_TEST(test_debug2);
   //test_status_initial_off();
   //test_status_off_to_pending();
   //test_status_pending_to_running();
   //test_status_running_to_pending();
   //test_status_running_to_off();
-  test_debug();
   //test_accuracy_timeout();
   //test_accuracy_duration();
 

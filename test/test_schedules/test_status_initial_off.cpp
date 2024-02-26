@@ -119,36 +119,52 @@ void test_status_initial_off_ign8(void)
 void test_status_initial_off(void)
 {
     RUN_TEST(test_status_initial_off_inj1);
+    delay(250);
     RUN_TEST(test_status_initial_off_inj2);
+    delay(250);
     RUN_TEST(test_status_initial_off_inj3);
+    delay(250);
     RUN_TEST(test_status_initial_off_inj4);
+    delay(250);
 #if INJ_CHANNELS >= 5
     RUN_TEST(test_status_initial_off_inj5);
+    delay(250);
 #endif
 #if INJ_CHANNELS >= 6
     RUN_TEST(test_status_initial_off_inj6);
+    delay(250);
 #endif
 #if INJ_CHANNELS >= 7
     RUN_TEST(test_status_initial_off_inj7);
+    delay(250);
 #endif
 #if INJ_CHANNELS >= 8
     RUN_TEST(test_status_initial_off_inj8);
+    delay(250);
 #endif
 
     RUN_TEST(test_status_initial_off_ign1);
+    delay(250);
     RUN_TEST(test_status_initial_off_ign2);
+    delay(250);
     RUN_TEST(test_status_initial_off_ign3);
+    delay(250);
     RUN_TEST(test_status_initial_off_ign4);
+    delay(250);
 #if IGN_CHANNELS >= 5
     RUN_TEST(test_status_initial_off_ign5);
+    delay(250);
 #endif
 #if IGN_CHANNELS >= 6
     RUN_TEST(test_status_initial_off_ign6);
+    delay(250);
 #endif
 #if IGN_CHANNELS >= 7
     RUN_TEST(test_status_initial_off_ign7);
+    delay(250);
 #endif
 #if IGN_CHANNELS >= 8
     RUN_TEST(test_status_initial_off_ign8);
+    delay(250);
 #endif
 }
