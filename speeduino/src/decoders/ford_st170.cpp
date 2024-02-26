@@ -2,12 +2,12 @@
 #include "missing_tooth.h"
 #include "decoders.h"
 #include "triggers.h"
-#include "bit_macros.h"
-#include "crankMaths.h"
+#include "../../bit_macros.h"
+#include "../../crankMaths.h"
 #include "null_trigger.h"
-#include "ignition_control.h"
-#include "auxiliary_pins.h"
-#include "utilities.h"
+#include "../../ignition_control.h"
+#include "../../auxiliary_pins.h"
+#include "../../utilities.h"
 
 /** Ford ST170 - a dedicated decoder for 01-04 Ford Focus ST170/SVT engine.
 Standard 36-1 trigger wheel running at crank speed and 8-3 trigger wheel running at cam speed.

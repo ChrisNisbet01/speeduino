@@ -2,12 +2,12 @@
 #include "missing_tooth.h"
 #include "decoders.h"
 #include "triggers.h"
-#include "bit_macros.h"
-#include "crankMaths.h"
+#include "../../bit_macros.h"
+#include "../../crankMaths.h"
 #include "null_trigger.h"
-#include "ignition_control.h"
-#include "auxiliary_pins.h"
-#include "utilities.h"
+#include "../../ignition_control.h"
+#include "../../auxiliary_pins.h"
+#include "../../utilities.h"
 
 /** 36-2-2-2 crank based trigger wheel.
 * A crank based trigger with a nominal 36 teeth, but 6 of these removed in 3 groups of 2.

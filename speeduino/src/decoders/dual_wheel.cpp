@@ -1,11 +1,11 @@
 #include "dual_wheel.h"
 #include "decoders.h"
 #include "triggers.h"
-#include "bit_macros.h"
-#include "crankMaths.h"
+#include "../../bit_macros.h"
+#include "../../crankMaths.h"
 #include "null_trigger.h"
-#include "utilities.h"
-#include "auxiliary_pins.h"
+#include "../../utilities.h"
+#include "../../auxiliary_pins.h"
 
 /** @} */
 

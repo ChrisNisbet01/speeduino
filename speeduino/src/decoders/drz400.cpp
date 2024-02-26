@@ -2,12 +2,12 @@
 #include "dual_wheel.h"
 #include "decoders.h"
 #include "triggers.h"
-#include "bit_macros.h"
-#include "crankMaths.h"
+#include "../../bit_macros.h"
+#include "../../crankMaths.h"
 #include "null_trigger.h"
-#include "ignition_control.h"
-#include "auxiliary_pins.h"
-#include "utilities.h"
+#include "../../ignition_control.h"
+#include "../../auxiliary_pins.h"
+#include "../../utilities.h"
 
 void triggerSetup_DRZ400(bool const initialisationComplete)
 {

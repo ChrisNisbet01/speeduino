@@ -1,5 +1,5 @@
 #include "null_trigger.h"
-#include "utilities.h"
+#include "../../utilities.h"
 
 //initialisation function for triggerhandlers, does exactly nothing
 void nullTriggerHandler(void)

@@ -1,10 +1,10 @@
 #include "missing_tooth.h"
 #include "decoders.h"
 #include "triggers.h"
-#include "crankMaths.h"
-#include "bit_macros.h"
-#include "auxiliary_pins.h"
-#include "utilities.h"
+#include "../../crankMaths.h"
+#include "../../bit_macros.h"
+#include "../../auxiliary_pins.h"
+#include "../../utilities.h"
 
 static inline void triggerRecordVVT1Angle(void)
 {
@@ -96,10 +96,6 @@ void triggerSetup_missingTooth(bool initialisationComplete)
 
 void triggerPri_missingTooth(void)
 {
-  extern volatile uint32_t interrupt_running;
-
-  interrupt_running++;
-
   curTime = micros();
   curGap = curTime - toothLastToothTime;
   //Pulses should never be less than triggerFilterTime, so if they are it means a false trigger.
@@ -540,8 +536,6 @@ static void attach_interrupts(void)
     tertiaryTriggerEdge = (configPage10.TrigEdgeThrd == 0) ? RISING : FALLING;
     attachInterrupt(digitalPinToInterrupt(Trigger3.pin), triggerThird_missingTooth, tertiaryTriggerEdge);
   }
-  extern int trigger_pattern;
-  trigger_pattern = 95;
 }
 
 decoder_handler_st const trigger_missing_tooth PROGMEM =

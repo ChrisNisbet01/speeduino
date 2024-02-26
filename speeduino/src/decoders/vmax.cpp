@@ -1,13 +1,13 @@
 #include "vmax.h"
 #include "decoders.h"
 #include "triggers.h"
-#include "bit_macros.h"
-#include "crankMaths.h"
+#include "../../bit_macros.h"
+#include "../../crankMaths.h"
 #include "null_trigger.h"
-#include "ignition_control.h"
-#include "auxiliary_pins.h"
-#include "utilities.h"
-#include "globals.h"
+#include "../../ignition_control.h"
+#include "../../auxiliary_pins.h"
+#include "../../utilities.h"
+#include "../../globals.h"
 
 /** Yamaha Vmax 1990+ with 6 uneven teeth, triggering on the wide lobe.
 Within the decoder code, the sync tooth is referred to as tooth #1.*

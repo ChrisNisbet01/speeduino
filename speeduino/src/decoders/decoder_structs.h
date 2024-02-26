@@ -1,6 +1,7 @@
 #pragma once
 
-#include "globals.h"
+#include "../../globals.h"
+
 #include <stdint.h>
 
 #if defined(CORE_SAMD21)

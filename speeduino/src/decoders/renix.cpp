@@ -2,13 +2,13 @@
 #include "missing_tooth.h"
 #include "decoders.h"
 #include "triggers.h"
-#include "bit_macros.h"
-#include "crankMaths.h"
+#include "../../bit_macros.h"
+#include "../../crankMaths.h"
 #include "null_trigger.h"
-#include "ignition_control.h"
-#include "auxiliary_pins.h"
-#include "utilities.h"
-#include "globals.h"
+#include "../../ignition_control.h"
+#include "../../auxiliary_pins.h"
+#include "../../utilities.h"
+#include "../../globals.h"
 
 /** Renix 44-2-2  and 66-2-2-2 decoder.
 * Renix trigger wheel doesn't decode into 360 degrees nicely (360/44 = 8.18 degrees or 360/66 = 5.454545).

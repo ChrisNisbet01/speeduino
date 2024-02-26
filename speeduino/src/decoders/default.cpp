@@ -2,8 +2,8 @@
 #include "missing_tooth.h"
 #include "null_trigger.h"
 #include "decoders.h"
-#include "utilities.h"
-#include "auxiliary_pins.h"
+#include "../../utilities.h"
+#include "../../auxiliary_pins.h"
 
 static void triggerSetup_default(bool initialisationComplete)
 {

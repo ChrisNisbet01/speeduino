@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ignition_contexts.h"
-#include "bit_macros.h"
+#include "../../ignition_contexts.h"
+#include "../../bit_macros.h"
 
 #ifdef USE_LIBDIVIDE
 #include "src/libdivide/libdivide.h"
