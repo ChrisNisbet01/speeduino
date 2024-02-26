@@ -18,7 +18,7 @@ struct FuelSchedule {
   using counter_t = decltype(FUEL1_COUNTER);
   using compare_t = decltype(FUEL1_COMPARE);
 
-  FuelSchedule( counter_t &counter, compare_t &compare,
+  FuelSchedule(counter_t &counter, compare_t &compare,
             void (&_pTimerDisable)(), void (&_pTimerEnable)())
   : counter(counter)
   , compare(compare)

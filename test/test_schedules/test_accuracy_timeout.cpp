@@ -25,7 +25,7 @@ static void endCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
 {
     UNUSED(coil_id1);
     UNUSED(coil_id2);
-
+    end_time = start_time + 3500;
     /* Empty */
 }
 
@@ -41,18 +41,22 @@ static void injEndCallback(injector_id_t inj_id1, injector_id_t inj_id2)
 {
     UNUSED(inj_id1);
     UNUSED(inj_id2);
-
+    end_time = start_time + 2600;
     /* Do nothing. */
 }
 
 void test_accuracy_timeout_inj(FuelSchedule &schedule)
 {
     initialiseSchedulers();
+    TEST_ASSERT_EQUAL(OFF, schedule.Status);
     schedule.start.pCallback = injStartCallback;
+    TEST_ASSERT_EQUAL(schedule.start.pCallback, injStartCallback);
     schedule.end.pCallback = injEndCallback;
+    TEST_ASSERT_EQUAL(schedule.end.pCallback, injEndCallback);
     start_time = micros();
+    end_time = start_time;
     setFuelSchedule(schedule, TIMEOUT, DURATION);
-    while(schedule.Status == PENDING)
+    while(schedule.Status != RUNNING)
     {
         /*Wait*/
     }
@@ -113,6 +117,7 @@ void test_accuracy_timeout_ign(IgnitionSchedule &schedule)
     schedule.start.pCallback = startCallback;
     schedule.end.pCallback = endCallback;
     start_time = micros();
+    end_time = start_time;
     setIgnitionSchedule(schedule, TIMEOUT, DURATION);
     while(schedule.Status == PENDING)
     {

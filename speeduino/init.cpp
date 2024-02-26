@@ -3342,17 +3342,28 @@ void setPinMapping(byte boardID)
  */
 void initialiseTriggers(void)
 {
-  byte triggerInterrupt = digitalPinToInterrupt(Trigger.pin);
-  byte triggerInterrupt2 = digitalPinToInterrupt(Trigger2.pin);
-  byte triggerInterrupt3 = digitalPinToInterrupt(Trigger3.pin);
-
   Trigger.configure();
   Trigger2.configure();
   Trigger3.configure();
 
-  detachInterrupt(triggerInterrupt);
-  detachInterrupt(triggerInterrupt2);
-  detachInterrupt(triggerInterrupt3);
+  if (Trigger.is_configured())
+  {
+    byte const triggerInterrupt = digitalPinToInterrupt(Trigger.pin);
+
+    detachInterrupt(triggerInterrupt);
+  }
+  if (Trigger2.is_configured())
+  {
+    byte const triggerInterrupt = digitalPinToInterrupt(Trigger2.pin);
+
+    detachInterrupt(triggerInterrupt);
+  }
+  if (Trigger3.is_configured())
+  {
+    byte const triggerInterrupt = digitalPinToInterrupt(Trigger3.pin);
+
+    detachInterrupt(triggerInterrupt);
+  }
 
   //The default values for edges
   primaryTriggerEdge = 0; //This should ALWAYS be changed below

@@ -522,15 +522,18 @@ static void attach_interrupts(void)
   // (Hall sensor drags to ground when triggering)
   primaryTriggerEdge = (configPage4.TrigEdge == 0) ? RISING : FALLING;
 
-  attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_missingTooth, primaryTriggerEdge);
+  if (Trigger.is_configured())
+  {
+    attachInterrupt(digitalPinToInterrupt(Trigger.pin), triggerPri_missingTooth, primaryTriggerEdge);
+  }
 
-  if (BIT_CHECK(decoderState, BIT_DECODER_HAS_SECONDARY))
+  if (BIT_CHECK(decoderState, BIT_DECODER_HAS_SECONDARY) && Trigger2.is_configured())
   {
     secondaryTriggerEdge = (configPage4.TrigEdgeSec == 0) ? RISING : FALLING;
     attachInterrupt(digitalPinToInterrupt(Trigger2.pin), triggerSec_missingTooth, secondaryTriggerEdge);
   }
 
-  if (configPage10.vvt2Enabled > 0)
+  if (configPage10.vvt2Enabled > 0 && Trigger3.is_configured())
   {
     // we only need this for vvt2, so not really needed if it's not used
     tertiaryTriggerEdge = (configPage10.TrigEdgeThrd == 0) ? RISING : FALLING;
