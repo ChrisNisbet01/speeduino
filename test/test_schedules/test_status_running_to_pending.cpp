@@ -20,6 +20,10 @@ void test_status_running_to_pending_inj1(void)
     initialiseSchedulers();
     setFuelSchedule(fuelSchedule1, TIMEOUT, DURATION);
     while(fuelSchedule1.Status == PENDING) /*Wait*/ ;
+    /*
+     * Quickly insert another scheduled event before the current one ends.
+     * This second event should get placed into the pending queue.
+     */
     setFuelSchedule(fuelSchedule1, 2*TIMEOUT, DURATION);
     while(fuelSchedule1.Status == RUNNING) /*Wait*/ ;
     TEST_ASSERT_EQUAL(PENDING, fuelSchedule1.Status);

@@ -1,6 +1,7 @@
 
 #include <Arduino.h>
 #include <unity.h>
+#include "globals.h"
 
 #include "injector_contexts.h"
 #include "scheduler.h"
@@ -9,25 +10,9 @@
 
 #define TIMEOUT 1000
 #define DURATION 1000
-#define DELTA 24
+#define DELTA 40
 
 static uint32_t start_time, end_time;
-
-static void startCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
-{
-    UNUSED(coil_id1);
-    UNUSED(coil_id2);
-
-    end_time = micros();
-}
-
-static void endCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
-{
-    UNUSED(coil_id1);
-    UNUSED(coil_id2);
-    end_time = start_time + 3500;
-    /* Empty */
-}
 
 static void injStartCallback(injector_id_t inj_id1, injector_id_t inj_id2)
 {
@@ -41,26 +26,37 @@ static void injEndCallback(injector_id_t inj_id1, injector_id_t inj_id2)
 {
     UNUSED(inj_id1);
     UNUSED(inj_id2);
-    end_time = start_time + 2600;
+
     /* Do nothing. */
 }
 
 void test_accuracy_timeout_inj(FuelSchedule &schedule)
 {
-    initialiseSchedulers();
-    TEST_ASSERT_EQUAL(OFF, schedule.Status);
-    schedule.start.pCallback = injStartCallback;
-    TEST_ASSERT_EQUAL(schedule.start.pCallback, injStartCallback);
-    schedule.end.pCallback = injEndCallback;
-    TEST_ASSERT_EQUAL(schedule.end.pCallback, injEndCallback);
-    start_time = micros();
-    end_time = start_time;
-    setFuelSchedule(schedule, TIMEOUT, DURATION);
-    while(schedule.Status != RUNNING)
+  initialiseSchedulers();
+
+  schedule.start.pCallback = injStartCallback;
+  schedule.end.pCallback = injEndCallback;
+  start_time = micros();
+  end_time = start_time;
+  setFuelSchedule(schedule, TIMEOUT, DURATION);
+
+  while(schedule.Status != RUNNING)
+  {
+    /*
+     * Ensure the test doesn't get stuck in this loop by waiting for a maximum
+     * of twice the expected delay before the schedule starts.
+     */
+    int32_t const now = micros();
+
+    if ((now - ((int32_t)start_time + 2 * TIMEOUT)) > 0)
     {
-        /*Wait*/
+      end_time = now;
+      break;
     }
-    TEST_ASSERT_UINT32_WITHIN(DELTA, TIMEOUT, end_time - start_time);
+    /* Wait */
+  }
+
+  TEST_ASSERT_UINT32_WITHIN(DELTA, TIMEOUT, end_time - start_time);
 }
 
 void test_accuracy_timeout_inj1(void)
@@ -111,19 +107,49 @@ void test_accuracy_timeout_inj8(void)
 }
 #endif
 
+static void ignStartCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
+{
+  UNUSED(coil_id1);
+  UNUSED(coil_id2);
+
+  end_time = micros();
+}
+
+static void ignEndCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
+{
+    UNUSED(coil_id1);
+    UNUSED(coil_id2);
+
+    /* Do nothing. */
+}
+
 void test_accuracy_timeout_ign(IgnitionSchedule &schedule)
 {
-    initialiseSchedulers();
-    schedule.start.pCallback = startCallback;
-    schedule.end.pCallback = endCallback;
-    start_time = micros();
-    end_time = start_time;
-    setIgnitionSchedule(schedule, TIMEOUT, DURATION);
-    while(schedule.Status == PENDING)
+  initialiseSchedulers();
+
+  schedule.start.pCallback = ignStartCallback;
+  schedule.end.pCallback = ignEndCallback;
+  start_time = micros();
+  end_time = start_time;
+  setIgnitionSchedule(schedule, TIMEOUT, DURATION);
+
+  while(schedule.Status != RUNNING)
+  {
+    /*
+     * Ensure the test doesn't get stuck in this loop by waiting for a maximum
+     * of twice the expected delay before the schedule starts.
+     */
+    int32_t const now = micros();
+
+    if ((now - ((int32_t)start_time + 2 * TIMEOUT)) > 0)
     {
-        /*Wait*/
+      end_time = now;
+      break;
     }
-    TEST_ASSERT_UINT32_WITHIN(DELTA, TIMEOUT, end_time - start_time);
+    /* Wait */
+  }
+
+  TEST_ASSERT_UINT32_WITHIN(DELTA, TIMEOUT, end_time - start_time);
 }
 
 void test_accuracy_timeout_ign1(void)

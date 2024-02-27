@@ -209,6 +209,7 @@ void _setIgnitionScheduleRunning(
 
   SET_COMPARE(schedule.compare, schedule.startCompare);
   schedule.Status = PENDING; //Turn this schedule on
+
   interrupts();
 
   schedule.pTimerEnable();

@@ -6,6 +6,6 @@ void FuelSchedule::reset(void)
     Status = OFF;
     start.pCallback = nullCallback;
     end.pCallback = nullCallback;
-    pTimerEnable();
+    pTimerDisable();
 }
 
