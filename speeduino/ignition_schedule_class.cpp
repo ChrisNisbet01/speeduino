@@ -3,8 +3,12 @@
 
 void IgnitionSchedule::reset(void)
 {
-    Status = OFF;
-    start.pCallback = nullCallback;
-    end.pCallback = nullCallback;
-    pTimerDisable();
+  noInterrupts();
+
+  Status = OFF;
+  start.pCallback = nullIgnCallback;
+  end.pCallback = nullIgnCallback;
+  pTimerDisable();
+
+  interrupts();
 }

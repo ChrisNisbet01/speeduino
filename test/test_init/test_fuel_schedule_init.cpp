@@ -30,9 +30,9 @@ assert_fuel_channel(
   sprintf_P(msg, PSTR("channel%" PRIu8 ".InjDegrees"), cmdBit + 1);
   TEST_ASSERT_EQUAL_MESSAGE(angle, channelInjDegrees, msg);
   sprintf_P(msg, PSTR("inj%" PRIu8 ".StartFunction"), cmdBit + 1);
-  TEST_ASSERT_TRUE_MESSAGE(!enabled || (startFunction!=nullCallback), msg);
+  TEST_ASSERT_TRUE_MESSAGE(!enabled || (startFunction!=nullInjCallback), msg);
   sprintf_P(msg, PSTR("inj%" PRIu8 ".EndFunction"), cmdBit + 1);
-  TEST_ASSERT_TRUE_MESSAGE(!enabled || (endFunction!=nullCallback), msg);
+  TEST_ASSERT_TRUE_MESSAGE(!enabled || (endFunction!=nullInjCallback), msg);
 }
 
 static void __attribute__((noinline))

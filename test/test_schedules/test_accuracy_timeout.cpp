@@ -12,7 +12,8 @@
 #define DURATION 1000
 #define DELTA 40
 
-static uint32_t start_time, end_time;
+static volatile uint32_t start_time;
+static volatile uint32_t end_time;
 
 static void injStartCallback(injector_id_t inj_id1, injector_id_t inj_id2)
 {
@@ -30,7 +31,7 @@ static void injEndCallback(injector_id_t inj_id1, injector_id_t inj_id2)
     /* Do nothing. */
 }
 
-void test_accuracy_timeout_inj(FuelSchedule &schedule)
+static void test_accuracy_timeout_inj(FuelSchedule &schedule)
 {
   initialiseSchedulers();
 
@@ -59,49 +60,49 @@ void test_accuracy_timeout_inj(FuelSchedule &schedule)
   TEST_ASSERT_UINT32_WITHIN(DELTA, TIMEOUT, end_time - start_time);
 }
 
-void test_accuracy_timeout_inj1(void)
+static void test_accuracy_timeout_inj1(void)
 {
     test_accuracy_timeout_inj(fuelSchedule1);
 }
 
-void test_accuracy_timeout_inj2(void)
+static void test_accuracy_timeout_inj2(void)
 {
     test_accuracy_timeout_inj(fuelSchedule2);
 }
 
-void test_accuracy_timeout_inj3(void)
+static void test_accuracy_timeout_inj3(void)
 {
     test_accuracy_timeout_inj(fuelSchedule3);
 }
 
-void test_accuracy_timeout_inj4(void)
+static void test_accuracy_timeout_inj4(void)
 {
     test_accuracy_timeout_inj(fuelSchedule4);
 }
 
 #if INJ_CHANNELS >= 5
-void test_accuracy_timeout_inj5(void)
+static void test_accuracy_timeout_inj5(void)
 {
     test_accuracy_timeout_inj(fuelSchedule5);
 }
 #endif
 
 #if INJ_CHANNELS >= 6
-void test_accuracy_timeout_inj6(void)
+static void test_accuracy_timeout_inj6(void)
 {
     test_accuracy_timeout_inj(fuelSchedule6);
 }
 #endif
 
 #if INJ_CHANNELS >= 7
-void test_accuracy_timeout_inj7(void)
+static void test_accuracy_timeout_inj7(void)
 {
     test_accuracy_timeout_inj(fuelSchedule7);
 }
 #endif
 
 #if INJ_CHANNELS >= 8
-void test_accuracy_timeout_inj8(void)
+static void test_accuracy_timeout_inj8(void)
 {
     test_accuracy_timeout_inj(fuelSchedule8);
 }
@@ -123,7 +124,7 @@ static void ignEndCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
     /* Do nothing. */
 }
 
-void test_accuracy_timeout_ign(IgnitionSchedule &schedule)
+static void test_accuracy_timeout_ign(IgnitionSchedule &schedule)
 {
   initialiseSchedulers();
 
@@ -152,49 +153,49 @@ void test_accuracy_timeout_ign(IgnitionSchedule &schedule)
   TEST_ASSERT_UINT32_WITHIN(DELTA, TIMEOUT, end_time - start_time);
 }
 
-void test_accuracy_timeout_ign1(void)
+static void test_accuracy_timeout_ign1(void)
 {
     test_accuracy_timeout_ign(ignitionSchedule1);
 }
 
-void test_accuracy_timeout_ign2(void)
+static void test_accuracy_timeout_ign2(void)
 {
     test_accuracy_timeout_ign(ignitionSchedule2);
 }
 
-void test_accuracy_timeout_ign3(void)
+static void test_accuracy_timeout_ign3(void)
 {
     test_accuracy_timeout_ign(ignitionSchedule3);
 }
 
-void test_accuracy_timeout_ign4(void)
+static void test_accuracy_timeout_ign4(void)
 {
     test_accuracy_timeout_ign(ignitionSchedule4);
 }
 
 #if IGN_CHANNELS >= 5
-void test_accuracy_timeout_ign5(void)
+static void test_accuracy_timeout_ign5(void)
 {
     test_accuracy_timeout_ign(ignitionSchedule5);
 }
 #endif
 
 #if IGN_CHANNELS >= 6
-void test_accuracy_timeout_ign6(void)
+static void test_accuracy_timeout_ign6(void)
 {
     test_accuracy_timeout_ign(ignitionSchedule6);
 }
 #endif
 
 #if IGN_CHANNELS >= 7
-void test_accuracy_timeout_ign7(void)
+static void test_accuracy_timeout_ign7(void)
 {
     test_accuracy_timeout_ign(ignitionSchedule7);
 }
 #endif
 
 #if IGN_CHANNELS >= 8
-void test_accuracy_timeout_ign8(void)
+static void test_accuracy_timeout_ign8(void)
 {
     test_accuracy_timeout_ign(ignitionSchedule8);
 }

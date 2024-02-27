@@ -10,21 +10,9 @@
 #define DURATION 1000
 #define DELTA 20
 
-static uint32_t start_time, end_time;
-static void startCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
-{
-    UNUSED(coil_id1);
-    UNUSED(coil_id2);
+static volatile uint32_t start_time;
+static volatile uint32_t end_time;
 
-    start_time = micros();
-}
-static void endCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
-{
-    UNUSED(coil_id1);
-    UNUSED(coil_id2);
-
-    end_time = micros();
-}
 static void injStartCallback(injector_id_t inj_id1, injector_id_t inj_id2)
 {
     UNUSED(inj_id1);
@@ -32,6 +20,7 @@ static void injStartCallback(injector_id_t inj_id1, injector_id_t inj_id2)
 
     start_time = micros();
 }
+
 static void injEndCallback(injector_id_t inj_id1, injector_id_t inj_id2)
 {
     UNUSED(inj_id1);
@@ -40,123 +29,167 @@ static void injEndCallback(injector_id_t inj_id1, injector_id_t inj_id2)
     end_time = micros();
 }
 
-void test_accuracy_duration_inj(FuelSchedule &schedule)
+static void test_accuracy_duration_inj(FuelSchedule &schedule)
 {
     initialiseSchedulers();
     schedule.start.pCallback = injStartCallback;
     schedule.end.pCallback = injEndCallback;
     setFuelSchedule(schedule, TIMEOUT, DURATION);
+    uint32_t const loop_start_time = micros();
+
     while(schedule.Status != OFF)
     {
-        /*Wait*/
+      /*
+       * Ensure the test doesn't get stuck in this loop by waiting for a maximum
+       * of twice the expected delay before the schedule starts.
+       */
+      int32_t const now = micros();
+
+      if ((now - ((int32_t)loop_start_time + 2 * (TIMEOUT + DURATION))) > 0)
+      {
+        break;
+      }
+      /* Wait */
     }
+
+    TEST_ASSERT_EQUAL(OFF, schedule.Status);
     TEST_ASSERT_UINT32_WITHIN(DELTA, DURATION, end_time - start_time);
 }
 
-void test_accuracy_duration_inj1(void)
+static void test_accuracy_duration_inj1(void)
 {
     test_accuracy_duration_inj(fuelSchedule1);
 }
 
-void test_accuracy_duration_inj2(void)
+static void test_accuracy_duration_inj2(void)
 {
     test_accuracy_duration_inj(fuelSchedule2);
 }
 
-void test_accuracy_duration_inj3(void)
+static void test_accuracy_duration_inj3(void)
 {
     test_accuracy_duration_inj(fuelSchedule3);
 }
 
-void test_accuracy_duration_inj4(void)
+static void test_accuracy_duration_inj4(void)
 {
     test_accuracy_duration_inj(fuelSchedule4);
 }
 
 #if INJ_CHANNELS >= 5
-void test_accuracy_duration_inj5(void)
+static void test_accuracy_duration_inj5(void)
 {
     test_accuracy_duration_inj(fuelSchedule5);
 }
 #endif
 
 #if INJ_CHANNELS >= 6
-void test_accuracy_duration_inj6(void)
+static void test_accuracy_duration_inj6(void)
 {
     test_accuracy_duration_inj(fuelSchedule6);
 }
 #endif
 
 #if INJ_CHANNELS >= 7
-void test_accuracy_duration_inj7(void)
+static void test_accuracy_duration_inj7(void)
 {
     test_accuracy_duration_inj(fuelSchedule7);
 }
 #endif
 
 #if INJ_CHANNELS >= 8
-void test_accuracy_duration_inj8(void)
+static void test_accuracy_duration_inj8(void)
 {
     test_accuracy_duration_inj(fuelSchedule8);
 }
 #endif
 
-void test_accuracy_duration_ign(IgnitionSchedule &schedule)
+static void ignStartCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
+{
+    UNUSED(coil_id1);
+    UNUSED(coil_id2);
+
+    start_time = micros();
+}
+
+static void ignEndCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
+{
+    UNUSED(coil_id1);
+    UNUSED(coil_id2);
+
+    end_time = micros();
+}
+
+static void test_accuracy_duration_ign(IgnitionSchedule &schedule)
 {
     initialiseSchedulers();
-    schedule.start.pCallback = startCallback;
-    schedule.end.pCallback = endCallback;
+    schedule.start.pCallback = ignStartCallback;
+    schedule.end.pCallback = ignEndCallback;
     setIgnitionSchedule(schedule, TIMEOUT, DURATION);
+    uint32_t const loop_start_time = micros();
+
     while(schedule.Status != OFF)
     {
-        /*Wait*/
-    }
-    TEST_ASSERT_UINT32_WITHIN(DELTA, DURATION, end_time - start_time);
+      /*
+       * Ensure the test doesn't get stuck in this loop by waiting for a maximum
+       * of twice the expected delay before the schedule starts.
+       */
+      int32_t const now = micros();
 
+      if ((now - ((int32_t)loop_start_time + 2 * (TIMEOUT + DURATION))) > 0)
+      {
+        break;
+      }
+      /* Wait */
+    }
+
+    TEST_ASSERT_EQUAL(OFF, schedule.Status);
+    TEST_ASSERT_UINT32_WITHIN(DELTA, DURATION, end_time - start_time);
 }
-void test_accuracy_duration_ign1(void)
+
+static void test_accuracy_duration_ign1(void)
 {
     test_accuracy_duration_ign(ignitionSchedule1);
 }
 
-void test_accuracy_duration_ign2(void)
+static void test_accuracy_duration_ign2(void)
 {
     test_accuracy_duration_ign(ignitionSchedule2);
 }
 
-void test_accuracy_duration_ign3(void)
+static void test_accuracy_duration_ign3(void)
 {
     test_accuracy_duration_ign(ignitionSchedule3);
 }
 
-void test_accuracy_duration_ign4(void)
+static void test_accuracy_duration_ign4(void)
 {
     test_accuracy_duration_ign(ignitionSchedule4);
 }
 
-void test_accuracy_duration_ign5(void)
-{
 #if IGN_CHANNELS >= 5
+static void test_accuracy_duration_ign5(void)
+{
     test_accuracy_duration_ign(ignitionSchedule5);
-#endif
 }
+#endif
 
 #if IGN_CHANNELS >= 6
-void test_accuracy_duration_ign6(void)
+static void test_accuracy_duration_ign6(void)
 {
     test_accuracy_duration_ign(ignitionSchedule6);
 }
 #endif
 
 #if IGN_CHANNELS >= 7
-void test_accuracy_duration_ign7(void)
+static void test_accuracy_duration_ign7(void)
 {
     test_accuracy_duration_ign(ignitionSchedule7);
 }
 #endif
 
 #if IGN_CHANNELS >= 8
-void test_accuracy_duration_ign8(void)
+static void test_accuracy_duration_ign8(void)
 {
     test_accuracy_duration_ign(ignitionSchedule8);
 }

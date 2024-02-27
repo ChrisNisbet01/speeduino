@@ -147,7 +147,7 @@ void endTrailingCoilCharge2(ignition_id_t unused1, ignition_id_t unused2) //sets
   twoCoilsEndCharge(ignition_id_2, ignition_id_3);
 }
 
-void nullCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
+void nullIgnCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
 {
   UNUSED(coil_id1);
   UNUSED(coil_id2);

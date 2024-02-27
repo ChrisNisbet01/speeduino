@@ -32,7 +32,7 @@ void beginTrailingCoilCharge(ignition_id_t unused1, ignition_id_t unused2);
 void endTrailingCoilCharge1(ignition_id_t unused1, ignition_id_t unused2);
 void endTrailingCoilCharge2(ignition_id_t unused1, ignition_id_t unused2);
 
-void nullCallback(ignition_id_t coil_id1, ignition_id_t coil_id2);
+void nullIgnCallback(ignition_id_t coil_id1, ignition_id_t coil_id2);
 
 void coil1Toggle(void);
 void coil2Toggle(void);

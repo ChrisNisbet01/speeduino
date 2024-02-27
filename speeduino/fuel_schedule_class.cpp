@@ -3,9 +3,13 @@
 
 void FuelSchedule::reset(void)
 {
-    Status = OFF;
-    start.pCallback = nullCallback;
-    end.pCallback = nullCallback;
-    pTimerDisable();
+  noInterrupts();
+
+  Status = OFF;
+  start.pCallback = nullInjCallback;
+  end.pCallback = nullInjCallback;
+  pTimerDisable();
+
+  interrupts();
 }
 

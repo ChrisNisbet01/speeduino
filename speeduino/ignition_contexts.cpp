@@ -83,8 +83,8 @@ configure_coil_schedule(ignition_id_t const id1, ignition_id_t const id2)
 void ignition_context_st::
 inhibit_coil_schedule(void)
 {
-  ignitionSchedule->start.pCallback = nullCallback;
-  ignitionSchedule->end.pCallback = nullCallback;
+  ignitionSchedule->start.pCallback = nullIgnCallback;
+  ignitionSchedule->end.pCallback = nullIgnCallback;
 }
 
 

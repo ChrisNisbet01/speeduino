@@ -63,7 +63,7 @@ void closeTwoInjectors(injector_id_t arg1, injector_id_t arg2)
   closeInjector(arg2);
 }
 
-void nullCallback(injector_id_t arg1, injector_id_t arg2)
+void nullInjCallback(injector_id_t arg1, injector_id_t arg2)
 {
   UNUSED(arg1);
   UNUSED(arg2);

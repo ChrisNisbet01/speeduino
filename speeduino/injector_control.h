@@ -19,5 +19,5 @@ void closeSingleInjector(injector_id_t injector_id);
 void openTwoInjectors(injector_id_t injector1_id, injector_id_t injector2_id);
 void closeTwoInjectors(injector_id_t injector1_id, injector_id_t injector2_id);
 
-void nullCallback(injector_id_t coil_id1, injector_id_t coil_id2);
+void nullInjCallback(injector_id_t coil_id1, injector_id_t coil_id2);
 

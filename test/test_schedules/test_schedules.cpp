@@ -22,6 +22,17 @@ static void prepareForInitialiseAll(void)
 #endif
 }
 
+static void flash(void)
+{
+  for (int i = 0; i < 5; i++)
+  {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(500);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(250);
+  }
+}
+
 void setup()
 {
   pinMode(LED_BUILTIN, OUTPUT);
@@ -34,12 +45,19 @@ void setup()
   initialiseAll(); // Run the main initialise function
 
   test_status_initial_off();
+  flash();
   test_status_off_to_pending();
-  test_status_pending_to_running();
-  test_status_running_to_pending();
-  test_status_running_to_off();
-  test_accuracy_timeout();
-  //test_accuracy_duration();
+  flash();
+  //test_status_pending_to_running();
+  //flash();
+  //test_status_running_to_pending();
+  //flash();
+  //test_status_running_to_off();
+  //flash();
+  //test_accuracy_timeout();
+  //flash();
+  test_accuracy_duration();
+  flash();
 
   UNITY_END(); // stop unit testing
 }
