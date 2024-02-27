@@ -163,9 +163,9 @@ void _setFuelScheduleRunning(FuelSchedule &schedule, unsigned long timeout, unsi
   SET_COMPARE(schedule.compare, schedule.startCompare); //Use the B compare unit of timer 3
   schedule.Status = PENDING; //Turn this schedule on
 
-  interrupts();
-
   schedule.pTimerEnable();
+
+  interrupts();
 }
 
 void _setFuelScheduleNext(FuelSchedule &schedule, unsigned long timeout, unsigned long duration)
@@ -210,9 +210,9 @@ void _setIgnitionScheduleRunning(
   SET_COMPARE(schedule.compare, schedule.startCompare);
   schedule.Status = PENDING; //Turn this schedule on
 
-  interrupts();
-
   schedule.pTimerEnable();
+
+  interrupts();
 }
 
 void _setIgnitionScheduleNext(IgnitionSchedule &schedule, unsigned long timeout, unsigned long durationMicrosecs)
