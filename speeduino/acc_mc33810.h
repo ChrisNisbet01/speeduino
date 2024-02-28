@@ -20,23 +20,52 @@ void initMC33810(void);
 
 //These are default values for which injector is attached to which output on the IC.
 //They may (Probably will) be changed during init by the board specific config in init.ino
-extern uint8_t MC33810_BIT_INJ1;
-extern uint8_t MC33810_BIT_INJ2;
-extern uint8_t MC33810_BIT_INJ3;
-extern uint8_t MC33810_BIT_INJ4;
-extern uint8_t MC33810_BIT_INJ5;
-extern uint8_t MC33810_BIT_INJ6;
-extern uint8_t MC33810_BIT_INJ7;
-extern uint8_t MC33810_BIT_INJ8;
+typedef enum mc33810_injector_pin_assignments_t
+{
+#if defined(CORE_TEENSY)
+  MC33810_BIT_INJ1 = 3,
+  MC33810_BIT_INJ2 = 1,
+  MC33810_BIT_INJ3 = 0,
+  MC33810_BIT_INJ4 = 2,
+  MC33810_BIT_INJ5 = 3,
+  MC33810_BIT_INJ6 = 1,
+  MC33810_BIT_INJ7 = 0,
+  MC33810_BIT_INJ8 = 2,
+#else
+  MC33810_BIT_INJ1 = 1,
+  MC33810_BIT_INJ2 = 2,
+  MC33810_BIT_INJ3 = 3,
+  MC33810_BIT_INJ4 = 4,
+  MC33810_BIT_INJ5 = 5,
+  MC33810_BIT_INJ6 = 6,
+  MC33810_BIT_INJ7 = 7,
+  MC33810_BIT_INJ8 = 8,
+#endif
+} mc33810_injector_pin_assignments_t;
 
-extern uint8_t MC33810_BIT_IGN1;
-extern uint8_t MC33810_BIT_IGN2;
-extern uint8_t MC33810_BIT_IGN3;
-extern uint8_t MC33810_BIT_IGN4;
-extern uint8_t MC33810_BIT_IGN5;
-extern uint8_t MC33810_BIT_IGN6;
-extern uint8_t MC33810_BIT_IGN7;
-extern uint8_t MC33810_BIT_IGN8;
+typedef enum mc33810_ignition_pin_assignments_t
+{
+#if defined(CORE_TEENSY)
+  MC33810_BIT_IGN1 = 4,
+  MC33810_BIT_IGN2 = 5,
+  MC33810_BIT_IGN3 = 6,
+  MC33810_BIT_IGN4 = 7,
+  MC33810_BIT_IGN5 = 4,
+  MC33810_BIT_IGN6 = 5,
+  MC33810_BIT_IGN7 = 6,
+  MC33810_BIT_IGN8 = 7,
+#else
+  MC33810_BIT_IGN1 = 1,
+  MC33810_BIT_IGN2 = 2,
+  MC33810_BIT_IGN3 = 3,
+  MC33810_BIT_IGN4 = 4,
+  MC33810_BIT_IGN5 = 5,
+  MC33810_BIT_IGN6 = 6,
+  MC33810_BIT_IGN7 = 7,
+  MC33810_BIT_IGN8 = 8,
+#endif
+} mc33810_ignition_pin_assignments_t;
+
 
 #define openInjector1_MC33810() MC33810_1_CS.off(); BIT_SET(mc33810_1_requestedState, MC33810_BIT_INJ1); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
 #define openInjector2_MC33810() MC33810_1_CS.off(); BIT_SET(mc33810_1_requestedState, MC33810_BIT_INJ2); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
