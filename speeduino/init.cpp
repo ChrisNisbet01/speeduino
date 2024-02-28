@@ -2506,7 +2506,7 @@ void setPinMapping(byte boardID)
     #endif
 
     case 55:
-      #if defined(CORE_TEENSY)
+#if defined(CORE_TEENSY)
       //Pin mappings for the DropBear
       injectorControlMethodAssign(OUTPUT_CONTROL_MC33810);
       ignitionControlMethodAssign(OUTPUT_CONTROL_MC33810);
@@ -2606,10 +2606,7 @@ void setPinMapping(byte boardID)
       MC33810_BIT_IGN6 = 5;
       MC33810_BIT_IGN7 = 6;
       MC33810_BIT_IGN8 = 7;
-
-
-
-      #endif
+#endif
       break;
 
     case 56:
