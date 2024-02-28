@@ -35,3 +35,4 @@ misra/.results
 /speeduino/build/STMicroelectronics.stm32.Disco/speeduino.ino.elf
 /speeduino/build/STMicroelectronics.stm32.Disco/speeduino.ino.hex
 /speeduino/build/STMicroelectronics.stm32.Disco/speeduino.ino.map
+/firmware.map
