@@ -1,5 +1,4 @@
-#if !defined(__TEST_SCHEDULE_H__)
-#define __TEST_SCHEDULE_H__
+#pragma once
 
 void testSchedules();
 void test_status_initial_off(void);
@@ -11,5 +10,3 @@ void test_accuracy_timeout(void);
 void test_accuracy_duration(void);
 
 void test_accuracy_timeout(void);
-
-#endif // __TEST_SCHEDULE_H__
