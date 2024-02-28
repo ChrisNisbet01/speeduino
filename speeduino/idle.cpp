@@ -523,14 +523,14 @@ void idleControl(void)
     {
       Idle1.on();
       idleOn = true;
-      BIT_SET(currentStatus.spark, BIT_SPARK_IDLE); //Turn the idle control flag on
+      BIT_SET(currentStatus.spark, BIT_SPARK_IDLE);
       currentStatus.idleLoad = 100;
     }
     else if (idleOn)
     {
       Idle1.off();
       idleOn = false;
-      BIT_CLEAR(currentStatus.spark, BIT_SPARK_IDLE); //Turn the idle control flag on
+      BIT_CLEAR(currentStatus.spark, BIT_SPARK_IDLE);
       currentStatus.idleLoad = 0;
     }
     break;
