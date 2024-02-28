@@ -1034,19 +1034,25 @@ uint16_t correctionsDwell(uint16_t dwell)
 
   //**************************************************************************************************************************
   /*
-  Dwell limiter - If the total required dwell time per revolution is longer than the maximum time available at the current RPM, reduce dwell. This can occur if there are multiple sparks per revolution
+  Dwell limiter - If the total required dwell time per revolution is longer than
+  the maximum time available at the current RPM, reduce dwell.
+  This can occur if there are multiple sparks per revolution
   This only times this can occur are:
   1. Single channel spark mode where there will be nCylinders/2 sparks per revolution
-  2. Rotary ignition in wasted spark configuration (FC/FD), results in 2 pulses per rev. RX-8 is fully sequential resulting in 1 pulse, so not required
+  2. Rotary ignition in wasted spark configuration (FC/FD), results in 2 pulses per rev. R
+  X-8 is fully sequential resulting in 1 pulse, so not required
   */
   uint16_t dwellPerRevolution = tempDwell + sparkDur_uS;
   int8_t pulsesPerRevolution = 1;
-  if( ( (configPage4.sparkMode == IGN_MODE_SINGLE) || ((configPage4.sparkMode == IGN_MODE_ROTARY) && (configPage10.rotaryType != ROTARY_IGN_RX8)) ) && (configPage2.nCylinders > 1) ) //No point in running this for 1 cylinder engines
+  if ((configPage4.sparkMode == IGN_MODE_SINGLE
+       || (configPage4.sparkMode == IGN_MODE_ROTARY && configPage10.rotaryType != ROTARY_IGN_RX8))
+      && configPage2.nCylinders > 1
+      ) //No point in running this for 1 cylinder engines
   {
     pulsesPerRevolution = (configPage2.nCylinders >> 1);
     dwellPerRevolution = dwellPerRevolution * pulsesPerRevolution;
   }
-  if(dwellPerRevolution > revolutionTime)
+  if (dwellPerRevolution > revolutionTime)
   {
     //Possibly need some method of reducing spark duration here as well, but this is a start
     uint16_t adjustedSparkDur = udiv_32_16(sparkDur_uS * revolutionTime, dwellPerRevolution);

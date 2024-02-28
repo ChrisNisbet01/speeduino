@@ -137,14 +137,13 @@ void loop(void)
   }
 
   currentLoopTime = micros_safe();
-  uint32_t timeToLastTooth = (currentLoopTime - toothLastToothTime);
+  uint32_t timeToLastTooth = currentLoopTime - toothLastToothTime;
 
   //Check how long ago the last tooth was seen compared to now. If it was more
   //than MAX_STALL_TIME ago then the engine is probably stopped.
   //toothLastToothTime can be greater than currentLoopTime if a pulse occurs
   //between getting the latest time and doing the comparison.
-  if (timeToLastTooth < MAX_STALL_TIME
-      || toothLastToothTime > currentLoopTime)
+  if (timeToLastTooth < MAX_STALL_TIME || toothLastToothTime > currentLoopTime)
   {
     currentStatus.longRPM = decoder.handler.get_rpm(); //Long RPM is included here
     currentStatus.RPM = currentStatus.longRPM;

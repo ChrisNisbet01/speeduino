@@ -178,8 +178,9 @@ uint16_t getRPM_Daihatsu(void)
   }
   else
   {
+    //Tracking over 2 crank revolutions
     tempRPM = stdGetRPM(CAM_SPEED);
-  } //Tracking over 2 crank revolutions
+  }
 
   return tempRPM;
 }

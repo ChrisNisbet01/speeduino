@@ -165,6 +165,7 @@ void test_PW_Limit_Long_Revolution(void)
   configPage2.strokes = TWO_STROKE;
   currentStatus.nSquirts = 1U;
 
-  //Duty limit of 90% for 100,000uS should give 90,000, but as this would overflow the PW value, this should default to UINT16 Max
+  //Duty limit of 90% for 100,000uS should give 90,000, but as this would
+  //overflow the PW value, this should default to UINT16 Max
   TEST_ASSERT_EQUAL(UINT16_MAX, calculatePWLimit());
 }

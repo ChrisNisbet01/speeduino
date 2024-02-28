@@ -464,6 +464,7 @@ uint16_t getRPM_missingTooth(void)
   {
     tempRPM = stdGetRPM(configPage4.TrigSpeed == CAM_SPEED); //Account for cam speed
   }
+
   return tempRPM;
 }
 

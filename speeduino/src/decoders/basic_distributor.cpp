@@ -151,12 +151,6 @@ uint16_t getRPM_BasicDistributor(void)
   //there should be no single revolution where this changes more than this
   MAX_STALL_TIME = revolutionTime << 1;
 
-  //Special case for 1 cylinder engines that only get 1 pulse every 720 degrees
-  if (triggerActualTeeth == 1)
-  {
-    MAX_STALL_TIME = revolutionTime << 1;
-  }
-
   if (MAX_STALL_TIME < 366667UL) //Check for 50rpm minimum
   {
     MAX_STALL_TIME = 366667UL;
