@@ -165,9 +165,10 @@ struct table2D o2CalibrationTable;
 bool pinIsOutput(byte pin)
 {
   bool used = false;
-  bool isIdlePWM = configPage6.iacAlgorithm > 0
+  bool const isIdlePWM = configPage6.iacAlgorithm > 0
     && (configPage6.iacAlgorithm <= 3 || configPage6.iacAlgorithm == 6);
-  bool isIdleSteper = configPage6.iacAlgorithm > 3 && configPage6.iacAlgorithm != 6;
+  bool const isIdleStepper = configPage6.iacAlgorithm > 3 && configPage6.iacAlgorithm != 6;
+
   //Injector?
   if (pin == inj1.pin
   || (pin == inj2.pin && configPage2.nInjectors > 1)
@@ -220,9 +221,9 @@ bool pinIsOutput(byte pin)
   || (pin == Boost.pin && configPage6.boostEnabled == 1)
   || (pin == Idle1.pin && isIdlePWM)
   || (pin == Idle2.pin && isIdlePWM && (configPage6.iacChannels == 1))
-  || (pin == StepperEnable.pin && isIdleSteper)
-  || (pin == StepperStep.pin && isIdleSteper)
-  || (pin == StepperDir.pin && isIdleSteper)
+  || (pin == StepperEnable.pin && isIdleStepper)
+  || (pin == StepperStep.pin && isIdleStepper)
+  || (pin == StepperDir.pin && isIdleStepper)
   || (pin == TachOut.pin)
   || (pin == AirConComp.pin && configPage15.airConEnable > 0)
   || (pin == AirConFan.pin && configPage15.airConEnable > 0 && configPage15.airConFanEnabled > 0))

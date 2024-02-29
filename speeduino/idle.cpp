@@ -247,7 +247,7 @@ void initialiseIdle(bool forcehoming)
         idleStepper.stepperStatus = SOFF;
       }
 
-      if (! configPage9.iacStepperInv)
+      if (!configPage9.iacStepperInv)
       {
         idleStepper.lessAirDirection = STEPPER_BACKWARD;
         idleStepper.moreAirDirection = STEPPER_FORWARD;
@@ -355,25 +355,19 @@ False: If the motor is ready for another step
 static inline byte checkForStepping(void)
 {
   bool isStepping = false;
-  unsigned int timeCheck;
+
 
   if (idleStepper.stepperStatus == STEPPING || idleStepper.stepperStatus == COOLING)
   {
-    if (idleStepper.stepperStatus == STEPPING)
-    {
-      timeCheck = iacStepTime_uS;
-    }
-    else
-    {
-      timeCheck = iacCoolTime_uS;
-    }
+    unsigned int const timeCheck =
+      (idleStepper.stepperStatus == STEPPING) ? iacStepTime_uS : iacCoolTime_uS;
 
     if ((micros_safe() - idleStepper.stepStartTime) > timeCheck)
     {
       if (idleStepper.stepperStatus == STEPPING)
       {
         //Means we're currently in a step, but it needs to be turned off
-        StepperStep.write(LOW); //Turn off the step
+        StepperStep.off(); //Turn off the step
         idleStepper.stepStartTime = micros_safe();
 
         // if there is no cool time we can miss that step out completely.
@@ -392,14 +386,15 @@ static inline byte checkForStepping(void)
       }
       else
       {
-        //Means we're in COOLING status but have been in this state long enough. Go into off state
+        //Means we're in COOLING status but have been in this state long enough.
+        //Go into off state
         idleStepper.stepperStatus = SOFF;
         if (configPage9.iacStepperPower == STEPPER_POWER_WHEN_ACTIVE)
         {
           //Disable the DRV8825, but only if we're at the final step in this cycle.
           if (idleStepper.targetIdleStep == idleStepper.curIdleStep)
           {
-            StepperEnable.write(HIGH);
+            StepperEnable.on();
           }
         }
       }
@@ -438,8 +433,8 @@ static inline void doStep(void)
       idleStepper.curIdleStep++;
     }
 
-    StepperEnable.write(LOW); //Enable the DRV8825
-    StepperStep.write(HIGH);
+    StepperEnable.off(); //Enable the DRV8825
+    StepperStep.on();
     idleStepper.stepStartTime = micros_safe();
     idleStepper.stepperStatus = STEPPING;
     idleOn = true;
@@ -454,20 +449,39 @@ False: If the motor has not yet been homed. Will also perform another homing ste
 */
 static inline byte isStepperHomed(void)
 {
-  bool isHomed = true; //As it's the most common scenario, default value is true
-
   //Home steps are divided by 3 from TS
-  if (completedHomeSteps < configPage6.iacStepHome * 3)
+  bool const step_config_factor = 3;
+  bool const isHomed =
+    completedHomeSteps >= configPage6.iacStepHome * step_config_factor;
+
+  return isHomed;
+}
+
+static inline void stepperDoHomingStep(void)
+{
+  //homing the stepper closes off the air bleed
+  StepperDir.write(idleStepper.lessAirDirection);
+  StepperEnable.off(); //Enable the DRV8825
+  StepperStep.on();
+  idleStepper.stepStartTime = micros_safe();
+  idleStepper.stepperStatus = STEPPING;
+  completedHomeSteps++;
+  idleOn = true;
+}
+
+/*
+Checks whether the stepper has been homed yet. If it hasn't, will handle the next step
+Returns:
+True: If the system has been homed. No other action is taken
+False: If the motor has not yet been homed. Will also perform another homing step.
+*/
+static inline byte stepperHomingCheck(void)
+{
+  bool const isHomed = isStepperHomed();
+
+  if (!isHomed)
   {
-    //homing the stepper closes off the air bleed
-    StepperDir.write(idleStepper.lessAirDirection);
-    StepperEnable.write(LOW); //Enable the DRV8825
-    StepperStep.write(HIGH);
-    idleStepper.stepStartTime = micros_safe();
-    idleStepper.stepperStatus = STEPPING;
-    completedHomeSteps++;
-    idleOn = true;
-    isHomed = false;
+    stepperDoHomingStep();
   }
 
   return isHomed;
@@ -773,7 +787,7 @@ void idleControl(unsigned const delta_ms)
   case IAC_ALGORITHM_STEP_OL:    //Case 4 is open loop stepper control
     //First thing to check is whether there is currently a step going on and if so, whether it needs to be turned off
     //Check that homing is complete and that there's not currently a step already taking place. MUST BE IN THIS ORDER!
-    if (!checkForStepping() && isStepperHomed())
+    if (!checkForStepping() && stepperHomingCheck())
     {
       //Check for cranking pulsewidth
       //If ain't running it means off or cranking
@@ -869,7 +883,7 @@ void idleControl(unsigned const delta_ms)
     //Check that homing is complete and that there's not currently a step already taking place.
     //MUST BE IN THIS ORDER!
     // FIXME - The comment on the line above and the code disagree.
-    if (!checkForStepping() && isStepperHomed())
+    if (!checkForStepping() && stepperHomingCheck())
     {
       if (!BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN)) //If ain't running it means off or cranking
       {
@@ -1087,7 +1101,7 @@ void disableIdle(void)
            || configPage6.iacAlgorithm == IAC_ALGORITHM_STEP_OLCL)
   {
     //Only disable the stepper motor if homing is completed
-    if (!checkForStepping() && isStepperHomed())
+    if (!checkForStepping() && stepperHomingCheck())
     {
       /* for open loop stepper we should just move to the cranking position when
          disabling idle, since the only time this function is called in this scenario
