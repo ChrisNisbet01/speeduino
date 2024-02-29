@@ -943,7 +943,9 @@ uint16_t getSpeed(void)
       vssTotalTime += vssGetPulseGap(x);
     }
 
-    if ((micros() - vssTimes[vssIndex]) > MICROS_PER_SEC) // Check that the car hasn't come to a stop. Is true if last pulse was more than 1 second ago
+    // Check that the car hasn't come to a stop.
+    // Is true if last pulse was more than 1 second ago
+    if ((micros() - vssTimes[vssIndex]) > MICROS_PER_SEC)
     {
       tempSpeed = 0;
     }
@@ -1074,7 +1076,8 @@ void flexPulse(void)
 {
   if (Flex.read())
   {
-    unsigned long tempPW = (micros() - flexStartTime); //Calculate the pulse width
+    unsigned long const tempPW = micros() - flexStartTime; //Calculate the pulse width
+
     flexPulseWidth = ADC_FILTER(tempPW, configPage4.FILTER_FLEX, flexPulseWidth);
     ++flexCounter;
   }
@@ -1093,7 +1096,6 @@ void knockPulse(void)
   //Check if this the start of a knock.
   if (knockCounter == 0)
   {
-    //knockAngle = crankAngle + timeToAngleDegPerMicroSec( (micros() - lastCrankAngleCalc) );
     knockStartTime = micros();
     knockCounter = 1;
   }

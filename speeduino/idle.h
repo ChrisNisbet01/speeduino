@@ -35,7 +35,7 @@ extern uint16_t idle_pwm_max_count; //Used for variable PWM frequency
 extern long FeedForwardTerm;
 
 void initialiseIdle(bool forcehoming);
-void idleControl(void);
+void idleControl(unsigned delta_ms);
 void initialiseIdleUpOutput(void);
 void disableIdle(void);
 void idleInterrupt(void);

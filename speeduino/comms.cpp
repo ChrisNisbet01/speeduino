@@ -564,8 +564,15 @@ void processSerialCommand(void)
       break;
 
     case 'b': // New EEPROM burn command to only burn a single page at a time
-      if( (micros() > deferEEPROMWritesUntil)) { writeConfig(serialPayload[2]); } //Read the table number and perform burn. Note that byte 1 in the array is unused
-      else { BIT_SET(currentStatus.status4, BIT_STATUS4_BURNPENDING); }
+      if ((long)(micros() - deferEEPROMWritesUntil) > 0)
+      {
+        //Read the table number and perform burn. Note that byte 1 in the array is unused
+        writeConfig(serialPayload[2]);
+      }
+      else
+      {
+        BIT_SET(currentStatus.status4, BIT_STATUS4_BURNPENDING);
+      }
 
       sendReturnCodeMsg(SERIAL_RC_BURN_OK);
       break;
@@ -573,8 +580,15 @@ void processSerialCommand(void)
     case 'B': // Same as above, but for the comms compat mode. Slows down the burn rate and increases the defer time
       BIT_SET(currentStatus.status4, BIT_STATUS4_COMMS_COMPAT); //Force the compat mode
       deferEEPROMWritesUntil += (EEPROM_DEFER_DELAY/4); //Add 25% more to the EEPROM defer time
-      if( (micros() > deferEEPROMWritesUntil)) { writeConfig(serialPayload[2]); } //Read the table number and perform burn. Note that byte 1 in the array is unused
-      else { BIT_SET(currentStatus.status4, BIT_STATUS4_BURNPENDING); }
+      if ((long)(micros() - deferEEPROMWritesUntil) > 0)
+      {
+        //Read the table number and perform burn. Note that byte 1 in the array is unused
+        writeConfig(serialPayload[2]);
+      }
+      else
+      {
+        BIT_SET(currentStatus.status4, BIT_STATUS4_BURNPENDING);
+      }
 
       sendReturnCodeMsg(SERIAL_RC_BURN_OK);
       break;

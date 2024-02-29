@@ -130,12 +130,6 @@ void loop(void)
   }
 #     endif
 
-  if (currentLoopTime > micros_safe())
-  {
-    //Occurs when micros() has overflowed
-    deferEEPROMWritesUntil = 0; //Required to ensure that EEPROM writes are not deferred indefinitely
-  }
-
   currentLoopTime = micros_safe();
   uint32_t timeToLastTooth = currentLoopTime - toothLastToothTime;
 
@@ -270,12 +264,14 @@ void loop(void)
 
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ)) //10 hertz
   {
+    unsigned const delta_ms = 100;
+
     BIT_CLEAR(TIMER_mask, BIT_TIMER_10HZ);
     //updateFullStatus();
     checkProgrammableIO();
     //Perform any idle related actions. This needs to be run at 10Hz to align
     //with the idle taper resolution of 0.1s
-    idleControl();
+    idleControl(delta_ms);
 
     // Air conditioning control
     airConControl();
@@ -338,7 +334,7 @@ void loop(void)
     //Check for any outstanding EEPROM writes.
     if (isEepromWritePending()
         && serialStatusFlag == SERIAL_INACTIVE
-        && micros() > deferEEPROMWritesUntil)
+        && (long)(micros() - deferEEPROMWritesUntil) > 0)
     {
       writeAllConfig();
     }
@@ -481,7 +477,7 @@ void loop(void)
       || configPage6.iacAlgorithm == IAC_ALGORITHM_STEP_CL
       || configPage6.iacAlgorithm == IAC_ALGORITHM_STEP_OLCL)
   {
-    idleControl(); //Run idlecontrol every loop for stepper idle.
+    idleControl(0); //Run idlecontrol every loop for stepper idle.
   }
 
 

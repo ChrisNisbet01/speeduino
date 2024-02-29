@@ -8,6 +8,7 @@ A full copy of the license may be found in the projects root directory
 #include "timers.h"
 #include "src/PID_v1/PID_v1.h"
 #include "bit_macros.h"
+#include "utilities.h"
 
 byte idleUpOutputHIGH = HIGH; // Used to invert the idle Up Output
 byte idleUpOutputLOW = LOW;   // Used to invert the idle Up Output
@@ -498,7 +499,7 @@ static void idleUpControl(void)
   }
 }
 
-void idleControl(void)
+void idleControl(unsigned const delta_ms)
 {
   if (idleInitComplete != configPage6.iacAlgorithm)
   {
@@ -559,16 +560,13 @@ void idleControl(void)
     }
     else
     {
-      if (idleTaper < configPage2.idleTaperTime)
+      if (idleTaper < TENTHS_TO_MS(configPage2.idleTaperTime))
       {
         //Tapering between cranking IAC value and running
         currentStatus.idleLoad = map(idleTaper, 0, configPage2.idleTaperTime,
                                      table2D_getValue(&iacCrankDutyTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET),
                                      table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET));
-        if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ))
-        {
-          idleTaper++;
-        }
+          idleTaper += delta_ms;
       }
       else
       {

@@ -1,8 +1,7 @@
 /*
 These are some utility functions and variables used through the main code
 */
-#ifndef UTILS_H
-#define UTILS_H
+#pragma once
 #include "globals.h"
 
 #include <Arduino.h>
@@ -55,6 +54,8 @@ int16_t ProgrammableIOGetData(uint16_t index);
     })
 #endif
 
+#define TENTHS_TO_MS(v) ((v) * 100)
+
 #define PP_INC_0 1
 #define PP_INC_1 2
 #define PP_INC_2 3
@@ -69,4 +70,3 @@ int16_t ProgrammableIOGetData(uint16_t index);
 #define PP_INC_11 12
 #define PP_INC_12 13
 
-#endif // UTILS_H

@@ -458,7 +458,6 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
       else { testInjectorPulseCount++; }
     }
 
-
     //Check for pulsed ignition output test
     if( (HWTest_IGN_Pulsed > 0) )
     {
