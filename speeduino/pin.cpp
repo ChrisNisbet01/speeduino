@@ -47,6 +47,19 @@ atomic_pin_clear(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
   }
 }
 
+static inline bool
+atomic_pin_read(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
+{
+  bool state;
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+  {
+    state = (port & mask) != 0;
+  }
+
+  return state;
+}
+
 static inline void
 atomic_pin_toggle(volatile PORT_TYPE &port, PINMASK_TYPE const mask)
 {
@@ -132,6 +145,11 @@ bool IOPortMaskInputPin::is_configured(void)
 void IOPortMaskInputPin::setPin(byte pin_)
 {
   pin = pin_;
+}
+
+bool IODigitalWriteOutputPin::read(void)
+{
+  return digitalRead(pin);
 }
 
 void IODigitalWriteOutputPin::on(void)
@@ -220,6 +238,11 @@ void IODigitalReadInputPin::setPin(byte pin_)
 #if defined(CORE_TEENSY) || defined(CORE_STM32)
 
 #else
+
+bool IOAtomicWriteOutputPin::read(void)
+{
+  return atomic_pin_read(*m_port, m_mask);
+}
 
 void IOAtomicWriteOutputPin::on(void)
 {

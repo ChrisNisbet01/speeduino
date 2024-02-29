@@ -62,6 +62,8 @@ class IODigitalWriteOutputPin
 public:
   byte pin = INVALID_PIN_NUMBER;
 
+  bool read(void);
+
   void on(void);
 
   void off(void);
@@ -111,6 +113,8 @@ public:
    * Assumes that port and mask have been assigned before control methods are
    * called.
    */
+  bool read(void);
+
   void on(void);
 
   void off(void);

@@ -7,19 +7,17 @@ class FuelPumpControl
 public:
   void turnOn(void)
   {
-    m_state = true;
     FuelPump.on();
   }
 
   void turnOff(void)
   {
-    m_state = false;
     FuelPump.off();
   }
 
   bool isOn(void)
   {
-    return m_state;
+    return FuelPump.read();
   }
 
   void startPriming(void)
@@ -43,7 +41,6 @@ public:
   }
 
 private:
-  bool m_state = false;
   bool m_is_primed = false;
 };
 
