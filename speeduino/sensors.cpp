@@ -870,7 +870,7 @@ void readBat(void)
   {
     //Re-prime the fuel pump
     fuelPriming.start(currentStatus.secl);
-    fuelPump.turnOn();
+    FuelPump.on();
 
     //Redo the stepper homing
     if (configPage6.iacAlgorithm == IAC_ALGORITHM_STEP_CL

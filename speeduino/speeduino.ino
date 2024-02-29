@@ -144,7 +144,7 @@ void loop(void)
     currentStatus.longRPM = decoder.handler.get_rpm(); //Long RPM is included here
     currentStatus.RPM = currentStatus.longRPM;
     currentStatus.RPMdiv100 = div100(currentStatus.RPM);
-    fuelPump.turnOn();
+    FuelPump.on();
   }
   else
   {
@@ -176,7 +176,7 @@ void loop(void)
     //Turn off the fuel pump if the priming is complete.
     if (!fuelPriming.arePriming())
     {
-      fuelPump.turnOff();
+      FuelPump.off();
     }
 
     if (!configPage6.iacPWMrun)

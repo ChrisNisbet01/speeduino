@@ -54,7 +54,8 @@ int16_t ProgrammableIOGetData(uint16_t index);
     })
 #endif
 
-#define TENTHS_TO_MS(v) ((v) * 100)
+#define TENTHS_TO_MS(tenths) ((tenths) * 100)
+#define MS_TO_US(ms) ((ms) * 1000)
 
 #define PP_INC_0 1
 #define PP_INC_1 2

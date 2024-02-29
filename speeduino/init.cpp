@@ -471,7 +471,7 @@ void initialiseAll(void)
     //Crank RPM limit (Saves us calculating this over and over again.
     //It's updated once per second in timers.ino)
     currentStatus.crankRPM = ((unsigned int)configPage4.crankRPM * 10);
-    fuelPump.turnOff(); /* Assumes pin mappings have been applied. */
+    FuelPump.off(); /* Assumes pin mappings have been applied. */
     currentStatus.engineProtectStatus = 0;
     triggerFilterTime = 0; //Trigger filter time is the shortest possible time (in uS) that there can be between crank teeth (ie at max RPM). Any pulses that occur faster than this time will be discarded as noise. This is simply a default value, the actual values are set in the setup() functions of each decoder
     dwellLimit_uS = (1000 * configPage4.dwellLimit);
@@ -1353,7 +1353,7 @@ void initialiseAll(void)
     if(configPage2.fpPrime > 0)
     {
       fuelPriming.start(currentStatus.secl);
-      fuelPump.turnOn();
+      FuelPump.on();
     }
     else
     {
@@ -2003,7 +2003,7 @@ void setPinMapping(byte boardID)
       break;
 
     case 10:
-    #ifndef SMALL_FLASH_MODE //No support for bluepill here anyway
+#ifndef SMALL_FLASH_MODE //No support for bluepill here anyway
       //Pin mappings for user turtanas PCB
       inj1.pin = 4; //Output pin injector 1 is on
       inj2.pin = 5; //Output pin injector 2 is on

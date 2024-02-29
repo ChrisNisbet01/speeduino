@@ -2,48 +2,6 @@
 
 #include "auxiliaries.h"
 
-class FuelPumpControl
-{
-public:
-  void turnOn(void)
-  {
-    FuelPump.on();
-  }
-
-  void turnOff(void)
-  {
-    FuelPump.off();
-  }
-
-  bool isOn(void)
-  {
-    return FuelPump.read();
-  }
-
-  void startPriming(void)
-  {
-    m_is_primed = false;
-  }
-
-  void stopPriming(void)
-  {
-    m_is_primed = true;
-  }
-
-  bool isPrimed(void)
-  {
-    return m_is_primed;
-  }
-
-  void resetPriming(void)
-  {
-    m_is_primed = false;
-  }
-
-private:
-  bool m_is_primed = false;
-};
-
 class FuelPriming
 {
 public:
@@ -87,7 +45,5 @@ private:
   ///< The time (in seconds, based on @ref statuses.secl) that the fuel pump started priming
   byte m_priming_time = 0;
 };
-
-extern FuelPumpControl fuelPump;
 
 extern FuelPriming fuelPriming;

@@ -846,8 +846,8 @@ void idleControl(unsigned const delta_ms)
             idleStepper.targetIdleStep += configPage15.airConIdleSteps;
           }
 
-          iacStepTime_uS = configPage6.iacStepTime * 1000;
-          iacCoolTime_uS = configPage9.iacCoolTime * 1000;
+          iacStepTime_uS = MS_TO_US(configPage6.iacStepTime);
+          iacCoolTime_uS = MS_TO_US(configPage9.iacCoolTime);
 
           //limit to the configured max steps. This must include any idle up adder, to prevent over-opening.
           if (idleStepper.targetIdleStep > configPage9.iacMaxSteps * 3)
@@ -1010,8 +1010,8 @@ void idleControl(unsigned const delta_ms)
     {
       //This only needs to be run very infrequently, once per second
       idlePID.SetTunings(configPage6.idleKP, configPage6.idleKI, configPage6.idleKD);
-      iacStepTime_uS = configPage6.iacStepTime * 1000;
-      iacCoolTime_uS = configPage9.iacCoolTime * 1000;
+      iacStepTime_uS = MS_TO_US(configPage6.iacStepTime);
+      iacCoolTime_uS = MS_TO_US(configPage9.iacCoolTime);
     }
     break;
 
