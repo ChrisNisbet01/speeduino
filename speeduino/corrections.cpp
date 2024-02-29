@@ -433,7 +433,7 @@ uint16_t correctionAccel(void)
   {
     //If it is currently running, check whether it should still be running or
     //whether it's reached it's end time
-    if (micros_safe() >= currentStatus.AEEndTime)
+    if ((long)(micros_safe() - currentStatus.AEEndTime) > 0)
     {
       //Time to turn enrichment off
       BIT_CLEAR(currentStatus.engine, BIT_ENGINE_ACC);

@@ -368,7 +368,7 @@ static inline byte checkForStepping(void)
       timeCheck = iacCoolTime_uS;
     }
 
-    if (micros_safe() > idleStepper.stepStartTime + timeCheck)
+    if ((micros_safe() - idleStepper.stepStartTime) > timeCheck)
     {
       if (idleStepper.stepperStatus == STEPPING)
       {
@@ -406,7 +406,8 @@ static inline byte checkForStepping(void)
     }
     else
     {
-      //Means we're in a step, but it doesn't need to turn off yet. No further action at this time
+      //Means we're in a step, but it doesn't need to turn off yet.
+      //No further action at this time
       isStepping = true;
     }
   }

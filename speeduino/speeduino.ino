@@ -137,7 +137,7 @@ void loop(void)
   //than MAX_STALL_TIME ago then the engine is probably stopped.
   //toothLastToothTime can be greater than currentLoopTime if a pulse occurs
   //between getting the latest time and doing the comparison.
-  if (timeToLastTooth < MAX_STALL_TIME || toothLastToothTime > currentLoopTime)
+  if (timeToLastTooth < MAX_STALL_TIME || (long)(toothLastToothTime - currentLoopTime) > 0)
   {
     currentStatus.longRPM = decoder.handler.get_rpm(); //Long RPM is included here
     currentStatus.RPM = currentStatus.longRPM;

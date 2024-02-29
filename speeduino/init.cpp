@@ -502,7 +502,7 @@ void initialiseAll(void)
     }
 
     //End crank trigger interrupt attachment
-    if(configPage2.strokes == FOUR_STROKE)
+    if (configPage2.strokes == FOUR_STROKE)
     {
       //Default is 1 squirt per revolution, so we halve the given req-fuel figure (Which would be over 2 revolutions)
       req_fuel_init_uS /= 2; //The req_fuel calculation above gives the total required fuel (At VE 100%) in the full cycle. If we're doing more than 1 squirt per cycle then we need to split the amount accordingly. (Note that in a non-sequential 4-stroke setup you cannot have less than 2 squirts as you cannot determine the stroke to make the single squirt on)
@@ -513,9 +513,23 @@ void initialiseAll(void)
     currentLoopTime = micros_safe();
     mainLoopCount = 0;
 
-    if(configPage2.divider == 0) { currentStatus.nSquirts = 2; } //Safety check.
-    else { currentStatus.nSquirts = configPage2.nCylinders / configPage2.divider; } //The number of squirts being requested. This is manually overridden below for sequential setups (Due to TS req_fuel calc limitations)
-    if(currentStatus.nSquirts == 0) { currentStatus.nSquirts = 1; } //Safety check. Should never happen as TS will give an error, but leave in case tune is manually altered etc.
+    if (configPage2.divider == 0)
+    {
+      //Safety check.
+      currentStatus.nSquirts = 2;
+    }
+    else
+    {
+      //The number of squirts being requested. This is manually overridden below
+      //for sequential setups (Due to TS req_fuel calc limitations)
+      currentStatus.nSquirts = configPage2.nCylinders / configPage2.divider;
+    }
+    if (currentStatus.nSquirts == 0)
+    {
+      //Safety check. Should never happen as TS will give an error,
+      //but leave in case tune is manually altered etc.
+      currentStatus.nSquirts = 1;
+    }
 
     //Calculate the number of degrees between cylinders
     //Set some default values. These will be updated below if required.
