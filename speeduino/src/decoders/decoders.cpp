@@ -558,7 +558,7 @@ void loggerTertiaryISR(void)
 
 static inline bool IsCranking(const statuses &status)
 {
-  return (status.RPM < status.crankRPM) && (status.startRevolutions == 0U);
+  return status.RPM < status.crankRPM && status.startRevolutions == 0U;
 }
 
 __attribute__((noinline))
@@ -570,7 +570,7 @@ bool SetRevolutionTime(uint32_t revTime)
   {
     revolutionTime = revTime;
     microsPerDegree = div360(revolutionTime << microsPerDegree_Shift);
-    degreesPerMicro = (uint16_t)UDIV_ROUND_CLOSEST((UINT32_C(360) << degreesPerMicro_Shift), revolutionTime, uint32_t);
+    degreesPerMicro = (uint16_t)UDIV_ROUND_CLOSEST(UINT32_C(360) << degreesPerMicro_Shift, revolutionTime, uint32_t);
   }
 
   return revolution_time_changed;

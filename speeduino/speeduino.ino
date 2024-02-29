@@ -224,16 +224,21 @@ void loop(void)
 
   //***Perform sensor reads***
   //-----------------------------------------------------------------------------------------------------
-  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1KHZ)) //Every 1ms. NOTE: This is NOT guaranteed to run at 1kHz on AVR systems. It will run at 1kHz if possible or as fast as loops/s allows if not.
+  //Every 1ms. NOTE: This is NOT guaranteed to run at 1kHz on AVR systems.
+  //It will run at 1kHz if possible or as fast as loops/s allows if not.
+  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1KHZ))
   {
     BIT_CLEAR(TIMER_mask, BIT_TIMER_1KHZ);
     readMAP();
   }
+
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_200HZ))
   {
     BIT_CLEAR(TIMER_mask, BIT_TIMER_200HZ);
 #     if defined(ANALOG_ISR)
-    //ADC in free running mode does 1 complete conversion of all 16 channels and then the interrupt is disabled. Every 200Hz we re-enable the interrupt to get another conversion cycle
+    //ADC in free running mode does 1 complete conversion of all 16 channels and
+    //then the interrupt is disabled. Every 200Hz we re-enable the interrupt to
+    //get another conversion cycle
     BIT_SET(ADCSRA, ADIE); //Enable ADC interrupt
 #     endif
   }
@@ -242,7 +247,9 @@ void loop(void)
   {
     BIT_CLEAR(TIMER_mask, BIT_TIMER_15HZ);
 #if TPS_READ_FREQUENCY == 15
-    readTPS(); //TPS reading to be performed every 32 loops (any faster and it can upset the TPSdot sampling time)
+    //TPS reading to be performed every 32 loops
+    //(any faster and it can upset the TPSdot sampling time)
+    readTPS();
 #endif
 #if defined(CORE_TEENSY35)
     if (configPage9.enable_intcan == 1) // use internal can module
@@ -259,16 +266,16 @@ void loop(void)
     {
       BIT_SET(currentStatus.status1, BIT_STATUS1_TOOTHLOG1READY);
     }
-
-
-
   }
+
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ)) //10 hertz
   {
     BIT_CLEAR(TIMER_mask, BIT_TIMER_10HZ);
     //updateFullStatus();
     checkProgrammableIO();
-    idleControl(); //Perform any idle related actions. This needs to be run at 10Hz to align with the idle taper resolution of 0.1s
+    //Perform any idle related actions. This needs to be run at 10Hz to align
+    //with the idle taper resolution of 0.1s
+    idleControl();
 
     // Air conditioning control
     airConControl();
@@ -276,13 +283,14 @@ void loop(void)
     currentStatus.vss = getSpeed();
     currentStatus.gear = getGear();
 
-#     ifdef SD_LOGGING
+#ifdef SD_LOGGING
     if (configPage13.onboard_log_file_rate == LOGGER_RATE_10HZ)
     {
       writeSDLogEntry();
     }
-#     endif
+#endif
   }
+
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_30HZ)) //30 hertz
   {
     BIT_CLEAR(TIMER_mask, BIT_TIMER_30HZ);
@@ -348,9 +356,12 @@ void loop(void)
     //Lookup the current target idle RPM. This is aligned with coolant and so needs to be calculated at the same rate CLT is read
     if (configPage2.idleAdvEnabled >= 1 || configPage6.iacAlgorithm != IAC_ALGORITHM_NONE)
     {
+      //All temps are offset by 40 degrees
       currentStatus.CLIdleTarget =
-        (byte)table2D_getValue(&idleTargetTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET); //All temps are offset by 40 degrees
-      if (BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON)) //Adds Idle Up RPM amount if active
+        (byte)table2D_getValue(&idleTargetTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET);
+
+      //Adds Idle Up RPM amount if active
+      if (BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON))
       {
         currentStatus.CLIdleTarget += configPage15.airConIdleUpRPMAdder;
       }
@@ -380,13 +391,22 @@ void loop(void)
                 || ((configPage9.enable_secondarySerial == 1) && ((configPage9.enable_intcan == 1) && (configPage9.intcan_available == 1)) &&
                     ((configPage9.caninput_sel[currentStatus.current_caninchannel] & 64) == 0))
                 || ((configPage9.enable_secondarySerial == 1) && ((configPage9.enable_intcan == 1) && (configPage9.intcan_available == 0)))))
-        { //if current input channel is enabled as external & secondary serial enabled & internal can disabled(but internal can is available)
-          // or current input channel is enabled as external & secondary serial enabled & internal can enabled(and internal can is available)
+        { //if current input channel is enabled as external & secondary serial enabled
+          //and  internal can disabled(but internal can is available)
+          // or current input channel is enabled as external & secondary serial enabled
+          // and internal can enabled(and internal can is available)
           //currentStatus.canin[13] = 11;  Dev test use only!
-          if (configPage9.enable_secondarySerial == 1)  // megas only support can via secondary serial
+          // megas only support can via secondary serial
+          if (configPage9.enable_secondarySerial == 1)
           {
-            sendCancommand(2, 0, currentStatus.current_caninchannel, 0, ((configPage9.caninput_source_can_address[currentStatus.current_caninchannel] & 2047) + 0x100));
-            //send an R command for data from caninput_source_address[currentStatus.current_caninchannel] from secondarySerial
+            //send an R command for data from
+            //caninput_source_address[currentStatus.current_caninchannel]
+            //from secondarySerial
+            sendCancommand(2,
+                           0,
+                           currentStatus.current_caninchannel,
+                           0,
+                           (configPage9.caninput_source_can_address[currentStatus.current_caninchannel] & 2047) + 0x100);
           }
         }
         else if (((configPage9.caninput_sel[currentStatus.current_caninchannel] & 12) == 4)

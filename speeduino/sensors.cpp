@@ -74,7 +74,9 @@ ISR(ADC_vect)
     ADMUX = ADMUX_DEFAULT_CONFIG; //channel 0
     ADCSRB = 0x00; //clear MUX5 bit
 
-    BIT_CLEAR(ADCSRA, ADIE); //Disable interrupt as we're at the end of a full ADC cycle. This will be re-enabled in the main loop
+    //Disable interrupt as we're at the end of a full ADC cycle.
+    //This will be re-enabled in the main loop
+    BIT_CLEAR(ADCSRA, ADIE);
   }
   else if (nChannel == 7) //channel 7
   {
@@ -331,7 +333,8 @@ static void instantaneousMAP(bool const initialisationComplete)
     mapErrorCount = 0;
   }
 
-  //During startup a call is made here to get the baro reading. In this case, we can't apply the ADC filter
+  //During startup a call is made here to get the baro reading.
+  //In this case, we can't apply the ADC filter
   if (!initialisationComplete)
   {
     /* First time through. Just assign the current reading to the output value. */

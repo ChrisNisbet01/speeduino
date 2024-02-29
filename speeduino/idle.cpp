@@ -577,7 +577,8 @@ void idleControl(void)
         currentStatus.idleLoad =
           table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET);
       }
-      // Add air conditioning idle-up - we only do this if the engine is running (A/C should never engage with engine off).
+      // Add air conditioning idle-up - we only do this if the engine is running
+      // (A/C should never engage with engine off).
       if (configPage15.airConIdleSteps > 0
           && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON))
       {

@@ -446,7 +446,7 @@ void triggerSetEndTeeth_missingTooth(void)
 
 uint16_t getRPM_missingTooth(void)
 {
-  uint16_t tempRPM = 0;
+  uint16_t tempRPM;
 
   if (currentStatus.RPM < currentStatus.crankRPM)
   {
