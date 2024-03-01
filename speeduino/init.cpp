@@ -1492,7 +1492,7 @@ void setPinMapping(byte boardID)
     //Note: Case 0 (Speeduino v0.1) was removed in Nov 2020 to handle default case for blank FRAM modules
 
     case 1:
-    #ifndef SMALL_FLASH_MODE //No support for bluepill here anyway
+#ifndef SMALL_FLASH_MODE //No support for bluepill here anyway
       //Pin mappings as per the v0.2 shield
       inj1.pin = 8; //Output pin injector 1 is on
       inj2.pin = 9; //Output pin injector 2 is on
