@@ -16,7 +16,7 @@ public:
     }
 
     uint32_t const delta_t = timestamp_micros - m_last_timestamp;
-    byte const delta_tps = newTPS - m_last_tps;
+    int16_t const delta_tps = newTPS - m_last_tps;
 
     if (delta_t == 0)
     {
@@ -26,7 +26,6 @@ public:
     else if (abs(delta_tps) < minChange)
     {
       m_dot = 0;
-
       /*
        * Don't update the TPS reading though, so slow but continuous changes
        * eventually result in minChange getting exceeded.
@@ -36,7 +35,6 @@ public:
     else
     {
       m_dot = (MICROS_PER_SEC / delta_t * delta_tps) / 2;
-
       m_last_tps = newTPS;
       m_last_timestamp = timestamp_micros;
     }
