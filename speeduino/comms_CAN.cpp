@@ -146,8 +146,14 @@ void DashMessage(uint16_t DashMessageID)
       uint8_t temp_BARO;
       uint16_t temp_CLT;
       temp_TPS = map(currentStatus.TPS, 0, 100, 0, 254);//TPS value conversion (from 0x00 to 0xFE)
-      temp_CLT = (((currentStatus.coolant - CALIBRATION_TEMPERATURE_OFFSET) + 48)*4/3); //CLT conversion (actual value to add is 48.373, but close enough)
-      if (temp_CLT > 255) { temp_CLT = 255; } //CLT conversion can yield to higher values than what fits to byte, so limit the maximum value to 255.
+       //CLT conversion (actual value to add is 48.373, but close enough)
+      temp_CLT = ((currentStatus.coolant - CALIBRATION_TEMPERATURE_OFFSET) + 48) * 4 / 3;
+      //CLT conversion can yield to higher values than what fits to byte,
+      //so limit the maximum value to 255.
+      if (temp_CLT > 255)
+      {
+        temp_CLT = 255;
+      }
       temp_BARO = currentStatus.baro;
 
       outMsg.id = DashMessageID;
@@ -169,8 +175,18 @@ void DashMessage(uint16_t DashMessageID)
       outMsg.buf[0] = 0x00;  //Check engine light (binary 10), Cruise light (binary 1000), EML (binary 10000).
       outMsg.buf[1] = 0x00;  //LSB Fuel consumption
       outMsg.buf[2] = 0x00;  //MSB Fuel Consumption
-      if (currentStatus.coolant > 159) { outMsg.buf[3] = 0x08; } //Turn on overheat light if coolant temp hits 120 degrees celsius.
-      else { outMsg.buf[3] = 0x00; } //Overheat light off at normal engine temps.
+      //Turn on overheat light if coolant temp hits 120 degrees celsius.
+      int const overheat_temperature_c = 120;
+
+      if (currentStatus.coolant -  CALIBRATION_TEMPERATURE_OFFSET >= overheat_temperature_c)
+      {
+        outMsg.buf[3] = 0x08;
+      }
+      else
+      {
+        //Overheat light off at normal engine temps.
+        outMsg.buf[3] = 0x00;
+      }
       outMsg.buf[4] = 0x7E; //this is oil temp
     break;
 

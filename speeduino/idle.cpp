@@ -86,7 +86,7 @@ void initialiseIdle(bool forcehoming)
 
     case IAC_ALGORITHM_ONOFF:
       //Case 1 is on/off idle control
-      if ((currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) < configPage6.iacFastTemp)
+      if (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET < configPage6.iacFastTemp)
       {
         Idle1.on();
         idleOn = true;
@@ -796,7 +796,7 @@ void idleControl(unsigned const delta_ms)
         //Currently cranking. Use the cranking table
         //All temps are offset by 40 degrees. Step counts are divided by 3 in TS. Multiply back out here
         idleStepper.targetIdleStep =
-          table2D_getValue(&iacCrankStepsTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) * 3;
+          table2D_getValue(&iacCrankStepsTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) * 3;
         if (currentStatus.idleUpActive) //Add Idle Up amount if active
         {
           idleStepper.targetIdleStep += configPage2.idleUpAdder;
@@ -820,8 +820,8 @@ void idleControl(unsigned const delta_ms)
           {
             //Tapering between cranking IAC value and running
             idleStepper.targetIdleStep = map(idleTaper, 0, configPage2.idleTaperTime,
-                                             table2D_getValue(&iacCrankStepsTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) * 3,
-                                             table2D_getValue(&iacStepTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) * 3);
+                                             table2D_getValue(&iacCrankStepsTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) * 3,
+                                             table2D_getValue(&iacStepTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) * 3);
             if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ))
             {
               idleTaper++;
@@ -831,7 +831,7 @@ void idleControl(unsigned const delta_ms)
           {
             //Standard running
             idleStepper.targetIdleStep =
-              table2D_getValue(&iacStepTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) * 3;
+              table2D_getValue(&iacStepTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) * 3;
           }
           if (currentStatus.idleUpActive) //Add Idle Up amount if active
           {
@@ -894,7 +894,7 @@ void idleControl(unsigned const delta_ms)
         //All temps are offset by 40 degrees. Step counts are divided by 3 in TS.
         //Multiply back out here
         idleStepper.targetIdleStep =
-          table2D_getValue(&iacCrankStepsTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) * 3;
+          table2D_getValue(&iacCrankStepsTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) * 3;
         if (currentStatus.idleUpActive) //Add Idle Up amount if active
         {
           idleStepper.targetIdleStep += configPage2.idleUpAdder;
@@ -921,7 +921,7 @@ void idleControl(unsigned const delta_ms)
           if (idleTaper < configPage2.idleTaperTime)
           {
             uint16_t minValue =
-              table2D_getValue(&iacCrankStepsTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) * 3;
+              table2D_getValue(&iacCrankStepsTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) * 3;
             if (idle_pid_target_value < minValue << 2)
             {
               idle_pid_target_value = minValue << 2;
@@ -930,7 +930,7 @@ void idleControl(unsigned const delta_ms)
             if (configPage6.iacAlgorithm == IAC_ALGORITHM_STEP_OLCL)
             {
               maxValue =
-                table2D_getValue(&iacStepTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) * 3;
+                table2D_getValue(&iacStepTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) * 3;
             }
 
             //Tapering between cranking IAC value and running
@@ -944,7 +944,7 @@ void idleControl(unsigned const delta_ms)
             //All temps are offset by 40 degrees. Step counts are divided by 3 in TS.
             //Multiply back out here
             FeedForwardTerm =
-              (table2D_getValue(&iacStepTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) * 3) << 2;
+              (table2D_getValue(&iacStepTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) * 3) << 2;
             //reset integral to zero when TPS is bigger than set value in TS
             //(opening throttle so not idle anymore). OR when RPM higher than
             //Idle Target + RPM Hysteresis (coming back from high rpm with throttle closed)
@@ -1115,7 +1115,7 @@ void disableIdle(void)
       */
       //All temps are offset by 40 degrees. Step counts are divided by 3 in TS. Multiply back out here
       idleStepper.targetIdleStep =
-        table2D_getValue(&iacCrankStepsTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) * 3;
+        table2D_getValue(&iacCrankStepsTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) * 3;
       if (currentStatus.idleUpActive) //Add Idle Up amount if active?
       {
         idleStepper.targetIdleStep += configPage2.idleUpAdder;

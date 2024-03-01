@@ -279,7 +279,7 @@ void test_corrections_TAE_setup()
 	//Set the coolant to be above the warmup AE taper
 	configPage2.aeColdTaperMax = 60;
 	configPage2.aeColdTaperMin = 0;
-	currentStatus.coolant = (int)(configPage2.aeColdTaperMax - CALIBRATION_TEMPERATURE_OFFSET) + 1;
+	currentStatus.coolant = (int)configPage2.aeColdTaperMax - CALIBRATION_TEMPERATURE_OFFSET + 1;
 
   BIT_CLEAR(currentStatus.engine, BIT_ENGINE_ACC); //Make sure AE is turned off
   BIT_CLEAR(currentStatus.engine, BIT_ENGINE_DCC); //Make sure AE is turned off

@@ -233,8 +233,8 @@ Uses a 2D enrichment table (WUETable) where the X axis is engine temp and the Y 
 byte correctionWUE(void)
 {
   byte WUEValue;
+
   //Possibly reduce the frequency this runs at (Costs about 50 loops per second)
-  //if (currentStatus.coolant > (WUETable.axisX[9] - CALIBRATION_TEMPERATURE_OFFSET))
   if (currentStatus.coolant > (table2D_getAxisValue(&WUETable, 9) - CALIBRATION_TEMPERATURE_OFFSET))
   {
     //This prevents us doing the 2D lookup if we're already up to temp
@@ -256,8 +256,9 @@ Additional fuel % to be added when the engine is cranking
 uint16_t correctionCranking(void)
 {
   uint16_t crankingValue = 100;
+
   //Check if we are actually cranking
-  if ( BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) )
+  if (BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK))
   {
     crankingValue = table2D_getValue(&crankingEnrichTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET);
     crankingValue = (uint16_t) crankingValue * 5; //multiplied by 5 to get range from 0% to 1275%
@@ -265,7 +266,7 @@ uint16_t correctionCranking(void)
   }
 
   //If we're not cranking, check if if cranking enrichment tapering to ASE should be done
-  else if ( crankingEnrichTaper < configPage10.crankingEnrichTaper )
+  else if (crankingEnrichTaper < configPage10.crankingEnrichTaper)
   {
     crankingValue = table2D_getValue(&crankingEnrichTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET);
     crankingValue = (uint16_t) crankingValue * 5; //multiplied by 5 to get range from 0% to 1275%
@@ -294,7 +295,8 @@ byte correctionASE(void)
   {
     if ( BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ) || (currentStatus.ASEValue == 0) )
     {
-      if ( (currentStatus.runSecs < (table2D_getValue(&ASECountTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET))) && !(BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK)) )
+      if (currentStatus.runSecs < (table2D_getValue(&ASECountTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET))
+          && !BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK))
       {
         BIT_SET(currentStatus.engine, BIT_ENGINE_ASE); //Mark ASE as active.
         ASEValue = 100 + table2D_getValue(&ASETable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET);
@@ -302,7 +304,7 @@ byte correctionASE(void)
       }
       else
       {
-        if ( aseTaper < configPage2.aseTaperTime ) //Check if we've reached the end of the taper time
+        if (aseTaper < configPage2.aseTaperTime) //Check if we've reached the end of the taper time
         {
           BIT_SET(currentStatus.engine, BIT_ENGINE_ASE); //Mark ASE as active.
           ASEValue = 100 + map(aseTaper, 0, configPage2.aseTaperTime, table2D_getValue(&ASETable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET), 0);
@@ -387,13 +389,12 @@ static int16_t doAECalculation(int16_t const DOT, byte const threshold, struct t
           uint16_t accelValue_uint = percentage(configPage2.aeColdPct, accelValue);
           accelValue = (int16_t)accelValue_uint;
         }
-
         else
         {
           //If CLT is between taper min and max, taper the modifier value and apply it on top of accelValue
           int16_t taperRange = (int16_t)configPage2.aeColdTaperMax - configPage2.aeColdTaperMin;
           int16_t taperPercent = (int)((currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET - configPage2.aeColdTaperMin) * 100) / taperRange;
-          int16_t coldPct = (int16_t)100 + percentage((100 - taperPercent), (configPage2.aeColdPct - 100));
+          int16_t coldPct = (int16_t)100 + percentage(100 - taperPercent, configPage2.aeColdPct - 100);
           //Potential overflow (if AE is large) without using uint16_t (percentage() may overflow)
           uint16_t accelValue_uint = (uint16_t)accelValue * coldPct / 100;
 
@@ -576,11 +577,14 @@ byte correctionDFCOfuel(void)
 bool correctionDFCO(void)
 {
   bool DFCOValue = false;
-  if ( configPage2.dfcoEnabled == 1 )
+
+  if (configPage2.dfcoEnabled == 1)
   {
-    if ( BIT_CHECK(currentStatus.status1, BIT_STATUS1_DFCO) == 1 )
+    if (BIT_CHECK(currentStatus.status1, BIT_STATUS1_DFCO))
     {
-      DFCOValue = ( currentStatus.RPM > ( configPage4.dfcoRPM * 10) ) && ( currentStatus.TPS < configPage4.dfcoTPSThresh );
+      DFCOValue = currentStatus.RPM > (uint16_t)configPage4.dfcoRPM * 10
+                  && currentStatus.TPS < configPage4.dfcoTPSThresh;
+
       if (!DFCOValue)
       {
         dfcoDelay = 0;
@@ -588,17 +592,30 @@ bool correctionDFCO(void)
     }
     else
     {
-      if ( (currentStatus.TPS < configPage4.dfcoTPSThresh) && (currentStatus.coolant >= (int)(configPage2.dfcoMinCLT - CALIBRATION_TEMPERATURE_OFFSET)) && ( currentStatus.RPM > (unsigned int)( (configPage4.dfcoRPM * 10) + (configPage4.dfcoHyster * 2)) ) )
+      if (currentStatus.TPS < configPage4.dfcoTPSThresh
+          && currentStatus.coolant >= (int)configPage2.dfcoMinCLT - CALIBRATION_TEMPERATURE_OFFSET
+          && currentStatus.RPM > (unsigned int)configPage4.dfcoRPM * 10 + (unsigned int)configPage4.dfcoHyster * 2)
       {
-        if( dfcoDelay < configPage2.dfcoDelay )
+        if (dfcoDelay < configPage2.dfcoDelay)
         {
-          if( BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ) ) { dfcoDelay++; }
+          if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ))
+          {
+            dfcoDelay++;
+          }
         }
-        else { DFCOValue = true; }
+        else
+        {
+          DFCOValue = true;
+        }
       }
-      else { dfcoDelay = 0; } //Prevent future activation right away if previous time wasn't activated
+      else
+      {
+        //Prevent future activation right away if previous time wasn't activated
+        dfcoDelay = 0;
+      }
     } // DFCO active check
   } // DFCO enabled check
+
   return DFCOValue;
 }
 
@@ -662,16 +679,29 @@ byte correctionAFRClosedLoop(void)
     }
   }
 
-  if((configPage6.egoType > 0) && (BIT_CHECK(currentStatus.status1, BIT_STATUS1_DFCO) != 1  ) ) //egoType of 0 means no O2 sensor. If DFCO is active do not run the ego controllers to prevent interator wind-up.
+  //egoType of 0 means no O2 sensor.
+  //If DFCO is active do not run the ego controllers to prevent integrator wind-up.
+  if (configPage6.egoType > 0 && !BIT_CHECK(currentStatus.status1, BIT_STATUS1_DFCO))
   {
-    AFRValue = currentStatus.egoCorrection; //Need to record this here, just to make sure the correction stays 'on' even if the nextCycle count isn't ready
+    //Need to record this here, just to make sure the correction stays 'on'
+    //even if the nextCycle count isn't ready
+    AFRValue = currentStatus.egoCorrection;
 
-    if((ignitionCount >= AFRnextCycle) || (ignitionCount < (AFRnextCycle - configPage6.egoCount)))
+    if (ignitionCount >= AFRnextCycle || ignitionCount < AFRnextCycle - configPage6.egoCount)
     {
-      AFRnextCycle = ignitionCount + configPage6.egoCount; //Set the target ignition event for the next calculation
+      //Set the target ignition event for the next calculation
+      AFRnextCycle = ignitionCount + configPage6.egoCount;
 
       //Check all other requirements for closed loop adjustments
-      if( (currentStatus.coolant > (int)(configPage6.egoTemp - CALIBRATION_TEMPERATURE_OFFSET)) && (currentStatus.RPM > (unsigned int)(configPage6.egoRPM * 100)) && (currentStatus.TPS <= configPage6.egoTPSMax) && (currentStatus.O2 < configPage6.ego_max) && (currentStatus.O2 > configPage6.ego_min) && (currentStatus.runSecs > configPage6.ego_sdelay) &&  (BIT_CHECK(currentStatus.status1, BIT_STATUS1_DFCO) == 0) && ( currentStatus.MAP <= (configPage9.egoMAPMax * 2U) ) && ( currentStatus.MAP >= (configPage9.egoMAPMin * 2U) ) )
+      if (currentStatus.coolant > (int)(configPage6.egoTemp - CALIBRATION_TEMPERATURE_OFFSET)
+          && currentStatus.RPM > (uint16_t)configPage6.egoRPM * 100
+          && currentStatus.TPS <= configPage6.egoTPSMax
+          && currentStatus.O2 < configPage6.ego_max
+          && currentStatus.O2 > configPage6.ego_min
+          && currentStatus.runSecs > configPage6.ego_sdelay
+          &&  !BIT_CHECK(currentStatus.status1, BIT_STATUS1_DFCO)
+          && currentStatus.MAP <= configPage9.egoMAPMax * 2U
+          && currentStatus.MAP >= configPage9.egoMAPMin * 2U)
       {
 
         //Check which algorithm is used, simple or PID
