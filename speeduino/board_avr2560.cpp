@@ -3,6 +3,7 @@
 #include "board_avr2560.h"
 #include "auxiliaries.h"
 #include "comms_secondary.h"
+#include "bit_macros.h"
 
 // Prescaler values for timers 1-3-4-5. Refer to www.instructables.com/files/orig/F3T/TIKL/H3WSA4V7/F3TTIKLH3WSA4V7.jpg
 #define TIMER_PRESCALER_OFF  ((0<<CS12)|(0<<CS11)|(0<<CS10))
@@ -132,28 +133,23 @@ static inline unsigned long micros_safe(void)
 }
 #endif //TIMER5_MICROS
 
-  //Note that the interrupt flag is reset BEFORE the interrupt is enabled
-void FUEL1_TIMER_ENABLE(void) //Turn on the A compare unit (ie turn on the interrupt)
-{
-  TIFR3 |= (1 << OCF3A);
-  TIMSK3 |= (1 << OCIE3A);
-}
+//Note that the interrupt flag is reset BEFORE the interrupt is enabled
+void FUEL1_TIMER_ENABLE(void) { BIT_SET(TIFR3, OCF3A); BIT_SET(TIMSK3, OCIE3A); }
+void FUEL2_TIMER_ENABLE(void) { BIT_SET(TIFR3, OCF3B); BIT_SET(TIMSK3, OCIE3B); }
+void FUEL3_TIMER_ENABLE(void) { BIT_SET(TIFR3, OCF3C); BIT_SET(TIMSK3, OCIE3C); }
+void FUEL4_TIMER_ENABLE(void) { BIT_SET(TIFR4, OCF4B); BIT_SET(TIMSK4, OCIE4B); }
+void FUEL5_TIMER_ENABLE(void) { BIT_SET(TIFR4, OCF4C); BIT_SET(TIMSK4, OCIE4C); }
+void FUEL6_TIMER_ENABLE(void) { BIT_SET(TIFR4, OCF4A); BIT_SET(TIMSK4, OCIE4A); }
+void FUEL7_TIMER_ENABLE(void) { BIT_SET(TIFR5, OCF5C); BIT_SET(TIMSK5, OCIE5C); }
+void FUEL8_TIMER_ENABLE(void) { BIT_SET(TIFR5, OCF5B); BIT_SET(TIMSK5, OCIE5B); }
 
-void FUEL2_TIMER_ENABLE(void) { TIFR3 |= (1<<OCF3B); TIMSK3 |= (1 << OCIE3B); } //Turn on the B compare unit (ie turn on the interrupt)
-void FUEL3_TIMER_ENABLE(void) { TIFR3 |= (1<<OCF3C); TIMSK3 |= (1 << OCIE3C); } //Turn on the C compare unit (ie turn on the interrupt)
-void FUEL4_TIMER_ENABLE(void) { TIFR4 |= (1<<OCF4B); TIMSK4 |= (1 << OCIE4B); } //Turn on the B compare unit (ie turn on the interrupt)
-void FUEL5_TIMER_ENABLE(void) { TIFR4 |= (1<<OCF4C); TIMSK4 |= (1 << OCIE4C); } //Turn on the C compare unit (ie turn on the interrupt)
-void FUEL6_TIMER_ENABLE(void) { TIFR4 |= (1<<OCF4A); TIMSK4 |= (1 << OCIE4A); } //Turn on the A compare unit (ie turn on the interrupt)
-void FUEL7_TIMER_ENABLE(void) { TIFR5 |= (1<<OCF5C); TIMSK5 |= (1 << OCIE5C); } //
-void FUEL8_TIMER_ENABLE(void) { TIFR5 |= (1<<OCF5B); TIMSK5 |= (1 << OCIE5B); } //
-
-void FUEL1_TIMER_DISABLE(void) { TIMSK3 &= ~(1 << OCIE3A); } // //Turn off this output compare unit
-void FUEL2_TIMER_DISABLE(void) { TIMSK3 &= ~(1 << OCIE3B); } // //Turn off this output compare unit
-void FUEL3_TIMER_DISABLE(void) { TIMSK3 &= ~(1 << OCIE3C); } // //Turn off this output compare unit
-void FUEL4_TIMER_DISABLE(void) { TIMSK4 &= ~(1 << OCIE4B); } ////Turn off this output compare unit
-void FUEL5_TIMER_DISABLE(void) { TIMSK4 &= ~(1 << OCIE4C); } // //
-void FUEL6_TIMER_DISABLE(void) { TIMSK4 &= ~(1 << OCIE4A); } // //
-void FUEL7_TIMER_DISABLE(void) { TIMSK5 &= ~(1 << OCIE5C); } // //
-void FUEL8_TIMER_DISABLE(void) { TIMSK5 &= ~(1 << OCIE5B); } //
+void FUEL1_TIMER_DISABLE(void) { BIT_CLEAR(TIMSK3, OCIE3A); }
+void FUEL2_TIMER_DISABLE(void) { BIT_CLEAR(TIMSK3, OCIE3B); }
+void FUEL3_TIMER_DISABLE(void) { BIT_CLEAR(TIMSK3, OCIE3C); }
+void FUEL4_TIMER_DISABLE(void) { BIT_CLEAR(TIMSK4, OCIE4B); }
+void FUEL5_TIMER_DISABLE(void) { BIT_CLEAR(TIMSK4, OCIE4C); }
+void FUEL6_TIMER_DISABLE(void) { BIT_CLEAR(TIMSK4, OCIE4A); }
+void FUEL7_TIMER_DISABLE(void) { BIT_CLEAR(TIMSK5, OCIE5C); }
+void FUEL8_TIMER_DISABLE(void) { BIT_CLEAR(TIMSK5, OCIE5B); }
 
 #endif //CORE_AVR
