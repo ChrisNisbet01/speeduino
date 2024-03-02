@@ -1508,9 +1508,9 @@ void setPinMapping(byte boardID)
 #if IGN_CHANNELS >= 5
       ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
 #endif
-      Trigger.setPin(20); //The CAS pin
-      Trigger2.setPin(21); //The Cam Sensor pin
-      Trigger3.setPin(3); //The Cam sensor 2 pin
+      Trigger.pin = 20; //The CAS pin
+      Trigger2.pin = 21; //The Cam Sensor pin
+      Trigger3.pin = 3; //The Cam sensor 2 pin
       pinTPS = A2; //TPS input pin
       pinMAP = A3; //MAP sensor pin
       pinIAT = A0; //IAT sensor pin
@@ -1520,7 +1520,7 @@ void setPinMapping(byte boardID)
       TachOut.pin = 49; //Tacho output pin
       Idle1.pin = 30; //Single wire idle control
       Idle2.pin = 31; //2 wire idle control
-      StepperDir.setPin(16); //Direction pin  for DRV8825 driver
+      StepperDir.pin = 16; //Direction pin  for DRV8825 driver
       StepperStep.pin = 17; //Step pin for DRV8825 driver
       Fan.pin = 47; //Pin for the fan output
       FuelPump.pin = 4; //Fuel pump output
@@ -1546,9 +1546,9 @@ void setPinMapping(byte boardID)
 #if IGN_CHANNELS >= 5
       ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
 #endif
-      Trigger.setPin(19); //The CAS pin
-      Trigger2.setPin(18); //The Cam Sensor pin
-      Trigger3.setPin(3); //The Cam sensor 2 pin
+      Trigger.pin = 19; //The CAS pin
+      Trigger2.pin = 18; //The Cam Sensor pin
+      Trigger3.pin = 3; //The Cam sensor 2 pin
       pinTPS = A2;//TPS input pin
       pinMAP = A3; //MAP sensor pin
       pinIAT = A0; //IAT sensor pin
@@ -1562,7 +1562,7 @@ void setPinMapping(byte boardID)
       VVT_1.pin = 6; //Default VVT output
       VVT_2.pin = 48; //Default VVT2 output
       FuelPump.pin = 4; //Fuel pump output
-      StepperDir.setPin(16); //Direction pin  for DRV8825 driver
+      StepperDir.pin = 16; //Direction pin  for DRV8825 driver
       StepperStep.pin = 17; //Step pin for DRV8825 driver
       StepperEnable.pin = 26; //Enable pin for DRV8825
       Fan.pin = A13; //Pin for the fan output
@@ -1573,8 +1573,8 @@ void setPinMapping(byte boardID)
       VSS.pin = 20;
 
 #if defined(CORE_TEENSY35)
-        Trigger.setPin(23);
-        StepperDir.setPin(33);
+        Trigger.pin = 23;
+        StepperDir.pin = 33;
         StepperStep.pin = 34;
         ign1.pin = 31;
         TachOut.pin = 28;
@@ -1606,9 +1606,9 @@ void setPinMapping(byte boardID)
 #if IGN_CHANNELS >= 5
       ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
 #endif
-      Trigger.setPin(19); //The CAS pin
-      Trigger2.setPin(18); //The Cam Sensor pin
-      Trigger3.setPin(3); //The Cam sensor 2 pin
+      Trigger.pin = 19; //The CAS pin
+      Trigger2.pin = 18; //The Cam Sensor pin
+      Trigger3.pin = 3; //The Cam sensor 2 pin
       pinTPS = A2;//TPS input pin
       pinMAP = A3; //MAP sensor pin
       pinIAT = A0; //IAT sensor pin
@@ -1622,7 +1622,7 @@ void setPinMapping(byte boardID)
       VVT_1.pin = 4; //Default VVT output
       VVT_2.pin = 48; //Default VVT2 output
       FuelPump.pin = 45; //Fuel pump output  (Goes to ULN2803)
-      StepperDir.setPin(16); //Direction pin  for DRV8825 driver
+      StepperDir.pin = 16; //Direction pin  for DRV8825 driver
       StepperStep.pin = 17; //Step pin for DRV8825 driver
       StepperEnable.pin = 24; //Enable pin for DRV8825
       Fan.pin = 47; //Pin for the fan output (Goes to ULN2803)
@@ -1640,9 +1640,9 @@ void setPinMapping(byte boardID)
         inj6.pin = 51;
 #endif
 
-        Trigger.setPin(23);
-        Trigger2.setPin(36);
-        StepperDir.setPin(34);
+        Trigger.pin = 23;
+        Trigger2.pin = 36;
+        StepperDir.pin = 34;
         StepperStep.pin = 35;
         ign1.pin = 31;
         ign2.pin = 32;
@@ -1653,7 +1653,7 @@ void setPinMapping(byte boardID)
         pinO2 = A22;
 
         //Make sure the CAN pins aren't overwritten
-        Trigger3.setPin(54);
+        Trigger3.pin = 54;
         VVT_1.pin = 55;
 
 #elif defined(CORE_TEENSY41)
@@ -1668,11 +1668,11 @@ void setPinMapping(byte boardID)
         Launch.pin = 34; //Can be overwritten below
         VSS.pin = 35;
 
-        Trigger.setPin(20); //The CAS pin
-        Trigger2.setPin(21); //The Cam Sensor pin
-        Trigger3.setPin(23);
+        Trigger.pin = 20; //The CAS pin
+        Trigger2.pin = 21; //The Cam Sensor pin
+        Trigger3.pin = 23;
 
-        StepperDir.setPin(34);
+        StepperDir.pin = 34;
         StepperStep.pin = 35;
 
         ign1.pin = 31;
@@ -1774,14 +1774,14 @@ void setPinMapping(byte boardID)
         //******************************************
         //******** PORTE CONNECTIONS ***************
         //******************************************
-        Trigger.setPin(PE0); //
-        Trigger2.setPin(PE1); //
+        Trigger.pin = PE0; //
+        Trigger2.pin = PE1; //
         StepperEnable.pin = PE2; //
         /* = PE3; */ //ONBOARD KEY1
         /* = PE4; */ //ONBOARD KEY2
         StepperStep.pin = PE5; //
         Fan.pin = PE6; //
-        StepperDir.setPin(PE7); //
+        StepperDir.pin = PE7; //
         /* = PE8; */ //
         /* = PE9; */ //
         /* = PE10; */ //
@@ -1819,14 +1819,14 @@ void setPinMapping(byte boardID)
         Idle1.pin = PB2; //Single wire idle control
         Idle2.pin = PB10; //2 wire idle control
         Boost.pin = PA6; //Boost control
-        StepperDir.setPin(PB10); //Direction pin  for DRV8825 driver
+        StepperDir.pin = PB10; //Direction pin  for DRV8825 driver
         StepperStep.pin = PB2; //Step pin for DRV8825 driver
         FuelPump.pin = PA8; //Fuel pump output
         Fan.pin = PA5; //Pin for the fan output (Goes to ULN2803)
         //external interrupt enabled pins
         Flex.pin = PC14; // Flex sensor (Must be external interrupt enabled)
-        Trigger.setPin(PC13); //The CAS pin also led pin so bad idea
-        Trigger2.setPin(PC15); //The Cam Sensor pin
+        Trigger.pin = PC13; //The CAS pin also led pin so bad idea
+        Trigger2.pin = PC15; //The Cam Sensor pin
 #endif
       break;
 
@@ -1848,9 +1848,9 @@ void setPinMapping(byte boardID)
 #if IGN_CHANNELS >= 5
       ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
 #endif
-      Trigger.setPin(19); //The CAS pin
-      Trigger2.setPin(18); //The Cam Sensor pin
-      Trigger3.setPin(2); //The Cam sensor 2 pin
+      Trigger.pin = 19; //The CAS pin
+      Trigger2.pin = 18; //The Cam Sensor pin
+      Trigger3.pin = 2; //The Cam sensor 2 pin
       pinTPS = A2;//TPS input pin
       pinMAP = A5; //MAP sensor pin
       pinIAT = A0; //IAT sensor pin
@@ -1864,7 +1864,7 @@ void setPinMapping(byte boardID)
       VVT_2.pin = 48; //Default VVT2 output
       Idle2.pin = 4; //2 wire idle control (Note this is shared with boost!!!)
       FuelPump.pin = 40; //Fuel pump output
-      StepperDir.setPin(16); //Direction pin  for DRV8825 driver
+      StepperDir.pin = 16; //Direction pin  for DRV8825 driver
       StepperStep.pin = 17; //Step pin for DRV8825 driver
       StepperEnable.pin = 24;
       Fan.pin = 41; //Pin for the fan output
@@ -1874,9 +1874,9 @@ void setPinMapping(byte boardID)
       #endif
       //This is NOT correct. It has not yet been tested with this board
       #if defined(CORE_TEENSY35)
-        Trigger.setPin(23);
-        Trigger2.setPin(36);
-        StepperDir.setPin(34);
+        Trigger.pin = 23;
+        Trigger2.pin = 36;
+        StepperDir.pin = 34;
         StepperStep.pin = 35;
         ign1.pin = 33; //Done
         ign2.pin = 24; //Done
@@ -1906,8 +1906,8 @@ void setPinMapping(byte boardID)
 #if IGN_CHANNELS >= 5
       ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
 #endif
-      Trigger.setPin(19); //The CAS pin
-      Trigger2.setPin(18); //The Cam Sensor pin
+      Trigger.pin = 19; //The CAS pin
+      Trigger2.pin = 18; //The Cam Sensor pin
       pinTPS = A2;//TPS input pin
       pinMAP = A5; //MAP sensor pin
       pinIAT = A0; //IAT sensor pin
@@ -1919,7 +1919,7 @@ void setPinMapping(byte boardID)
       Boost.pin = 4;
       Idle2.pin = 4; //2 wire idle control (Note this is shared with boost!!!)
       FuelPump.pin = 49; //Fuel pump output
-      StepperDir.setPin(16); //Direction pin  for DRV8825 driver
+      StepperDir.pin = 16; //Direction pin  for DRV8825 driver
       StepperStep.pin = 17; //Step pin for DRV8825 driver
       StepperEnable.pin = 24;
       Fan.pin = 35; //Pin for the fan output
@@ -1929,9 +1929,9 @@ void setPinMapping(byte boardID)
 
       //This is NOT correct. It has not yet been tested with this board
       #if defined(CORE_TEENSY35)
-        Trigger.setPin(23);
-        Trigger2.setPin(36);
-        StepperDir.setPin(34);
+        Trigger.pin = 23;
+        Trigger2.pin = 36;
+        StepperDir.pin = 34;
         StepperStep.pin = 35;
         ign1.pin = 33; //Done
         ign2.pin = 24; //Done
@@ -1962,8 +1962,8 @@ void setPinMapping(byte boardID)
 #if IGN_CHANNELS >= 5
       ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
 #endif
-      Trigger.setPin(19); //The CAS pin
-      Trigger2.setPin(18); //The Cam Sensor pin
+      Trigger.pin = 19; //The CAS pin
+      Trigger2.pin = 18; //The Cam Sensor pin
       pinTPS = A2;//TPS input pin
       pinMAP = A5; //MAP sensor pin
       pinIAT = A0; //IAT sensor pin
@@ -1977,7 +1977,7 @@ void setPinMapping(byte boardID)
       FuelPump.pin = 37; //Fuel pump output
       //Note that there is no stepper driver output on the PNP boards. These pins are unconnected and remain here just to prevent issues with random pin numbers occurring
       StepperEnable.pin = 15; //Enable pin for the DRV8825
-      StepperDir.setPin(16); //Direction pin  for DRV8825 driver
+      StepperDir.pin = 16; //Direction pin  for DRV8825 driver
       StepperStep.pin = 17; //Step pin for DRV8825 driver
       Fan.pin = 35; //Pin for the fan output
       Launch.pin = 12; //Can be overwritten below
@@ -1988,9 +1988,9 @@ void setPinMapping(byte boardID)
       CTPS.pin = 47;
 #endif
 #if defined(CORE_TEENSY35)
-        Trigger.setPin(23);
-        Trigger2.setPin(36);
-        StepperDir.setPin(34);
+        Trigger.pin = 23;
+        Trigger2.pin = 36;
+        StepperDir.pin = 34;
         StepperStep.pin = 35;
         ign1.pin = 33; //Done
         ign2.pin = 24; //Done
@@ -2028,8 +2028,8 @@ void setPinMapping(byte boardID)
 #if IGN_CHANNELS >= 5
       ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
 #endif
-      Trigger.setPin(18); //The CAS pin
-      Trigger2.setPin(19); //The Cam Sensor pin
+      Trigger.pin = 18; //The CAS pin
+      Trigger2.pin = 19; //The Cam Sensor pin
       pinTPS = A2;//TPS input pin
       pinMAP = A3; //MAP sensor pin
       pinMAP2 = A8; //MAP2 sensor pin
@@ -2065,8 +2065,8 @@ void setPinMapping(byte boardID)
 #if IGN_CHANNELS >= 5
       ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
 #endif
-      Trigger.setPin(20); //The CAS pin
-      Trigger2.setPin(21); //The Cam Sensor pin
+      Trigger.pin = 20; //The CAS pin
+      Trigger2.pin = 21; //The Cam Sensor pin
       pinO2 = A8; //O2 Sensor pin
       pinBat = A4; //Battery reference voltage pin
       pinMAP = A3; //MAP sensor pin
@@ -2098,9 +2098,9 @@ void setPinMapping(byte boardID)
 #if IGN_CHANNELS >= 5
       ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
 #endif
-      Trigger.setPin(19); //The CAS pin
-      Trigger2.setPin(18); //The Cam Sensor pin
-      Trigger3.setPin(17); // cam sensor 2 pin, pin17 isn't external trigger enabled in arduino mega??
+      Trigger.pin = 19; //The CAS pin
+      Trigger2.pin = 18; //The Cam Sensor pin
+      Trigger3.pin = 17; // cam sensor 2 pin, pin17 isn't external trigger enabled in arduino mega??
       pinTPS = A2;//TPS input pin
       pinMAP = A3; //MAP sensor pin
       pinIAT = A0; //IAT sensor pin
@@ -2111,7 +2111,7 @@ void setPinMapping(byte boardID)
       TachOut.pin = 49; //Tacho output pin
       Idle1.pin = 5; //Single wire idle control
       FuelPump.pin = 45; //Fuel pump output
-      StepperDir.setPin(20); //Direction pin  for DRV8825 driver
+      StepperDir.pin = 20; //Direction pin  for DRV8825 driver
       StepperStep.pin = 21; //Step pin for DRV8825 driver
       Boost.pin = 7;
       Fan.pin = 47; //Pin for the fan output
@@ -2154,9 +2154,9 @@ void setPinMapping(byte boardID)
 #if IGN_CHANNELS >= 8
       ign8.pin = 53; //Pin for coil 8 (placeholder)
 #endif
-      Trigger.setPin(19); //The CAS pin
-      Trigger2.setPin(18); //The Cam Sensor pin
-      Trigger3.setPin(20); //The Cam sensor 2 pin
+      Trigger.pin = 19; //The CAS pin
+      Trigger2.pin = 18; //The Cam Sensor pin
+      Trigger3.pin = 20; //The Cam sensor 2 pin
       pinTPS = A2;//TPS input pin
       pinMAP = A3; //MAP sensor pin
       pinEMAP = A15; //EMAP sensor pin
@@ -2172,7 +2172,7 @@ void setPinMapping(byte boardID)
       VVT_1.pin = 4; //VVT1 output (intake vanos)
       VVT_2.pin = 26; //VVT2 output (exhaust vanos)
       FuelPump.pin = 45; //Fuel pump output  (Goes to ULN2003)
-      StepperDir.setPin(16); //Stepper valve isn't used with these
+      StepperDir.pin = 16; //Stepper valve isn't used with these
       StepperStep.pin = 17; //Stepper valve isn't used with these
       StepperEnable.pin = 24; //Stepper valve isn't used with these
       Fan.pin = 47; //Pin for the fan output (Goes to ULN2003)
@@ -2218,8 +2218,8 @@ void setPinMapping(byte boardID)
 #if IGN_CHANNELS >= 8
       ign8.pin = PB9; //Pin for coil 8 (placeholder)
 #endif
-      Trigger.setPin(PD3); //The CAS pin
-      Trigger2.setPin(PD4); //The Cam Sensor pin
+      Trigger.pin = PD3; //The CAS pin
+      Trigger2.pin = PD4; //The Cam Sensor pin
       pinTPS = PA2;//TPS input pin
       pinMAP = PA3; //MAP sensor pin
       pinEMAP = PC5; //EMAP sensor pin
@@ -2235,7 +2235,7 @@ void setPinMapping(byte boardID)
       VVT_1.pin = PD11; //VVT1 output (intake vanos)
       VVT_2.pin = PC7; //VVT2 output (exhaust vanos)
       FuelPump.pin = PE11; //Fuel pump output  (Goes to ULN2003)
-      StepperDir.setPin(PB10); //Stepper valve isn't used with these
+      StepperDir.pin = PB10; //Stepper valve isn't used with these
       StepperStep.pin = PB11; //Stepper valve isn't used with these
       StepperEnable.pin = PA15; //Stepper valve isn't used with these
       Fan.pin = PE9; //Pin for the fan output (Goes to ULN2003)
@@ -2269,9 +2269,9 @@ void setPinMapping(byte boardID)
 #if IGN_CHANNELS >= 5
       ign5.pin = 46; //Placeholder only - NOT USED
 #endif
-      Trigger.setPin(19); //The CAS pin
-      Trigger2.setPin(18); //The Cam Sensor pin
-      Trigger3.setPin(21); //The Cam sensor 2 pin
+      Trigger.pin = 19; //The CAS pin
+      Trigger2.pin = 18; //The Cam Sensor pin
+      Trigger3.pin = 21; //The Cam sensor 2 pin
       pinTPS = A3; //TPS input pin
       pinMAP = A0; //MAP sensor pin
       pinIAT = A5; //IAT sensor pin
@@ -2286,7 +2286,7 @@ void setPinMapping(byte boardID)
       VVT_1.pin = 6; //Default VVT output
       VVT_2.pin = 48; //Default VVT2 output
       FuelPump.pin = 4; //Fuel pump output
-      StepperDir.setPin(25); //Direction pin for DRV8825 driver
+      StepperDir.pin = 25; //Direction pin for DRV8825 driver
       StepperStep.pin = 24; //Step pin for DRV8825 driver
       StepperEnable.pin = 27; //Enable pin for DRV8825 driver
       Launch.pin = 10; //Can be overwritten below
@@ -2314,9 +2314,9 @@ void setPinMapping(byte boardID)
 #if IGN_CHANNELS >= 5
       ign5.pin = 44; //Pin for coil 5 PLACEHOLDER value for now
 #endif
-      Trigger.setPin(19); //The CAS pin
-      Trigger2.setPin(18); //The Cam Sensor pin
-      Trigger3.setPin(3); //The Cam sensor 2 pin
+      Trigger.pin = 19; //The CAS pin
+      Trigger2.pin = 18; //The Cam Sensor pin
+      Trigger3.pin = 3; //The Cam sensor 2 pin
       Flex.pin = 20; // Flex sensor
       pinTPS = A3; //TPS input pin
       pinMAP = A0; //MAP sensor pin
@@ -2333,7 +2333,7 @@ void setPinMapping(byte boardID)
       FuelPump.pin = 23; //Fuel pump output
       VVT_1.pin = 11; //Default VVT output
       VVT_2.pin = 48; //Default VVT2 output
-      StepperDir.setPin(32); //Direction pin  for DRV8825 driver
+      StepperDir.pin = 32; //Direction pin  for DRV8825 driver
       StepperStep.pin = 31; //Step pin for DRV8825 driver
       StepperEnable.pin = 30; //Enable pin for DRV8825 driver
       Boost.pin = 12; //Boost control
@@ -2352,8 +2352,8 @@ void setPinMapping(byte boardID)
       ign2.pin = 25; //Pin for coil 2
       ign3.pin = 23; //Pin for coil 3
       ign4.pin = 22; //Pin for coil 4
-      Trigger.setPin(19); //The CRANK Sensor pin
-      Trigger2.setPin(18); //The Cam Sensor pin
+      Trigger.pin = 19; //The CRANK Sensor pin
+      Trigger2.pin = 18; //The Cam Sensor pin
       Flex.pin = 20; // Flex sensor PLACEHOLDER value for now
       pinTPS = A0; //TPS input pin
       pinO2 = A2; //O2 Sensor pin
@@ -2389,9 +2389,9 @@ void setPinMapping(byte boardID)
 #if IGN_CHANNELS >= 5
       ign5.pin = 26; //Placeholder  for coil 5
 #endif
-      Trigger.setPin(19); //The CAS pin
-      Trigger2.setPin(18); //The Cam Sensor pin
-      Trigger3.setPin(21);// The Cam sensor 2 pin
+      Trigger.pin = 19; //The CAS pin
+      Trigger2.pin = 18; //The Cam Sensor pin
+      Trigger3.pin = 21;// The Cam sensor 2 pin
       Flex.pin = 20; // Flex sensor
       pinTPS = A3; //TPS input pin
       pinMAP = A2; //MAP sensor pin
@@ -2408,7 +2408,7 @@ void setPinMapping(byte boardID)
       FuelPump.pin = 41; //Fuel pump output
       VVT_1.pin = 44; //Default VVT output
       VVT_2.pin = 48; //Default VVT2 output
-      StepperDir.setPin(32); //Direction pin  for DRV8825 driver
+      StepperDir.pin = 32; //Direction pin  for DRV8825 driver
       StepperStep.pin = 31; //Step pin for DRV8825 driver
       StepperEnable.pin = 30; //Enable pin for DRV8825 driver
       Boost.pin = 45; //Boost control
@@ -2436,8 +2436,8 @@ void setPinMapping(byte boardID)
       ign2.pin = 30; //Pin for coil 2
       ign3.pin = 31; //Pin for coil 3 - ONLY WITH DB2
       ign4.pin = 32; //Pin for coil 4 - ONLY WITH DB2
-      Trigger.setPin(23); //The CAS pin
-      Trigger2.setPin(36); //The Cam Sensor pin
+      Trigger.pin = 23; //The CAS pin
+      Trigger2.pin = 36; //The Cam Sensor pin
       pinTPS = 16; //TPS input pin
       pinMAP = 17; //MAP sensor pin
       pinIAT = 14; //IAT sensor pin
@@ -2449,7 +2449,7 @@ void setPinMapping(byte boardID)
       Idle1.pin = 5; //Single wire idle control
       Boost.pin = 11; //Boost control
       FuelPump.pin = 38; //Fuel pump output
-      StepperDir.setPin(34); //Direction pin for DRV8825 driver
+      StepperDir.pin = 34; //Direction pin for DRV8825 driver
       StepperStep.pin = 35; //Step pin for DRV8825 driver
       StepperEnable.pin = 33; //Enable pin for DRV8825 driver
       Launch.pin = 26; //Can be overwritten below
@@ -2466,8 +2466,8 @@ void setPinMapping(byte boardID)
       ign2.pin = 30; //Pin for coil 2
       ign3.pin = 31; //Pin for coil 3 - ONLY WITH DB2
       ign4.pin = 32; //Pin for coil 4 - ONLY WITH DB2
-      Trigger.setPin(23); //The CAS pin
-      Trigger2.setPin(36); //The Cam Sensor pin
+      Trigger.pin = 23; //The CAS pin
+      Trigger2.pin = 36; //The Cam Sensor pin
       pinTPS = 16; //TPS input pin
       pinMAP = 17; //MAP sensor pin
       pinIAT = 14; //IAT sensor pin
@@ -2479,7 +2479,7 @@ void setPinMapping(byte boardID)
       Idle1.pin = 5; //Single wire idle control
       Boost.pin = 11; //Boost control
       FuelPump.pin = 38; //Fuel pump output
-      StepperDir.setPin(34); //Direction pin for DRV8825 driver
+      StepperDir.pin = 34; //Direction pin for DRV8825 driver
       StepperStep.pin = 35; //Step pin for DRV8825 driver
       StepperEnable.pin = 33; //Enable pin for DRV8825 driver
       Launch.pin = 26; //Can be overwritten below
@@ -2498,8 +2498,8 @@ void setPinMapping(byte boardID)
       ign2.pin = 30; //Pin for coil 2
       ign3.pin = 31; //Pin for coil 3
       ign4.pin = 32; //Pin for coil 4
-      Trigger.setPin(37); //The CAS pin
-      Trigger2.setPin(38); //The Cam Sensor pin - NOT USED
+      Trigger.pin = 37; //The CAS pin
+      Trigger2.pin = 38; //The Cam Sensor pin - NOT USED
       pinTPS = A2; //TPS input pin
       pinMAP = A7; //MAP sensor pin
       pinIAT = A1; //IAT sensor pin
@@ -2511,7 +2511,7 @@ void setPinMapping(byte boardID)
       Idle1.pin = 5; //Single wire idle control - NOT USED
       Boost.pin = 11; //Boost control - NOT USED
       FuelPump.pin = 24; //Fuel pump output
-      StepperDir.setPin(3); //Direction pin for DRV8825 driver - NOT USED
+      StepperDir.pin = 3; //Direction pin for DRV8825 driver - NOT USED
       StepperStep.pin = 4; //Step pin for DRV8825 driver - NOT USED
       StepperEnable.pin = 6; //Enable pin for DRV8825 driver - NOT USED
       Launch.pin = 26; //Can be overwritten below
@@ -2541,9 +2541,9 @@ void setPinMapping(byte boardID)
       ign1.pin = 40;
       ign2.pin = 41;
 
-      Trigger.setPin(19); //The CAS pin
-      Trigger2.setPin(18); //The Cam Sensor pin
-      Trigger3.setPin(22); //Uses one of the protected spare digitial inputs. This must be set or Serial1 (Pin 0) gets broken
+      Trigger.pin = 19; //The CAS pin
+      Trigger2.pin = 18; //The Cam Sensor pin
+      Trigger3.pin = 22; //Uses one of the protected spare digitial inputs. This must be set or Serial1 (Pin 0) gets broken
       Flex.pin = A16; // Flex sensor
       pinMAP = A1; //MAP sensor pin
       pinBaro = A0; //Baro sensor pin
@@ -2554,7 +2554,7 @@ void setPinMapping(byte boardID)
       Idle2.pin = 29; //2 wire idle control. Shared with Spare 1 output
       FuelPump.pin = 8; //Fuel pump output
       VVT_1.pin = 28; //Default VVT output
-      StepperDir.setPin(32); //Direction pin  for DRV8825 driver
+      StepperDir.pin = 32; //Direction pin  for DRV8825 driver
       StepperStep.pin = 31; //Step pin for DRV8825 driver
       StepperEnable.pin = 30; //Enable pin for DRV8825 driver
       Boost.pin = 24; //Boost control
@@ -2589,8 +2589,8 @@ void setPinMapping(byte boardID)
         Launch.pin = 36;
         Flex.pin = 37; // Flex sensor
 
-        Trigger.setPin(20); //The CAS pin
-        Trigger2.setPin(21); //The Cam Sensor pin
+        Trigger.pin = 20; //The CAS pin
+        Trigger2.pin = 21; //The Cam Sensor pin
 
         FuelPump.pin = 5; //Fuel pump output
         TachOut.pin = 8; //Tacho output pin
@@ -2641,8 +2641,8 @@ void setPinMapping(byte boardID)
       ign4.pin = 5;
 #endif
 
-      Trigger.setPin(20); //The CAS pin
-      Trigger2.setPin(21); //The Cam Sensor pin
+      Trigger.pin = 20; //The CAS pin
+      Trigger2.pin = 21; //The Cam Sensor pin
       Flex.pin = 37; // Flex sensor
       pinMAP = A5; //MAP sensor pin
       pinBaro = A4; //Baro sensor pin
@@ -2658,7 +2658,7 @@ void setPinMapping(byte boardID)
       Idle2.pin = 26; //2 wire idle control. Shared with Spare 1 output
       FuelPump.pin = 10; //Fuel pump output
       VVT_1.pin = 28; //Default VVT output
-      StepperDir.setPin(32); //Direction pin  for DRV8825 driver
+      StepperDir.pin = 32; //Direction pin  for DRV8825 driver
       StepperStep.pin = 31; //Step pin for DRV8825 driver
       StepperEnable.pin = 30; //Enable pin for DRV8825 driver
       Boost.pin = 24; //Boost control
@@ -2763,14 +2763,14 @@ void setPinMapping(byte boardID)
         //******************************************
         //******** PORTE CONNECTIONS ***************
         //******************************************
-        Trigger.setPin(PE0); //
-        Trigger2.setPin(PE1); //
+        Trigger.pin = PE0; //
+        Trigger2.pin = PE1; //
         StepperEnable.pin = PE2; //
         FuelPump.pin = PE3; //ONBOARD KEY1
         // = PE4;  //ONBOARD KEY2
         StepperStep.pin = PE5; //
         Fan.pin = PE6; //
-        StepperDir.setPin(PE7); //
+        StepperDir.pin = PE7; //
         // = PE8;  //
 #if INJ_CHANNELS >= 5
         inj5.pin = PE9; //
@@ -2809,15 +2809,15 @@ void setPinMapping(byte boardID)
         Idle1.pin = PB2; //Single wire idle control
         Idle2.pin = PB10; //2 wire idle control
         Boost.pin = PA6; //Boost control
-        StepperDir.setPin(PB10); //Direction pin  for DRV8825 driver
+        StepperDir.pin = PB10; //Direction pin  for DRV8825 driver
         StepperStep.pin = PB2; //Step pin for DRV8825 driver
         FuelPump.pin = PA8; //Fuel pump output
         Fan.pin = PA5; //Pin for the fan output (Goes to ULN2803)
 
         //external interrupt enabled pins
         Flex.pin = PC14; // Flex sensor (Must be external interrupt enabled)
-        Trigger.setPin(PC13); //The CAS pin also led pin so bad idea
-        Trigger2.setPin(PC15); //The Cam Sensor pin
+        Trigger.pin = PC13; //The CAS pin also led pin so bad idea
+        Trigger2.pin = PC15; //The Cam Sensor pin
 
      #elif defined(CORE_STM32)
         //blue pill wiki.stm32duino.com/index.php?title=Blue_Pill
@@ -2847,7 +2847,7 @@ void setPinMapping(byte boardID)
         Boost.pin = PA1; //Boost control
         VVT_1.pin = PA0; //Default VVT output
         VVT_2.pin = PA2; //Default VVT2 output
-        StepperDir.setPin(PC15); //Direction pin  for DRV8825 driver
+        StepperDir.pin = PC15; //Direction pin  for DRV8825 driver
         StepperStep.pin = PC14; //Step pin for DRV8825 driver
         StepperEnable.pin = PC13; //Enable pin for DRV8825
         Fan.pin = PB1; //Pin for the fan output
@@ -2855,8 +2855,8 @@ void setPinMapping(byte boardID)
         TachOut.pin = PB10; //Tacho output pin
         //external interrupt enabled pins
         Flex.pin = PB8; // Flex sensor (Must be external interrupt enabled)
-        Trigger.setPin(PA10); //The CAS pin
-        Trigger2.setPin(PA13); //The Cam Sensor pin
+        Trigger.pin = PA10; //The CAS pin
+        Trigger2.pin = PA13; //The Cam Sensor pin
 
     #endif
       break;
@@ -2871,7 +2871,7 @@ void setPinMapping(byte boardID)
       pinTPS = PA2;
       // = PA3;
       // = PA4;
-      Trigger.setPin(PA5);
+      Trigger.pin = PA5;
       // = PA6;
       // = PA7; // ALT crank
       // = PA8; // Thermocouple #3 /CS
@@ -2912,7 +2912,7 @@ void setPinMapping(byte boardID)
       pinO2 = PC3;
       pinBat = PC4;
       // = PC5;
-      Trigger2.setPin(PC6);
+      Trigger2.pin = PC6;
       ign1.pin = PC7;
       /* = PC8; */ //(DO NOT USE FOR SPEEDUINO) - SDIO_D0
       ign3.pin = PC9;
@@ -3074,14 +3074,14 @@ void setPinMapping(byte boardID)
         //******************************************
         //******** PORTE CONNECTIONS ***************
         //******************************************
-        Trigger.setPin(PE0); //
-        Trigger2.setPin(PE1); //
+        Trigger.pin = PE0; //
+        Trigger2.pin = PE1; //
         StepperEnable.pin = PE2; //
         /* = PE3; */ //ONBOARD KEY1
         /* = PE4; */ //ONBOARD KEY2
         StepperStep.pin = PE5; //
         Fan.pin = PE6; //
-        StepperDir.setPin(PE7); //
+        StepperDir.pin = PE7; //
         /* = PE8; */ //
         /* = PE9; */ //
         /* = PE10; */ //
@@ -3112,8 +3112,8 @@ void setPinMapping(byte boardID)
 #if IGN_CHANNELS >= 5
         ign5.pin = 34; //Pin for coil 5 PLACEHOLDER value for now
 #endif
-        Trigger.setPin(20); //The CAS pin
-        Trigger2.setPin(21); //The Cam Sensor pin
+        Trigger.pin = 20; //The CAS pin
+        Trigger2.pin = 21; //The Cam Sensor pin
         pinTPS = A2; //TPS input pin
         pinMAP = A3; //MAP sensor pin
         pinIAT = A0; //IAT sensor pin
@@ -3122,7 +3122,7 @@ void setPinMapping(byte boardID)
         pinO2 = A8; //O2 Sensor pin
         #endif
         pinBat = A4; //Battery reference voltage pin
-        StepperDir.setPin(16); //Direction pin  for DRV8825 driver
+        StepperDir.pin = 16; //Direction pin  for DRV8825 driver
         StepperStep.pin = 17; //Step pin for DRV8825 driver
         Fan.pin = 47; //Pin for the fan output
         FuelPump.pin = 4; //Fuel pump output

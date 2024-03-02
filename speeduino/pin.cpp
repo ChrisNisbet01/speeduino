@@ -142,11 +142,6 @@ bool IOPortMaskInputPin::is_configured(void)
   return m_port != nullptr && m_is_configured;
 }
 
-void IOPortMaskInputPin::setPin(byte pin_)
-{
-  pin = pin_;
-}
-
 bool IODigitalWriteOutputPin::read(void)
 {
   return digitalRead(pin);
@@ -205,11 +200,6 @@ bool IODigitalWriteOutputPin::is_configured(void)
   return m_is_configured;
 }
 
-void IODigitalWriteOutputPin::setPin(byte pin_)
-{
-  pin = pin_;
-}
-
 bool IODigitalReadInputPin::read(void)
 {
   return digitalRead(pin);
@@ -230,11 +220,6 @@ bool IODigitalReadInputPin::is_configured(void)
   return m_is_configured;
 }
 
-void IODigitalReadInputPin::setPin(byte pin_)
-{
-  pin = pin_;
-}
-
 #if defined(CORE_TEENSY) || defined(CORE_STM32)
 
 #else
@@ -252,6 +237,11 @@ void IOAtomicWriteOutputPin::on(void)
 void IOAtomicWriteOutputPin::off(void)
 {
   atomic_pin_clear(*m_port, m_mask);
+}
+
+void IOAtomicWriteOutputPin:: write(byte val)
+{
+  val ? on() : off();
 }
 
 void IOAtomicWriteOutputPin::toggle(void)

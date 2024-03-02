@@ -49,8 +49,6 @@ public:
 
   bool is_configured(void);
 
-  void setPin(byte pin);
-
 private:
   volatile PORT_TYPE * m_port = nullptr;
   PINMASK_TYPE m_mask = 0;
@@ -76,8 +74,6 @@ public:
 
   bool is_configured(void);
 
-  void setPin(byte pin);
-
 private:
   bool m_is_configured = false;
 };
@@ -93,8 +89,6 @@ public:
   void configure(byte mode = INPUT);
 
   bool is_configured(void);
-
-  void setPin(byte pin);
 
 private:
   bool m_is_configured = false;
@@ -118,6 +112,8 @@ public:
   void on(void);
 
   void off(void);
+
+  void write(byte value);
 
   void toggle(void);
 
