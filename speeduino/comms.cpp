@@ -932,7 +932,7 @@ void processSerialCommand(void)
         {
           /* Do nothing. */
         }
-        ResetControl.write(LOW);
+        ResetControl.off();
       }
       else
       {

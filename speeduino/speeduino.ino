@@ -1311,14 +1311,14 @@ void loop(void)
         && resetControl == RESET_CONTROL_PREVENT_WHEN_RUNNING)
     {
       //Reset prevention is supposed to be on while the engine is running but isn't. Fix that.
-      ResetControl.write(HIGH);
+      ResetControl.on();
       BIT_SET(currentStatus.status3, BIT_STATUS3_RESET_PREVENT);
     }
   } //Has sync and RPM
   else if (BIT_CHECK(currentStatus.status3, BIT_STATUS3_RESET_PREVENT)
            && resetControl == RESET_CONTROL_PREVENT_WHEN_RUNNING)
   {
-    ResetControl.write(LOW);
+    ResetControl.off();
     BIT_CLEAR(currentStatus.status3, BIT_STATUS3_RESET_PREVENT);
   }
 } //loop()
