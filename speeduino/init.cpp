@@ -91,6 +91,7 @@ static uint16_t req_fuel_init_uS = 0; /**< The original value of req_fuel_uS to 
  */
 void initialiseAll(void)
 {
+  Serial.begin(115200);
   currentStatus.injPrimed = false;
 
   pinMode(LED_BUILTIN, OUTPUT);
@@ -166,7 +167,6 @@ void initialiseAll(void)
     initSD();
 #endif
 
-    //Serial.begin(115200);
     BIT_SET(currentStatus.status4, BIT_STATUS4_ALLOW_LEGACY_COMMS); // Flag legacy comms as being allowed on startup
 
     //Repoint the 2D table structs to the config pages that were just loaded
