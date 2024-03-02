@@ -10,8 +10,10 @@ A full copy of the license may be found in the projects root directory
 #include "bit_macros.h"
 #include "utilities.h"
 
-byte idleUpOutputHIGH = HIGH; // Used to invert the idle Up Output
-byte idleUpOutputLOW = LOW;   // Used to invert the idle Up Output
+// Used to invert the idle Up Output
+#define idleUpOutputHIGH ((configPage2.idleUpOutputInv == 0) ? HIGH : LOW)
+#define idleUpOutputLOW ((configPage2.idleUpOutputInv == 0) ? LOW : HIGH)
+
 byte idleCounter; //Used for tracking the number of calls to the idle control function
 uint8_t idleTaper;
 
@@ -326,17 +328,6 @@ void initialiseIdle(bool forcehoming)
 
 void initialiseIdleUpOutput(void)
 {
-  if (configPage2.idleUpOutputInv == 1)
-  {
-    idleUpOutputHIGH = LOW;
-    idleUpOutputLOW = HIGH;
-  }
-  else
-  {
-    idleUpOutputHIGH = HIGH;
-    idleUpOutputLOW = LOW;
-  }
-
   //Initialise program with the idle up output in the off state if it is enabled.
   if (configPage2.idleUpEnabled > 0)
   {
