@@ -497,8 +497,8 @@ int getCrankAngle_missingTooth(void)
     crankAngle += 360;
   }
 
-  lastCrankAngleCalc = micros();
-  elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
+  unsigned long const lastCrankAngleCalc = micros();
+  unsigned long const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
   crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
 
   if (crankAngle >= 720)

@@ -131,7 +131,7 @@ int getCrankAngle_24X(void)
   tempToothCurrentCount = toothCurrentCount;
   tempToothLastToothTime = toothLastToothTime;
   tempRevolutionOne = revolutionOne;
-  lastCrankAngleCalc = micros(); //micros() is no longer interrupt safe
+  unsigned long const lastCrankAngleCalc = micros();
 
   interrupts();
 
@@ -151,7 +151,7 @@ int getCrankAngle_24X(void)
   }
 
   //Estimate the number of degrees travelled since the last tooth}
-  elapsedTime = (lastCrankAngleCalc - tempToothLastToothTime);
+  unsigned long const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
   crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
 
   //Sequential check (simply sets whether we're on the first or 2nd revolution of the cycle)

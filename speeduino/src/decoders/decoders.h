@@ -104,8 +104,6 @@ extern volatile uint16_t triggerToothAngle;
 extern volatile unsigned long triggerSecFilterTime; // The shortest time (in uS) that pulses will be accepted (Used for debounce filtering) for the secondary input
 extern unsigned int triggerSecFilterTime_duration; // The shortest valid time (in uS) pulse DURATION
 extern byte checkSyncToothCount; //How many teeth must've been seen on this revolution before we try to confirm sync (Useful for missing tooth type decoders)
-extern unsigned long elapsedTime;
-extern unsigned long lastCrankAngleCalc;
 extern unsigned long lastVVTtime; //The time between the vvt reference pulse and the last crank pulse
 
 typedef uint32_t UQ24X8_t;

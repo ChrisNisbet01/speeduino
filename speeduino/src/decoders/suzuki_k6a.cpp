@@ -345,7 +345,7 @@ int getCrankAngle_SuzukiK6A(void)
 
   tempToothCurrentCount = toothCurrentCount;
   tempToothLastToothTime = toothLastToothTime;
-  lastCrankAngleCalc = micros(); //micros() is no longer interrupt safe
+  unsigned long const lastCrankAngleCalc = micros();
 
   interrupts();
 
@@ -354,7 +354,7 @@ int getCrankAngle_SuzukiK6A(void)
   crankAngle = toothAngles[tempToothCurrentCount] + configPage4.triggerAngle;
 
   //Estimate the number of degrees travelled since the last tooth}
-  elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
+  unsigned long const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
 
   switch (toothCurrentCount)
   {

@@ -240,7 +240,7 @@ int getCrankAngle_Vmax(void)
 
   tempsecondaryToothCount = secondaryToothCount;
   tempToothLastToothTime = toothLastToothTime;
-  lastCrankAngleCalc = micros(); //micros() is no longer interrupt safe
+  unsigned long const lastCrankAngleCalc = micros();
 
   interrupts();
 
@@ -250,7 +250,7 @@ int getCrankAngle_Vmax(void)
   crankAngle = toothAngles[tempsecondaryToothCount] + configPage4.triggerAngle;
 
   //Estimate the number of degrees travelled since the last tooth}
-  elapsedTime = (lastCrankAngleCalc - tempToothLastToothTime);
+  unsigned long const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
   crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
 
   if (crankAngle >= 720)

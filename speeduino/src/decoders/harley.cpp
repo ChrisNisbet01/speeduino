@@ -134,7 +134,7 @@ int getCrankAngle_Harley(void)
 
   tempToothCurrentCount = toothCurrentCount;
   tempToothLastToothTime = toothLastToothTime;
-  lastCrankAngleCalc = micros(); //micros() is no longer interrupt safe
+  unsigned long const lastCrankAngleCalc = micros();
 
   interrupts();
 
@@ -154,7 +154,7 @@ int getCrankAngle_Harley(void)
   }
 
   //Estimate the number of degrees travelled since the last tooth}
-  elapsedTime = (lastCrankAngleCalc - tempToothLastToothTime);
+  unsigned long const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
   crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
 
   if (crankAngle >= 720)

@@ -190,7 +190,7 @@ int getCrankAngle_DualWheel(void)
   tempToothCurrentCount = toothCurrentCount;
   tempToothLastToothTime = toothLastToothTime;
   tempRevolutionOne = revolutionOne;
-  lastCrankAngleCalc = micros();
+  unsigned long const lastCrankAngleCalc = micros();
 
   interrupts();
 
@@ -205,7 +205,7 @@ int getCrankAngle_DualWheel(void)
   //only to the nearest tooth.
   int crankAngle = ((tempToothCurrentCount - 1) * triggerToothAngle) + configPage4.triggerAngle;
 
-  elapsedTime = (lastCrankAngleCalc - tempToothLastToothTime);
+  unsigned long const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
   crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
 
   //Sequential check (simply sets whether we're on the first or 2nd revolution of the cycle)

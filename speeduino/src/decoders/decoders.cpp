@@ -302,8 +302,6 @@ volatile uint16_t triggerToothAngle;
 //How many teeth must've been seen on this revolution before we try to confirm sync
 //(Useful for missing tooth type decoders)
 byte checkSyncToothCount;
-unsigned long elapsedTime;
-unsigned long lastCrankAngleCalc;
 //The time between the vvt reference pulse and the last crank pulse
 unsigned long lastVVTtime;
 
