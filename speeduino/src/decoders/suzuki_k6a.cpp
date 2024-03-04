@@ -58,6 +58,11 @@ void triggerSetup_SuzukiK6A(bool const initialisationComplete)
 
   // not using toothAngles[0] as i'm hoping it makes logic easier
 
+/*
+ |   170  | 70  |   170  | 70  | 35| 135  | 70  |
+  -        -     -        -     -   -      -     -
+ |1|------|2|---|3|------|4|---|5|-|6|----|7|---|1|...
+ */
   toothAngles[1] = 0;   // 0 TDC cylinder 1,
   toothAngles[2] = 170; // 170 - end of cylinder 1, start of cylinder 3, trigger ignition for cylinder 3 on this tooth
   toothAngles[3] = 240; // 70 TDC cylinder 3
@@ -134,7 +139,7 @@ void triggerPri_SuzukiK6A(void)
     }
 
     // check gaps match with tooth to check we have sync
-    // so if we *think* we've seen tooth 3 whos gap should be smaller than the
+    // so if we *think* we've seen tooth 3, whose gap should be smaller than the
     // previous tooth & it isn't, then we've lost sync
     switch (toothCurrentCount)
     {
@@ -227,7 +232,7 @@ void triggerPri_SuzukiK6A(void)
         break;
 
       case 6:
-        // sync tooth, next tooth is 135
+        // sync tooth (35 degree tooth), next tooth is 135
         switch (configPage4.triggerFilter)
         {
         case 1: // 25 % 33 degrees
