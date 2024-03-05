@@ -56,7 +56,7 @@ applyOverDwellCheck(uint32_t targetOverdwellTime)
   //Check first whether each spark output is currently on. Only check it's dwell time if it is
   if (ignitionSchedule->Status == RUNNING && ignitionSchedule->startTime < targetOverdwellTime)
   {
-    ignitionSchedule->end.pCallback(ignitionSchedule->end.coil_ids[0], ignitionSchedule->end.coil_ids[1]);
+    ignitionSchedule->end.pCallback();
     ignitionSchedule->Status = OFF;
   }
 }
@@ -71,72 +71,16 @@ reset(void)
 }
 
 void ignition_context_st::
-configure_coil_schedule(ignition_id_t const id)
-{
-  configure_ignition_coil_schedule(*ignitionSchedule, id);
-}
-
-void ignition_context_st::
-configure_coil_schedule(ignition_id_t const id1, ignition_id_t const id2)
-{
-  configure_ignition_coil_schedule(*ignitionSchedule, id1, id2);
-}
-
-void ignition_context_st::
 inhibit_coil_schedule(void)
 {
   ignitionSchedule->start.pCallback = nullIgnCallback;
   ignitionSchedule->end.pCallback = nullIgnCallback;
 }
 
-#if 0
-/* Ignitions context methods. */
-void ignition_contexts_st::adjustCrankAngle(int16_t const crankAngle, uint16_t const currentTooth)
-{
-  for (size_t i = 0; i < ignChannelCount; i++)
-  {
-    if (ignitions[i].adjustCrankAngle(crankAngle, currentTooth))
-    {
-      break;
-    }
-  }
-}
-
-void ignition_contexts_st::adjustStartAngle(int const adjustment)
-{
-  for (size_t i = 0; i < ignChannelCount; i++)
-  {
-    ignitions[i].startAngle += adjustment;
-  }
-}
-
-void ignition_contexts_st::resetEndAngle(void)
-{
-  for (size_t i = 0; i < ignChannelCount; i++)
-  {
-    ignition_context_st &ignition = ignitions[i];
-
-    ignition.endAngle = 0;
-  }
-}
-#endif
-
 void ignition_contexts_st::setMaxIgnitions(byte const maxOutputs)
 {
   this->maxOutputs = maxOutputs;
   this->maxOutputMask = ((uint16_t)1 << maxOutputs) - 1;
-}
-
-void ignition_contexts_st::
-configure_coil_schedule(ignitionChannelID_t const ign, ignition_id_t const id)
-{
-  ignition_contexts[ign].configure_coil_schedule(id);
-}
-
-void ignition_contexts_st::
-configure_coil_schedule(ignitionChannelID_t const ign, ignition_id_t const id1, ignition_id_t const id2)
-{
-  ignition_contexts[ign].configure_coil_schedule(id1, id2);
 }
 
 void ignition_contexts_st::

@@ -281,42 +281,42 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
       //Check for pulsed ignition output test
       if (BIT_CHECK(HWTest_IGN_Pulsed, IGN1_CMD_BIT))
       {
-        singleCoilBeginCharge(ignition_id_1);
+        beginCoil1Charge();
       }
       if (BIT_CHECK(HWTest_IGN_Pulsed, IGN2_CMD_BIT))
       {
-        singleCoilBeginCharge(ignition_id_2);
+        beginCoil2Charge();
       }
       if (BIT_CHECK(HWTest_IGN_Pulsed, IGN3_CMD_BIT))
       {
-        singleCoilBeginCharge(ignition_id_3);
+        beginCoil3Charge();
       }
       if (BIT_CHECK(HWTest_IGN_Pulsed, IGN4_CMD_BIT))
       {
-        singleCoilBeginCharge(ignition_id_4);
+        beginCoil4Charge();
       }
 #if IGN_CHANNELS >= 5
       if (BIT_CHECK(HWTest_IGN_Pulsed, IGN5_CMD_BIT))
       {
-        singleCoilBeginCharge(ignition_id_5);
+        beginCoil5Charge();
       }
 #endif
 #if IGN_CHANNELS >= 6
       if (BIT_CHECK(HWTest_IGN_Pulsed, IGN6_CMD_BIT))
       {
-        singleCoilBeginCharge(ignition_id_6);
+        beginCoil6Charge();
       }
 #endif
 #if IGN_CHANNELS >= 7
       if (BIT_CHECK(HWTest_IGN_Pulsed, IGN7_CMD_BIT))
       {
-        singleCoilBeginCharge(ignition_id_7);
+        beginCoil7Charge();
       }
 #endif
 #if IGN_CHANNELS >= 8
       if (BIT_CHECK(HWTest_IGN_Pulsed, IGN8_CMD_BIT))
       {
-        singleCoilBeginCharge(ignition_id_8);
+        beginCoil8Charge();
       }
 #endif
       testIgnitionPulseCount = 0;
@@ -463,21 +463,21 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     {
       if(testIgnitionPulseCount >= configPage13.hwTestIgnDuration)
       {
-        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN1_CMD_BIT)) { singleCoilEndCharge(ignition_id_1); }
-        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN2_CMD_BIT)) { singleCoilEndCharge(ignition_id_2); }
-        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN3_CMD_BIT)) { singleCoilEndCharge(ignition_id_3); }
-        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN4_CMD_BIT)) { singleCoilEndCharge(ignition_id_4); }
+        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN1_CMD_BIT)) { endCoil1Charge(); }
+        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN2_CMD_BIT)) { endCoil2Charge(); }
+        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN3_CMD_BIT)) { endCoil3Charge(); }
+        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN4_CMD_BIT)) { endCoil4Charge(); }
 #if IGN_CHANNELS >= 5
-        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN5_CMD_BIT)) { singleCoilEndCharge(ignition_id_5); }
+        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN5_CMD_BIT)) { endCoil5Charge(); }
 #endif
 #if IGN_CHANNELS >= 6
-        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN6_CMD_BIT)) { singleCoilEndCharge(ignition_id_6); }
+        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN6_CMD_BIT)) { endCoil6Charge(); }
 #endif
 #if IGN_CHANNELS >= 7
-        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN7_CMD_BIT)) { singleCoilEndCharge(ignition_id_7); }
+        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN7_CMD_BIT)) { endCoil7Charge(); }
 #endif
 #if IGN_CHANNELS >= 8
-        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN8_CMD_BIT)) { singleCoilEndCharge(ignition_id_8); }
+        if(BIT_CHECK(HWTest_IGN_Pulsed, IGN8_CMD_BIT)) { endCoil8Charge(); }
 #endif
         testIgnitionPulseCount = 0;
       }

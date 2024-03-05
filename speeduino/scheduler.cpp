@@ -406,7 +406,7 @@ static void ignitionScheduleISR(IgnitionSchedule &schedule)
 {
   if (schedule.Status == PENDING) //Check to see if this schedule is turn on
   {
-    schedule.start.pCallback(schedule.start.coil_ids[0], schedule.start.coil_ids[1]);
+    schedule.start.pCallback();
     //Set the status to be in progress (ie The start callback has been called,
     //but not the end callback)
     schedule.Status = RUNNING;
@@ -423,7 +423,7 @@ static void ignitionScheduleISR(IgnitionSchedule &schedule)
   }
   else if (schedule.Status == RUNNING)
   {
-    schedule.end.pCallback(schedule.end.coil_ids[0], schedule.end.coil_ids[1]);
+    schedule.end.pCallback();
     schedule.endScheduleSetByDecoder = false;
     ignitionCount = ignitionCount + 1; //Increment the ignition counter
     currentStatus.actualDwell =

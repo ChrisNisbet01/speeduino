@@ -88,19 +88,19 @@ void triggerPri_Daihatsu(void)
         //This locks the cranking timing to 0 degrees BTDC (All the triggers allow for)
         if (toothCurrentCount == 1)
         {
-          singleCoilEndCharge(ignition_id_1);
+          endCoil1Charge();
         }
         else if (toothCurrentCount == 2)
         {
-          singleCoilEndCharge(ignition_id_2);
+          endCoil2Charge();
         }
         else if (toothCurrentCount == 3)
         {
-          singleCoilEndCharge(ignition_id_3);
+          endCoil3Charge();
         }
         else if (toothCurrentCount == 4)
         {
-          singleCoilEndCharge(ignition_id_4);
+          endCoil4Charge();
         }
       }
     }

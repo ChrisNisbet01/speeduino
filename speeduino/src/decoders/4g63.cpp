@@ -119,26 +119,26 @@ void triggerPri_4G63(void)
           //with crank teeth
           if (toothCurrentCount == 1 || toothCurrentCount == 5)
           {
-            twoCoilsEndCharge(ignition_id_1, ignition_id_3);
+            endCoil1and3Charge();
           }
           else if (toothCurrentCount == 3 || toothCurrentCount == 7)
           {
-            twoCoilsEndCharge(ignition_id_2, ignition_id_4);
+            endCoil2and4Charge();
           }
         }
         else if (configPage2.nCylinders == 6)
         {
           if (toothCurrentCount == 1 || toothCurrentCount == 7)
           {
-            singleCoilEndCharge(ignition_id_1);
+            endCoil1Charge();
           }
           else if (toothCurrentCount == 3 || toothCurrentCount == 9)
           {
-            singleCoilEndCharge(ignition_id_2);
+            endCoil2Charge();
           }
           else if (toothCurrentCount == 5 || toothCurrentCount == 11)
           {
-            singleCoilEndCharge(ignition_id_3);
+            endCoil3Charge();
           }
         }
       }

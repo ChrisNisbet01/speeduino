@@ -109,15 +109,24 @@ void endCoil8Charge(void) { singleCoilEndCharge(ignition_id_8); }
 void coil8Toggle(void) { coil_toggle(ignition_id_8); }
 #endif
 
+//As above but for ignition (Wasted COP mode)
+void beginCoil1and3Charge(void) { beginCoil1Charge(); beginCoil3Charge(); }
+void endCoil1and3Charge(void)   { endCoil1Charge();  endCoil3Charge(); }
+void beginCoil2and4Charge(void) { beginCoil2Charge(); beginCoil4Charge(); }
+void endCoil2and4Charge(void)   { endCoil2Charge();  endCoil4Charge(); }
+
 //For 6cyl wasted COP mode)
+#if IGN_CHANNELS >= 6
 void beginCoil1and4Charge(void) { beginCoil1Charge(); beginCoil4Charge(); }
 void endCoil1and4Charge(void)   { endCoil1Charge();  endCoil4Charge(); }
 void beginCoil2and5Charge(void) { beginCoil2Charge(); beginCoil5Charge(); }
 void endCoil2and5Charge(void)   { endCoil2Charge();  endCoil5Charge(); }
 void beginCoil3and6Charge(void) { beginCoil3Charge(); beginCoil6Charge(); }
 void endCoil3and6Charge(void)   { endCoil3Charge(); endCoil6Charge(); }
+#endif
 
 //For 8cyl wasted COP mode)
+#if IGN_CHANNELS >= 8
 void beginCoil1and5Charge(void) { beginCoil1Charge(); beginCoil5Charge(); }
 void endCoil1and5Charge(void)   { endCoil1Charge();  endCoil5Charge(); }
 void beginCoil2and6Charge(void) { beginCoil2Charge(); beginCoil6Charge(); }
@@ -126,6 +135,7 @@ void beginCoil3and7Charge(void) { beginCoil3Charge(); beginCoil7Charge(); }
 void endCoil3and7Charge(void)   { endCoil3Charge(); endCoil7Charge(); }
 void beginCoil4and8Charge(void) { beginCoil4Charge(); beginCoil8Charge(); }
 void endCoil4and8Charge(void)   { endCoil4Charge();  endCoil8Charge(); }
+#endif
 
 void nullIgnCallback(void)
 {

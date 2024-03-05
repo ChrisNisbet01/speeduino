@@ -54,10 +54,6 @@ public:
 
   void applyOverDwellCheck(uint32_t targetOverdwellTime);
 
-  void configure_coil_schedule(ignition_id_t const id);
-
-  void configure_coil_schedule(ignition_id_t const id1, ignition_id_t const id2);
-
   void inhibit_coil_schedule(void);
 
 } ignition_context_st;
@@ -122,10 +118,6 @@ public:
   void setChannelsOnMask(uint8_t mask);
 
   void applyIgnitionControl(ignitionChannelID_t ign, int crankAngle);
-
-  void configure_coil_schedule(ignitionChannelID_t ign, ignition_id_t const id);
-
-  void configure_coil_schedule(ignitionChannelID_t ign, ignition_id_t const id1, ignition_id_t const id2);
 
   void inhibit_coil_schedule(ignitionChannelID_t ign);
 

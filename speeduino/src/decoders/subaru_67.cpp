@@ -149,11 +149,11 @@ void triggerPri_Subaru67(void)
     {
       if (toothCurrentCount == 1 || toothCurrentCount == 7)
       {
-        twoCoilsEndCharge(ignition_id_1, ignition_id_3);
+        endCoil1and3Charge();
       }
       else if (toothCurrentCount == 4 || toothCurrentCount == 10)
       {
-        twoCoilsEndCharge(ignition_id_2, ignition_id_4);
+        endCoil2and4Charge();
       }
     }
 

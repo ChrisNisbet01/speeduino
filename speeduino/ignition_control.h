@@ -60,6 +60,29 @@ void beginTrailingCoilCharge(void);
 void endTrailingCoilCharge1(void);
 void endTrailingCoilCharge2(void);
 
+void beginCoil1and3Charge(void);
+void endCoil1and3Charge(void);
+void beginCoil2and4Charge(void);
+void endCoil2and4Charge(void);
+
+//For 6cyl wasted COP mode)
+void beginCoil1and4Charge(void);
+void endCoil1and4Charge(void);
+void beginCoil2and5Charge(void);
+void endCoil2and5Charge(void);
+void beginCoil3and6Charge(void);
+void endCoil3and6Charge(void);
+
+//For 8cyl wasted COP mode)
+void beginCoil1and5Charge(void);
+void endCoil1and5Charge(void);
+void beginCoil2and6Charge(void);
+void endCoil2and6Charge(void);
+void beginCoil3and7Charge(void);
+void endCoil3and7Charge(void);
+void beginCoil4and8Charge(void);
+void endCoil4and8Charge(void);
+
 void nullIgnCallback(void);
 
 void coil1Toggle(void);

@@ -106,10 +106,10 @@ void triggerPri_BasicDistributor(void)
 
     if (configPage4.ignCranklock && BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK))
     {
-      singleCoilEndCharge(ignition_id_1);
-      singleCoilEndCharge(ignition_id_2);
-      singleCoilEndCharge(ignition_id_3);
-      singleCoilEndCharge(ignition_id_4);
+      endCoil1Charge();
+      endCoil2Charge();
+      endCoil3Charge();
+      endCoil4Charge();
     }
 
     if (configPage2.perToothIgn)

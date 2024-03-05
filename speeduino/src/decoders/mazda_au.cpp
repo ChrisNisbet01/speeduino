@@ -72,11 +72,11 @@ void triggerPri_MazdaAU(void)
       {
         if (toothCurrentCount == 1)
         {
-          singleCoilEndCharge(ignition_id_1);
+          endCoil1Charge();
         }
         else if (toothCurrentCount == 3)
         {
-          singleCoilEndCharge(ignition_id_2);
+          endCoil2Charge();
         }
       }
 
