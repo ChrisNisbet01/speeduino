@@ -4,7 +4,7 @@
 #include "schedule_status.h"
 #include "globals.h"
 
-typedef void (*coilCallback_fn)(ignition_id_t coil_id1, ignition_id_t coil_id2);
+typedef void (*coilCallback_fn)(void);
 
 /** Ignition schedule.
  */
@@ -30,12 +30,10 @@ struct IgnitionSchedule {
   struct
   {
     coilCallback_fn pCallback = nullptr;
-    ignition_id_t coil_ids[2] = {ignition_id_1, ignition_id_1};
   } start;
   struct
   {
     coilCallback_fn pCallback = nullptr;
-    ignition_id_t coil_ids[2] = {ignition_id_1, ignition_id_1};
   } end;
   volatile unsigned long startTime = 0; /**< The system time (in uS) that the schedule started, used by the overdwell protection in timers.ino */
   volatile COMPARE_TYPE startCompare = 0; ///< The counter value of the timer when this will start

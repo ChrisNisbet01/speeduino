@@ -5,6 +5,8 @@
 #include "schedule_calcs.h"
 #include "bit_macros.h"
 
+ignition_context_st ignition_contexts[ignChannelCount];
+
 bool ignition_context_st::
 adjustCrankAngle(int const crankAngle, uint16_t const currentTooth)
 {
@@ -87,7 +89,7 @@ inhibit_coil_schedule(void)
   ignitionSchedule->end.pCallback = nullIgnCallback;
 }
 
-
+#if 0
 /* Ignitions context methods. */
 void ignition_contexts_st::adjustCrankAngle(int16_t const crankAngle, uint16_t const currentTooth)
 {
@@ -117,6 +119,7 @@ void ignition_contexts_st::resetEndAngle(void)
     ignition.endAngle = 0;
   }
 }
+#endif
 
 void ignition_contexts_st::setMaxIgnitions(byte const maxOutputs)
 {
@@ -127,26 +130,26 @@ void ignition_contexts_st::setMaxIgnitions(byte const maxOutputs)
 void ignition_contexts_st::
 configure_coil_schedule(ignitionChannelID_t const ign, ignition_id_t const id)
 {
-  ignitions[ign].configure_coil_schedule(id);
+  ignition_contexts[ign].configure_coil_schedule(id);
 }
 
 void ignition_contexts_st::
 configure_coil_schedule(ignitionChannelID_t const ign, ignition_id_t const id1, ignition_id_t const id2)
 {
-  ignitions[ign].configure_coil_schedule(id1, id2);
+  ignition_contexts[ign].configure_coil_schedule(id1, id2);
 }
 
 void ignition_contexts_st::
 inhibit_coil_schedule(ignitionChannelID_t const ign)
 {
-  ignitions[ign].inhibit_coil_schedule();
+  ignition_contexts[ign].inhibit_coil_schedule();
 }
 
 void ignition_contexts_st::
 configure_rotary_fc_trailing_coil_schedules(void)
 {
   ::configure_rotary_fc_trailing_coil_schedules(
-    *ignitions[ignition_id_3].ignitionSchedule, *ignitions[ignition_id_4].ignitionSchedule);
+    *ignition_contexts[ignition_id_3].ignitionSchedule, *ignition_contexts[ignition_id_4].ignitionSchedule);
 }
 
 void ignition_contexts_st::setAllOn(void)
@@ -189,7 +192,7 @@ applyIgnitionControl(ignitionChannelID_t const ign, int const crankAngle)
 {
   if (isOperational(ign))
   {
-    ignition_context_st &ignition = ignitions[ign];
+    ignition_context_st &ignition = ignition_contexts[ign];
     uint32_t const timeOut = ignition.calculateIgnitionTimeout(crankAngle);
 
     if (timeOut > 0U)

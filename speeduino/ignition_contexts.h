@@ -4,6 +4,8 @@
 #include "scheduler.h"
 #include "maths.h"
 
+#include <stddef.h>
+
 typedef enum
 {
   ignChannel1,
@@ -60,6 +62,7 @@ public:
 
 } ignition_context_st;
 
+extern ignition_context_st ignition_contexts[ignChannelCount];
 
 typedef struct ignition_contexts_st
 {
@@ -68,16 +71,39 @@ public:
   uint8_t channelsOn = 0;
   uint8_t channelsPending = 0;
 
-  ignition_context_st& ignition(ignitionChannelID_t ign)
+  ignition_context_st &ignition(ignitionChannelID_t ign)
   {
-    return ignitions[ign];
+    return ignition_contexts[ign];
   }
 
-  void adjustCrankAngle(int16_t crankAngle, uint16_t currentTooth);
+  void adjustCrankAngle(int16_t crankAngle, uint16_t currentTooth)
+  {
+    for (size_t i = 0; i < ignChannelCount; i++)
+    {
+      if (ignition_contexts[i].adjustCrankAngle(crankAngle, currentTooth))
+      {
+        break;
+      }
+    }
+  }
 
-  void adjustStartAngle(int adjustment);
+  void adjustStartAngle(int adjustment)
+  {
+    for (size_t i = 0; i < ignChannelCount; i++)
+    {
+      ignition_contexts[i].startAngle += adjustment;
+    }
+  }
 
-  void resetEndAngle(void);
+  void resetEndAngle(void)
+  {
+    for (size_t i = 0; i < ignChannelCount; i++)
+    {
+      ignition_context_st &ignition = ignition_contexts[i];
+
+      ignition.endAngle = 0;
+    }
+  }
 
   void setMaxIgnitions(byte const maxOutputs);
 
@@ -106,7 +132,7 @@ public:
   void configure_rotary_fc_trailing_coil_schedules(void);
 
 private:
-  ignition_context_st ignitions[ignChannelCount];
+  //ignition_context_st ignitions[ignChannelCount];
 
   byte maxOutputMask = 0x01;
 } ignition_contexts_st;
