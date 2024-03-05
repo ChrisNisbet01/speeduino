@@ -10,7 +10,6 @@
 #include "comms_secondary.h"
 #include "comms_CAN.h"
 #include "utilities.h"
-#include "ignition_schedule.h"
 #include "ignition_control.h"
 #include "injector_control.h"
 #include "scheduler.h"
@@ -1354,7 +1353,10 @@ void initialiseAll(void)
         ignition_contexts[ignChannel1].ignitionSchedule->end.pCallback = endCoil1Charge;
         ignition_contexts[ignChannel2].ignitionSchedule->start.pCallback = beginCoil1Charge;
         ignition_contexts[ignChannel2].ignitionSchedule->end.pCallback = endCoil1Charge;
-        ignitions.configure_rotary_fc_trailing_coil_schedules();
+        ignition_contexts[ignChannel3].ignitionSchedule->start.pCallback = beginTrailingCoilCharge;
+        ignition_contexts[ignChannel3].ignitionSchedule->end.pCallback = endTrailingCoilCharge1;
+        ignition_contexts[ignChannel4].ignitionSchedule->start.pCallback = beginTrailingCoilCharge;
+        ignition_contexts[ignChannel4].ignitionSchedule->end.pCallback = endTrailingCoilCharge2;
       }
       else if(configPage10.rotaryType == ROTARY_IGN_FD)
       {

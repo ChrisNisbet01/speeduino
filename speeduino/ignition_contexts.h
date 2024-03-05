@@ -121,8 +121,6 @@ public:
 
   void inhibit_coil_schedule(ignitionChannelID_t ign);
 
-  void configure_rotary_fc_trailing_coil_schedules(void);
-
 private:
   //ignition_context_st ignitions[ignChannelCount];
 

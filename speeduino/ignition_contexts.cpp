@@ -1,6 +1,5 @@
 #include "ignition_contexts.h"
 
-#include "ignition_schedule.h"
 #include "ignition_control.h"
 #include "schedule_calcs.h"
 #include "bit_macros.h"
@@ -87,13 +86,6 @@ void ignition_contexts_st::
 inhibit_coil_schedule(ignitionChannelID_t const ign)
 {
   ignition_contexts[ign].inhibit_coil_schedule();
-}
-
-void ignition_contexts_st::
-configure_rotary_fc_trailing_coil_schedules(void)
-{
-  ::configure_rotary_fc_trailing_coil_schedules(
-    *ignition_contexts[ignition_id_3].ignitionSchedule, *ignition_contexts[ignition_id_4].ignitionSchedule);
 }
 
 void ignition_contexts_st::setAllOn(void)
