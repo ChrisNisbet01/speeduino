@@ -6,32 +6,32 @@
 static void test_status_initial_off_inj1(void)
 {
     initialiseSchedulers();
-    TEST_ASSERT_EQUAL(OFF, fuelSchedule1.Status);
+    TEST_ASSERT_EQUAL(OFF, fuelSchedules[injChannel1].Status);
 }
 
 static void test_status_initial_off_inj2(void)
 {
     initialiseSchedulers();
-    TEST_ASSERT_EQUAL(OFF, fuelSchedule2.Status);
+    TEST_ASSERT_EQUAL(OFF, fuelSchedules[injChannel2].Status);
 }
 
 static void test_status_initial_off_inj3(void)
 {
     initialiseSchedulers();
-    TEST_ASSERT_EQUAL(OFF, fuelSchedule3.Status);
+    TEST_ASSERT_EQUAL(OFF, fuelSchedules[injChannel3].Status);
 }
 
 static void test_status_initial_off_inj4(void)
 {
     initialiseSchedulers();
-    TEST_ASSERT_EQUAL(OFF, fuelSchedule4.Status);
+    TEST_ASSERT_EQUAL(OFF, fuelSchedules[injChannel4].Status);
 }
 
 #if INJ_CHANNELS >= 5
 static void test_status_initial_off_inj5(void)
 {
     initialiseSchedulers();
-    TEST_ASSERT_EQUAL(OFF, fuelSchedule5.Status);
+    TEST_ASSERT_EQUAL(OFF, fuelSchedules[injChannel5].Status);
 }
 #endif
 
@@ -39,7 +39,7 @@ static void test_status_initial_off_inj5(void)
 static void test_status_initial_off_inj6(void)
 {
     initialiseSchedulers();
-    TEST_ASSERT_EQUAL(OFF, fuelSchedule6.Status);
+    TEST_ASSERT_EQUAL(OFF, fuelSchedules[injChannel6].Status);
 }
 #endif
 
@@ -47,7 +47,7 @@ static void test_status_initial_off_inj6(void)
 static void test_status_initial_off_inj7(void)
 {
     initialiseSchedulers();
-    TEST_ASSERT_EQUAL(OFF, fuelSchedule7.Status);
+    TEST_ASSERT_EQUAL(OFF, fuelSchedules[injChannel7].Status);
 }
 #endif
 
@@ -55,7 +55,7 @@ static void test_status_initial_off_inj7(void)
 static void test_status_initial_off_inj8(void)
 {
     initialiseSchedulers();
-    TEST_ASSERT_EQUAL(OFF, fuelSchedule8.Status);
+    TEST_ASSERT_EQUAL(OFF, fuelSchedules[injChannel8].Status);
 }
 #endif
 void test_status_initial_off(void)

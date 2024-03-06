@@ -58,49 +58,49 @@ static void test_accuracy_duration_inj(FuelSchedule &schedule)
 
 static void test_accuracy_duration_inj1(void)
 {
-    test_accuracy_duration_inj(fuelSchedule1);
+    test_accuracy_duration_inj(fuelSchedules[injChannel1]);
 }
 
 static void test_accuracy_duration_inj2(void)
 {
-    test_accuracy_duration_inj(fuelSchedule2);
+    test_accuracy_duration_inj(fuelSchedules[injChannel2]);
 }
 
 static void test_accuracy_duration_inj3(void)
 {
-    test_accuracy_duration_inj(fuelSchedule3);
+    test_accuracy_duration_inj(fuelSchedules[injChannel3]);
 }
 
 static void test_accuracy_duration_inj4(void)
 {
-    test_accuracy_duration_inj(fuelSchedule4);
+    test_accuracy_duration_inj(fuelSchedules[injChannel4]);
 }
 
 #if INJ_CHANNELS >= 5
 static void test_accuracy_duration_inj5(void)
 {
-    test_accuracy_duration_inj(fuelSchedule5);
+    test_accuracy_duration_inj(fuelSchedules[injChannel5]);
 }
 #endif
 
 #if INJ_CHANNELS >= 6
 static void test_accuracy_duration_inj6(void)
 {
-    test_accuracy_duration_inj(fuelSchedule6);
+    test_accuracy_duration_inj(fuelSchedules[injChannel6]);
 }
 #endif
 
 #if INJ_CHANNELS >= 7
 static void test_accuracy_duration_inj7(void)
 {
-    test_accuracy_duration_inj(fuelSchedule7);
+    test_accuracy_duration_inj(fuelSchedules[injChannel7]);
 }
 #endif
 
 #if INJ_CHANNELS >= 8
 static void test_accuracy_duration_inj8(void)
 {
-    test_accuracy_duration_inj(fuelSchedule8);
+    test_accuracy_duration_inj(fuelSchedules[injChannel8]);
 }
 #endif
 

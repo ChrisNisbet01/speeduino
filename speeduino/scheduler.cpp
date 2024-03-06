@@ -35,24 +35,25 @@ A full copy of the license may be found in the project's root directory
 #define DWELL_SMOOTHED(current_dwell, input) ((((long)(input) * (256 - DWELL_SMOOTHED_ALPHA) + ((long)(current_dwell) * DWELL_SMOOTHED_ALPHA))) >> 8)
 //#define DWELL_SMOOTHED(current_dwell, input) (current_dwell) //Can be use to disable the above for testing
 
-
-FuelSchedule fuelSchedule1(FUEL1_COUNTER, FUEL1_COMPARE, FUEL1_TIMER_DISABLE, FUEL1_TIMER_ENABLE);
-FuelSchedule fuelSchedule2(FUEL2_COUNTER, FUEL2_COMPARE, FUEL2_TIMER_DISABLE, FUEL2_TIMER_ENABLE);
-FuelSchedule fuelSchedule3(FUEL3_COUNTER, FUEL3_COMPARE, FUEL3_TIMER_DISABLE, FUEL3_TIMER_ENABLE);
-FuelSchedule fuelSchedule4(FUEL4_COUNTER, FUEL4_COMPARE, FUEL4_TIMER_DISABLE, FUEL4_TIMER_ENABLE);
-
+FuelSchedule fuelSchedules[injChannelCount] =
+{
+  FuelSchedule(FUEL1_COUNTER, FUEL1_COMPARE, FUEL1_TIMER_DISABLE, FUEL1_TIMER_ENABLE),
+  FuelSchedule(FUEL2_COUNTER, FUEL2_COMPARE, FUEL2_TIMER_DISABLE, FUEL2_TIMER_ENABLE),
+  FuelSchedule(FUEL3_COUNTER, FUEL3_COMPARE, FUEL3_TIMER_DISABLE, FUEL3_TIMER_ENABLE),
+  FuelSchedule(FUEL4_COUNTER, FUEL4_COMPARE, FUEL4_TIMER_DISABLE, FUEL4_TIMER_ENABLE),
 #if (INJ_CHANNELS >= 5)
-FuelSchedule fuelSchedule5(FUEL5_COUNTER, FUEL5_COMPARE, FUEL5_TIMER_DISABLE, FUEL5_TIMER_ENABLE);
+  FuelSchedule(FUEL5_COUNTER, FUEL5_COMPARE, FUEL5_TIMER_DISABLE, FUEL5_TIMER_ENABLE),
 #endif
 #if (INJ_CHANNELS >= 6)
-FuelSchedule fuelSchedule6(FUEL6_COUNTER, FUEL6_COMPARE, FUEL6_TIMER_DISABLE, FUEL6_TIMER_ENABLE);
+  FuelSchedule(FUEL6_COUNTER, FUEL6_COMPARE, FUEL6_TIMER_DISABLE, FUEL6_TIMER_ENABLE),
 #endif
 #if (INJ_CHANNELS >= 7)
-FuelSchedule fuelSchedule7(FUEL7_COUNTER, FUEL7_COMPARE, FUEL7_TIMER_DISABLE, FUEL7_TIMER_ENABLE);
+  FuelSchedule(FUEL7_COUNTER, FUEL7_COMPARE, FUEL7_TIMER_DISABLE, FUEL7_TIMER_ENABLE),
 #endif
 #if (INJ_CHANNELS >= 8)
-FuelSchedule fuelSchedule8(FUEL8_COUNTER, FUEL8_COMPARE, FUEL8_TIMER_DISABLE, FUEL8_TIMER_ENABLE);
+  FuelSchedule(FUEL8_COUNTER, FUEL8_COMPARE, FUEL8_TIMER_DISABLE, FUEL8_TIMER_ENABLE),
 #endif
+};
 
 IgnitionSchedule ignitionSchedules[ignChannelCount] =
 {
@@ -76,21 +77,21 @@ IgnitionSchedule ignitionSchedules[ignChannelCount] =
 
 static void initialiseFuelSchedules(void)
 {
-  injectors.injector(injChannel1).fuelSchedule = &fuelSchedule1;
-  injectors.injector(injChannel2).fuelSchedule = &fuelSchedule2;
-  injectors.injector(injChannel3).fuelSchedule = &fuelSchedule3;
-  injectors.injector(injChannel4).fuelSchedule = &fuelSchedule4;
+  injectors.injector(injChannel1).fuelSchedule = &fuelSchedules[injChannel1];
+  injectors.injector(injChannel2).fuelSchedule = &fuelSchedules[injChannel2];
+  injectors.injector(injChannel3).fuelSchedule = &fuelSchedules[injChannel3];
+  injectors.injector(injChannel4).fuelSchedule = &fuelSchedules[injChannel4];
 #if INJ_CHANNELS >= 5
-  injectors.injector(injChannel5).fuelSchedule = &fuelSchedule5;
+  injectors.injector(injChannel5).fuelSchedule = &fuelSchedules[injChannel5];
 #endif
 #if INJ_CHANNELS >= 6
-  injectors.injector(injChannel6).fuelSchedule = &fuelSchedule6;
+  injectors.injector(injChannel6).fuelSchedule = &fuelSchedules[injChannel6];
 #endif
 #if INJ_CHANNELS >= 7
-  injectors.injector(injChannel7).fuelSchedule = &fuelSchedule7;
+  injectors.injector(injChannel7).fuelSchedule = &fuelSchedules[injChannel7];
 #endif
 #if INJ_CHANNELS >= 8
-  injectors.injector(injChannel8).fuelSchedule = &fuelSchedule8;
+  injectors.injector(injChannel8).fuelSchedule = &fuelSchedules[injChannel8];
 #endif
 }
 

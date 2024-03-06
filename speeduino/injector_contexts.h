@@ -92,4 +92,5 @@ private:
   byte maxOutputMask = 0x01;
 } injectors_context_st;
 
+extern FuelSchedule fuelSchedules[injChannelCount];
 extern injectors_context_st injectors;

@@ -53,19 +53,3 @@ struct FuelSchedule {
   void reset(void);
 };
 
-extern FuelSchedule fuelSchedule1;
-extern FuelSchedule fuelSchedule2;
-extern FuelSchedule fuelSchedule3;
-extern FuelSchedule fuelSchedule4;
-#if INJ_CHANNELS >= 5
-extern FuelSchedule fuelSchedule5;
-#endif
-#if INJ_CHANNELS >= 6
-extern FuelSchedule fuelSchedule6;
-#endif
-#if INJ_CHANNELS >= 7
-extern FuelSchedule fuelSchedule7;
-#endif
-#if INJ_CHANNELS >= 8
-extern FuelSchedule fuelSchedule8;
-#endif

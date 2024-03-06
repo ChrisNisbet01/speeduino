@@ -35,54 +35,54 @@ static void test_status_running_to_off_inj(FuelSchedule &fuelSchedule)
     }
     /*Wait*/
   }
-  TEST_ASSERT_EQUAL(OFF, fuelSchedule1.Status);
+  TEST_ASSERT_EQUAL(OFF, fuelSchedule.Status);
 }
 
 static void test_status_running_to_off_inj1(void)
 {
-  test_status_running_to_off_inj(fuelSchedule1);
+  test_status_running_to_off_inj(fuelSchedules[injChannel1]);
 }
 
 static void test_status_running_to_off_inj2(void)
 {
-  test_status_running_to_off_inj(fuelSchedule2);
+  test_status_running_to_off_inj(fuelSchedules[injChannel2]);
 }
 
 static void test_status_running_to_off_inj3(void)
 {
-  test_status_running_to_off_inj(fuelSchedule3);
+  test_status_running_to_off_inj(fuelSchedules[injChannel3]);
 }
 
 static void test_status_running_to_off_inj4(void)
 {
-  test_status_running_to_off_inj(fuelSchedule4);
+  test_status_running_to_off_inj(fuelSchedules[injChannel4]);
 }
 
 #if INJ_CHANNELS >= 5
 static void test_status_running_to_off_inj5(void)
 {
-  test_status_running_to_off_inj(fuelSchedule5);
+  test_status_running_to_off_inj(fuelSchedules[injChannel5]);
 }
 #endif
 
 #if INJ_CHANNELS >= 6
 static void test_status_running_to_off_inj6(void)
 {
-  test_status_running_to_off_inj(fuelSchedule6);
+  test_status_running_to_off_inj(fuelSchedules[injChannel6]);
 }
 #endif
 
 #if INJ_CHANNELS >= 7
 static void test_status_running_to_off_inj7(void)
 {
-  test_status_running_to_off_inj(fuelSchedule7);
+  test_status_running_to_off_inj(fuelSchedules[injChannel7]);
 }
 #endif
 
 #if INJ_CHANNELS >= 8
 static void test_status_running_to_off_inj8(void)
 {
-  test_status_running_to_off_inj(fuelSchedule8);
+  test_status_running_to_off_inj(fuelSchedules[injChannel8]);
 }
 #endif
 void test_status_running_to_off(void)
