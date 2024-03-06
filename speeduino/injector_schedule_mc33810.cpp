@@ -2,16 +2,22 @@
 #include "acc_mc33810.h"
 #include "bit_macros.h"
 
-typedef void (*open_injector_fn)(void);
-typedef void (*close_injector_fn)(void);
-typedef void (*toggle_injector_fn)(void);
+typedef void (&open_injector_fn)(void);
+typedef void (&close_injector_fn)(void);
+typedef void (&toggle_injector_fn)(void);
 
-typedef struct injector_control_st
+struct mc33810_injector_control_st
 {
+  mc33810_injector_control_st(open_injector_fn &_open, close_injector_fn &_close, toggle_injector_fn &_toggle)
+    : open(_open),
+      close(_close),
+      toggle(_toggle)
+  {
+  }
   open_injector_fn open;
   close_injector_fn close;
   toggle_injector_fn toggle;
-} injector_control_st;
+};
 
 static void open_injector1_mc33810(void)
 {
@@ -157,54 +163,23 @@ static void toggle_injector8_mc33810(void)
 }
 #endif
 
-static injector_control_st const injector_control_mc33810[injector_id_COUNT] = {
-    [injector_id_1] = {
-        .open = open_injector1_mc33810,
-        .close = close_injector1_mc33810,
-        .toggle = toggle_injector1_mc33810,
-    },
-    [injector_id_2] = {
-        .open = open_injector2_mc33810,
-        .close = close_injector2_mc33810,
-        .toggle = toggle_injector2_mc33810,
-    },
-    [injector_id_3] = {
-        .open = open_injector3_mc33810,
-        .close = close_injector3_mc33810,
-        .toggle = toggle_injector3_mc33810,
-    },
-    [injector_id_4] = {
-        .open = open_injector4_mc33810,
-        .close = close_injector4_mc33810,
-        .toggle = toggle_injector4_mc33810,
-    },
+static mc33810_injector_control_st const
+injector_control_mc33810[injector_id_COUNT] = {
+  [injector_id_1] = mc33810_injector_control_st(open_injector1_mc33810, close_injector1_mc33810, toggle_injector1_mc33810),
+  [injector_id_2] = mc33810_injector_control_st(open_injector2_mc33810, close_injector2_mc33810, toggle_injector2_mc33810),
+  [injector_id_3] = mc33810_injector_control_st(open_injector3_mc33810, close_injector3_mc33810, toggle_injector3_mc33810),
+  [injector_id_4] = mc33810_injector_control_st(open_injector4_mc33810, close_injector4_mc33810, toggle_injector4_mc33810),
 #if INJ_CHANNELS >= 5
-    [injector_id_5] = {
-        .open = open_injector5_mc33810,
-        .close = close_injector5_mc33810,
-        .toggle = toggle_injector5_mc33810,
-    },
+  [injector_id_5] = mc33810_injector_control_st(open_injector5_mc33810, close_injector5_mc33810, toggle_injector5_mc33810),
 #endif
 #if INJ_CHANNELS >= 6
-    [injector_id_6] = {
-        .open = open_injector6_mc33810,
-        .close = close_injector6_mc33810,
-        .toggle = toggle_injector6_mc33810,
-    },
+  [injector_id_6] = mc33810_injector_control_st(open_injector6_mc33810, close_injector6_mc33810, toggle_injector6_mc33810),
 #endif
 #if INJ_CHANNELS >= 7
-    [injector_id_7] = {
-        .open = open_injector7_mc33810,
-        .close = close_injector7_mc33810,
-        .toggle = toggle_injector7_mc33810,
-    },
+  [injector_id_7] = mc33810_injector_control_st(open_injector7_mc33810, close_injector7_mc33810, toggle_injector7_mc33810),
 #endif
 #if INJ_CHANNELS >= 8
-    [injector_id_8] = {
-        .open = open_injector8_mc33810,
-        .close = close_injector8_mc33810,
-        .toggle = toggle_injector8_mc33810,
-    }
+  [injector_id_8] = mc33810_injector_control_st(open_injector8_mc33810, close_injector8_mc33810, toggle_injector8_mc33810),
 #endif
 };
 

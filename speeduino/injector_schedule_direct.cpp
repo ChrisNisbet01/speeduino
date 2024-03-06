@@ -3,16 +3,22 @@
 #include "injector_pins.h"
 #include "bit_macros.h"
 
-typedef void (*open_injector_fn)(void);
-typedef void (*close_injector_fn)(void);
-typedef void (*toggle_injector_fn)(void);
+typedef void (&open_injector_fn)(void);
+typedef void (&close_injector_fn)(void);
+typedef void (&toggle_injector_fn)(void);
 
-typedef struct injector_control_st
+struct direct_injector_control_st
 {
+  direct_injector_control_st(open_injector_fn &_open, close_injector_fn &_close, toggle_injector_fn &_toggle)
+    : open(_open),
+      close(_close),
+      toggle(_toggle)
+  {
+  }
   open_injector_fn open;
   close_injector_fn close;
   toggle_injector_fn toggle;
-} injector_control_st;
+};
 
 
 //Macros are used to define how each injector control system functions. These are then called by the master openInjectx() function.
@@ -201,54 +207,23 @@ static void toggle_injector8_direct(void)
 }
 #endif
 
-static injector_control_st const injector_control_direct[injector_id_COUNT] = {
-    [injector_id_1] = {
-        .open = open_injector1_direct,
-        .close = close_injector1_direct,
-        .toggle = toggle_injector1_direct,
-    },
-    [injector_id_2] = {
-        .open = open_injector2_direct,
-        .close = close_injector2_direct,
-        .toggle = toggle_injector2_direct,
-    },
-    [injector_id_3] = {
-        .open = open_injector3_direct,
-        .close = close_injector3_direct,
-        .toggle = toggle_injector3_direct,
-    },
-    [injector_id_4] = {
-        .open = open_injector4_direct,
-        .close = close_injector4_direct,
-        .toggle = toggle_injector4_direct,
-    },
+static direct_injector_control_st const
+injector_control_direct[injector_id_COUNT] = {
+  [injector_id_1] = direct_injector_control_st(open_injector1_direct, close_injector1_direct, toggle_injector1_direct),
+  [injector_id_2] = direct_injector_control_st(open_injector2_direct, close_injector2_direct, toggle_injector2_direct),
+  [injector_id_3] = direct_injector_control_st(open_injector3_direct, close_injector3_direct, toggle_injector3_direct),
+  [injector_id_4] = direct_injector_control_st(open_injector4_direct, close_injector4_direct, toggle_injector4_direct),
 #if (INJ_CHANNELS >= 5)
-    [injector_id_5] = {
-        .open = open_injector5_direct,
-        .close = close_injector5_direct,
-        .toggle = toggle_injector5_direct,
-    },
+  [injector_id_5] = direct_injector_control_st(open_injector5_direct, close_injector5_direct, toggle_injector5_direct),
 #endif
 #if (INJ_CHANNELS >= 6)
-    [injector_id_6] = {
-        .open = open_injector6_direct,
-        .close = close_injector6_direct,
-        .toggle = toggle_injector6_direct,
-    },
+  [injector_id_6] = direct_injector_control_st(open_injector6_direct, close_injector6_direct, toggle_injector6_direct),
 #endif
 #if (INJ_CHANNELS >= 7)
-    [injector_id_7] = {
-        .open = open_injector7_direct,
-        .close = close_injector7_direct,
-        .toggle = toggle_injector7_direct,
-    },
+  [injector_id_7] = direct_injector_control_st(open_injector7_direct, close_injector7_direct, toggle_injector7_direct),
 #endif
 #if (INJ_CHANNELS >= 8)
-    [injector_id_8] = {
-        .open = open_injector8_direct,
-        .close = close_injector8_direct,
-        .toggle = toggle_injector8_direct,
-    }
+  [injector_id_8] = direct_injector_control_st(open_injector8_direct, close_injector8_direct, toggle_injector8_direct),
 #endif
 };
 
