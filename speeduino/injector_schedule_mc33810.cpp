@@ -19,6 +19,33 @@ struct mc33810_injector_control_st
   toggle_injector_fn toggle;
 };
 
+#define openInjector1_MC33810() MC33810_1_CS.off(); BIT_SET(mc33810_1_requestedState, MC33810_BIT_INJ1); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define openInjector2_MC33810() MC33810_1_CS.off(); BIT_SET(mc33810_1_requestedState, MC33810_BIT_INJ2); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define openInjector3_MC33810() MC33810_1_CS.off(); BIT_SET(mc33810_1_requestedState, MC33810_BIT_INJ3); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define openInjector4_MC33810() MC33810_1_CS.off(); BIT_SET(mc33810_1_requestedState, MC33810_BIT_INJ4); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define openInjector5_MC33810() MC33810_2_CS.off(); BIT_SET(mc33810_2_requestedState, MC33810_BIT_INJ5); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+#define openInjector6_MC33810() MC33810_2_CS.off(); BIT_SET(mc33810_2_requestedState, MC33810_BIT_INJ6); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+#define openInjector7_MC33810() MC33810_2_CS.off(); BIT_SET(mc33810_2_requestedState, MC33810_BIT_INJ7); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+#define openInjector8_MC33810() MC33810_2_CS.off(); BIT_SET(mc33810_2_requestedState, MC33810_BIT_INJ8); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+
+#define closeInjector1_MC33810() MC33810_1_CS.off(); BIT_CLEAR(mc33810_1_requestedState, MC33810_BIT_INJ1); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define closeInjector2_MC33810() MC33810_1_CS.off(); BIT_CLEAR(mc33810_1_requestedState, MC33810_BIT_INJ2); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define closeInjector3_MC33810() MC33810_1_CS.off(); BIT_CLEAR(mc33810_1_requestedState, MC33810_BIT_INJ3); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define closeInjector4_MC33810() MC33810_1_CS.off(); BIT_CLEAR(mc33810_1_requestedState, MC33810_BIT_INJ4); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define closeInjector5_MC33810() MC33810_2_CS.off(); BIT_CLEAR(mc33810_2_requestedState, MC33810_BIT_INJ5); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+#define closeInjector6_MC33810() MC33810_2_CS.off(); BIT_CLEAR(mc33810_2_requestedState, MC33810_BIT_INJ6); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+#define closeInjector7_MC33810() MC33810_2_CS.off(); BIT_CLEAR(mc33810_2_requestedState, MC33810_BIT_INJ7); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+#define closeInjector8_MC33810() MC33810_2_CS.off(); BIT_CLEAR(mc33810_2_requestedState, MC33810_BIT_INJ8); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+
+#define injector1Toggle_MC33810() MC33810_1_CS.off(); BIT_TOGGLE(mc33810_1_requestedState, MC33810_BIT_INJ1); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define injector2Toggle_MC33810() MC33810_1_CS.off(); BIT_TOGGLE(mc33810_1_requestedState, MC33810_BIT_INJ2); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define injector3Toggle_MC33810() MC33810_1_CS.off(); BIT_TOGGLE(mc33810_1_requestedState, MC33810_BIT_INJ3); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define injector4Toggle_MC33810() MC33810_1_CS.off(); BIT_TOGGLE(mc33810_1_requestedState, MC33810_BIT_INJ4); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define injector5Toggle_MC33810() MC33810_2_CS.off(); BIT_TOGGLE(mc33810_2_requestedState, MC33810_BIT_INJ5); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+#define injector6Toggle_MC33810() MC33810_2_CS.off(); BIT_TOGGLE(mc33810_2_requestedState, MC33810_BIT_INJ6); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+#define injector7Toggle_MC33810() MC33810_2_CS.off(); BIT_TOGGLE(mc33810_2_requestedState, MC33810_BIT_INJ7); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+#define injector8Toggle_MC33810() MC33810_2_CS.off(); BIT_TOGGLE(mc33810_2_requestedState, MC33810_BIT_INJ8); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+
 static void open_injector1_mc33810(void)
 {
   openInjector1_MC33810();

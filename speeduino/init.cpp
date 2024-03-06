@@ -2661,7 +2661,7 @@ void setPinMapping(byte boardID)
         FuelPump.pin = 5; //Fuel pump output
         TachOut.pin = 8; //Tacho output pin
 
-        ResetControl.pin = 49; //PLaceholder only. Cannot use 42-47 as these are the SD card
+        ResetControl.pin = 49; //Placeholder only. Cannot use 42-47 as these are the SD card
 
 #endif
 

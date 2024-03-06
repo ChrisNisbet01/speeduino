@@ -14,6 +14,33 @@ typedef struct ignition_control_st
 } ignition_control_st;
 
 
+#define coil1High_MC33810() MC33810_1_CS.off(); BIT_SET(mc33810_1_requestedState, MC33810_BIT_IGN1); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define coil2High_MC33810() MC33810_1_CS.off(); BIT_SET(mc33810_1_requestedState, MC33810_BIT_IGN2); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define coil3High_MC33810() MC33810_1_CS.off(); BIT_SET(mc33810_1_requestedState, MC33810_BIT_IGN3); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define coil4High_MC33810() MC33810_1_CS.off(); BIT_SET(mc33810_1_requestedState, MC33810_BIT_IGN4); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define coil5High_MC33810() MC33810_2_CS.off(); BIT_SET(mc33810_2_requestedState, MC33810_BIT_IGN5); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+#define coil6High_MC33810() MC33810_2_CS.off(); BIT_SET(mc33810_2_requestedState, MC33810_BIT_IGN6); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+#define coil7High_MC33810() MC33810_2_CS.off(); BIT_SET(mc33810_2_requestedState, MC33810_BIT_IGN7); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+#define coil8High_MC33810() MC33810_2_CS.off(); BIT_SET(mc33810_2_requestedState, MC33810_BIT_IGN8); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+
+#define coil1Low_MC33810() MC33810_1_CS.off(); BIT_CLEAR(mc33810_1_requestedState, MC33810_BIT_IGN1); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define coil2Low_MC33810() MC33810_1_CS.off(); BIT_CLEAR(mc33810_1_requestedState, MC33810_BIT_IGN2); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define coil3Low_MC33810() MC33810_1_CS.off(); BIT_CLEAR(mc33810_1_requestedState, MC33810_BIT_IGN3); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define coil4Low_MC33810() MC33810_1_CS.off(); BIT_CLEAR(mc33810_1_requestedState, MC33810_BIT_IGN4); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define coil5Low_MC33810() MC33810_2_CS.off(); BIT_CLEAR(mc33810_2_requestedState, MC33810_BIT_IGN5); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+#define coil6Low_MC33810() MC33810_2_CS.off(); BIT_CLEAR(mc33810_2_requestedState, MC33810_BIT_IGN6); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+#define coil7Low_MC33810() MC33810_2_CS.off(); BIT_CLEAR(mc33810_2_requestedState, MC33810_BIT_IGN7); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+#define coil8Low_MC33810() MC33810_2_CS.off(); BIT_CLEAR(mc33810_2_requestedState, MC33810_BIT_IGN8); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+
+#define coil1Toggle_MC33810() MC33810_1_CS.off(); BIT_TOGGLE(mc33810_1_requestedState, MC33810_BIT_IGN1); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define coil2Toggle_MC33810() MC33810_1_CS.off(); BIT_TOGGLE(mc33810_1_requestedState, MC33810_BIT_IGN2); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define coil3Toggle_MC33810() MC33810_1_CS.off(); BIT_TOGGLE(mc33810_1_requestedState, MC33810_BIT_IGN3); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define coil4Toggle_MC33810() MC33810_1_CS.off(); BIT_TOGGLE(mc33810_1_requestedState, MC33810_BIT_IGN4); mc33810_1_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_1_requestedState)); MC33810_1_CS.on()
+#define coil5Toggle_MC33810() MC33810_2_CS.off(); BIT_TOGGLE(mc33810_2_requestedState, MC33810_BIT_IGN5); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+#define coil6Toggle_MC33810() MC33810_2_CS.off(); BIT_TOGGLE(mc33810_2_requestedState, MC33810_BIT_IGN6); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+#define coil7Toggle_MC33810() MC33810_2_CS.off(); BIT_TOGGLE(mc33810_2_requestedState, MC33810_BIT_IGN7); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+#define coil8Toggle_MC33810() MC33810_2_CS.off(); BIT_TOGGLE(mc33810_2_requestedState, MC33810_BIT_IGN8); mc33810_2_returnState = SPI.transfer16(word(MC33810_ONOFF_CMD, mc33810_2_requestedState)); MC33810_2_CS.on()
+
 //Set the value of the coil pins to the coilHIGH or coilLOW state
 #define coil1Charging_MC33810()      if(configPage4.IgInv == GOING_HIGH) { coil1Low_MC33810();  } else { coil1High_MC33810(); }
 #define coil1StopCharging_MC33810()  if(configPage4.IgInv == GOING_HIGH) { coil1High_MC33810(); } else { coil1Low_MC33810();  }

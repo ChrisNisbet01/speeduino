@@ -5,6 +5,44 @@
 IOPortMaskOutputPin MC33810_1_CS;
 IOPortMaskOutputPin MC33810_2_CS;
 
+#if defined(CORE_TEENSY)
+byte MC33810_BIT_INJ1 = 3;
+byte MC33810_BIT_INJ2 = 1;
+byte MC33810_BIT_INJ3 = 0;
+byte MC33810_BIT_INJ4 = 2;
+byte MC33810_BIT_INJ5 = 3;
+byte MC33810_BIT_INJ6 = 1;
+byte MC33810_BIT_INJ7 = 0;
+byte MC33810_BIT_INJ8 = 2;
+
+byte MC33810_BIT_IGN1 = 4;
+byte MC33810_BIT_IGN2 = 5;
+byte MC33810_BIT_IGN3 = 6;
+byte MC33810_BIT_IGN4 = 7;
+byte MC33810_BIT_IGN5 = 4;
+byte MC33810_BIT_IGN6 = 5;
+byte MC33810_BIT_IGN7 = 6;
+byte MC33810_BIT_IGN8 = 7;
+#else
+byte MC33810_BIT_INJ1 = 1;
+byte MC33810_BIT_INJ2 = 2;
+byte MC33810_BIT_INJ3 = 3;
+byte MC33810_BIT_INJ4 = 4;
+byte MC33810_BIT_INJ5 = 5;
+byte MC33810_BIT_INJ6 = 6;
+byte MC33810_BIT_INJ7 = 7;
+byte MC33810_BIT_INJ8 = 8;
+
+byte MC33810_BIT_IGN1 = 1;
+byte MC33810_BIT_IGN2 = 2;
+byte MC33810_BIT_IGN3 = 3;
+byte MC33810_BIT_IGN4 = 4;
+byte MC33810_BIT_IGN5 = 5;
+byte MC33810_BIT_IGN6 = 6;
+byte MC33810_BIT_IGN7 = 7;
+byte MC33810_BIT_IGN8 = 8;
+#endif
+
 static bool done_init = false;
 
 void initMC33810(void)
