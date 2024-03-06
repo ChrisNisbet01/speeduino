@@ -205,8 +205,8 @@ int getCrankAngle_BasicDistributor(void)
 
 void triggerSetEndTeeth_BasicDistributor(void)
 {
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
-  ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
+  ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
   int const tempEndAngle =
     ignitionLimits(ignition1.endAngle - configPage4.triggerAngle);
@@ -229,7 +229,7 @@ void triggerSetEndTeeth_BasicDistributor(void)
   case 3: //Shared with 6 cylinder
   case 6:
   {
-    ignition_context_st &ignition3 = ignitions.ignition(ignChannel3);
+    ignition_context_st &ignition3 = ignition_contexts[ignChannel3];
 
     if (tempEndAngle > 120 && tempEndAngle <= 240)
     {
@@ -254,8 +254,8 @@ void triggerSetEndTeeth_BasicDistributor(void)
 
   case 8:
   {
-    ignition_context_st &ignition3 = ignitions.ignition(ignChannel3);
-    ignition_context_st &ignition4 = ignitions.ignition(ignChannel4);
+    ignition_context_st &ignition3 = ignition_contexts[ignChannel3];
+    ignition_context_st &ignition4 = ignition_contexts[ignChannel4];
 
     if (tempEndAngle > 90 && tempEndAngle <= 180)
     {

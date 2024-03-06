@@ -14,19 +14,13 @@
 static volatile uint32_t start_time;
 static volatile uint32_t end_time;
 
-static void ignStartCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
+static void ignStartCallback(void)
 {
-  UNUSED(coil_id1);
-  UNUSED(coil_id2);
-
   end_time = micros();
 }
 
-static void ignEndCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
+static void ignEndCallback(void)
 {
-    UNUSED(coil_id1);
-    UNUSED(coil_id2);
-
     /* Do nothing. */
 }
 
@@ -61,49 +55,49 @@ static void test_accuracy_timeout_ign(IgnitionSchedule &schedule)
 
 static void test_accuracy_timeout_ign1(void)
 {
-    test_accuracy_timeout_ign(ignitionSchedule1);
+    test_accuracy_timeout_ign(ignitionSchedules[ignChannel1]);
 }
 
 static void test_accuracy_timeout_ign2(void)
 {
-    test_accuracy_timeout_ign(ignitionSchedule2);
+    test_accuracy_timeout_ign(ignitionSchedules[ignChannel2]);
 }
 
 static void test_accuracy_timeout_ign3(void)
 {
-    test_accuracy_timeout_ign(ignitionSchedule3);
+    test_accuracy_timeout_ign(ignitionSchedules[ignChannel3]);
 }
 
 static void test_accuracy_timeout_ign4(void)
 {
-    test_accuracy_timeout_ign(ignitionSchedule4);
+    test_accuracy_timeout_ign(ignitionSchedules[ignChannel4]);
 }
 
 #if IGN_CHANNELS >= 5
 static void test_accuracy_timeout_ign5(void)
 {
-    test_accuracy_timeout_ign(ignitionSchedule5);
+    test_accuracy_timeout_ign(ignitionSchedules[ignChannel5]);
 }
 #endif
 
 #if IGN_CHANNELS >= 6
 static void test_accuracy_timeout_ign6(void)
 {
-    test_accuracy_timeout_ign(ignitionSchedule6);
+    test_accuracy_timeout_ign(ignitionSchedules[ignChannel6]);
 }
 #endif
 
 #if IGN_CHANNELS >= 7
 static void test_accuracy_timeout_ign7(void)
 {
-    test_accuracy_timeout_ign(ignitionSchedule7);
+    test_accuracy_timeout_ign(ignitionSchedules[ignChannel7]);
 }
 #endif
 
 #if IGN_CHANNELS >= 8
 static void test_accuracy_timeout_ign8(void)
 {
-    test_accuracy_timeout_ign(ignitionSchedule8);
+    test_accuracy_timeout_ign(ignitionSchedules[ignChannel8]);
 }
 #endif
 

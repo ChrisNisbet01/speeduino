@@ -9,16 +9,11 @@ ignition_context_st ignition_contexts[ignChannelCount];
 bool ignition_context_st::
 adjustCrankAngle(int const crankAngle, uint16_t const currentTooth)
 {
-  bool adjusted;
+  bool const adjusted = currentTooth == endTooth;
 
-  if (currentTooth == endTooth)
+  if (adjusted)
   {
     ::adjustCrankAngle(*ignitionSchedule, endAngle, crankAngle);
-    adjusted = true;
-  }
-  else
-  {
-    adjusted = false;
   }
 
   return adjusted;
@@ -44,15 +39,9 @@ calculateIgnitionTimeout(int crankAngle)
 }
 
 void ignition_context_st::
-setIgnitionSchedule(unsigned long const timeout, unsigned long const durationMicrosecs)
-{
-  ::setIgnitionSchedule(*ignitionSchedule, timeout, durationMicrosecs);
-}
-
-void ignition_context_st::
 applyOverDwellCheck(uint32_t targetOverdwellTime)
 {
-  //Check first whether each spark output is currently on. Only check it's dwell time if it is
+  //Check first whether each spark output is currently on. Only check its dwell time if it is
   if (ignitionSchedule->Status == RUNNING && ignitionSchedule->startTime < targetOverdwellTime)
   {
     ignitionSchedule->end.pCallback();
@@ -69,23 +58,10 @@ reset(void)
   ignitionSchedule->reset();
 }
 
-void ignition_context_st::
-inhibit_coil_schedule(void)
-{
-  ignitionSchedule->start.pCallback = nullIgnCallback;
-  ignitionSchedule->end.pCallback = nullIgnCallback;
-}
-
 void ignition_contexts_st::setMaxIgnitions(byte const maxOutputs)
 {
   this->maxOutputs = maxOutputs;
   this->maxOutputMask = ((uint16_t)1 << maxOutputs) - 1;
-}
-
-void ignition_contexts_st::
-inhibit_coil_schedule(ignitionChannelID_t const ign)
-{
-  ignition_contexts[ign].inhibit_coil_schedule();
 }
 
 void ignition_contexts_st::setAllOn(void)
@@ -133,7 +109,7 @@ applyIgnitionControl(ignitionChannelID_t const ign, int const crankAngle)
 
     if (timeOut > 0U)
     {
-      ignition.setIgnitionSchedule(timeOut, currentStatus.dwell + fixedCrankingOverride);
+      setIgnitionSchedule(ignitionSchedules[ign], timeOut, currentStatus.dwell + fixedCrankingOverride);
     }
   }
 }

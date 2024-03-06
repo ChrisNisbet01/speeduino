@@ -38,7 +38,7 @@ static void assert_ignition_schedules(uint16_t crankAngle, uint16_t expectedOutp
 
   for (size_t i = ignChannel1; i < ignChannelCount; i++)
   {
-    ignition_context_st &ignition = ignitions.ignition((ignitionChannelID_t)i);
+    ignition_context_st &ignition = ignition_contexts[(ignitionChannelID_t)i];
 
     assert_ignition_channel(
       angle[i],

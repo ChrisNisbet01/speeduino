@@ -9,10 +9,9 @@
 #define TIMEOUT 1000
 #define DURATION 1000
 
-static void ignEmptyCallback(ignition_id_t coil_id1, ignition_id_t coil_id2)
+static void ignEmptyCallback(void)
 {
-    UNUSED(coil_id1);
-    UNUSED(coil_id2);
+  /* Do nothing. */
 }
 
 static void test_status_running_to_pending_ign(IgnitionSchedule &ignitionSchedule)
@@ -29,49 +28,49 @@ static void test_status_running_to_pending_ign(IgnitionSchedule &ignitionSchedul
 
 static void test_status_running_to_pending_ign1(void)
 {
-  test_status_running_to_pending_ign(ignitionSchedule1);
+  test_status_running_to_pending_ign(ignitionSchedules[ignChannel1]);
 }
 
 static void test_status_running_to_pending_ign2(void)
 {
-  test_status_running_to_pending_ign(ignitionSchedule2);
+  test_status_running_to_pending_ign(ignitionSchedules[ignChannel2]);
 }
 
 static void test_status_running_to_pending_ign3(void)
 {
-  test_status_running_to_pending_ign(ignitionSchedule3);
+  test_status_running_to_pending_ign(ignitionSchedules[ignChannel3]);
 }
 
 static void test_status_running_to_pending_ign4(void)
 {
-  test_status_running_to_pending_ign(ignitionSchedule4);
+  test_status_running_to_pending_ign(ignitionSchedules[ignChannel4]);
 }
 
 #if IGN_CHANNELS >= 5
 static void test_status_running_to_pending_ign5(void)
 {
-  test_status_running_to_pending_ign(ignitionSchedule5);
+  test_status_running_to_pending_ign(ignitionSchedules[ignChannel5]);
 }
 #endif
 
 #if IGN_CHANNELS >= 6
 static void test_status_running_to_pending_ign6(void)
 {
-  test_status_running_to_pending_ign(ignitionSchedule6);
+  test_status_running_to_pending_ign(ignitionSchedules[ignChannel6]);
 }
 #endif
 
 #if IGN_CHANNELS >= 7
 static void test_status_running_to_pending_ign7(void)
 {
-  test_status_running_to_pending_ign(ignitionSchedule7);
+  test_status_running_to_pending_ign(ignitionSchedules[ignChannel7]);
 }
 #endif
 
 #if IGN_CHANNELS >= 8
 static void test_status_running_to_pending_ign8(void)
 {
-  test_status_running_to_pending_ign(ignitionSchedule8);
+  test_status_running_to_pending_ign(ignitionSchedules[ignChannel8]);
 }
 #endif
 

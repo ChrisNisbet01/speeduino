@@ -36,7 +36,7 @@ void test_missingtooth_newIgn_36_1_trig0_1()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=0
-    ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+    ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
@@ -53,7 +53,7 @@ void test_missingtooth_newIgn_36_1_trig90_1()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=90
-    ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+    ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
@@ -70,7 +70,7 @@ void test_missingtooth_newIgn_36_1_trig180_1()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=180
-    ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+    ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
@@ -87,7 +87,7 @@ void test_missingtooth_newIgn_36_1_trig270_1()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=270
-    ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+    ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
@@ -104,7 +104,7 @@ void test_missingtooth_newIgn_36_1_trig360_1()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=360
-    ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+    ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
@@ -121,7 +121,7 @@ void test_missingtooth_newIgn_36_1_trigNeg90_1()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=-90
-    ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+    ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
@@ -138,7 +138,7 @@ void test_missingtooth_newIgn_36_1_trigNeg180_1()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=-180
-    ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+    ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
@@ -155,7 +155,7 @@ void test_missingtooth_newIgn_36_1_trigNeg270_1()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=-270
-    ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+    ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
@@ -172,7 +172,7 @@ void test_missingtooth_newIgn_36_1_trigNeg360_1()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=-360
-    ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+    ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
@@ -190,7 +190,7 @@ void test_missingtooth_newIgn_36_1_trig0_2()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=0
-    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+    ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
@@ -207,7 +207,7 @@ void test_missingtooth_newIgn_36_1_trig90_2()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=90
-    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+    ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
@@ -224,7 +224,7 @@ void test_missingtooth_newIgn_36_1_trig180_2()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=180
-    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+    ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
@@ -241,7 +241,7 @@ void test_missingtooth_newIgn_36_1_trig270_2()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=270
-    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+    ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
@@ -258,7 +258,7 @@ void test_missingtooth_newIgn_36_1_trig360_2()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=360
-    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+    ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
@@ -275,7 +275,7 @@ void test_missingtooth_newIgn_36_1_trigNeg90_2()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=-90
-    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+    ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
@@ -292,7 +292,7 @@ void test_missingtooth_newIgn_36_1_trigNeg180_2()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=-180
-    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+    ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
@@ -309,7 +309,7 @@ void test_missingtooth_newIgn_36_1_trigNeg270_2()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=-270
-    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+    ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
@@ -326,7 +326,7 @@ void test_missingtooth_newIgn_36_1_trigNeg360_2()
     //Trigger: 36-1
     //Advance: 10
     //triggerAngle=-360
-    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+    ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
     test_setup_36_1();
     configPage4.sparkMode = IGN_MODE_WASTED;
@@ -343,7 +343,7 @@ void test_missingtooth_newIgn_60_2_trig0_2()
     //Trigger: 60-2
     //Advance: 10
     //triggerAngle=300
-    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+    ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
     test_setup_60_2();
     configPage4.sparkMode = IGN_MODE_WASTED;
@@ -360,7 +360,7 @@ void test_missingtooth_newIgn_60_2_trig181_2()
     //Trigger: 60-2
     //Advance: 10
     //triggerAngle=300
-    ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+    ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
     test_setup_60_2();
     configPage4.sparkMode = IGN_MODE_WASTED;

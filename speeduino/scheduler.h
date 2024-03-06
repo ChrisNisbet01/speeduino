@@ -45,6 +45,28 @@ See page 136 of the processors datasheet: http://www.atmel.com/Images/doc2549.pd
 #include "ignition_schedule_class.h"
 #include "fuel_schedule_class.h"
 
+typedef enum
+{
+  ignChannel1,
+  ignChannel2,
+  ignChannel3,
+  ignChannel4,
+#if IGN_CHANNELS >= 5
+  ignChannel5,
+#endif
+#if IGN_CHANNELS >= 6
+  ignChannel6,
+#endif
+#if IGN_CHANNELS >= 7
+  ignChannel7,
+#endif
+#if IGN_CHANNELS >= 8
+  ignChannel8,
+#endif
+  ignChannelCount,
+} ignitionChannelID_t;
+
+
 #define USE_IGN_REFRESH
 #define IGNITION_REFRESH_THRESHOLD  30 //Time in uS that the refresh functions will check to ensure there is enough time before changing the end compare
 
@@ -147,17 +169,5 @@ static inline uint16_t applyFuelTrimToPW(trimTable3d * pTrimTable, int16_t fuelL
   return percentage(pw1percent, currentPW);
 }
 
-extern IgnitionSchedule ignitionSchedule1;
-extern IgnitionSchedule ignitionSchedule2;
-extern IgnitionSchedule ignitionSchedule3;
-extern IgnitionSchedule ignitionSchedule4;
-extern IgnitionSchedule ignitionSchedule5;
-#if IGN_CHANNELS >= 6
-extern IgnitionSchedule ignitionSchedule6;
-#endif
-#if IGN_CHANNELS >= 7
-extern IgnitionSchedule ignitionSchedule7;
-#endif
-#if IGN_CHANNELS >= 8
-extern IgnitionSchedule ignitionSchedule8;
-#endif
+extern IgnitionSchedule ignitionSchedules[ignChannelCount];
+

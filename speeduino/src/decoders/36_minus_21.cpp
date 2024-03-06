@@ -154,8 +154,8 @@ uint16_t getRPM_ThirtySixMinus21(void)
 
 void triggerSetEndTeeth_ThirtySixMinus21(void)
 {
-  ignitions.ignition(ignChannel1).endTooth = 10;
-  ignitions.ignition(ignChannel2).endTooth = 28; // Arbitrarily picked  at 180°.
+  ignition_contexts[ignChannel1].endTooth = 10;
+  ignition_contexts[ignChannel2].endTooth = 28; // Arbitrarily picked  at 180°.
 }
 
 static void attach_interrupts(void)

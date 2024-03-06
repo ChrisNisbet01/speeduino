@@ -30,7 +30,7 @@ void test_Renix_newIgn_44_trig0_1(void)
   //Test the set end tooth function. Conditions:
   //Advance: 10
   //triggerAngle=0
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
   test_setup_renix44();
   configPage4.sparkMode = IGN_MODE_SINGLE;
@@ -47,7 +47,7 @@ void test_Renix_newIgn_44_trig90_1(void)
 
   //Advance: 10
   //triggerAngle=90
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
   test_setup_renix44();
   configPage4.sparkMode = IGN_MODE_SINGLE;
@@ -64,7 +64,7 @@ void test_Renix_newIgn_44_trig180_1(void)
   //Advance: 10
   //triggerAngle=180
   test_setup_renix44();
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
   configPage4.sparkMode = IGN_MODE_SINGLE;
   ignition1.endAngle = 360 - 10; //Set 10 degrees advance
@@ -79,7 +79,7 @@ void test_Renix_newIgn_44_trig270_1(void)
   //Test the set end tooth function. Conditions:
   //Advance: 10
   //triggerAngle=270
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
   test_setup_renix44();
   configPage4.sparkMode = IGN_MODE_SINGLE;
@@ -95,7 +95,7 @@ void test_Renix_newIgn_44_trig360_1(void)
   //Test the set end tooth function. Conditions:
   //Advance: 10
   //triggerAngle=360
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
   test_setup_renix44();
   configPage4.sparkMode = IGN_MODE_SINGLE;
@@ -111,7 +111,7 @@ void test_Renix_newIgn_44_trigNeg90_1(void)
   //Test the set end tooth function. Conditions:
   //Advance: 10
   //triggerAngle=-90
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
   test_setup_renix44();
   configPage4.sparkMode = IGN_MODE_SINGLE;
@@ -127,7 +127,7 @@ void test_Renix_newIgn_44_trigNeg180_1(void)
   //Test the set end tooth function. Conditions:
   //Advance: 10
   //triggerAngle=-180
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
   test_setup_renix44();
   configPage4.sparkMode = IGN_MODE_SINGLE;
@@ -143,7 +143,7 @@ void test_Renix_newIgn_44_trigNeg270_1(void)
   //Test the set end tooth function. Conditions:
   //Advance: 10
   //triggerAngle=-270
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
   test_setup_renix44();
   configPage4.sparkMode = IGN_MODE_SINGLE;
@@ -159,7 +159,7 @@ void test_Renix_newIgn_44_trigNeg360_1(void)
   //Test the set end tooth function. Conditions:
   //Advance: 10
   //triggerAngle=-360
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
   test_setup_renix44();
   configPage4.sparkMode = IGN_MODE_SINGLE;
@@ -176,7 +176,7 @@ void test_Renix_newIgn_44_trig0_2(void)
   //Test the set end tooth function. Conditions:
   //Advance: 10
   //triggerAngle=0
-  ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+  ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
   test_setup_renix44();
   configPage4.sparkMode = IGN_MODE_SINGLE;
@@ -192,7 +192,7 @@ void test_Renix_newIgn_44_trig90_2(void)
   //Test the set end tooth function. Conditions:
   //Advance: 10
   //triggerAngle=90
-  ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+  ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
   test_setup_renix44();
   configPage4.sparkMode = IGN_MODE_SINGLE;
@@ -208,7 +208,7 @@ void test_Renix_newIgn_44_trig180_2(void)
   //Test the set end tooth function. Conditions:
   //Advance: 10
   //triggerAngle=180
-  ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+  ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
   test_setup_renix44();
   configPage4.sparkMode = IGN_MODE_SINGLE;
@@ -224,7 +224,7 @@ void test_Renix_newIgn_44_trig270_2(void)
   //Test the set end tooth function. Conditions:
   //Advance: 10
   //triggerAngle=270
-  ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+  ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
   test_setup_renix44();
   configPage4.sparkMode = IGN_MODE_SINGLE;
@@ -240,7 +240,7 @@ void test_Renix_newIgn_44_trig366(void)
   //Test the set end tooth function. Conditions:
   //Advance: 10
   //triggerAngle=360
-  ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+  ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
   test_setup_renix44();
   configPage4.sparkMode = IGN_MODE_SINGLE;
@@ -256,7 +256,7 @@ void test_Renix_newIgn_44_trigNeg90_2(void)
   //Test the set end tooth function. Conditions:
   //Advance: 10
   //triggerAngle=-90
-  ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+  ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
   test_setup_renix44();
   configPage4.sparkMode = IGN_MODE_SINGLE;
@@ -272,7 +272,7 @@ void test_Renix_newIgn_44_trigNeg180_2(void)
   //Test the set end tooth function. Conditions:
   //Advance: 10
   //triggerAngle=-180
-  ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+  ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
   test_setup_renix44();
   configPage4.sparkMode = IGN_MODE_SINGLE;
@@ -288,7 +288,7 @@ void test_Renix_newIgn_44_trigNeg270_2(void)
   //Test the set end tooth function. Conditions:
   //Advance: 10
   //triggerAngle=-270
-  ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+  ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
   test_setup_renix44();
   configPage4.sparkMode = IGN_MODE_SINGLE;
@@ -304,7 +304,7 @@ void test_Renix_newIgn_44_trigNeg366(void)
   //Test the set end tooth function. Conditions:
   //Advance: 10
   //triggerAngle=-360
-  ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+  ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
   test_setup_renix44();
   configPage4.sparkMode = IGN_MODE_SINGLE;
@@ -321,7 +321,7 @@ void test_Renix_newIgn_66_trig0_2(void)
 
   //Advance: 10
   //triggerAngle=300
-  ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+  ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
   test_setup_renix66();
   configPage4.sparkMode = IGN_MODE_SINGLE;
@@ -338,7 +338,7 @@ void test_Renix_newIgn_66_trig181_2(void)
 
   //Advance: 10
   //triggerAngle=300
-  ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
+  ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
 
   test_setup_renix66();
   configPage4.sparkMode = IGN_MODE_SINGLE;

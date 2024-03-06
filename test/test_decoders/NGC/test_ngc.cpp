@@ -9,7 +9,7 @@
 
 void test_ngc_newIgn_12_trig0_1(void)
 {
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
   triggerSetup_NGC();
   CRANK_ANGLE_MAX_IGN = 360;
@@ -33,7 +33,7 @@ void test_ngc_newIgn_12_trig0_1(void)
 
 void test_ngc_newIgn_12_trig90_1(void)
 {
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
   triggerSetup_NGC();
   CRANK_ANGLE_MAX_IGN = 360;
@@ -47,7 +47,7 @@ void test_ngc_newIgn_12_trig90_1(void)
 
 void test_ngc_newIgn_12_trig180_1(void)
 {
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
   triggerSetup_NGC();
   CRANK_ANGLE_MAX_IGN = 360;
@@ -64,7 +64,7 @@ void test_ngc_newIgn_12_trig180_1(void)
 
 void test_ngc_newIgn_12_trig270_1(void)
 {
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
   triggerSetup_NGC();
   CRANK_ANGLE_MAX_IGN = 360;
@@ -78,7 +78,7 @@ void test_ngc_newIgn_12_trig270_1(void)
 
 void test_ngc_newIgn_12_trig360_1(void)
 {
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
   triggerSetup_NGC();
   CRANK_ANGLE_MAX_IGN = 360;
@@ -92,7 +92,7 @@ void test_ngc_newIgn_12_trig360_1(void)
 
 void test_ngc_newIgn_12_trigNeg90_1(void)
 {
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
   triggerSetup_NGC();
   CRANK_ANGLE_MAX_IGN = 360;
@@ -106,7 +106,7 @@ void test_ngc_newIgn_12_trigNeg90_1(void)
 
 void test_ngc_newIgn_12_trigNeg180_1(void)
 {
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
   triggerSetup_NGC();
   CRANK_ANGLE_MAX_IGN = 360;
@@ -120,7 +120,7 @@ void test_ngc_newIgn_12_trigNeg180_1(void)
 
 void test_ngc_newIgn_12_trigNeg270_1(void)
 {
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
   triggerSetup_NGC();
   CRANK_ANGLE_MAX_IGN = 360;
@@ -134,7 +134,7 @@ void test_ngc_newIgn_12_trigNeg270_1(void)
 
 void test_ngc_newIgn_12_trigNeg360_1(void)
 {
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
   triggerSetup_NGC();
   CRANK_ANGLE_MAX_IGN = 360;

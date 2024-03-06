@@ -418,29 +418,29 @@ void triggerSetEndTeeth_missingTooth(void)
     toothAdder = configPage4.triggerTeeth;
   }
 
-  ignitions.ignition(ignChannel1).endTooth =
-    calcEndTeeth_missingTooth(ignitions.ignition(ignChannel1).endAngle, toothAdder);
-  ignitions.ignition(ignChannel2).endTooth =
-    calcEndTeeth_missingTooth(ignitions.ignition(ignChannel2).endAngle, toothAdder);
-  ignitions.ignition(ignChannel3).endTooth =
-    calcEndTeeth_missingTooth(ignitions.ignition(ignChannel3).endAngle, toothAdder);
-  ignitions.ignition(ignChannel4).endTooth =
-    calcEndTeeth_missingTooth(ignitions.ignition(ignChannel4).endAngle, toothAdder);
+  ignition_contexts[ignChannel1].endTooth =
+    calcEndTeeth_missingTooth(ignition_contexts[ignChannel1].endAngle, toothAdder);
+  ignition_contexts[ignChannel2].endTooth =
+    calcEndTeeth_missingTooth(ignition_contexts[ignChannel2].endAngle, toothAdder);
+  ignition_contexts[ignChannel3].endTooth =
+    calcEndTeeth_missingTooth(ignition_contexts[ignChannel3].endAngle, toothAdder);
+  ignition_contexts[ignChannel4].endTooth =
+    calcEndTeeth_missingTooth(ignition_contexts[ignChannel4].endAngle, toothAdder);
 #if IGN_CHANNELS >= 5
-  ignitions.ignition(ignChannel5).endTooth =
-    calcEndTeeth_missingTooth(ignitions.ignition(ignChannel5).endAngle, toothAdder);
+  ignition_contexts[ignChannel5].endTooth =
+    calcEndTeeth_missingTooth(ignition_contexts[ignChannel5].endAngle, toothAdder);
 #endif
 #if IGN_CHANNELS >= 6
-  ignitions.ignition(ignChannel6).endTooth =
-    calcEndTeeth_missingTooth(ignitions.ignition(ignChannel6).endAngle, toothAdder);
+  ignition_contexts[ignChannel6].endTooth =
+    calcEndTeeth_missingTooth(ignition_contexts[ignChannel6].endAngle, toothAdder);
 #endif
 #if IGN_CHANNELS >= 7
-  ignitions.ignition(ignChannel7).endTooth =
-    calcEndTeeth_missingTooth(ignitions.ignition(ignChannel7).endAngle, toothAdder);
+  ignition_contexts[ignChannel7].endTooth =
+    calcEndTeeth_missingTooth(ignition_contexts[ignChannel7].endAngle, toothAdder);
 #endif
 #if IGN_CHANNELS >= 8
-  ignitions.ignition(ignChannel8).endTooth =
-    calcEndTeeth_missingTooth(ignitions.ignition(ignChannel8).endAngle, toothAdder);
+  ignition_contexts[ignChannel8].endTooth =
+    calcEndTeeth_missingTooth(ignition_contexts[ignChannel8].endAngle, toothAdder);
 #endif
 }
 

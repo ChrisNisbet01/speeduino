@@ -54,23 +54,25 @@ FuelSchedule fuelSchedule7(FUEL7_COUNTER, FUEL7_COMPARE, FUEL7_TIMER_DISABLE, FU
 FuelSchedule fuelSchedule8(FUEL8_COUNTER, FUEL8_COMPARE, FUEL8_TIMER_DISABLE, FUEL8_TIMER_ENABLE);
 #endif
 
-IgnitionSchedule ignitionSchedule1(IGN1_COUNTER, IGN1_COMPARE, IGN1_TIMER_DISABLE, IGN1_TIMER_ENABLE);
-IgnitionSchedule ignitionSchedule2(IGN2_COUNTER, IGN2_COMPARE, IGN2_TIMER_DISABLE, IGN2_TIMER_ENABLE);
-IgnitionSchedule ignitionSchedule3(IGN3_COUNTER, IGN3_COMPARE, IGN3_TIMER_DISABLE, IGN3_TIMER_ENABLE);
-IgnitionSchedule ignitionSchedule4(IGN4_COUNTER, IGN4_COMPARE, IGN4_TIMER_DISABLE, IGN4_TIMER_ENABLE);
-
+IgnitionSchedule ignitionSchedules[ignChannelCount] =
+{
+  IgnitionSchedule(IGN1_COUNTER, IGN1_COMPARE, IGN1_TIMER_DISABLE, IGN1_TIMER_ENABLE),
+  IgnitionSchedule(IGN2_COUNTER, IGN2_COMPARE, IGN2_TIMER_DISABLE, IGN2_TIMER_ENABLE),
+  IgnitionSchedule(IGN3_COUNTER, IGN3_COMPARE, IGN3_TIMER_DISABLE, IGN3_TIMER_ENABLE),
+  IgnitionSchedule(IGN4_COUNTER, IGN4_COMPARE, IGN4_TIMER_DISABLE, IGN4_TIMER_ENABLE),
 #if IGN_CHANNELS >= 5
-IgnitionSchedule ignitionSchedule5(IGN5_COUNTER, IGN5_COMPARE, IGN5_TIMER_DISABLE, IGN5_TIMER_ENABLE);
+  IgnitionSchedule(IGN5_COUNTER, IGN5_COMPARE, IGN5_TIMER_DISABLE, IGN5_TIMER_ENABLE),
 #endif
 #if IGN_CHANNELS >= 6
-IgnitionSchedule ignitionSchedule6(IGN6_COUNTER, IGN6_COMPARE, IGN6_TIMER_DISABLE, IGN6_TIMER_ENABLE);
+  IgnitionSchedule(IGN6_COUNTER, IGN6_COMPARE, IGN6_TIMER_DISABLE, IGN6_TIMER_ENABLE),
 #endif
 #if IGN_CHANNELS >= 7
-IgnitionSchedule ignitionSchedule7(IGN7_COUNTER, IGN7_COMPARE, IGN7_TIMER_DISABLE, IGN7_TIMER_ENABLE);
+  IgnitionSchedule(IGN7_COUNTER, IGN7_COMPARE, IGN7_TIMER_DISABLE, IGN7_TIMER_ENABLE),
 #endif
 #if IGN_CHANNELS >= 8
-IgnitionSchedule ignitionSchedule8(IGN8_COUNTER, IGN8_COMPARE, IGN8_TIMER_DISABLE, IGN8_TIMER_ENABLE);
+  IgnitionSchedule(IGN8_COUNTER, IGN8_COMPARE, IGN8_TIMER_DISABLE, IGN8_TIMER_ENABLE),
 #endif
+};
 
 static void initialiseFuelSchedules(void)
 {
@@ -94,21 +96,21 @@ static void initialiseFuelSchedules(void)
 
 static void initialiseIgnitionSchedules(void)
 {
-  ignitions.ignition(ignChannel1).ignitionSchedule = &ignitionSchedule1;
-  ignitions.ignition(ignChannel2).ignitionSchedule = &ignitionSchedule2;
-  ignitions.ignition(ignChannel3).ignitionSchedule = &ignitionSchedule3;
-  ignitions.ignition(ignChannel4).ignitionSchedule = &ignitionSchedule4;
+  ignition_contexts[ignChannel1].ignitionSchedule = &ignitionSchedules[ignChannel1];
+  ignition_contexts[ignChannel2].ignitionSchedule = &ignitionSchedules[ignChannel2];
+  ignition_contexts[ignChannel3].ignitionSchedule = &ignitionSchedules[ignChannel3];
+  ignition_contexts[ignChannel4].ignitionSchedule = &ignitionSchedules[ignChannel4];
 #if IGN_CHANNELS >= 5
-  ignitions.ignition(ignChannel5).ignitionSchedule = &ignitionSchedule5;
+  ignition_contexts[ignChannel5].ignitionSchedule = &ignitionSchedules[ignChannel5];
 #endif
 #if IGN_CHANNELS >= 6
-  ignitions.ignition(ignChannel6).ignitionSchedule = &ignitionSchedule6;
+  ignition_contexts[ignChannel6].ignitionSchedule = &ignitionSchedules[ignChannel6];
 #endif
 #if IGN_CHANNELS >= 7
-  ignitions.ignition(ignChannel7).ignitionSchedule = &ignitionSchedule7;
+  ignition_contexts[ignChannel7].ignitionSchedule = &ignitionSchedules[ignChannel7];
 #endif
 #if IGN_CHANNELS >= 8
-  ignitions.ignition(ignChannel8).ignitionSchedule = &ignitionSchedule8;
+  ignition_contexts[ignChannel8].ignitionSchedule = &ignitionSchedules[ignChannel8];
 #endif
 }
 
@@ -126,7 +128,7 @@ void initialiseSchedulers(void)
 
   for (size_t i = ignChannel1; i < ignChannelCount; i++)
   {
-    ignition_context_st &ignition = ignitions.ignition((ignitionChannelID_t)i);
+    ignition_context_st &ignition = ignition_contexts[(ignitionChannelID_t)i];
 
     ignition.reset();
   }
@@ -229,13 +231,14 @@ void refreshIgnitionSchedule1(unsigned long timeToEnd)
 {
   //Must have the threshold check here otherwise it can cause a condition where
   //the compare fires twice, once after the other, both for the end
+  IgnitionSchedule &ignition1 = ignitionSchedules[ignChannel1];
 
   noInterrupts();
 
-  if (ignitionSchedule1.Status == RUNNING && timeToEnd < ignitionSchedule1.duration)
+  if (ignition1.Status == RUNNING && timeToEnd < ignition1.duration)
   {
-    ignitionSchedule1.endCompare = IGN1_COUNTER + uS_TO_TIMER_COMPARE(timeToEnd);
-    SET_COMPARE(IGN1_COMPARE, ignitionSchedule1.endCompare);
+    ignition1.endCompare = IGN1_COUNTER + uS_TO_TIMER_COMPARE(timeToEnd);
+    SET_COMPARE(IGN1_COMPARE, ignition1.endCompare);
   }
 
   interrupts();
@@ -455,7 +458,7 @@ ISR(TIMER5_COMPA_vect) //cppcheck-suppress misra-c2012-8.2
 void ignitionSchedule1Interrupt(void) //Most ARM chips can simply call a function
 #endif
   {
-    ignitionScheduleISR(ignitionSchedule1);
+    ignitionScheduleISR(ignitionSchedules[ignChannel1]);
   }
 
 #if IGN_CHANNELS >= 2
@@ -465,7 +468,7 @@ ISR(TIMER5_COMPB_vect) //cppcheck-suppress misra-c2012-8.2
 void ignitionSchedule2Interrupt(void) //Most ARM chips can simply call a function
 #endif
   {
-    ignitionScheduleISR(ignitionSchedule2);
+    ignitionScheduleISR(ignitionSchedules[ignChannel2]);
   }
 #endif
 
@@ -476,7 +479,7 @@ ISR(TIMER5_COMPC_vect) //cppcheck-suppress misra-c2012-8.2
 void ignitionSchedule3Interrupt(void) //Most ARM chips can simply call a function
 #endif
   {
-    ignitionScheduleISR(ignitionSchedule3);
+    ignitionScheduleISR(ignitionSchedules[ignChannel3]);
   }
 #endif
 
@@ -487,7 +490,7 @@ ISR(TIMER4_COMPA_vect) //cppcheck-suppress misra-c2012-8.2
 void ignitionSchedule4Interrupt(void) //Most ARM chips can simply call a function
 #endif
   {
-    ignitionScheduleISR(ignitionSchedule4);
+    ignitionScheduleISR(ignitionSchedules[ignChannel4]);
   }
 #endif
 
@@ -498,7 +501,7 @@ ISR(TIMER4_COMPC_vect) //cppcheck-suppress misra-c2012-8.2
 void ignitionSchedule5Interrupt(void) //Most ARM chips can simply call a function
 #endif
   {
-    ignitionScheduleISR(ignitionSchedule5);
+    ignitionScheduleISR(ignitionSchedules[ignChannel5]);
   }
 #endif
 
@@ -509,7 +512,7 @@ ISR(TIMER4_COMPB_vect) //cppcheck-suppress misra-c2012-8.2
 void ignitionSchedule6Interrupt(void) //Most ARM chips can simply call a function
 #endif
   {
-    ignitionScheduleISR(ignitionSchedule6);
+    ignitionScheduleISR(ignitionSchedules[ignChannel6]);
   }
 #endif
 
@@ -520,7 +523,7 @@ ISR(TIMER3_COMPC_vect) //cppcheck-suppress misra-c2012-8.2
 void ignitionSchedule7Interrupt(void) //Most ARM chips can simply call a function
 #endif
   {
-    ignitionScheduleISR(ignitionSchedule7);
+    ignitionScheduleISR(ignitionSchedules[ignChannel7]);
   }
 #endif
 
@@ -531,7 +534,7 @@ ISR(TIMER3_COMPB_vect) //cppcheck-suppress misra-c2012-8.2
 void ignitionSchedule8Interrupt(void) //Most ARM chips can simply call a function
 #endif
   {
-    ignitionScheduleISR(ignitionSchedule8);
+    ignitionScheduleISR(ignitionSchedules[ignChannel8]);
   }
 #endif
 
@@ -560,7 +563,7 @@ void disablePendingIgnSchedule(byte channel)
     noInterrupts();
 
     ignition_context_st &ignition =
-      ignitions.ignition((ignitionChannelID_t)channel);
+      ignition_contexts[(ignitionChannelID_t)channel];
 
     if(ignition.ignitionSchedule->Status == PENDING)
     {

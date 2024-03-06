@@ -219,10 +219,10 @@ static void calcSetEndTeeth_FordST170_ignition(ignition_context_st &ignition)
 
 void triggerSetEndTeeth_FordST170(void)
 {
-  calcSetEndTeeth_FordST170_ignition(ignitions.ignition(ignChannel1));
-  calcSetEndTeeth_FordST170_ignition(ignitions.ignition(ignChannel2));
-  calcSetEndTeeth_FordST170_ignition(ignitions.ignition(ignChannel3));
-  calcSetEndTeeth_FordST170_ignition(ignitions.ignition(ignChannel4));
+  calcSetEndTeeth_FordST170_ignition(ignition_contexts[ignChannel1]);
+  calcSetEndTeeth_FordST170_ignition(ignition_contexts[ignChannel2]);
+  calcSetEndTeeth_FordST170_ignition(ignition_contexts[ignChannel3]);
+  calcSetEndTeeth_FordST170_ignition(ignition_contexts[ignChannel4]);
   // Removed ign channels >4 as an ST170 engine is a 4 cylinder
 }
 

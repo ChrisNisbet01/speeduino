@@ -204,9 +204,9 @@ uint16_t getRPM_ThirtySixMinus222(void)
 
 void triggerSetEndTeeth_ThirtySixMinus222(void)
 {
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
-  ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
-  ignition_context_st &ignition3 = ignitions.ignition(ignChannel3);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
+  ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
+  ignition_context_st &ignition3 = ignition_contexts[ignChannel3];
 
   if (configPage2.nCylinders == 4)
   {

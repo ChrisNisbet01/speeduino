@@ -293,10 +293,10 @@ static void triggerSetEndTeeth_Nissan360_ignition(ignition_context_st &ignition)
 
 void triggerSetEndTeeth_Nissan360(void)
 {
-  triggerSetEndTeeth_Nissan360_ignition(ignitions.ignition(ignChannel1));
-  triggerSetEndTeeth_Nissan360_ignition(ignitions.ignition(ignChannel2));
-  triggerSetEndTeeth_Nissan360_ignition(ignitions.ignition(ignChannel3));
-  triggerSetEndTeeth_Nissan360_ignition(ignitions.ignition(ignChannel4));
+  triggerSetEndTeeth_Nissan360_ignition(ignition_contexts[ignChannel1]);
+  triggerSetEndTeeth_Nissan360_ignition(ignition_contexts[ignChannel2]);
+  triggerSetEndTeeth_Nissan360_ignition(ignition_contexts[ignChannel3]);
+  triggerSetEndTeeth_Nissan360_ignition(ignition_contexts[ignChannel4]);
 }
 
 static void attach_interrupts(void)

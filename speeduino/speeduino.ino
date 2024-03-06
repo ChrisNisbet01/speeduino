@@ -1242,7 +1242,7 @@ void loop(void)
       //Refresh the current crank angle info
       crankAngle = ignitionLimits(decoder.handler.get_crank_angle());
 
-      ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
+      ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
 #if IGN_CHANNELS >= 1
       ignitions.applyIgnitionControl(ignChannel1, crankAngle);
@@ -1275,7 +1275,7 @@ void loop(void)
 
         refreshIgnitionSchedule1(uSToEnd + fixedCrankingOverride);
       }
-# endif
+#endif
 
 #if IGN_CHANNELS >= 2
       ignitions.applyIgnitionControl(ignChannel2, crankAngle);
@@ -1470,26 +1470,26 @@ void calculateIgnitionAngles(int dwellAngle)
   {
     //1 cylinder
   case 1:
-    ignitions.ignition(ignChannel1).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel1].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
     break;
 
     //2 cylinders
   case 2:
-    ignitions.ignition(ignChannel1).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
-    ignitions.ignition(ignChannel2).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel1].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel2].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
     break;
 
     //3 cylinders
   case 3:
-    ignitions.ignition(ignChannel1).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
-    ignitions.ignition(ignChannel2).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
-    ignitions.ignition(ignChannel3).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel1].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel2].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel3].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
     break;
 
     //4 cylinders
   case 4:
-    ignitions.ignition(ignChannel1).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
-    ignitions.ignition(ignChannel2).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel1].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel2].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
 
 #if IGN_CHANNELS >= 4
     if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL && currentStatus.hasSync)
@@ -1499,8 +1499,8 @@ void calculateIgnitionAngles(int dwellAngle)
         changeHalfToFullSync();
       }
 
-      ignitions.ignition(ignChannel3).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
-      ignitions.ignition(ignChannel4).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+      ignition_contexts[ignChannel3].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+      ignition_contexts[ignChannel4].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
     }
     else if (configPage4.sparkMode == IGN_MODE_ROTARY)
     {
@@ -1510,14 +1510,14 @@ void calculateIgnitionAngles(int dwellAngle)
       //The trailing angles are set relative to the leading ones
       calculateIgnitionTrailingRotary(
         dwellAngle, splitDegrees,
-        ignitions.ignition(ignChannel1).endAngle,
-        &ignitions.ignition(ignChannel3).endAngle,
-        &ignitions.ignition(ignChannel3).startAngle);
+        ignition_contexts[ignChannel1].endAngle,
+        &ignition_contexts[ignChannel3].endAngle,
+        &ignition_contexts[ignChannel3].startAngle);
       calculateIgnitionTrailingRotary(
         dwellAngle, splitDegrees,
-        ignitions.ignition(ignChannel2).endAngle,
-        &ignitions.ignition(ignChannel4).endAngle,
-        &ignitions.ignition(ignChannel4).startAngle);
+        ignition_contexts[ignChannel2].endAngle,
+        &ignition_contexts[ignChannel4].endAngle,
+        &ignition_contexts[ignChannel4].startAngle);
     }
     else
     {
@@ -1531,20 +1531,20 @@ void calculateIgnitionAngles(int dwellAngle)
 
     //5 cylinders
   case 5:
-    ignitions.ignition(ignChannel1).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
-    ignitions.ignition(ignChannel2).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
-    ignitions.ignition(ignChannel3).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
-    ignitions.ignition(ignChannel4).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel1].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel2].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel3].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel4].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
 #if (IGN_CHANNELS >= 5)
-    ignitions.ignition(ignChannel5).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel5].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
 #endif
     break;
 
     //6 cylinders
   case 6:
-    ignitions.ignition(ignChannel1).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
-    ignitions.ignition(ignChannel2).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
-    ignitions.ignition(ignChannel3).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel1].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel2].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel3].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
 
 #if IGN_CHANNELS >= 6
     if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL && currentStatus.hasSync)
@@ -1554,9 +1554,9 @@ void calculateIgnitionAngles(int dwellAngle)
         changeHalfToFullSync();
       }
 
-      ignitions.ignition(ignChannel4).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
-      ignitions.ignition(ignChannel5).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
-      ignitions.ignition(ignChannel6).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+      ignition_contexts[ignChannel4].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+      ignition_contexts[ignChannel5].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+      ignition_contexts[ignChannel6].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
     }
     else
     {
@@ -1570,10 +1570,10 @@ void calculateIgnitionAngles(int dwellAngle)
 
     //8 cylinders
   case 8:
-    ignitions.ignition(ignChannel1).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
-    ignitions.ignition(ignChannel2).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
-    ignitions.ignition(ignChannel3).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
-    ignitions.ignition(ignChannel4).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel1].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel2].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel3].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+    ignition_contexts[ignChannel4].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
 
 #if IGN_CHANNELS >= 8
     if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL && currentStatus.hasSync)
@@ -1583,10 +1583,10 @@ void calculateIgnitionAngles(int dwellAngle)
         changeHalfToFullSync();
       }
 
-      ignitions.ignition(ignChannel5).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
-      ignitions.ignition(ignChannel6).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
-      ignitions.ignition(ignChannel7).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
-      ignitions.ignition(ignChannel8).calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+      ignition_contexts[ignChannel5].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+      ignition_contexts[ignChannel6].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+      ignition_contexts[ignChannel7].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
+      ignition_contexts[ignChannel8].calculateIgnitionAngle(dwellAngle, currentStatus.advance);
     }
     else
     {

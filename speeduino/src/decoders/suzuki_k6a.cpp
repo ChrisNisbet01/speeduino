@@ -414,7 +414,7 @@ void triggerSetEndTeeth_SuzukiK6A(void)
   //occurs part way through this function
   int16_t tempIgnitionEndTooth;
 
-  tempIgnitionEndTooth = ignitions.ignition(ignChannel1).endAngle - configPage4.triggerAngle;
+  tempIgnitionEndTooth = ignition_contexts[ignChannel1].endAngle - configPage4.triggerAngle;
   tempIgnitionEndTooth = ignitionLimits(tempIgnitionEndTooth);
 
   for (nCount = 1, bExit = false; nCount < 8 && !bExit; nCount++)
@@ -435,9 +435,9 @@ void triggerSetEndTeeth_SuzukiK6A(void)
     // didn't find a match, use tooth 7 as it must be greater than 7 but less than 1.
     tempIgnitionEndTooth = 7;
   }
-  ignitions.ignition(ignChannel1).endTooth = tempIgnitionEndTooth;
+  ignition_contexts[ignChannel1].endTooth = tempIgnitionEndTooth;
 
-  tempIgnitionEndTooth = ignitions.ignition(ignChannel2).endAngle - configPage4.triggerAngle;
+  tempIgnitionEndTooth = ignition_contexts[ignChannel2].endAngle - configPage4.triggerAngle;
   tempIgnitionEndTooth = ignitionLimits(tempIgnitionEndTooth);
 
   for (nCount = 1, bExit = false; nCount < 8 && !bExit; nCount++)
@@ -459,9 +459,9 @@ void triggerSetEndTeeth_SuzukiK6A(void)
     tempIgnitionEndTooth = 7;
   }
 
-  ignitions.ignition(ignChannel2).endTooth = tempIgnitionEndTooth;
+  ignition_contexts[ignChannel2].endTooth = tempIgnitionEndTooth;
 
-  tempIgnitionEndTooth = ignitions.ignition(ignChannel3).endAngle - configPage4.triggerAngle;
+  tempIgnitionEndTooth = ignition_contexts[ignChannel3].endAngle - configPage4.triggerAngle;
   tempIgnitionEndTooth = ignitionLimits(tempIgnitionEndTooth);
 
   for (nCount = 1, bExit = false; nCount < 8 && !bExit; nCount++)
@@ -483,7 +483,7 @@ void triggerSetEndTeeth_SuzukiK6A(void)
     // didn't find a match, use tooth 7 as it must be greater than 7 but less than 1.
     tempIgnitionEndTooth = 7;
   }
-  ignitions.ignition(ignChannel1).endTooth = tempIgnitionEndTooth;
+  ignition_contexts[ignChannel1].endTooth = tempIgnitionEndTooth;
 }
 
 static void attach_interrupts(void)

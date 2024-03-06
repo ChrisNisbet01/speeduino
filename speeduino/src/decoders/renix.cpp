@@ -202,22 +202,22 @@ static void calcEndTeeth_Renix_ignition(ignition_context_st &ignition)
 
 void triggerSetEndTeeth_Renix(void)
 {
-  calcEndTeeth_Renix_ignition(ignitions.ignition(ignChannel1));
-  calcEndTeeth_Renix_ignition(ignitions.ignition(ignChannel2));
-  currentStatus.canin[1] = ignitions.ignition(ignChannel2).endTooth;
-  calcEndTeeth_Renix_ignition(ignitions.ignition(ignChannel3));
-  calcEndTeeth_Renix_ignition(ignitions.ignition(ignChannel4));
+  calcEndTeeth_Renix_ignition(ignition_contexts[ignChannel1]);
+  calcEndTeeth_Renix_ignition(ignition_contexts[ignChannel2]);
+  currentStatus.canin[1] = ignition_contexts[ignChannel2].endTooth;
+  calcEndTeeth_Renix_ignition(ignition_contexts[ignChannel3]);
+  calcEndTeeth_Renix_ignition(ignition_contexts[ignChannel4]);
 #if IGN_CHANNELS >= 5
-  calcEndTeeth_Renix_ignition(ignitions.ignition(ignChannel5));
+  calcEndTeeth_Renix_ignition(ignition_contexts[ignChannel5]);
 #endif
 #if IGN_CHANNELS >= 6
-  calcEndTeeth_Renix_ignition(ignitions.ignition(ignChannel6));
+  calcEndTeeth_Renix_ignition(ignition_contexts[ignChannel6]);
 #endif
 #if IGN_CHANNELS >= 7
-  calcEndTeeth_Renix_ignition(ignitions.ignition(ignChannel7));
+  calcEndTeeth_Renix_ignition(ignition_contexts[ignChannel7]);
 #endif
 #if IGN_CHANNELS >= 8
-  calcEndTeeth_Renix_ignition(ignitions.ignition(ignChannel8));
+  calcEndTeeth_Renix_ignition(ignition_contexts[ignChannel8]);
 #endif
 }
 

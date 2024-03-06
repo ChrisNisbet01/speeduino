@@ -6,32 +6,32 @@
 static void test_status_initial_off_ign1(void)
 {
     initialiseSchedulers();
-    TEST_ASSERT_EQUAL(OFF, ignitionSchedule1.Status);
+    TEST_ASSERT_EQUAL(OFF, ignitionSchedules[ignChannel1].Status);
 }
 
 static void test_status_initial_off_ign2(void)
 {
     initialiseSchedulers();
-    TEST_ASSERT_EQUAL(OFF, ignitionSchedule2.Status);
+    TEST_ASSERT_EQUAL(OFF, ignitionSchedules[ignChannel2].Status);
 }
 
 static void test_status_initial_off_ign3(void)
 {
     initialiseSchedulers();
-    TEST_ASSERT_EQUAL(OFF, ignitionSchedule3.Status);
+    TEST_ASSERT_EQUAL(OFF, ignitionSchedules[ignChannel3].Status);
 }
 
 static void test_status_initial_off_ign4(void)
 {
     initialiseSchedulers();
-    TEST_ASSERT_EQUAL(OFF, ignitionSchedule4.Status);
+    TEST_ASSERT_EQUAL(OFF, ignitionSchedules[ignChannel4].Status);
 }
 
 #if IGN_CHANNELS >= 5
 static void test_status_initial_off_ign5(void)
 {
     initialiseSchedulers();
-    TEST_ASSERT_EQUAL(OFF, ignitionSchedule5.Status);
+    TEST_ASSERT_EQUAL(OFF, ignitionSchedules[ignChannel5].Status);
 }
 #endif
 
@@ -39,7 +39,7 @@ static void test_status_initial_off_ign5(void)
 static void test_status_initial_off_ign6(void)
 {
     initialiseSchedulers();
-    TEST_ASSERT_EQUAL(OFF, ignitionSchedule6.Status);
+    TEST_ASSERT_EQUAL(OFF, ignitionSchedules[ignChannel6].Status);
 }
 #endif
 
@@ -47,7 +47,7 @@ static void test_status_initial_off_ign6(void)
 static void test_status_initial_off_ign7(void)
 {
     initialiseSchedulers();
-    TEST_ASSERT_EQUAL(OFF, ignitionSchedule7.Status);
+    TEST_ASSERT_EQUAL(OFF, ignitionSchedules[ignChannel7].Status);
 }
 #endif
 
@@ -55,7 +55,7 @@ static void test_status_initial_off_ign7(void)
 static void test_status_initial_off_ign8(void)
 {
     initialiseSchedulers();
-    TEST_ASSERT_EQUAL(OFF, ignitionSchedule8.Status);
+    TEST_ASSERT_EQUAL(OFF, ignitionSchedules[ignChannel8].Status);
 }
 #endif
 

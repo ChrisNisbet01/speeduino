@@ -545,7 +545,7 @@ void initialiseAll(void)
 
     switch (configPage2.nCylinders) {
     case 1:
-        ignitions.ignition(ignChannel1).ignDegrees = 0;
+        ignition_contexts[ignChannel1].ignDegrees = 0;
         ignitions.setMaxIgnitions(1);
         injectors.injector(injChannel1).channelInjDegrees = 0;
         injectors.setMaxInjectors(2);
@@ -574,18 +574,18 @@ void initialiseAll(void)
         break;
 
     case 2:
-      ignitions.ignition(ignChannel1).ignDegrees = 0;
+      ignition_contexts[ignChannel1].ignDegrees = 0;
       ignitions.setMaxIgnitions(2);
       injectors.injector(injChannel1).channelInjDegrees = 0;
       injectors.setMaxInjectors(2);
 
       if (configPage2.engineType == EVEN_FIRE)
       {
-        ignitions.ignition(ignChannel2).ignDegrees = 180;
+        ignition_contexts[ignChannel2].ignDegrees = 180;
       }
       else
       {
-        ignitions.ignition(ignChannel2).ignDegrees = configPage2.oddfire2;
+        ignition_contexts[ignChannel2].ignDegrees = configPage2.oddfire2;
       }
 
         //Sequential ignition works identically on a 2 cylinder whether it's odd or even fire (With the default being a 180 degree second cylinder).
@@ -631,7 +631,7 @@ void initialiseAll(void)
         break;
 
     case 3:
-      ignitions.ignition(ignChannel1).ignDegrees = 0;
+      ignition_contexts[ignChannel1].ignDegrees = 0;
       ignitions.setMaxIgnitions(3);
       injectors.setMaxInjectors(3);
       if (configPage2.engineType == EVEN_FIRE)
@@ -639,21 +639,21 @@ void initialiseAll(void)
         // Sequential and Single channel modes both run over 720 crank degrees, but only on 4 stroke engines.
         if ((configPage4.sparkMode == IGN_MODE_SEQUENTIAL || configPage4.sparkMode == IGN_MODE_SINGLE) && configPage2.strokes == FOUR_STROKE)
         {
-          ignitions.ignition(ignChannel2).ignDegrees = 240;
-          ignitions.ignition(ignChannel3).ignDegrees = 480;
+          ignition_contexts[ignChannel2].ignDegrees = 240;
+          ignition_contexts[ignChannel3].ignDegrees = 480;
 
           CRANK_ANGLE_MAX_IGN = 720;
         }
         else
         {
-          ignitions.ignition(ignChannel2).ignDegrees = 120;
-          ignitions.ignition(ignChannel3).ignDegrees = 240;
+          ignition_contexts[ignChannel2].ignDegrees = 120;
+          ignition_contexts[ignChannel3].ignDegrees = 240;
         }
         }
         else
         {
-          ignitions.ignition(ignChannel2).ignDegrees = configPage2.oddfire2;
-          ignitions.ignition(ignChannel3).ignDegrees = configPage2.oddfire3;
+          ignition_contexts[ignChannel2].ignDegrees = configPage2.oddfire2;
+          ignition_contexts[ignChannel3].ignDegrees = configPage2.oddfire3;
         }
 
         //For alternating injection, the squirt occurs at different times for each channel
@@ -745,20 +745,20 @@ void initialiseAll(void)
         }
         break;
     case 4:
-        ignitions.ignition(ignChannel1).ignDegrees = 0;
+        ignition_contexts[ignChannel1].ignDegrees = 0;
         ignitions.setMaxIgnitions(2);
         injectors.injector(injChannel1).channelInjDegrees = 0;
         injectors.setMaxInjectors(2);
 
         if (configPage2.engineType == EVEN_FIRE)
         {
-          ignitions.ignition(ignChannel2).ignDegrees = 180;
+          ignition_contexts[ignChannel2].ignDegrees = 180;
 
           if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL
               && configPage2.strokes == FOUR_STROKE)
           {
-            ignitions.ignition(ignChannel3).ignDegrees = 360;
-            ignitions.ignition(ignChannel4).ignDegrees = 540;
+            ignition_contexts[ignChannel3].ignDegrees = 360;
+            ignition_contexts[ignChannel4].ignDegrees = 540;
 
             CRANK_ANGLE_MAX_IGN = 720;
             ignitions.setMaxIgnitions(4);
@@ -766,8 +766,8 @@ void initialiseAll(void)
           if(configPage4.sparkMode == IGN_MODE_ROTARY)
           {
             //Rotary uses the ign 3 and 4 schedules for the trailing spark. They are offset from the ign 1 and 2 channels respectively and so use the same degrees as them
-            ignitions.ignition(ignChannel3).ignDegrees = 0;
-            ignitions.ignition(ignChannel4).ignDegrees = 180;
+            ignition_contexts[ignChannel3].ignDegrees = 0;
+            ignition_contexts[ignChannel4].ignDegrees = 180;
             ignitions.setMaxIgnitions(4);
 
             configPage4.IgInv = GOING_LOW; //Force Going Low ignition mode (Going high is never used for rotary)
@@ -775,9 +775,9 @@ void initialiseAll(void)
         }
         else
         {
-          ignitions.ignition(ignChannel2).ignDegrees = configPage2.oddfire2;
-          ignitions.ignition(ignChannel3).ignDegrees = configPage2.oddfire3;
-          ignitions.ignition(ignChannel4).ignDegrees = configPage2.oddfire4;
+          ignition_contexts[ignChannel2].ignDegrees = configPage2.oddfire2;
+          ignition_contexts[ignChannel3].ignDegrees = configPage2.oddfire3;
+          ignition_contexts[ignChannel4].ignDegrees = configPage2.oddfire4;
           ignitions.setMaxIgnitions(4);
         }
 
@@ -865,12 +865,12 @@ void initialiseAll(void)
 
         break;
     case 5:
-      ignitions.ignition(ignChannel1).ignDegrees = 0;
-      ignitions.ignition(ignChannel2).ignDegrees = 72;
-      ignitions.ignition(ignChannel3).ignDegrees = 144;
-      ignitions.ignition(ignChannel4).ignDegrees = 216;
+      ignition_contexts[ignChannel1].ignDegrees = 0;
+      ignition_contexts[ignChannel2].ignDegrees = 72;
+      ignition_contexts[ignChannel3].ignDegrees = 144;
+      ignition_contexts[ignChannel4].ignDegrees = 216;
 #if (IGN_CHANNELS >= 5)
-      ignitions.ignition(ignChannel5).ignDegrees = 288;
+      ignition_contexts[ignChannel5].ignDegrees = 288;
 #endif
       ignitions.setMaxIgnitions(5);
       // Is updated below to 5 if there are enough channels.
@@ -878,11 +878,11 @@ void initialiseAll(void)
 
       if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL)
       {
-        ignitions.ignition(ignChannel2).ignDegrees = 144;
-        ignitions.ignition(ignChannel3).ignDegrees = 288;
-        ignitions.ignition(ignChannel4).ignDegrees = 432;
+        ignition_contexts[ignChannel2].ignDegrees = 144;
+        ignition_contexts[ignChannel3].ignDegrees = 288;
+        ignition_contexts[ignChannel4].ignDegrees = 432;
 #if (IGN_CHANNELS >= 5)
-        ignitions.ignition(ignChannel5).ignDegrees = 576;
+        ignition_contexts[ignChannel5].ignDegrees = 576;
 #endif
 
           CRANK_ANGLE_MAX_IGN = 720;
@@ -942,18 +942,18 @@ void initialiseAll(void)
 #endif
         break;
     case 6:
-        ignitions.ignition(ignChannel1).ignDegrees = 0;
-        ignitions.ignition(ignChannel2).ignDegrees = 120;
-        ignitions.ignition(ignChannel3).ignDegrees = 240;
+        ignition_contexts[ignChannel1].ignDegrees = 0;
+        ignition_contexts[ignChannel2].ignDegrees = 120;
+        ignition_contexts[ignChannel3].ignDegrees = 240;
         ignitions.setMaxIgnitions(3);
         injectors.setMaxInjectors(3);
 
 #if IGN_CHANNELS >= 6
         if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL)
         {
-        ignitions.ignition(ignChannel4).ignDegrees = 360;
-        ignitions.ignition(ignChannel5).ignDegrees = 480;
-        ignitions.ignition(ignChannel6).ignDegrees = 600;
+        ignition_contexts[ignChannel4].ignDegrees = 360;
+        ignition_contexts[ignChannel5].ignDegrees = 480;
+        ignition_contexts[ignChannel6].ignDegrees = 600;
         CRANK_ANGLE_MAX_IGN = 720;
         ignitions.setMaxIgnitions(6);
         }
@@ -1028,10 +1028,10 @@ void initialiseAll(void)
 #endif
         break;
     case 8:
-        ignitions.ignition(ignChannel1).ignDegrees = 0;
-        ignitions.ignition(ignChannel2).ignDegrees = 90;
-        ignitions.ignition(ignChannel3).ignDegrees = 180;
-        ignitions.ignition(ignChannel4).ignDegrees = 270;
+        ignition_contexts[ignChannel1].ignDegrees = 0;
+        ignition_contexts[ignChannel2].ignDegrees = 90;
+        ignition_contexts[ignChannel3].ignDegrees = 180;
+        ignition_contexts[ignChannel4].ignDegrees = 270;
         ignitions.setMaxIgnitions(4);
         injectors.setMaxInjectors(4);
 
@@ -1045,10 +1045,10 @@ void initialiseAll(void)
 #if IGN_CHANNELS >= 8
         if (configPage4.sparkMode == IGN_MODE_SEQUENTIAL)
         {
-        ignitions.ignition(ignChannel5).ignDegrees = 360;
-        ignitions.ignition(ignChannel6).ignDegrees = 450;
-        ignitions.ignition(ignChannel7).ignDegrees = 540;
-        ignitions.ignition(ignChannel8).ignDegrees = 630;
+        ignition_contexts[ignChannel5].ignDegrees = 360;
+        ignition_contexts[ignChannel6].ignDegrees = 450;
+        ignition_contexts[ignChannel7].ignDegrees = 540;
+        ignition_contexts[ignChannel8].ignDegrees = 630;
         ignitions.setMaxIgnitions(8);
         CRANK_ANGLE_MAX_IGN = 720;
         }
@@ -1189,49 +1189,49 @@ void initialiseAll(void)
 
     }
 
-    switch(configPage4.sparkMode)
+    switch (configPage4.sparkMode)
     {
     case IGN_MODE_WASTED:
       //Wasted Spark (Normal mode)
-      ignition_contexts[ignChannel1].ignitionSchedule->start.pCallback = beginCoil1Charge;
-      ignition_contexts[ignChannel1].ignitionSchedule->end.pCallback = endCoil1Charge;
-      ignition_contexts[ignChannel2].ignitionSchedule->start.pCallback = beginCoil2Charge;
-      ignition_contexts[ignChannel2].ignitionSchedule->end.pCallback = endCoil2Charge;
-      ignition_contexts[ignChannel3].ignitionSchedule->start.pCallback = beginCoil3Charge;
-      ignition_contexts[ignChannel3].ignitionSchedule->end.pCallback = endCoil3Charge;
-      ignition_contexts[ignChannel4].ignitionSchedule->start.pCallback = beginCoil4Charge;
-      ignition_contexts[ignChannel4].ignitionSchedule->end.pCallback = endCoil4Charge;
+      ignitionSchedules[ignChannel1].start.pCallback = beginCoil1Charge;
+      ignitionSchedules[ignChannel1].end.pCallback = endCoil1Charge;
+      ignitionSchedules[ignChannel2].start.pCallback = beginCoil2Charge;
+      ignitionSchedules[ignChannel2].end.pCallback = endCoil2Charge;
+      ignitionSchedules[ignChannel3].start.pCallback = beginCoil3Charge;
+      ignitionSchedules[ignChannel3].end.pCallback = endCoil3Charge;
+      ignitionSchedules[ignChannel4].start.pCallback = beginCoil4Charge;
+      ignitionSchedules[ignChannel4].end.pCallback = endCoil4Charge;
 #if IGN_CHANNELS >= 5
-      ignition_contexts[ignChannel5].ignitionSchedule->start.pCallback = beginCoil5Charge;
-      ignition_contexts[ignChannel5].ignitionSchedule->end.pCallback = endCoil5Charge;
+      ignitionSchedules[ignChannel5].start.pCallback = beginCoil5Charge;
+      ignitionSchedules[ignChannel5].end.pCallback = endCoil5Charge;
 #endif
       break;
 
     case IGN_MODE_SINGLE:
       //Single channel mode. All ignition pulses are on channel 1
-      ignition_contexts[ignChannel1].ignitionSchedule->start.pCallback = beginCoil1Charge;
-      ignition_contexts[ignChannel1].ignitionSchedule->end.pCallback = endCoil1Charge;
-      ignition_contexts[ignChannel2].ignitionSchedule->start.pCallback = beginCoil1Charge;
-      ignition_contexts[ignChannel2].ignitionSchedule->end.pCallback = endCoil1Charge;
-      ignition_contexts[ignChannel3].ignitionSchedule->start.pCallback = beginCoil1Charge;
-      ignition_contexts[ignChannel3].ignitionSchedule->end.pCallback = endCoil1Charge;
-      ignition_contexts[ignChannel4].ignitionSchedule->start.pCallback = beginCoil1Charge;
-      ignition_contexts[ignChannel4].ignitionSchedule->end.pCallback = endCoil1Charge;
+      ignitionSchedules[ignChannel1].start.pCallback = beginCoil1Charge;
+      ignitionSchedules[ignChannel1].end.pCallback = endCoil1Charge;
+      ignitionSchedules[ignChannel2].start.pCallback = beginCoil1Charge;
+      ignitionSchedules[ignChannel2].end.pCallback = endCoil1Charge;
+      ignitionSchedules[ignChannel3].start.pCallback = beginCoil1Charge;
+      ignitionSchedules[ignChannel3].end.pCallback = endCoil1Charge;
+      ignitionSchedules[ignChannel4].start.pCallback = beginCoil1Charge;
+      ignitionSchedules[ignChannel4].end.pCallback = endCoil1Charge;
 #if IGN_CHANNELS >= 5
-      ignition_contexts[ignChannel5].ignitionSchedule->start.pCallback = beginCoil1Charge;
-      ignition_contexts[ignChannel5].ignitionSchedule->end.pCallback = endCoil1Charge;
+      ignitionSchedules[ignChannel5].start.pCallback = beginCoil1Charge;
+      ignitionSchedules[ignChannel5].end.pCallback = endCoil1Charge;
 #endif
 #if IGN_CHANNELS >= 6
-      ignition_contexts[ignChannel6].ignitionSchedule->start.pCallback = beginCoil1Charge;
-      ignition_contexts[ignChannel6].ignitionSchedule->end.pCallback = endCoil1Charge;
+      ignitionSchedules[ignChannel6].start.pCallback = beginCoil1Charge;
+      ignitionSchedules[ignChannel6].end.pCallback = endCoil1Charge;
 #endif
 #if IGN_CHANNELS >= 7
-      ignition_contexts[ignChannel7].ignitionSchedule->start.pCallback = beginCoil1Charge;
-      ignition_contexts[ignChannel7].ignitionSchedule->end.pCallback = endCoil1Charge;
+      ignitionSchedules[ignChannel7].start.pCallback = beginCoil1Charge;
+      ignitionSchedules[ignChannel7].end.pCallback = endCoil1Charge;
 #endif
 #if IGN_CHANNELS >= 8
-      ignition_contexts[ignChannel8].ignitionSchedule->start.pCallback = beginCoil1Charge;
-      ignition_contexts[ignChannel8].ignitionSchedule->end.pCallback = endCoil1Charge;
+      ignitionSchedules[ignChannel8].start.pCallback = beginCoil1Charge;
+      ignitionSchedules[ignChannel8].end.pCallback = endCoil1Charge;
 #endif
       break;
 
@@ -1240,108 +1240,108 @@ void initialiseAll(void)
       if( configPage2.nCylinders <= 3)
       {
         //1-3 cylinder wasted COP is the same as regular wasted mode
-        ignition_contexts[ignChannel1].ignitionSchedule->start.pCallback = beginCoil1Charge;
-        ignition_contexts[ignChannel1].ignitionSchedule->end.pCallback = endCoil1Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->start.pCallback = beginCoil2Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->end.pCallback = endCoil2Charge;
-        ignition_contexts[ignChannel3].ignitionSchedule->start.pCallback = beginCoil3Charge;
-        ignition_contexts[ignChannel3].ignitionSchedule->end.pCallback = endCoil3Charge;
+        ignitionSchedules[ignChannel1].start.pCallback = beginCoil1Charge;
+        ignitionSchedules[ignChannel1].end.pCallback = endCoil1Charge;
+        ignitionSchedules[ignChannel2].start.pCallback = beginCoil2Charge;
+        ignitionSchedules[ignChannel2].end.pCallback = endCoil2Charge;
+        ignitionSchedules[ignChannel3].start.pCallback = beginCoil3Charge;
+        ignitionSchedules[ignChannel3].end.pCallback = endCoil3Charge;
       }
       else if( configPage2.nCylinders == 4 )
       {
         //Wasted COP mode for 4 cylinders. Ignition channels 1&3 and 2&4 are paired together
-        ignition_contexts[ignChannel1].ignitionSchedule->start.pCallback = beginCoil1and3Charge;
-        ignition_contexts[ignChannel1].ignitionSchedule->end.pCallback = endCoil1and3Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->start.pCallback = beginCoil2and4Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->end.pCallback = endCoil2and4Charge;
-        ignition_contexts[ignChannel3].ignitionSchedule->start.pCallback = nullIgnCallback;
-        ignition_contexts[ignChannel3].ignitionSchedule->end.pCallback = nullIgnCallback;
-        ignition_contexts[ignChannel4].ignitionSchedule->start.pCallback = nullIgnCallback;
-        ignition_contexts[ignChannel4].ignitionSchedule->end.pCallback = nullIgnCallback;
+        ignitionSchedules[ignChannel1].start.pCallback = beginCoil1and3Charge;
+        ignitionSchedules[ignChannel1].end.pCallback = endCoil1and3Charge;
+        ignitionSchedules[ignChannel2].start.pCallback = beginCoil2and4Charge;
+        ignitionSchedules[ignChannel2].end.pCallback = endCoil2and4Charge;
+        ignitionSchedules[ignChannel3].start.pCallback = nullIgnCallback;
+        ignitionSchedules[ignChannel3].end.pCallback = nullIgnCallback;
+        ignitionSchedules[ignChannel4].start.pCallback = nullIgnCallback;
+        ignitionSchedules[ignChannel4].end.pCallback = nullIgnCallback;
       }
       else if( configPage2.nCylinders == 6 )
       {
         //Wasted COP mode for 6 cylinders. Ignition channels 1&4, 2&5 and 3&6 are paired together
 #if IGN_CHANNELS >= 6
-        ignition_contexts[ignChannel1].ignitionSchedule->start.pCallback = beginCoil1and4Charge;
-        ignition_contexts[ignChannel1].ignitionSchedule->end.pCallback = endCoil1and4Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->start.pCallback = beginCoil2and5Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->end.pCallback = endCoil2and5Charge;
-        ignition_contexts[ignChannel3].ignitionSchedule->start.pCallback = beginCoil3and6Charge;
-        ignition_contexts[ignChannel3].ignitionSchedule->end.pCallback = endCoil3and6Charge;
-        ignition_contexts[ignChannel4].ignitionSchedule->start.pCallback = nullIgnCallback;
-        ignition_contexts[ignChannel4].ignitionSchedule->end.pCallback = nullIgnCallback;
-        ignition_contexts[ignChannel5].ignitionSchedule->start.pCallback = nullIgnCallback;
-        ignition_contexts[ignChannel5].ignitionSchedule->end.pCallback = nullIgnCallback;
-        ignition_contexts[ignChannel6].ignitionSchedule->start.pCallback = nullIgnCallback;
-        ignition_contexts[ignChannel6].ignitionSchedule->end.pCallback = nullIgnCallback;
+        ignitionSchedules[ignChannel1].start.pCallback = beginCoil1and4Charge;
+        ignitionSchedules[ignChannel1].end.pCallback = endCoil1and4Charge;
+        ignitionSchedules[ignChannel2].start.pCallback = beginCoil2and5Charge;
+        ignitionSchedules[ignChannel2].end.pCallback = endCoil2and5Charge;
+        ignitionSchedules[ignChannel3].start.pCallback = beginCoil3and6Charge;
+        ignitionSchedules[ignChannel3].end.pCallback = endCoil3and6Charge;
+        ignitionSchedules[ignChannel4].start.pCallback = nullIgnCallback;
+        ignitionSchedules[ignChannel4].end.pCallback = nullIgnCallback;
+        ignitionSchedules[ignChannel5].start.pCallback = nullIgnCallback;
+        ignitionSchedules[ignChannel5].end.pCallback = nullIgnCallback;
+        ignitionSchedules[ignChannel6].start.pCallback = nullIgnCallback;
+        ignitionSchedules[ignChannel6].end.pCallback = nullIgnCallback;
 #endif
       }
       else if( configPage2.nCylinders == 8 )
       {
         //Wasted COP mode for 8 cylinders. Ignition channels 1&5, 2&6, 3&7 and 4&8 are paired together
 #if IGN_CHANNELS >= 8
-        ignition_contexts[ignChannel1].ignitionSchedule->start.pCallback = beginCoil1and5Charge;
-        ignition_contexts[ignChannel1].ignitionSchedule->end.pCallback = endCoil1and5Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->start.pCallback = beginCoil2and6Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->end.pCallback = endCoil2and6Charge;
-        ignition_contexts[ignChannel3].ignitionSchedule->start.pCallback = beginCoil3and7Charge;
-        ignition_contexts[ignChannel3].ignitionSchedule->end.pCallback = endCoil3and7Charge;
-        ignition_contexts[ignChannel4].ignitionSchedule->start.pCallback = beginCoil4and8Charge;
-        ignition_contexts[ignChannel4].ignitionSchedule->end.pCallback = endCoil4and8Charge;
-        ignition_contexts[ignChannel5].ignitionSchedule->start.pCallback = nullIgnCallback;
-        ignition_contexts[ignChannel5].ignitionSchedule->end.pCallback = nullIgnCallback;
-        ignition_contexts[ignChannel6].ignitionSchedule->start.pCallback = nullIgnCallback;
-        ignition_contexts[ignChannel6].ignitionSchedule->end.pCallback = nullIgnCallback;
-        ignition_contexts[ignChannel7].ignitionSchedule->start.pCallback = nullIgnCallback;
-        ignition_contexts[ignChannel7].ignitionSchedule->end.pCallback = nullIgnCallback;
-        ignition_contexts[ignChannel8].ignitionSchedule->start.pCallback = nullIgnCallback;
-        ignition_contexts[ignChannel8].ignitionSchedule->end.pCallback = nullIgnCallback;
+        ignitionSchedules[ignChannel1].start.pCallback = beginCoil1and5Charge;
+        ignitionSchedules[ignChannel1].end.pCallback = endCoil1and5Charge;
+        ignitionSchedules[ignChannel2].start.pCallback = beginCoil2and6Charge;
+        ignitionSchedules[ignChannel2].end.pCallback = endCoil2and6Charge;
+        ignitionSchedules[ignChannel3].start.pCallback = beginCoil3and7Charge;
+        ignitionSchedules[ignChannel3].end.pCallback = endCoil3and7Charge;
+        ignitionSchedules[ignChannel4].start.pCallback = beginCoil4and8Charge;
+        ignitionSchedules[ignChannel4].end.pCallback = endCoil4and8Charge;
+        ignitionSchedules[ignChannel5].start.pCallback = nullIgnCallback;
+        ignitionSchedules[ignChannel5].end.pCallback = nullIgnCallback;
+        ignitionSchedules[ignChannel6].start.pCallback = nullIgnCallback;
+        ignitionSchedules[ignChannel6].end.pCallback = nullIgnCallback;
+        ignitionSchedules[ignChannel7].start.pCallback = nullIgnCallback;
+        ignitionSchedules[ignChannel7].end.pCallback = nullIgnCallback;
+        ignitionSchedules[ignChannel8].start.pCallback = nullIgnCallback;
+        ignitionSchedules[ignChannel8].end.pCallback = nullIgnCallback;
 #endif
       }
       else
       {
         //If the person has inadvertently selected this when running more than
         //4 cylinders or other than 6 cylinders, just use standard Wasted spark mode
-        ignition_contexts[ignChannel1].ignitionSchedule->start.pCallback = beginCoil1Charge;
-        ignition_contexts[ignChannel1].ignitionSchedule->end.pCallback = endCoil1Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->start.pCallback = beginCoil2Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->end.pCallback = endCoil2Charge;
-        ignition_contexts[ignChannel3].ignitionSchedule->start.pCallback = beginCoil3Charge;
-        ignition_contexts[ignChannel3].ignitionSchedule->end.pCallback = endCoil3Charge;
-        ignition_contexts[ignChannel4].ignitionSchedule->start.pCallback = beginCoil4Charge;
-        ignition_contexts[ignChannel4].ignitionSchedule->end.pCallback = endCoil4Charge;
+        ignitionSchedules[ignChannel1].start.pCallback = beginCoil1Charge;
+        ignitionSchedules[ignChannel1].end.pCallback = endCoil1Charge;
+        ignitionSchedules[ignChannel2].start.pCallback = beginCoil2Charge;
+        ignitionSchedules[ignChannel2].end.pCallback = endCoil2Charge;
+        ignitionSchedules[ignChannel3].start.pCallback = beginCoil3Charge;
+        ignitionSchedules[ignChannel3].end.pCallback = endCoil3Charge;
+        ignitionSchedules[ignChannel4].start.pCallback = beginCoil4Charge;
+        ignitionSchedules[ignChannel4].end.pCallback = endCoil4Charge;
 #if IGN_CHANNELS >= 5
-        ignition_contexts[ignChannel5].ignitionSchedule->start.pCallback = beginCoil5Charge;
-        ignition_contexts[ignChannel5].ignitionSchedule->end.pCallback = endCoil5Charge;
+        ignitionSchedules[ignChannel5].start.pCallback = beginCoil5Charge;
+        ignitionSchedules[ignChannel5].end.pCallback = endCoil5Charge;
 #endif
       }
       break;
 
     case IGN_MODE_SEQUENTIAL:
-      ignition_contexts[ignChannel1].ignitionSchedule->start.pCallback = beginCoil1Charge;
-      ignition_contexts[ignChannel1].ignitionSchedule->end.pCallback = endCoil1Charge;
-      ignition_contexts[ignChannel2].ignitionSchedule->start.pCallback = beginCoil2Charge;
-      ignition_contexts[ignChannel2].ignitionSchedule->end.pCallback = endCoil2Charge;
-      ignition_contexts[ignChannel3].ignitionSchedule->start.pCallback = beginCoil3Charge;
-      ignition_contexts[ignChannel3].ignitionSchedule->end.pCallback = endCoil3Charge;
-      ignition_contexts[ignChannel4].ignitionSchedule->start.pCallback = beginCoil4Charge;
-      ignition_contexts[ignChannel4].ignitionSchedule->end.pCallback = endCoil4Charge;
+      ignitionSchedules[ignChannel1].start.pCallback = beginCoil1Charge;
+      ignitionSchedules[ignChannel1].end.pCallback = endCoil1Charge;
+      ignitionSchedules[ignChannel2].start.pCallback = beginCoil2Charge;
+      ignitionSchedules[ignChannel2].end.pCallback = endCoil2Charge;
+      ignitionSchedules[ignChannel3].start.pCallback = beginCoil3Charge;
+      ignitionSchedules[ignChannel3].end.pCallback = endCoil3Charge;
+      ignitionSchedules[ignChannel4].start.pCallback = beginCoil4Charge;
+      ignitionSchedules[ignChannel4].end.pCallback = endCoil4Charge;
 #if IGN_CHANNELS >= 5
-      ignition_contexts[ignChannel5].ignitionSchedule->start.pCallback = beginCoil5Charge;
-      ignition_contexts[ignChannel5].ignitionSchedule->end.pCallback = endCoil5Charge;
+      ignitionSchedules[ignChannel5].start.pCallback = beginCoil5Charge;
+      ignitionSchedules[ignChannel5].end.pCallback = endCoil5Charge;
 #endif
 #if IGN_CHANNELS >= 6
-      ignition_contexts[ignChannel6].ignitionSchedule->start.pCallback = beginCoil6Charge;
-      ignition_contexts[ignChannel6].ignitionSchedule->end.pCallback = endCoil6Charge;
+      ignitionSchedules[ignChannel6].start.pCallback = beginCoil6Charge;
+      ignitionSchedules[ignChannel6].end.pCallback = endCoil6Charge;
 #endif
 #if IGN_CHANNELS >= 7
-      ignition_contexts[ignChannel7].ignitionSchedule->start.pCallback = beginCoil7Charge;
-      ignition_contexts[ignChannel7].ignitionSchedule->end.pCallback = endCoil7Charge;
+      ignitionSchedules[ignChannel7].start.pCallback = beginCoil7Charge;
+      ignitionSchedules[ignChannel7].end.pCallback = endCoil7Charge;
 #endif
 #if IGN_CHANNELS >= 8
-      ignition_contexts[ignChannel8].ignitionSchedule->start.pCallback = beginCoil8Charge;
-      ignition_contexts[ignChannel8].ignitionSchedule->end.pCallback = endCoil8Charge;
+      ignitionSchedules[ignChannel8].start.pCallback = beginCoil8Charge;
+      ignitionSchedules[ignChannel8].end.pCallback = endCoil8Charge;
 #endif
       break;
 
@@ -1349,29 +1349,29 @@ void initialiseAll(void)
       if(configPage10.rotaryType == ROTARY_IGN_FC)
       {
         //Ignition channel 1 is a wasted spark signal for leading signal on both rotors
-        ignition_contexts[ignChannel1].ignitionSchedule->start.pCallback = beginCoil1Charge;
-        ignition_contexts[ignChannel1].ignitionSchedule->end.pCallback = endCoil1Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->start.pCallback = beginCoil1Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->end.pCallback = endCoil1Charge;
-        ignition_contexts[ignChannel3].ignitionSchedule->start.pCallback = beginTrailingCoilCharge;
-        ignition_contexts[ignChannel3].ignitionSchedule->end.pCallback = endTrailingCoilCharge1;
-        ignition_contexts[ignChannel4].ignitionSchedule->start.pCallback = beginTrailingCoilCharge;
-        ignition_contexts[ignChannel4].ignitionSchedule->end.pCallback = endTrailingCoilCharge2;
+        ignitionSchedules[ignChannel1].start.pCallback = beginCoil1Charge;
+        ignitionSchedules[ignChannel1].end.pCallback = endCoil1Charge;
+        ignitionSchedules[ignChannel2].start.pCallback = beginCoil1Charge;
+        ignitionSchedules[ignChannel2].end.pCallback = endCoil1Charge;
+        ignitionSchedules[ignChannel3].start.pCallback = beginTrailingCoilCharge;
+        ignitionSchedules[ignChannel3].end.pCallback = endTrailingCoilCharge1;
+        ignitionSchedules[ignChannel4].start.pCallback = beginTrailingCoilCharge;
+        ignitionSchedules[ignChannel4].end.pCallback = endTrailingCoilCharge2;
       }
       else if(configPage10.rotaryType == ROTARY_IGN_FD)
       {
         //Ignition channel 1 is a wasted spark signal for leading signal on both rotors
-        ignition_contexts[ignChannel1].ignitionSchedule->start.pCallback = beginCoil1Charge;
-        ignition_contexts[ignChannel1].ignitionSchedule->end.pCallback = endCoil1Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->start.pCallback = beginCoil1Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->end.pCallback = endCoil1Charge;
+        ignitionSchedules[ignChannel1].start.pCallback = beginCoil1Charge;
+        ignitionSchedules[ignChannel1].end.pCallback = endCoil1Charge;
+        ignitionSchedules[ignChannel2].start.pCallback = beginCoil1Charge;
+        ignitionSchedules[ignChannel2].end.pCallback = endCoil1Charge;
         //Trailing coils have their own channel each
         //IGN2 = front rotor trailing spark
-        ignition_contexts[ignChannel3].ignitionSchedule->start.pCallback = beginCoil2Charge;
-        ignition_contexts[ignChannel3].ignitionSchedule->end.pCallback = endCoil2Charge;
+        ignitionSchedules[ignChannel3].start.pCallback = beginCoil2Charge;
+        ignitionSchedules[ignChannel3].end.pCallback = endCoil2Charge;
         //IGN3 = rear rotor trailing spark
-        ignition_contexts[ignChannel4].ignitionSchedule->start.pCallback = beginCoil3Charge;
-        ignition_contexts[ignChannel4].ignitionSchedule->end.pCallback = endCoil3Charge;
+        ignitionSchedules[ignChannel4].start.pCallback = beginCoil3Charge;
+        ignitionSchedules[ignChannel4].end.pCallback = endCoil3Charge;
         //IGN4 not used
       }
       else if(configPage10.rotaryType == ROTARY_IGN_RX8)
@@ -1379,17 +1379,17 @@ void initialiseAll(void)
         //RX8 outputs are simply 1 coil and 1 output per plug
 
         //IGN1 is front rotor, leading spark
-        ignition_contexts[ignChannel1].ignitionSchedule->start.pCallback = beginCoil1Charge;
-        ignition_contexts[ignChannel1].ignitionSchedule->end.pCallback = endCoil1Charge;
+        ignitionSchedules[ignChannel1].start.pCallback = beginCoil1Charge;
+        ignitionSchedules[ignChannel1].end.pCallback = endCoil1Charge;
         //IGN2 is rear rotor, leading spark
-        ignition_contexts[ignChannel2].ignitionSchedule->start.pCallback = beginCoil2Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->end.pCallback = endCoil2Charge;
+        ignitionSchedules[ignChannel2].start.pCallback = beginCoil2Charge;
+        ignitionSchedules[ignChannel2].end.pCallback = endCoil2Charge;
         //IGN3 = front rotor trailing spark
-        ignition_contexts[ignChannel3].ignitionSchedule->start.pCallback = beginCoil3Charge;
-        ignition_contexts[ignChannel3].ignitionSchedule->end.pCallback = endCoil3Charge;
+        ignitionSchedules[ignChannel3].start.pCallback = beginCoil3Charge;
+        ignitionSchedules[ignChannel3].end.pCallback = endCoil3Charge;
         //IGN4 = rear rotor trailing spark
-        ignition_contexts[ignChannel4].ignitionSchedule->start.pCallback = beginCoil4Charge;
-        ignition_contexts[ignChannel4].ignitionSchedule->end.pCallback = endCoil4Charge;
+        ignitionSchedules[ignChannel4].start.pCallback = beginCoil4Charge;
+        ignitionSchedules[ignChannel4].end.pCallback = endCoil4Charge;
       }
       else
       {
@@ -1399,17 +1399,17 @@ void initialiseAll(void)
 
     default:
       //Wasted spark (Shouldn't ever happen anyway)
-      ignition_contexts[ignChannel1].ignitionSchedule->start.pCallback = beginCoil1Charge;
-      ignition_contexts[ignChannel1].ignitionSchedule->end.pCallback = endCoil1Charge;
-      ignition_contexts[ignChannel2].ignitionSchedule->start.pCallback = beginCoil2Charge;
-      ignition_contexts[ignChannel2].ignitionSchedule->end.pCallback = endCoil2Charge;
-      ignition_contexts[ignChannel3].ignitionSchedule->start.pCallback = beginCoil3Charge;
-      ignition_contexts[ignChannel3].ignitionSchedule->end.pCallback = endCoil3Charge;
-      ignition_contexts[ignChannel4].ignitionSchedule->start.pCallback = beginCoil4Charge;
-      ignition_contexts[ignChannel4].ignitionSchedule->end.pCallback = endCoil4Charge;
+      ignitionSchedules[ignChannel1].start.pCallback = beginCoil1Charge;
+      ignitionSchedules[ignChannel1].end.pCallback = endCoil1Charge;
+      ignitionSchedules[ignChannel2].start.pCallback = beginCoil2Charge;
+      ignitionSchedules[ignChannel2].end.pCallback = endCoil2Charge;
+      ignitionSchedules[ignChannel3].start.pCallback = beginCoil3Charge;
+      ignitionSchedules[ignChannel3].end.pCallback = endCoil3Charge;
+      ignitionSchedules[ignChannel4].start.pCallback = beginCoil4Charge;
+      ignitionSchedules[ignChannel4].end.pCallback = endCoil4Charge;
 #if IGN_CHANNELS >= 5
-      ignition_contexts[ignChannel5].ignitionSchedule->start.pCallback = beginCoil5Charge;
-      ignition_contexts[ignChannel5].ignitionSchedule->end.pCallback = endCoil5Charge;
+      ignitionSchedules[ignChannel5].start.pCallback = beginCoil5Charge;
+      ignitionSchedules[ignChannel5].end.pCallback = endCoil5Charge;
 #endif
       break;
     }
@@ -3484,7 +3484,7 @@ static inline bool isAnyIgnScheduleRunning(void)
 
   for (size_t i = ignChannel1; i < ignChannelCount; i++)
   {
-    if (ignitions.ignition((ignitionChannelID_t)i).ignitionSchedule->Status == RUNNING)
+    if (ignition_contexts[(ignitionChannelID_t)i].ignitionSchedule->Status == RUNNING)
     {
       anyRunning = true;
       break;
@@ -3536,30 +3536,30 @@ void changeHalfToFullSync(void)
     switch (configPage2.nCylinders)
     {
     case 4:
-      ignition_contexts[ignChannel1].ignitionSchedule->start.pCallback = beginCoil1Charge;
-      ignition_contexts[ignChannel1].ignitionSchedule->end.pCallback = endCoil1Charge;
-      ignition_contexts[ignChannel2].ignitionSchedule->start.pCallback = beginCoil2Charge;
-      ignition_contexts[ignChannel2].ignitionSchedule->end.pCallback = endCoil2Charge;
+      ignitionSchedules[ignChannel1].start.pCallback = beginCoil1Charge;
+      ignitionSchedules[ignChannel1].end.pCallback = endCoil1Charge;
+      ignitionSchedules[ignChannel2].start.pCallback = beginCoil2Charge;
+      ignitionSchedules[ignChannel2].end.pCallback = endCoil2Charge;
       break;
 
     case 6:
-      ignition_contexts[ignChannel1].ignitionSchedule->start.pCallback = beginCoil1Charge;
-      ignition_contexts[ignChannel1].ignitionSchedule->end.pCallback = endCoil1Charge;
-      ignition_contexts[ignChannel2].ignitionSchedule->start.pCallback = beginCoil2Charge;
-      ignition_contexts[ignChannel2].ignitionSchedule->end.pCallback = endCoil2Charge;
-      ignition_contexts[ignChannel3].ignitionSchedule->start.pCallback = beginCoil3Charge;
-      ignition_contexts[ignChannel3].ignitionSchedule->end.pCallback = endCoil3Charge;
+      ignitionSchedules[ignChannel1].start.pCallback = beginCoil1Charge;
+      ignitionSchedules[ignChannel1].end.pCallback = endCoil1Charge;
+      ignitionSchedules[ignChannel2].start.pCallback = beginCoil2Charge;
+      ignitionSchedules[ignChannel2].end.pCallback = endCoil2Charge;
+      ignitionSchedules[ignChannel3].start.pCallback = beginCoil3Charge;
+      ignitionSchedules[ignChannel3].end.pCallback = endCoil3Charge;
       break;
 
     case 8:
-      ignition_contexts[ignChannel1].ignitionSchedule->start.pCallback = beginCoil1Charge;
-      ignition_contexts[ignChannel1].ignitionSchedule->end.pCallback = endCoil1Charge;
-      ignition_contexts[ignChannel2].ignitionSchedule->start.pCallback = beginCoil2Charge;
-      ignition_contexts[ignChannel2].ignitionSchedule->end.pCallback = endCoil2Charge;
-      ignition_contexts[ignChannel3].ignitionSchedule->start.pCallback = beginCoil3Charge;
-      ignition_contexts[ignChannel3].ignitionSchedule->end.pCallback = endCoil3Charge;
-      ignition_contexts[ignChannel4].ignitionSchedule->start.pCallback = beginCoil4Charge;
-      ignition_contexts[ignChannel4].ignitionSchedule->end.pCallback = endCoil4Charge;
+      ignitionSchedules[ignChannel1].start.pCallback = beginCoil1Charge;
+      ignitionSchedules[ignChannel1].end.pCallback = endCoil1Charge;
+      ignitionSchedules[ignChannel2].start.pCallback = beginCoil2Charge;
+      ignitionSchedules[ignChannel2].end.pCallback = endCoil2Charge;
+      ignitionSchedules[ignChannel3].start.pCallback = beginCoil3Charge;
+      ignitionSchedules[ignChannel3].end.pCallback = endCoil3Charge;
+      ignitionSchedules[ignChannel4].start.pCallback = beginCoil4Charge;
+      ignitionSchedules[ignChannel4].end.pCallback = endCoil4Charge;
       break;
 
     default:
@@ -3623,33 +3623,33 @@ void changeFullToHalfSync(void)
     switch (configPage2.nCylinders)
     {
       case 4:
-        ignition_contexts[ignChannel1].ignitionSchedule->start.pCallback = beginCoil1and3Charge;
-        ignition_contexts[ignChannel1].ignitionSchedule->end.pCallback = endCoil1and3Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->start.pCallback = beginCoil2and4Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->end.pCallback = endCoil2and4Charge;
+        ignitionSchedules[ignChannel1].start.pCallback = beginCoil1and3Charge;
+        ignitionSchedules[ignChannel1].end.pCallback = endCoil1and3Charge;
+        ignitionSchedules[ignChannel2].start.pCallback = beginCoil2and4Charge;
+        ignitionSchedules[ignChannel2].end.pCallback = endCoil2and4Charge;
         break;
 
       case 6:
 #if IGN_CHANNELS >= 6
-        ignition_contexts[ignChannel1].ignitionSchedule->start.pCallback = beginCoil1and4Charge;
-        ignition_contexts[ignChannel1].ignitionSchedule->end.pCallback = endCoil1and4Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->start.pCallback = beginCoil2and5Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->end.pCallback = endCoil2and5Charge;
-        ignition_contexts[ignChannel3].ignitionSchedule->start.pCallback = beginCoil3and6Charge;
-        ignition_contexts[ignChannel3].ignitionSchedule->end.pCallback = endCoil3and6Charge;
+        ignitionSchedules[ignChannel1].start.pCallback = beginCoil1and4Charge;
+        ignitionSchedules[ignChannel1].end.pCallback = endCoil1and4Charge;
+        ignitionSchedules[ignChannel2].start.pCallback = beginCoil2and5Charge;
+        ignitionSchedules[ignChannel2].end.pCallback = endCoil2and5Charge;
+        ignitionSchedules[ignChannel3].start.pCallback = beginCoil3and6Charge;
+        ignitionSchedules[ignChannel3].end.pCallback = endCoil3and6Charge;
 #endif
         break;
 
       case 8:
 #if IGN_CHANNELS >= 8
-        ignition_contexts[ignChannel1].ignitionSchedule->start.pCallback = beginCoil1and5Charge;
-        ignition_contexts[ignChannel1].ignitionSchedule->end.pCallback = endCoil1and5Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->start.pCallback = beginCoil2and6Charge;
-        ignition_contexts[ignChannel2].ignitionSchedule->end.pCallback = endCoil2and6Charge;
-        ignition_contexts[ignChannel3].ignitionSchedule->start.pCallback = beginCoil3and7Charge;
-        ignition_contexts[ignChannel3].ignitionSchedule->end.pCallback = endCoil3and7Charge;
-        ignition_contexts[ignChannel4].ignitionSchedule->start.pCallback = beginCoil4and8Charge;
-        ignition_contexts[ignChannel4].ignitionSchedule->end.pCallback = endCoil4and8Charge;
+        ignitionSchedules[ignChannel1].start.pCallback = beginCoil1and5Charge;
+        ignitionSchedules[ignChannel1].end.pCallback = endCoil1and5Charge;
+        ignitionSchedules[ignChannel2].start.pCallback = beginCoil2and6Charge;
+        ignitionSchedules[ignChannel2].end.pCallback = endCoil2and6Charge;
+        ignitionSchedules[ignChannel3].start.pCallback = beginCoil3and7Charge;
+        ignitionSchedules[ignChannel3].end.pCallback = endCoil3and7Charge;
+        ignitionSchedules[ignChannel4].start.pCallback = beginCoil4and8Charge;
+        ignitionSchedules[ignChannel4].end.pCallback = endCoil4and8Charge;
 #endif
         break;
     }

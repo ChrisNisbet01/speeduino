@@ -490,18 +490,18 @@ static void calcSetEndTeeth_NGC_ignition(ignition_context_st &ignition)
 
 void triggerSetEndTeeth_NGC(void)
 {
-  calcSetEndTeeth_NGC_ignition(ignitions.ignition(ignChannel1));
-  calcSetEndTeeth_NGC_ignition(ignitions.ignition(ignChannel2));
-  calcSetEndTeeth_NGC_ignition(ignitions.ignition(ignChannel3));
-  calcSetEndTeeth_NGC_ignition(ignitions.ignition(ignChannel4));
+  calcSetEndTeeth_NGC_ignition(ignition_contexts[ignChannel1]);
+  calcSetEndTeeth_NGC_ignition(ignition_contexts[ignChannel2]);
+  calcSetEndTeeth_NGC_ignition(ignition_contexts[ignChannel3]);
+  calcSetEndTeeth_NGC_ignition(ignition_contexts[ignChannel4]);
 #if IGN_CHANNELS >= 6
-  calcSetEndTeeth_NGC_ignition(ignitions.ignition(ignChannel5));
-  calcSetEndTeeth_NGC_ignition(ignitions.ignition(ignChannel6));
+  calcSetEndTeeth_NGC_ignition(ignition_contexts[ignChannel5]);
+  calcSetEndTeeth_NGC_ignition(ignition_contexts[ignChannel6]);
 #endif
 
 #if IGN_CHANNELS >= 8
-  calcSetEndTeeth_NGC_ignition(ignitions.ignition(ignChannel7));
-  calcSetEndTeeth_NGC_ignition(ignitions.ignition(ignChannel8));
+  calcSetEndTeeth_NGC_ignition(ignition_contexts[ignChannel7]);
+  calcSetEndTeeth_NGC_ignition(ignition_contexts[ignChannel8]);
 #endif
 }
 

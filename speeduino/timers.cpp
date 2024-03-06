@@ -214,7 +214,7 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
   {
     for (size_t i = 0; i < ignChannelCount; i++)
     {
-      ignitions.ignition((ignitionChannelID_t)i).applyOverDwellCheck(targetOverdwellTime);
+      ignition_contexts[(ignitionChannelID_t)i].applyOverDwellCheck(targetOverdwellTime);
     }
   }
 

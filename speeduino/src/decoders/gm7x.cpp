@@ -172,9 +172,9 @@ int getCrankAngle_GM7X(void)
 
 void triggerSetEndTeeth_GM7X(void)
 {
-  ignition_context_st &ignition1 = ignitions.ignition(ignChannel1);
-  ignition_context_st &ignition2 = ignitions.ignition(ignChannel2);
-  ignition_context_st &ignition3 = ignitions.ignition(ignChannel3);
+  ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
+  ignition_context_st &ignition2 = ignition_contexts[ignChannel2];
+  ignition_context_st &ignition3 = ignition_contexts[ignChannel3];
 
   if (currentStatus.advance < 18)
   {
