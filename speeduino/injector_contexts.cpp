@@ -24,17 +24,6 @@ uint16_t injector_context_st::calculateInjectorStartAngle(uint16_t pwDegrees, ui
   return ::calculateInjectorStartAngle(pwDegrees, channelInjDegrees, injAngle);
 }
 
-
-void injector_context_st::configure_injector_schedule(injector_id_t injector_id)
-{
-  ::configure_injector_schedule(*fuelSchedule, injector_id);
-}
-
-void injector_context_st::configure_injector_schedule(injector_id_t injector_id1, injector_id_t injector_id2)
-{
-  ::configure_injector_schedule(*fuelSchedule, injector_id1, injector_id2);
-}
-
 void injector_context_st::applyInjectorControl(uint16_t injOpenTime, uint16_t openAngle, int crankAngle)
 {
   if (PW >= injOpenTime)
@@ -101,31 +90,6 @@ bool injectors_context_st::isOperational(injectorChannelID_t inj)
 byte injectors_context_st::channelsOnMask(void)
 {
   return channelsOn;
-}
-
-void injectors_context_st::configure_injector_schedule(injectorChannelID_t inj, injector_id_t injector_id)
-{
-  injector_context_st &injector = injectors[inj];
-
-  injector.configure_injector_schedule(injector_id);
-}
-
-void injectors_context_st::configure_injector_schedule(injectorChannelID_t inj, injector_id_t injector_id1, injector_id_t injector_id2)
-{
-  injector_context_st &injector = injectors[inj];
-
-  injector.configure_injector_schedule(injector_id1, injector_id2);
-}
-
-void
-injectors_context_st::configure_sequential_injector_schedules(size_t const count)
-{
-  for (size_t i = 0; i < MIN(count, (size_t)injChannelCount); i++)
-  {
-    injector_context_st &injector = injectors[i];
-
-    injector.configure_injector_schedule((injector_id_t)(injector_id_1 + i));
-  }
 }
 
 void injectors_context_st::applyInjectorControl(injectorChannelID_t inj, uint16_t injOpenTime, uint16_t openAngle, int crankAngle)

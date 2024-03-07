@@ -56,22 +56,22 @@ bool TS_CommandButtonsHandler(uint16_t buttonCommand)
       endCoil8Charge();
 #endif
 
-      closeSingleInjector(injector_id_1);
-      closeSingleInjector(injector_id_2);
-      closeSingleInjector(injector_id_3);
-      closeSingleInjector(injector_id_4);
-      #if INJ_CHANNELS >= 5
-      closeSingleInjector(injector_id_5);
-      #endif
-      #if INJ_CHANNELS >= 6
-      closeSingleInjector(injector_id_6);
-      #endif
-      #if INJ_CHANNELS >= 7
-      closeSingleInjector(injector_id_7);
-      #endif
-      #if INJ_CHANNELS >= 8
-      closeSingleInjector(injector_id_8);
-      #endif
+      closeInjector1();
+      closeInjector2();
+      closeInjector3();
+      closeInjector4();
+#if INJ_CHANNELS >= 5
+      closeInjector5();
+#endif
+#if INJ_CHANNELS >= 6
+      closeInjector6();
+#endif
+#if INJ_CHANNELS >= 7
+      closeInjector7();
+#endif
+#if INJ_CHANNELS >= 8
+      closeInjector8();
+#endif
 
       HWTest_INJ_Pulsed = 0;
       HWTest_IGN_Pulsed = 0;
@@ -83,62 +83,117 @@ bool TS_CommandButtonsHandler(uint16_t buttonCommand)
       break;
 
     case TS_CMD_INJ1_ON: // cmd group is for injector1 on actions
-      if( BIT_CHECK(currentStatus.testOutputs, 1) ){ openSingleInjector(injector_id_1); }
+      if (BIT_CHECK(currentStatus.testOutputs, 1))
+      {
+        openInjector1();
+      }
       break;
 
     case TS_CMD_INJ1_OFF: // cmd group is for injector1 off actions
-      if( BIT_CHECK(currentStatus.testOutputs, 1) ){ closeSingleInjector(injector_id_1); BIT_CLEAR(HWTest_INJ_Pulsed, INJ1_CMD_BIT); }
+      if (BIT_CHECK(currentStatus.testOutputs, 1))
+      {
+        closeInjector1();
+        BIT_CLEAR(HWTest_INJ_Pulsed, INJ1_CMD_BIT);
+      }
       break;
 
     case TS_CMD_INJ1_PULSED: // cmd group is for injector1 50% dc actions
-      if( BIT_CHECK(currentStatus.testOutputs, 1) ) { BIT_SET(HWTest_INJ_Pulsed, INJ1_CMD_BIT); }
-      if(!BIT_CHECK(HWTest_INJ_Pulsed, INJ1_CMD_BIT)) { closeSingleInjector(injector_id_1); } //Ensure this output is turned off (Otherwise the output may stay on permanently)
+      if (BIT_CHECK(currentStatus.testOutputs, 1))
+      {
+        BIT_SET(HWTest_INJ_Pulsed, INJ1_CMD_BIT);
+      }
+      if (!BIT_CHECK(HWTest_INJ_Pulsed, INJ1_CMD_BIT))
+      {
+        //Ensure this output is turned off (Otherwise the output may stay on permanently)
+        closeInjector1();
+      }
       break;
 
     case TS_CMD_INJ2_ON: // cmd group is for injector2 on actions
-      if( BIT_CHECK(currentStatus.testOutputs, 1) ){ openSingleInjector(injector_id_2); }
+      if (BIT_CHECK(currentStatus.testOutputs, 1))
+      {
+        openInjector2();
+      }
       break;
 
     case TS_CMD_INJ2_OFF: // cmd group is for injector2 off actions
-      if( BIT_CHECK(currentStatus.testOutputs, 1) ){ closeSingleInjector(injector_id_2); BIT_CLEAR(HWTest_INJ_Pulsed, INJ2_CMD_BIT); }
+      if (BIT_CHECK(currentStatus.testOutputs, 1))
+      {
+        closeInjector2();
+        BIT_CLEAR(HWTest_INJ_Pulsed, INJ2_CMD_BIT);
+      }
       break;
 
     case TS_CMD_INJ2_PULSED: // cmd group is for injector2 50%dc actions
-      if( BIT_CHECK(currentStatus.testOutputs, 1) ) { BIT_SET(HWTest_INJ_Pulsed, INJ2_CMD_BIT); }
-      if(!BIT_CHECK(HWTest_INJ_Pulsed, INJ2_CMD_BIT)) { closeSingleInjector(injector_id_2); } //Ensure this output is turned off (Otherwise the output may stay on permanently)
+      if (BIT_CHECK(currentStatus.testOutputs, 1))
+      {
+        BIT_SET(HWTest_INJ_Pulsed, INJ2_CMD_BIT);
+      }
+      if (!BIT_CHECK(HWTest_INJ_Pulsed, INJ2_CMD_BIT))
+      {
+        //Ensure this output is turned off (Otherwise the output may stay on permanently)
+        closeInjector2();
+      }
       break;
 
     case TS_CMD_INJ3_ON: // cmd group is for injector3 on actions
-      if( BIT_CHECK(currentStatus.testOutputs, 1) ){ openSingleInjector(injector_id_3); }
+      if (BIT_CHECK(currentStatus.testOutputs, 1))
+      {
+        openInjector3();
+      }
       break;
 
     case TS_CMD_INJ3_OFF: // cmd group is for injector3 off actions
-      if( BIT_CHECK(currentStatus.testOutputs, 1) ){ closeSingleInjector(injector_id_3); BIT_CLEAR(HWTest_INJ_Pulsed, INJ3_CMD_BIT); }
+      if (BIT_CHECK(currentStatus.testOutputs, 1))
+      {
+        closeInjector3();
+        BIT_CLEAR(HWTest_INJ_Pulsed, INJ3_CMD_BIT);
+      }
       break;
 
     case TS_CMD_INJ3_PULSED: // cmd group is for injector3 50%dc actions
-      if( BIT_CHECK(currentStatus.testOutputs, 1) ) { BIT_SET(HWTest_INJ_Pulsed, INJ3_CMD_BIT); }
-      if(!BIT_CHECK(HWTest_INJ_Pulsed, INJ3_CMD_BIT)) { closeSingleInjector(injector_id_3); } //Ensure this output is turned off (Otherwise the output may stay on permanently)
+      if (BIT_CHECK(currentStatus.testOutputs, 1))
+      {
+        BIT_SET(HWTest_INJ_Pulsed, INJ3_CMD_BIT);
+      }
+      if (!BIT_CHECK(HWTest_INJ_Pulsed, INJ3_CMD_BIT))
+      {
+        //Ensure this output is turned off (Otherwise the output may stay on permanently)
+        closeInjector3();
+      }
       break;
 
     case TS_CMD_INJ4_ON: // cmd group is for injector4 on actions
-      if( BIT_CHECK(currentStatus.testOutputs, 1) ){ openSingleInjector(injector_id_4); }
+      if (BIT_CHECK(currentStatus.testOutputs, 1))
+      {
+        openInjector4();
+      }
       break;
 
     case TS_CMD_INJ4_OFF: // cmd group is for injector4 off actions
-      if( BIT_CHECK(currentStatus.testOutputs, 1) ){ closeSingleInjector(injector_id_4); BIT_CLEAR(HWTest_INJ_Pulsed, INJ4_CMD_BIT); }
+      if (BIT_CHECK(currentStatus.testOutputs, 1))
+      {
+        closeInjector4(); BIT_CLEAR(HWTest_INJ_Pulsed, INJ4_CMD_BIT);
+      }
       break;
 
     case TS_CMD_INJ4_PULSED: // cmd group is for injector4 50% dc actions
-      if( BIT_CHECK(currentStatus.testOutputs, 1) ) { BIT_SET(HWTest_INJ_Pulsed, INJ4_CMD_BIT); }
-      if(!BIT_CHECK(HWTest_INJ_Pulsed, INJ4_CMD_BIT)) { closeSingleInjector(injector_id_4); } //Ensure this output is turned off (Otherwise the output may stay on permanently)
+      if (BIT_CHECK(currentStatus.testOutputs, 1))
+      {
+        BIT_SET(HWTest_INJ_Pulsed, INJ4_CMD_BIT);
+      }
+      if (!BIT_CHECK(HWTest_INJ_Pulsed, INJ4_CMD_BIT))
+      {
+        //Ensure this output is turned off (Otherwise the output may stay on permanently)
+        closeInjector4();
+      }
       break;
 
     case TS_CMD_INJ5_ON: // cmd group is for injector5 on actions
 #if INJ_CHANNELS >= 5
       if (BIT_CHECK(currentStatus.testOutputs, 1))
       {
-        openSingleInjector(injector_id_5);
+        openInjector5();
       }
 #endif
       break;
@@ -147,7 +202,7 @@ bool TS_CommandButtonsHandler(uint16_t buttonCommand)
 #if INJ_CHANNELS >= 5
       if (BIT_CHECK(currentStatus.testOutputs, 1))
       {
-        closeSingleInjector(injector_id_5);
+        closeInjector5();
         BIT_CLEAR(HWTest_INJ_Pulsed, INJ5_CMD_BIT);
       }
 #endif
@@ -159,7 +214,11 @@ bool TS_CommandButtonsHandler(uint16_t buttonCommand)
       {
         BIT_SET(HWTest_INJ_Pulsed, INJ5_CMD_BIT);
       }
-      if(!BIT_CHECK(HWTest_INJ_Pulsed, INJ5_CMD_BIT)) { closeSingleInjector(injector_id_5); } //Ensure this output is turned off (Otherwise the output may stay on permanently)
+      if (!BIT_CHECK(HWTest_INJ_Pulsed, INJ5_CMD_BIT))
+      {
+        //Ensure this output is turned off (Otherwise the output may stay on permanently)
+        closeInjector5();
+      }
 #endif
       break;
 
@@ -167,7 +226,7 @@ bool TS_CommandButtonsHandler(uint16_t buttonCommand)
 #if INJ_CHANNELS >= 6
       if (BIT_CHECK(currentStatus.testOutputs, 1))
       {
-        openSingleInjector(injector_id_6);
+        openInjector6();
       }
 #endif
       break;
@@ -176,7 +235,7 @@ bool TS_CommandButtonsHandler(uint16_t buttonCommand)
 #if INJ_CHANNELS >= 6
       if (BIT_CHECK(currentStatus.testOutputs, 1))
       {
-        closeSingleInjector(injector_id_6);
+        closeInjector6();
         BIT_CLEAR(HWTest_INJ_Pulsed, INJ6_CMD_BIT);
       }
     #endif
@@ -188,7 +247,11 @@ bool TS_CommandButtonsHandler(uint16_t buttonCommand)
       {
         BIT_SET(HWTest_INJ_Pulsed, INJ6_CMD_BIT);
       }
-      if(!BIT_CHECK(HWTest_INJ_Pulsed, INJ6_CMD_BIT)) { closeSingleInjector(injector_id_6); } //Ensure this output is turned off (Otherwise the output may stay on permanently)
+      if (!BIT_CHECK(HWTest_INJ_Pulsed, INJ6_CMD_BIT))
+      {
+        //Ensure this output is turned off (Otherwise the output may stay on permanently)
+        closeInjector6();
+      }
 #endif
       break;
 
@@ -196,7 +259,7 @@ bool TS_CommandButtonsHandler(uint16_t buttonCommand)
 #if INJ_CHANNELS >= 7
       if (BIT_CHECK(currentStatus.testOutputs, 1))
       {
-        openSingleInjector(injector_id_7);
+        openInjector7();
       }
 #endif
       break;
@@ -205,7 +268,7 @@ bool TS_CommandButtonsHandler(uint16_t buttonCommand)
 #if INJ_CHANNELS >= 7
       if (BIT_CHECK(currentStatus.testOutputs, 1))
       {
-        closeSingleInjector(injector_id_7);
+        closeInjector7();
         BIT_CLEAR(HWTest_INJ_Pulsed, INJ7_CMD_BIT);
       }
 #endif
@@ -217,7 +280,11 @@ bool TS_CommandButtonsHandler(uint16_t buttonCommand)
       {
         BIT_SET(HWTest_INJ_Pulsed, INJ7_CMD_BIT);
       }
-      if(!BIT_CHECK(HWTest_INJ_Pulsed, INJ7_CMD_BIT)) { closeSingleInjector(injector_id_7); } //Ensure this output is turned off (Otherwise the output may stay on permanently)
+      if (!BIT_CHECK(HWTest_INJ_Pulsed, INJ7_CMD_BIT))
+      {
+        //Ensure this output is turned off (Otherwise the output may stay on permanently)
+        closeInjector7();
+      }
 #endif
       break;
 
@@ -225,7 +292,7 @@ bool TS_CommandButtonsHandler(uint16_t buttonCommand)
 #if INJ_CHANNELS >= 8
       if (BIT_CHECK(currentStatus.testOutputs, 1))
       {
-        openSingleInjector(injector_id_8);
+        openInjector8();
       }
 #endif
       break;
@@ -234,7 +301,7 @@ bool TS_CommandButtonsHandler(uint16_t buttonCommand)
 #if INJ_CHANNELS >= 8
       if (BIT_CHECK(currentStatus.testOutputs, 1))
       {
-        closeSingleInjector(injector_id_8);
+        closeInjector8();
         BIT_CLEAR(HWTest_INJ_Pulsed, INJ8_CMD_BIT);
       }
 #endif
@@ -246,7 +313,11 @@ bool TS_CommandButtonsHandler(uint16_t buttonCommand)
       {
         BIT_SET(HWTest_INJ_Pulsed, INJ8_CMD_BIT);
       }
-      if(!BIT_CHECK(HWTest_INJ_Pulsed, INJ8_CMD_BIT)) { closeSingleInjector(injector_id_8); } //Ensure this output is turned off (Otherwise the output may stay on permanently)
+      if (!BIT_CHECK(HWTest_INJ_Pulsed, INJ8_CMD_BIT))
+      {
+        //Ensure this output is turned off (Otherwise the output may stay on permanently)
+        closeInjector8();
+      }
 #endif
       break;
 

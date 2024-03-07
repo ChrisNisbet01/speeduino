@@ -238,42 +238,42 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
       //Check for pulsed injector output test
       if (BIT_CHECK(HWTest_INJ_Pulsed, INJ1_CMD_BIT))
       {
-        openSingleInjector(injector_id_1);
+        openInjector1();
       }
       if (BIT_CHECK(HWTest_INJ_Pulsed, INJ2_CMD_BIT))
       {
-        openSingleInjector(injector_id_2);
+        openInjector2();
       }
       if (BIT_CHECK(HWTest_INJ_Pulsed, INJ3_CMD_BIT))
       {
-        openSingleInjector(injector_id_3);
+        openInjector3();
       }
       if (BIT_CHECK(HWTest_INJ_Pulsed, INJ4_CMD_BIT))
       {
-        openSingleInjector(injector_id_4);
+        openInjector4();
       }
 #if INJ_CHANNELS >= 5
       if (BIT_CHECK(HWTest_INJ_Pulsed, INJ5_CMD_BIT))
       {
-        openSingleInjector(injector_id_5);
+        openInjector5();
       }
 #endif
 #if INJ_CHANNELS >= 6
       if (BIT_CHECK(HWTest_INJ_Pulsed, INJ6_CMD_BIT))
       {
-        openSingleInjector(injector_id_6);
+        openInjector6();
       }
 #endif
 #if INJ_CHANNELS >= 7
       if (BIT_CHECK(HWTest_INJ_Pulsed, INJ7_CMD_BIT))
       {
-        openSingleInjector(injector_id_7);
+        openInjector7();
       }
 #endif
 #if INJ_CHANNELS >= 8
       if (BIT_CHECK(HWTest_INJ_Pulsed, INJ8_CMD_BIT))
       {
-        openSingleInjector(injector_id_8);
+        openInjector8();
       }
 #endif
       testInjectorPulseCount = 0;
@@ -425,32 +425,32 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     {
       if(testInjectorPulseCount >= configPage13.hwTestInjDuration)
       {
-        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ1_CMD_BIT)) { closeSingleInjector(injector_id_1); }
-        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ2_CMD_BIT)) { closeSingleInjector(injector_id_2); }
-        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ3_CMD_BIT)) { closeSingleInjector(injector_id_3); }
-        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ4_CMD_BIT)) { closeSingleInjector(injector_id_4); }
+        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ1_CMD_BIT)) { closeInjector1(); }
+        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ2_CMD_BIT)) { closeInjector2(); }
+        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ3_CMD_BIT)) { closeInjector3(); }
+        if(BIT_CHECK(HWTest_INJ_Pulsed, INJ4_CMD_BIT)) { closeInjector4(); }
 #if INJ_CHANNELS >= 5
         if (BIT_CHECK(HWTest_INJ_Pulsed, INJ5_CMD_BIT))
         {
-          closeSingleInjector(injector_id_5);
+          closeInjector5();
         }
 #endif
 #if INJ_CHANNELS >= 6
         if (BIT_CHECK(HWTest_INJ_Pulsed, INJ6_CMD_BIT))
         {
-          closeSingleInjector(injector_id_6);
+          closeInjector6();
         }
 #endif
 #if INJ_CHANNELS >= 7
         if (BIT_CHECK(HWTest_INJ_Pulsed, INJ7_CMD_BIT))
         {
-          closeSingleInjector(injector_id_7);
+          closeInjector7();
         }
 #endif
 #if INJ_CHANNELS >= 8
         if (BIT_CHECK(HWTest_INJ_Pulsed, INJ8_CMD_BIT))
         {
-          closeSingleInjector(injector_id_8);
+          closeInjector8();
         }
 #endif
         testInjectorPulseCount = 0;

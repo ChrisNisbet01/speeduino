@@ -29,44 +29,9 @@ static void toggleInjector(injector_id_t injector)
   injectors->toggle(injector);
 }
 
-void openSingleInjector(injector_id_t injector_id, injector_id_t unused)
+void nullInjCallback(void)
 {
-  UNUSED(unused);
-  openInjector(injector_id);
-}
-
-void openSingleInjector(injector_id_t injector_id)
-{
-  openInjector(injector_id);
-}
-
-void closeSingleInjector(injector_id_t injector_id, injector_id_t unused)
-{
-  UNUSED(unused);
-  closeInjector(injector_id);
-}
-
-void closeSingleInjector(injector_id_t injector_id)
-{
-  closeInjector(injector_id);
-}
-
-void openTwoInjectors(injector_id_t arg1, injector_id_t arg2)
-{
-  openInjector(arg1);
-  openInjector(arg2);
-}
-
-void closeTwoInjectors(injector_id_t arg1, injector_id_t arg2)
-{
-  closeInjector(arg1);
-  closeInjector(arg2);
-}
-
-void nullInjCallback(injector_id_t arg1, injector_id_t arg2)
-{
-  UNUSED(arg1);
-  UNUSED(arg2);
+  /* Do nothing. */
 }
 
 void openInjector1(void) { openInjector(injector_id_1); }

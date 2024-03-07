@@ -384,21 +384,21 @@ void initialiseAll(void)
 #endif
 
     //Similar for injectors, make sure they're turned off
-    closeSingleInjector(injector_id_1);
-    closeSingleInjector(injector_id_2);
-    closeSingleInjector(injector_id_3);
-    closeSingleInjector(injector_id_4);
+    closeInjector1();
+    closeInjector2();
+    closeInjector3();
+    closeInjector4();
 #if (INJ_CHANNELS >= 5)
-    closeSingleInjector(injector_id_5);
+    closeInjector5();
 #endif
 #if (INJ_CHANNELS >= 6)
-    closeSingleInjector(injector_id_6);
+    closeInjector6();
 #endif
 #if (INJ_CHANNELS >= 7)
-    closeSingleInjector(injector_id_7);
+    closeInjector7();
 #endif
 #if (INJ_CHANNELS >= 8)
-    closeSingleInjector(injector_id_8);
+    closeInjector8();
 #endif
 
     //Perform all initialisations
@@ -1133,58 +1133,124 @@ void initialiseAll(void)
       {
         if (configPage4.inj4cylPairing == INJ_PAIR_13_24)
         {
-          injectors.configure_injector_schedule(injChannel1, injector_id_1, injector_id_3);
-          injectors.configure_injector_schedule(injChannel2, injector_id_2, injector_id_4);
+          fuelSchedules[injChannel1].start.pCallback = openInjector1and3;
+          fuelSchedules[injChannel1].end.pCallback = closeInjector1and3;
+          fuelSchedules[injChannel2].start.pCallback = openInjector2and4;
+          fuelSchedules[injChannel2].end.pCallback = closeInjector2and4;
         }
         else
         {
-          injectors.configure_injector_schedule(injChannel1, injector_id_1, injector_id_4);
-          injectors.configure_injector_schedule(injChannel2, injector_id_2, injector_id_3);
+          fuelSchedules[injChannel1].start.pCallback = openInjector1and4;
+          fuelSchedules[injChannel1].end.pCallback = closeInjector1and4;
+          fuelSchedules[injChannel2].start.pCallback = openInjector2and3;
+          fuelSchedules[injChannel2].end.pCallback = closeInjector2and3;
         }
       }
 #if INJ_CHANNELS >= 5
       else if (configPage2.nCylinders == 5)
       {
         //This is similar to the paired injection but uses five injector outputs instead of four.
-        injectors.configure_injector_schedule(injChannel1, injector_id_1);
-        injectors.configure_injector_schedule(injChannel2, injector_id_2);
-        injectors.configure_injector_schedule(injChannel3, injector_id_3, injector_id_5);
-        injectors.configure_injector_schedule(injChannel4, injector_id_4);
+        fuelSchedules[injChannel1].start.pCallback = openInjector1;
+        fuelSchedules[injChannel1].end.pCallback = closeInjector1;
+        fuelSchedules[injChannel2].start.pCallback = openInjector2;
+        fuelSchedules[injChannel2].end.pCallback = closeInjector2;
+#if INJ_CHANNELS >= 5
+        fuelSchedules[injChannel3].start.pCallback = openInjector3and5;
+        fuelSchedules[injChannel3].end.pCallback = closeInjector3and5;
+#else
+        fuelSchedules[injChannel3].start.pCallback = openInjector3;
+        fuelSchedules[injChannel3].end.pCallback = closeInjector3;
+#endif
+        fuelSchedules[injChannel4].start.pCallback = openInjector4;
+        fuelSchedules[injChannel4].end.pCallback = closeInjector4;
       }
 #endif
 #if INJ_CHANNELS >= 6
       else if (configPage2.nCylinders == 6)
       {
-        injectors.configure_injector_schedule(injChannel1, injector_id_1, injector_id_4);
-        injectors.configure_injector_schedule(injChannel2, injector_id_2, injector_id_5);
-        injectors.configure_injector_schedule(injChannel3, injector_id_3, injector_id_6);
+        fuelSchedules[injChannel1].start.pCallback = openInjector1and4;
+        fuelSchedules[injChannel1].end.pCallback = closeInjector1and4;
+        fuelSchedules[injChannel2].start.pCallback = openInjector2and5;
+        fuelSchedules[injChannel2].end.pCallback = closeInjector2and5;
+        fuelSchedules[injChannel3].start.pCallback = openInjector3and6;
+        fuelSchedules[injChannel3].end.pCallback = closeInjector3and6;
       }
 #endif
 #if INJ_CHANNELS >= 8
       else if (configPage2.nCylinders == 8)
       {
-        injectors.configure_injector_schedule(injChannel1, injector_id_1, injector_id_5);
-        injectors.configure_injector_schedule(injChannel2, injector_id_2, injector_id_6);
-        injectors.configure_injector_schedule(injChannel3, injector_id_3, injector_id_7);
-        injectors.configure_injector_schedule(injChannel4, injector_id_4, injector_id_8);
+        fuelSchedules[injChannel1].start.pCallback = openInjector1and5;
+        fuelSchedules[injChannel1].end.pCallback = closeInjector1and5;
+        fuelSchedules[injChannel2].start.pCallback = openInjector2and6;
+        fuelSchedules[injChannel2].end.pCallback = closeInjector2and6;
+        fuelSchedules[injChannel3].start.pCallback = openInjector3and7;
+        fuelSchedules[injChannel3].end.pCallback = closeInjector3and7;
+        fuelSchedules[injChannel4].start.pCallback = openInjector4and8;
+        fuelSchedules[injChannel4].end.pCallback = closeInjector4and8;
       }
 #endif
       else
       {
         //Fall back to paired injection
-        injectors.configure_sequential_injector_schedules(MIN((size_t)injChannelCount, 5));
+        fuelSchedules[injector_id_1].start.pCallback = openInjector1;
+        fuelSchedules[injector_id_1].end.pCallback = closeInjector1;
+        fuelSchedules[injector_id_2].start.pCallback = openInjector2;
+        fuelSchedules[injector_id_2].end.pCallback = closeInjector2;
+        fuelSchedules[injector_id_3].start.pCallback = openInjector3;
+        fuelSchedules[injector_id_3].end.pCallback = closeInjector3;
+        fuelSchedules[injector_id_4].start.pCallback = openInjector4;
+        fuelSchedules[injector_id_4].end.pCallback = closeInjector4;
+#if INJ_CHANNELS >= 5
+        fuelSchedules[injector_id_5].start.pCallback = openInjector5;
+        fuelSchedules[injector_id_5].end.pCallback = closeInjector5;
+#endif
       }
       break;
 
     case INJ_SEQUENTIAL:
       //Sequential injection
-      injectors.configure_sequential_injector_schedules((size_t)injChannelCount);
+      fuelSchedules[injector_id_1].start.pCallback = openInjector1;
+      fuelSchedules[injector_id_1].end.pCallback = closeInjector1;
+      fuelSchedules[injector_id_2].start.pCallback = openInjector2;
+      fuelSchedules[injector_id_2].end.pCallback = closeInjector2;
+      fuelSchedules[injector_id_3].start.pCallback = openInjector3;
+      fuelSchedules[injector_id_3].end.pCallback = closeInjector3;
+      fuelSchedules[injector_id_4].start.pCallback = openInjector4;
+      fuelSchedules[injector_id_4].end.pCallback = closeInjector4;
+#if INJ_CHANNELS >= 5
+      fuelSchedules[injector_id_5].start.pCallback = openInjector5;
+      fuelSchedules[injector_id_5].end.pCallback = closeInjector5;
+#endif
+#if INJ_CHANNELS >= 6
+      fuelSchedules[injector_id_6].start.pCallback = openInjector6;
+      fuelSchedules[injector_id_6].end.pCallback = closeInjector6;
+#endif
+#if INJ_CHANNELS >= 7
+      fuelSchedules[injector_id_7].start.pCallback = openInjector7;
+      fuelSchedules[injector_id_7].end.pCallback = closeInjector7;
+#endif
+#if INJ_CHANNELS >= 8
+      fuelSchedules[injector_id_8].start.pCallback = openInjector8;
+      fuelSchedules[injector_id_8].end.pCallback = closeInjector8;
+#endif
       break;
 
     case INJ_PAIRED:
+      /* Drop through. */
     default:
       //Paired injection
-      injectors.configure_sequential_injector_schedules(MIN((size_t)injChannelCount, 5));
+      fuelSchedules[injector_id_1].start.pCallback = openInjector1;
+      fuelSchedules[injector_id_1].end.pCallback = closeInjector1;
+      fuelSchedules[injector_id_2].start.pCallback = openInjector2;
+      fuelSchedules[injector_id_2].end.pCallback = closeInjector2;
+      fuelSchedules[injector_id_3].start.pCallback = openInjector3;
+      fuelSchedules[injector_id_3].end.pCallback = closeInjector3;
+      fuelSchedules[injector_id_4].start.pCallback = openInjector4;
+      fuelSchedules[injector_id_4].end.pCallback = closeInjector4;
+#if INJ_CHANNELS >= 5
+      fuelSchedules[injector_id_5].start.pCallback = openInjector5;
+      fuelSchedules[injector_id_5].end.pCallback = closeInjector5;
+#endif
       break;
 
     }
@@ -3508,7 +3574,30 @@ void changeHalfToFullSync(void)
     CRANK_ANGLE_MAX_INJ = 720;
     req_fuel_uS = req_fuel_init_uS * 2;
 
-    injectors.configure_sequential_injector_schedules(injChannelCount);
+    fuelSchedules[injChannel1].start.pCallback = openInjector1;
+    fuelSchedules[injChannel1].end.pCallback = closeInjector1;
+    fuelSchedules[injChannel2].start.pCallback = openInjector2;
+    fuelSchedules[injChannel2].end.pCallback = closeInjector2;
+    fuelSchedules[injChannel3].start.pCallback = openInjector3;
+    fuelSchedules[injChannel3].end.pCallback = closeInjector3;
+    fuelSchedules[injChannel4].start.pCallback = openInjector4;
+    fuelSchedules[injChannel4].end.pCallback = closeInjector4;
+#if INJ_CHANNELS >= 5
+    fuelSchedules[injChannel5].start.pCallback = openInjector5;
+    fuelSchedules[injChannel5].end.pCallback = closeInjector5;
+#endif
+#if INJ_CHANNELS >= 6
+    fuelSchedules[injChannel6].start.pCallback = openInjector6;
+    fuelSchedules[injChannel6].end.pCallback = closeInjector6;
+#endif
+#if INJ_CHANNELS >= 7
+    fuelSchedules[injChannel7].start.pCallback = openInjector7;
+    fuelSchedules[injChannel7].end.pCallback = closeInjector7;
+#endif
+#if INJ_CHANNELS >= 8
+    fuelSchedules[injChannel8].start.pCallback = openInjector8;
+    fuelSchedules[injChannel8].end.pCallback = closeInjector8;
+#endif
 
     switch (configPage2.nCylinders)
     {
@@ -3583,32 +3672,43 @@ void changeFullToHalfSync(void)
       case 4:
         if(configPage4.inj4cylPairing == INJ_PAIR_13_24)
         {
-          injectors.configure_injector_schedule(injChannel1, injector_id_1, injector_id_3);
-          injectors.configure_injector_schedule(injChannel2, injector_id_2, injector_id_4);
+          fuelSchedules[injector_id_1].start.pCallback = openInjector1and3;
+          fuelSchedules[injector_id_1].end.pCallback = closeInjector1and3;
+          fuelSchedules[injector_id_2].start.pCallback = openInjector2and4;
+          fuelSchedules[injector_id_2].end.pCallback = closeInjector2and4;
         }
         else
         {
-          injectors.configure_injector_schedule(injChannel1, injector_id_1, injector_id_4);
-          injectors.configure_injector_schedule(injChannel2, injector_id_2, injector_id_3);
+          fuelSchedules[injector_id_1].start.pCallback = openInjector1and4;
+          fuelSchedules[injector_id_1].end.pCallback = closeInjector1and4;
+          fuelSchedules[injector_id_2].start.pCallback = openInjector2and3;
+          fuelSchedules[injector_id_2].end.pCallback = closeInjector2and3;
         }
         injectors.setMaxInjectors(2);
         break;
 
       case 6:
 #if INJ_CHANNELS >= 6
-        injectors.configure_injector_schedule(injChannel1, injector_id_1, injector_id_4);
-        injectors.configure_injector_schedule(injChannel2, injector_id_2, injector_id_5);
-        injectors.configure_injector_schedule(injChannel3, injector_id_3, injector_id_6);
+        fuelSchedules[injector_id_1].start.pCallback = openInjector1and4;
+        fuelSchedules[injector_id_1].end.pCallback = closeInjector1and4;
+        fuelSchedules[injector_id_2].start.pCallback = openInjector2and5;
+        fuelSchedules[injector_id_2].end.pCallback = closeInjector2and5;
+        fuelSchedules[injector_id_3].start.pCallback = openInjector3and6
+        fuelSchedules[injector_id_3].end.pCallback = closeInjector3and6;
         injectors.setMaxInjectors(3);
 #endif
         break;
 
       case 8:
 #if INJ_CHANNELS >= 8
-        injectors.configure_injector_schedule(injChannel1, injector_id_1, injector_id_5);
-        injectors.configure_injector_schedule(injChannel2, injector_id_2, injector_id_6);
-        injectors.configure_injector_schedule(injChannel3, injector_id_3, injector_id_7);
-        injectors.configure_injector_schedule(injChannel4, injector_id_4, injector_id_8);
+        fuelSchedules[injector_id_1].start.pCallback = openInjector1and5;
+        fuelSchedules[injector_id_1].end.pCallback = closeInjector1and5;
+        fuelSchedules[injector_id_2].start.pCallback = openInjector2and6;
+        fuelSchedules[injector_id_2].end.pCallback = closeInjector2and6;
+        fuelSchedules[injector_id_3].start.pCallback = openInjector3and7
+        fuelSchedules[injector_id_3].end.pCallback = closeInjector3and7;
+        fuelSchedules[injector_id_4].start.pCallback = openInjector4and8
+        fuelSchedules[injector_id_4].end.pCallback = closeInjector4and8;
         injectors.setMaxInjectors(4);
 #endif
         break;

@@ -4,7 +4,7 @@
 #include "schedule_status.h"
 #include "globals.h"
 
-typedef void (*injectorCallback_fn)(injector_id_t coil_id1, injector_id_t coil_id2);
+typedef void (*injectorCallback_fn)(void);
 
 /** Fuel injection schedule.
 * Fuel schedules don't use the callback pointers, or the startTime/endScheduleSetByDecoder variables.
@@ -34,12 +34,10 @@ struct FuelSchedule {
   struct
   {
     injectorCallback_fn pCallback = nullptr;
-    injector_id_t injector_ids[2] = {injector_id_1, injector_id_1};
   } start;
   struct
   {
     injectorCallback_fn pCallback = nullptr;
-    injector_id_t injector_ids[2] = {injector_id_1, injector_id_1};
   } end;
   COMPARE_TYPE nextStartCompare = 0;
   COMPARE_TYPE nextEndCompare = 0;

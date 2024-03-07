@@ -42,10 +42,6 @@ typedef struct injector_context_st
 
   uint16_t calculateInjectorStartAngle(uint16_t pwDegrees, uint16_t injAngle);
 
-  void configure_injector_schedule(injector_id_t injector_id);
-
-  void configure_injector_schedule(injector_id_t injector_id1, injector_id_t injector_id2);
-
   void applyInjectorControl(uint16_t injOpenTime, uint16_t openAngle, int crankAngle);
 } injector_context_st;
 
@@ -72,12 +68,6 @@ public:
   bool isOperational(injectorChannelID_t inj);
 
   byte channelsOnMask(void);
-
-  void configure_injector_schedule(injectorChannelID_t inj, injector_id_t injector_id);
-
-  void configure_injector_schedule(injectorChannelID_t inj, injector_id_t injector_id1, injector_id_t injector_id2);
-
-  void configure_sequential_injector_schedules(size_t const count);
 
   void applyInjectorControl(injectorChannelID_t inj, uint16_t injOpenTime, uint16_t openAngle, int crankAngle);
 
