@@ -773,10 +773,10 @@ void sendValuesLegacy(void)
 
   bytestosend -= Serial.write(currentStatus.secl>>8);
   bytestosend -= Serial.write(currentStatus.secl);
-  bytestosend -= Serial.write(highByte(injectors.injector(injChannel1).PW));
-  bytestosend -= Serial.write(lowByte(injectors.injector(injChannel1).PW));
-  bytestosend -= Serial.write(highByte(injectors.injector(injChannel2).PW));
-  bytestosend -= Serial.write(lowByte(injectors.injector(injChannel2).PW));
+  bytestosend -= Serial.write(highByte(injector_contexts[injChannel1].PW));
+  bytestosend -= Serial.write(lowByte(injector_contexts[injChannel1].PW));
+  bytestosend -= Serial.write(highByte(injector_contexts[injChannel2].PW));
+  bytestosend -= Serial.write(lowByte(injector_contexts[injChannel2].PW));
   bytestosend -= Serial.write(currentStatus.RPM>>8);
   bytestosend -= Serial.write(currentStatus.RPM);
 

@@ -105,32 +105,32 @@ assignStagedInjectorPulsewidths(staged_PW_st const &staged_PW)
   {
   case 1:
     // Primary pulsewidth on channel 1, secondary on channel 2
-    injectors.injector(injChannel1).PW = staged_PW.primary_PW_us;
-    injectors.injector(injChannel2).PW = staged_PW.secondary_PW_us;
+    injector_contexts[injChannel1].PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel2].PW = staged_PW.secondary_PW_us;
     break;
 
   case 2:
     // Primary pulsewidth on channels 1 and 2, secondary on channels 3 and 4
-    injectors.injector(injChannel1).PW = staged_PW.primary_PW_us;
-    injectors.injector(injChannel2).PW = staged_PW.primary_PW_us;
-    injectors.injector(injChannel3).PW = staged_PW.secondary_PW_us;
-    injectors.injector(injChannel4).PW = staged_PW.secondary_PW_us;
+    injector_contexts[injChannel1].PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel2].PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel3].PW = staged_PW.secondary_PW_us;
+    injector_contexts[injChannel4].PW = staged_PW.secondary_PW_us;
     break;
 
   case 3:
     // 6 channels required for 'normal' 3 cylinder staging support
-    injectors.injector(injChannel1).PW = staged_PW.primary_PW_us;
-    injectors.injector(injChannel2).PW = staged_PW.primary_PW_us;
-    injectors.injector(injChannel3).PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel1].PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel2].PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel3].PW = staged_PW.primary_PW_us;
 #if INJ_CHANNELS >= 6
     // Primary pulsewidth on channels 1, 2 and 3, secondary on channels 4, 5 and 6
-    injectors.injector(injChannel4).PW = staged_PW.secondary_PW_us;
-    injectors.injector(injChannel5).PW = staged_PW.secondary_PW_us;
-    injectors.injector(injChannel6).PW = staged_PW.secondary_PW_us;
+    injector_contexts[injChannel4].PW = staged_PW.secondary_PW_us;
+    injector_contexts[injChannel5].PW = staged_PW.secondary_PW_us;
+    injector_contexts[injChannel6].PW = staged_PW.secondary_PW_us;
 #else
     // If there are not enough channels, then primary pulsewidth is on
     // channels 1, 2 and 3, secondary on channel 4
-    injectors.injector(injChannel4).PW = staged_PW.secondary_PW_us;
+    injector_contexts[injChannel4].PW = staged_PW.secondary_PW_us;
 #endif
     break;
 
@@ -139,93 +139,93 @@ assignStagedInjectorPulsewidths(staged_PW_st const &staged_PW)
     {
       // Staging with 4 cylinders semi/sequential requires 8 total channels
 #if INJ_CHANNELS >= 8
-      injectors.injector(injChannel1).PW = staged_PW.primary_PW_us;
-      injectors.injector(injChannel2).PW = staged_PW.primary_PW_us;
-      injectors.injector(injChannel3).PW = staged_PW.primary_PW_us;
-      injectors.injector(injChannel4).PW = staged_PW.primary_PW_us;
-      injectors.injector(injChannel5).PW = staged_PW.secondary_PW_us;
-      injectors.injector(injChannel6).PW = staged_PW.secondary_PW_us;
-      injectors.injector(injChannel7).PW = staged_PW.secondary_PW_us;
-      injectors.injector(injChannel8).PW = staged_PW.secondary_PW_us;
+      injector_contexts[injChannel1].PW = staged_PW.primary_PW_us;
+      injector_contexts[injChannel2].PW = staged_PW.primary_PW_us;
+      injector_contexts[injChannel3].PW = staged_PW.primary_PW_us;
+      injector_contexts[injChannel4].PW = staged_PW.primary_PW_us;
+      injector_contexts[injChannel5].PW = staged_PW.secondary_PW_us;
+      injector_contexts[injChannel6].PW = staged_PW.secondary_PW_us;
+      injector_contexts[injChannel7].PW = staged_PW.secondary_PW_us;
+      injector_contexts[injChannel8].PW = staged_PW.secondary_PW_us;
 #elif INJ_CHANNELS >= 5
       // This is an invalid config as there are not enough outputs to support sequential + staging
       // Put the staging output to the non-existent channel 5
-      injectors.injector(injChannel5).PW = staged_PW.secondary_PW_us;
+      injector_contexts[injChannel5].PW = staged_PW.secondary_PW_us;
 #endif
     }
     else
     {
-      injectors.injector(injChannel1).PW = staged_PW.primary_PW_us;
-      injectors.injector(injChannel2).PW = staged_PW.primary_PW_us;
-      injectors.injector(injChannel3).PW = staged_PW.secondary_PW_us;
-      injectors.injector(injChannel4).PW = staged_PW.secondary_PW_us;
+      injector_contexts[injChannel1].PW = staged_PW.primary_PW_us;
+      injector_contexts[injChannel2].PW = staged_PW.primary_PW_us;
+      injector_contexts[injChannel3].PW = staged_PW.secondary_PW_us;
+      injector_contexts[injChannel4].PW = staged_PW.secondary_PW_us;
     }
     break;
 
   case 5:
     // No easily supportable 5 cylinder staging option unless there are at least 5 channels
-    injectors.injector(injChannel1).PW = staged_PW.primary_PW_us;
-    injectors.injector(injChannel2).PW = staged_PW.primary_PW_us;
-    injectors.injector(injChannel3).PW = staged_PW.primary_PW_us;
-    injectors.injector(injChannel4).PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel1].PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel2].PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel3].PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel4].PW = staged_PW.primary_PW_us;
 #if INJ_CHANNELS >= 5
-    injectors.injector(injChannel5).PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel5].PW = staged_PW.primary_PW_us;
 #endif
 #if INJ_CHANNELS >= 6
-    injectors.injector(injChannel6).PW = staged_PW.secondary_PW_us;
+    injector_contexts[injChannel6].PW = staged_PW.secondary_PW_us;
 #endif
     break;
 
   case 6:
-    injectors.injector(injChannel1).PW = staged_PW.primary_PW_us;
-    injectors.injector(injChannel2).PW = staged_PW.primary_PW_us;
-    injectors.injector(injChannel3).PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel1].PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel2].PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel3].PW = staged_PW.primary_PW_us;
 #if INJ_CHANNELS >= 6
     // 6 cylinder staging only if not sequential
     if (configPage2.injLayout != INJ_SEQUENTIAL)
     {
-      injectors.injector(injChannel4).PW = staged_PW.secondary_PW_us;
-      injectors.injector(injChannel5).PW = staged_PW.secondary_PW_us;
-      injectors.injector(injChannel6).PW = staged_PW.secondary_PW_us;
+      injector_contexts[injChannel4].PW = staged_PW.secondary_PW_us;
+      injector_contexts[injChannel5].PW = staged_PW.secondary_PW_us;
+      injector_contexts[injChannel6].PW = staged_PW.secondary_PW_us;
     }
 #if INJ_CHANNELS >= 8
     else
     {
-      injectors.injector(injChannel4).PW = staged_PW.primary_PW_us;
-      injectors.injector(injChannel5).PW = staged_PW.primary_PW_us;
-      injectors.injector(injChannel6).PW = staged_PW.primary_PW_us;
+      injector_contexts[injChannel4].PW = staged_PW.primary_PW_us;
+      injector_contexts[injChannel5].PW = staged_PW.primary_PW_us;
+      injector_contexts[injChannel6].PW = staged_PW.primary_PW_us;
       // If there are 8 channels, then the 6 cylinder sequential option is
       // available by using channels 7 + 8 for staging
-      injectors.injector(injChannel7).PW = staged_PW.secondary_PW_us;
-      injectors.injector(injChannel8).PW = staged_PW.secondary_PW_us;
+      injector_contexts[injChannel7].PW = staged_PW.secondary_PW_us;
+      injector_contexts[injChannel8].PW = staged_PW.secondary_PW_us;
     }
 #endif
 #endif
     break;
 
   case 8:
-    injectors.injector(injChannel1).PW = staged_PW.primary_PW_us;
-    injectors.injector(injChannel2).PW = staged_PW.primary_PW_us;
-    injectors.injector(injChannel3).PW = staged_PW.primary_PW_us;
-    injectors.injector(injChannel4).PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel1].PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel2].PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel3].PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel4].PW = staged_PW.primary_PW_us;
 #if INJ_CHANNELS >= 8
     // 8 cylinder staging only if not sequential
     if (configPage2.injLayout != INJ_SEQUENTIAL)
     {
-      injectors.injector(injChannel5).PW = staged_PW.secondary_PW_us;
-      injectors.injector(injChannel6).PW = staged_PW.secondary_PW_us;
-      injectors.injector(injChannel7).PW = staged_PW.secondary_PW_us;
-      injectors.injector(injChannel8).PW = staged_PW.secondary_PW_us;
+      injector_contexts[injChannel5].PW = staged_PW.secondary_PW_us;
+      injector_contexts[injChannel6].PW = staged_PW.secondary_PW_us;
+      injector_contexts[injChannel7].PW = staged_PW.secondary_PW_us;
+      injector_contexts[injChannel8].PW = staged_PW.secondary_PW_us;
     }
 #endif
     break;
 
   default:
     // Assume 4 cylinder non-seq for default
-    injectors.injector(injChannel1).PW = staged_PW.primary_PW_us;
-    injectors.injector(injChannel2).PW = staged_PW.primary_PW_us;
-    injectors.injector(injChannel3).PW = staged_PW.secondary_PW_us;
-    injectors.injector(injChannel4).PW = staged_PW.secondary_PW_us;
+    injector_contexts[injChannel1].PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel2].PW = staged_PW.primary_PW_us;
+    injector_contexts[injChannel3].PW = staged_PW.secondary_PW_us;
+    injector_contexts[injChannel4].PW = staged_PW.secondary_PW_us;
     break;
   }
 }
@@ -242,7 +242,7 @@ void calculateInjectorStaging(unsigned int const desiredPW, uint32_t const pwLim
   // overflow below (See #267)
   if (configPage10.stagingEnabled
       && (configPage2.nCylinders <= INJ_CHANNELS || configPage2.injType == INJ_TYPE_TBODY)
-      && injectors.injector(injChannel1).PW > inj_opentime_uS)
+      && injector_contexts[injChannel1].PW > inj_opentime_uS)
   {
     staged_PW_st const staged_PW = calculateStagedInjectorPulsewidths(desiredPW, pwLimit);
 
@@ -254,7 +254,7 @@ void calculateInjectorStaging(unsigned int const desiredPW, uint32_t const pwLim
     {
       unsigned int const PW = (i < injectors.maxOutputs) ? desiredPW : 0;
 
-      injectors.injector((injectorChannelID_t)i).PW = PW;
+      injector_contexts[i].PW = PW;
     }
 
     // Clear the staging active flag

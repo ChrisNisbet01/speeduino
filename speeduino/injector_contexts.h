@@ -2,7 +2,6 @@
 
 #include "scheduler.h"
 #include "schedule_calcs.h"
-#include "injector_id.h"
 
 #include <stdint.h>
 
@@ -36,8 +35,6 @@ typedef struct injector_context_st
 
   void reset(void);
 
-  void scheduleFuel(uint32_t const timeout);
-
   void applyFuelTrimToPW(trimTable3d * pTrimTable, int16_t fuelLoad, int16_t RPM);
 
   uint16_t calculateInjectorStartAngle(uint16_t pwDegrees, uint16_t injAngle);
@@ -45,17 +42,13 @@ typedef struct injector_context_st
   void applyInjectorControl(uint16_t injOpenTime, uint16_t openAngle, int crankAngle);
 } injector_context_st;
 
-typedef struct injectors_context_st
+typedef struct injectors_state_st
 {
 public:
   byte maxOutputs = 1; /**< Number of injection outputs being used by the current tune configuration */
   byte channelsOn = 0;
 
   void setMaxInjectors(byte const maxOutputs);
-
-  void applyFuelTrimToPW(injectorChannelID_t inj, trimTable3d * pTrimTable, int16_t fuelLoad, int16_t RPM);
-
-  uint16_t calculateInjectorStartAngle(injectorChannelID_t inj, uint16_t pwDegrees, uint16_t injAngle);
 
   void setAllOn(void);
 
@@ -69,18 +62,10 @@ public:
 
   byte channelsOnMask(void);
 
-  void applyInjectorControl(injectorChannelID_t inj, uint16_t injOpenTime, uint16_t openAngle, int crankAngle);
-
-  injector_context_st& injector(injectorChannelID_t inj)
-  {
-    return injectors[inj];
-  }
-
 private:
-  injector_context_st injectors[injChannelCount];
-
   byte maxOutputMask = 0x01;
-} injectors_context_st;
+} injectors_state_st;
 
+extern injector_context_st injector_contexts[injChannelCount];
 extern FuelSchedule fuelSchedules[injChannelCount];
-extern injectors_context_st injectors;
+extern injectors_state_st injectors;

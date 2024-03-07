@@ -33,8 +33,6 @@ public:
 
 } ignition_context_st;
 
-extern ignition_context_st ignition_contexts[ignChannelCount];
-
 typedef struct ignition_contexts_st
 {
 public:
@@ -97,5 +95,6 @@ private:
   byte maxOutputMask = 0x01;
 } ignition_contexts_st;
 
+extern ignition_context_st ignition_contexts[ignChannelCount];
 extern ignition_contexts_st ignitions;
 

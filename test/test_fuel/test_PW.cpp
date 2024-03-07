@@ -142,8 +142,8 @@ void test_PW_4Cyl_PW0(void)
   configPage10.stagingEnabled = false; //Staging must be off or channels 3 and 4 will be used
 
   loop();
-  TEST_ASSERT_EQUAL(0, injectors.injector(injChannel3).PW);
-  TEST_ASSERT_EQUAL(0, injectors.injector(injChannel4).PW);
+  TEST_ASSERT_EQUAL(0, injector_contexts[injChannel3].PW);
+  TEST_ASSERT_EQUAL(0, injector_contexts[injChannel4].PW);
 }
 
 //Tests the PW Limit calculation for a normal scenario

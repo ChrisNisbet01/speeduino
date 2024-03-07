@@ -70,10 +70,10 @@ void test_Staging_4cyl_Auto_Inactive(void)
   // PW 1 and 2 should be normal, 3 and 4 should be 0 as that testPW is below the pwLimit
   // PW1/2 should be ((PW - openTime) * staged_req_fuel_mult_pri) + openTime = ((3000 - 1000) * 3.0) + 1000 = 7000
   TEST_ASSERT_FALSE(BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE));
-  TEST_ASSERT_EQUAL(7000, injectors.injector(injChannel1).PW);
-  TEST_ASSERT_EQUAL(7000, injectors.injector(injChannel2).PW);
-  TEST_ASSERT_EQUAL(0, injectors.injector(injChannel3).PW);
-  TEST_ASSERT_EQUAL(0, injectors.injector(injChannel4).PW);
+  TEST_ASSERT_EQUAL(7000, injector_contexts[injChannel1].PW);
+  TEST_ASSERT_EQUAL(7000, injector_contexts[injChannel2].PW);
+  TEST_ASSERT_EQUAL(0, injector_contexts[injChannel3].PW);
+  TEST_ASSERT_EQUAL(0, injector_contexts[injChannel4].PW);
 }
 
 void test_Staging_4cyl_Table_Inactive(void)
@@ -101,10 +101,10 @@ void test_Staging_4cyl_Table_Inactive(void)
 
   // PW 1 and 2 should be normal, 3 and 4 should be 0 as that testPW is below the pwLimit
   // PW1/2 should be (PW - openTime) * staged_req_fuel_mult_pri = openTime + (3000 - 1000) * 3.0 = 7000
-  TEST_ASSERT_EQUAL(7000, injectors.injector(injChannel1).PW);
-  TEST_ASSERT_EQUAL(7000, injectors.injector(injChannel2).PW);
-  TEST_ASSERT_EQUAL(0, injectors.injector(injChannel3).PW);
-  TEST_ASSERT_EQUAL(0, injectors.injector(injChannel4).PW);
+  TEST_ASSERT_EQUAL(7000, injector_contexts[injChannel1].PW);
+  TEST_ASSERT_EQUAL(7000, injector_contexts[injChannel2].PW);
+  TEST_ASSERT_EQUAL(0, injector_contexts[injChannel3].PW);
+  TEST_ASSERT_EQUAL(0, injector_contexts[injChannel4].PW);
   TEST_ASSERT_FALSE(BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE));
 }
 
@@ -123,11 +123,11 @@ void test_Staging_4cyl_Auto_50pct(void)
   TEST_ASSERT_TRUE(BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE));
   // PW 1 and 2 should be maxed out at the pwLimit, 3 and 4 should be based on their relative size
   // PW1/2 run at maximum available limit
-  TEST_ASSERT_EQUAL(pwLimit + inj_opentime_uS, injectors.injector(injChannel1).PW);
-  TEST_ASSERT_EQUAL(pwLimit + inj_opentime_uS, injectors.injector(injChannel2).PW);
+  TEST_ASSERT_EQUAL(pwLimit + inj_opentime_uS, injector_contexts[injChannel1].PW);
+  TEST_ASSERT_EQUAL(pwLimit + inj_opentime_uS, injector_contexts[injChannel2].PW);
 
-  TEST_ASSERT_EQUAL(8500, injectors.injector(injChannel3).PW);
-  TEST_ASSERT_EQUAL(8500, injectors.injector(injChannel4).PW);
+  TEST_ASSERT_EQUAL(8500, injector_contexts[injChannel3].PW);
+  TEST_ASSERT_EQUAL(8500, injector_contexts[injChannel4].PW);
 }
 
 void test_Staging_4cyl_Auto_33pct(void)
@@ -146,10 +146,10 @@ void test_Staging_4cyl_Auto_33pct(void)
   TEST_ASSERT_TRUE(BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE));
   // PW 1 and 2 should be maxed out at the pwLimit, 3 and 4 should be based on their relative size
   // PW1/2 run at maximum available limit
-  TEST_ASSERT_EQUAL(pwLimit + inj_opentime_uS, injectors.injector(injChannel1).PW);
-  TEST_ASSERT_EQUAL(pwLimit + inj_opentime_uS, injectors.injector(injChannel2).PW);
-  TEST_ASSERT_EQUAL(5500, injectors.injector(injChannel3).PW);
-  TEST_ASSERT_EQUAL(5500, injectors.injector(injChannel4).PW);
+  TEST_ASSERT_EQUAL(pwLimit + inj_opentime_uS, injector_contexts[injChannel1].PW);
+  TEST_ASSERT_EQUAL(pwLimit + inj_opentime_uS, injector_contexts[injChannel2].PW);
+  TEST_ASSERT_EQUAL(5500, injector_contexts[injChannel3].PW);
+  TEST_ASSERT_EQUAL(5500, injector_contexts[injChannel4].PW);
 }
 
 void test_Staging_4cyl_Table_50pct(void)
@@ -177,8 +177,8 @@ void test_Staging_4cyl_Table_50pct(void)
   calculateInjectorStaging(testPW, pwLimit);
 
   TEST_ASSERT_TRUE(BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE));
-  TEST_ASSERT_EQUAL(4000, injectors.injector(injChannel1).PW);
-  TEST_ASSERT_EQUAL(4000, injectors.injector(injChannel2).PW);
-  TEST_ASSERT_EQUAL(2500, injectors.injector(injChannel3).PW);
-  TEST_ASSERT_EQUAL(2500, injectors.injector(injChannel4).PW);
+  TEST_ASSERT_EQUAL(4000, injector_contexts[injChannel1].PW);
+  TEST_ASSERT_EQUAL(4000, injector_contexts[injChannel2].PW);
+  TEST_ASSERT_EQUAL(2500, injector_contexts[injChannel3].PW);
+  TEST_ASSERT_EQUAL(2500, injector_contexts[injChannel4].PW);
 }
