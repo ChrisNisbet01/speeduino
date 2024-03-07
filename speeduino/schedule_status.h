@@ -11,7 +11,6 @@ enum ScheduleStatus
 {
   OFF,
   PENDING,
-  STAGED,
   RUNNING
 };
 
