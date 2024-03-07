@@ -84,5 +84,3 @@ void injectorControlMethodAssign(OUTPUT_CONTROL_TYPE control_method);
 /* Must be called _after_ the control method has been assigned. */
 void injector_pins_init(void);
 
-void nullInjCallback(void);
-

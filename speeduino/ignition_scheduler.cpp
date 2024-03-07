@@ -52,6 +52,23 @@ IgnitionSchedule ignitionSchedules[ignChannelCount] =
 #endif
 };
 
+void nullIgnCallback(void)
+{
+  /* Do nothing. */
+}
+
+void IgnitionSchedule::reset(void)
+{
+  noInterrupts();
+
+  Status = OFF;
+  start.pCallback = nullIgnCallback;
+  end.pCallback = nullIgnCallback;
+  pTimerDisable();
+
+  interrupts();
+}
+
 void _setIgnitionScheduleRunning(
   IgnitionSchedule &schedule, unsigned long timeout, unsigned long durationMicrosecs)
 {

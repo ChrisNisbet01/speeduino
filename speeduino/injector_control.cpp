@@ -29,11 +29,6 @@ static void toggleInjector(injector_id_t injector)
   injectors->toggle(injector);
 }
 
-void nullInjCallback(void)
-{
-  /* Do nothing. */
-}
-
 void openInjector1(void) { openInjector(injector_id_1); }
 void closeInjector1(void) {  closeInjector(injector_id_1); }
 void injector1Toggle(void) { toggleInjector(injector_id_1); }

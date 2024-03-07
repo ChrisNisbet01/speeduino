@@ -83,8 +83,6 @@ void endCoil3and7Charge(void);
 void beginCoil4and8Charge(void);
 void endCoil4and8Charge(void);
 
-void nullIgnCallback(void);
-
 void coil1Toggle(void);
 void coil2Toggle(void);
 void coil3Toggle(void);

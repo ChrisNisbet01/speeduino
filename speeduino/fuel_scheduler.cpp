@@ -48,6 +48,23 @@ FuelSchedule fuelSchedules[injChannelCount] =
 #endif
 };
 
+void nullInjCallback(void)
+{
+  /* Do nothing. */
+}
+
+void FuelSchedule::reset(void)
+{
+  noInterrupts();
+
+  Status = OFF;
+  start.pCallback = nullInjCallback;
+  end.pCallback = nullInjCallback;
+  pTimerDisable();
+
+  interrupts();
+}
+
 void _setFuelScheduleRunning(FuelSchedule &schedule, unsigned long timeout, unsigned long duration)
 {
   schedule.duration = duration;

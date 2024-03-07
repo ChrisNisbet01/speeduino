@@ -137,11 +137,6 @@ void beginCoil4and8Charge(void) { beginCoil4Charge(); beginCoil8Charge(); }
 void endCoil4and8Charge(void)   { endCoil4Charge();  endCoil8Charge(); }
 #endif
 
-void nullIgnCallback(void)
-{
-  /* Do nothing. */
-}
-
 static void ignition_control_update(OUTPUT_CONTROL_TYPE const control_method)
 {
   if (control_method == OUTPUT_CONTROL_MC33810)
