@@ -5,6 +5,7 @@
 #include "bit_macros.h"
 
 ignition_context_st ignition_contexts[ignChannelCount];
+ignition_contexts_st ignitions;
 
 bool ignition_context_st::
 adjustCrankAngle(int const crankAngle, uint16_t const currentTooth)
@@ -114,4 +115,22 @@ applyIgnitionControl(ignitionChannelID_t const ign, int const crankAngle)
   }
 }
 
-ignition_contexts_st ignitions;
+static void initialiseIgnitionSchedules(void)
+{
+  for (size_t i = 0; i < ignChannelCount; i++)
+  {
+    ignition_contexts[i].ignitionSchedule = &ignitionSchedules[i];
+  }
+}
+
+void initialiseAndResetIgnitionSchedules(void)
+{
+  initialiseIgnitionSchedules();
+  for (size_t i = ignChannel1; i < ignChannelCount; i++)
+  {
+    ignition_context_st &ignition = ignition_contexts[i];
+
+    ignition.reset();
+  }
+}
+

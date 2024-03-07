@@ -73,3 +73,47 @@ byte injectors_state_st::channelsOnMask(void)
   return channelsOn;
 }
 
+static void initialiseFuelSchedules(void)
+{
+  for (size_t i = 0; i < injChannelCount; i++)
+  {
+    injector_contexts[i].fuelSchedule = &fuelSchedules[i];
+  }
+}
+
+/** Perform the injector priming pulses.
+ * Set these to run at an arbitrary time in the future (100us).
+ * The prime pulse value is in ms*10, so need to multiply by 100 to get to uS
+ */
+void beginInjectorPriming(void)
+{
+  static unsigned long const priming_delay_us = 100;
+  unsigned long primingValue =
+    table2D_getValue(&PrimingPulseTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET);
+
+  if (primingValue > 0 && currentStatus.TPS < configPage4.floodClear)
+  {
+    // To achieve long enough priming pulses, the values in tuner studio are divided by 0.5 instead of 0.1,
+    // so multiplier of 5 is required.
+    // XXX - Should that be _multiplied_ by 0.5, which also means the value should be multiplied by 2?
+    static unsigned config_multiplier = 5;
+    primingValue = MS_TIMES_10_TO_US(primingValue * config_multiplier);
+
+    for (size_t i = 0; i < injectors.maxOutputs; i++)
+    {
+      setFuelSchedule(fuelSchedules[i], priming_delay_us, primingValue);
+    }
+  }
+}
+
+void initialiseAndResetFuelSchedules(void)
+{
+  initialiseFuelSchedules();
+  for (size_t i = injChannel1; i < injChannelCount; i++)
+  {
+    injector_context_st &injector = injector_contexts[i];
+
+    injector.reset();
+  }
+}
+

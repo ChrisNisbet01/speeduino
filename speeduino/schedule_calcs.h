@@ -1,7 +1,9 @@
 #pragma once
 
+#include "fuel_scheduler.h"
+#include "ignition_scheduler.h"
+
 #include <stdint.h>
-#include "scheduler.h"
 
 static inline uint16_t __attribute__((always_inline))
 calculateInjectorStartAngle(uint16_t PWdivTimerPerDegree, int16_t injChannelDegrees, uint16_t injAngle);

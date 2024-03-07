@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ignition_scheduler.h"
 #include "ignition_id.h"
 #include "scheduler.h"
 #include "maths.h"
@@ -32,6 +33,8 @@ public:
   void applyOverDwellCheck(uint32_t targetOverdwellTime);
 
 } ignition_context_st;
+
+extern ignition_context_st ignition_contexts[ignChannelCount];
 
 typedef struct ignition_contexts_st
 {
@@ -95,6 +98,7 @@ private:
   byte maxOutputMask = 0x01;
 } ignition_contexts_st;
 
-extern ignition_context_st ignition_contexts[ignChannelCount];
+void initialiseAndResetIgnitionSchedules(void);
+
 extern ignition_contexts_st ignitions;
 
