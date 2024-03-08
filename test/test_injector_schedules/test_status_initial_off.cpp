@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <unity.h>
 
+#include "fuel_scheduler.h"
 #include "scheduler.h"
 
 static void test_status_initial_off_inj1(void)

@@ -3,6 +3,7 @@
 #include <unity.h>
 #include "globals.h"
 
+#include "ignition_scheduler.h"
 #include "scheduler.h"
 #include "ignition_control.h"
 #include "utilities.h"

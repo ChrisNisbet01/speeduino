@@ -3,7 +3,6 @@
 #include <unity.h>
 
 #include "ignition_contexts.h"
-#include "scheduler.h"
 #include "utilities.h"
 
 #define TIMEOUT 1000

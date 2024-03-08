@@ -4,7 +4,6 @@
 #include "globals.h"
 
 #include "injector_contexts.h"
-#include "scheduler.h"
 #include "utilities.h"
 
 #define TIMEOUT 1000
@@ -14,19 +13,13 @@
 static volatile uint32_t start_time;
 static volatile uint32_t end_time;
 
-static void injStartCallback(injector_id_t inj_id1, injector_id_t inj_id2)
+static void injStartCallback(void)
 {
-    UNUSED(inj_id1);
-    UNUSED(inj_id2);
-
     end_time = micros();
 }
 
-static void injEndCallback(injector_id_t inj_id1, injector_id_t inj_id2)
+static void injEndCallback(void)
 {
-    UNUSED(inj_id1);
-    UNUSED(inj_id2);
-
     /* Do nothing. */
 }
 

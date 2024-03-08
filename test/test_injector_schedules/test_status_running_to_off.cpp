@@ -2,16 +2,16 @@
 #include <Arduino.h>
 #include <unity.h>
 
+#include "fuel_scheduler.h"
 #include "scheduler.h"
 #include "utilities.h"
 
 #define TIMEOUT 1000
 #define DURATION 1000
 
-static void injEmptyCallback(injector_id_t inj_id1, injector_id_t inj_id2)
+static void injEmptyCallback()
 {
-  UNUSED(inj_id1);
-  UNUSED(inj_id2);
+  /* Do nothing. */
 }
 
 static void test_status_running_to_off_inj(FuelSchedule &fuelSchedule)

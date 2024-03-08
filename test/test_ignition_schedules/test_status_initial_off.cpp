@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <unity.h>
 
+#include "ignition_scheduler.h"
 #include "scheduler.h"
 
 static void test_status_initial_off_ign1(void)

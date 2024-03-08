@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include <unity.h>
 
+#include "ignition_scheduler.h"
 #include "scheduler.h"
 #include "utilities.h"
 

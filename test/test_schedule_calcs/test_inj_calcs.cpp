@@ -16,8 +16,6 @@ struct inj_test_parameters
     uint32_t running;       // Expected delay when channel status is RUNNING
 };
 
-static void nullInjCallback(void) { }
-
 static void test_calc_inj_timeout(const inj_test_parameters &parameters)
 {
     static constexpr uint16_t injAngle = 355;

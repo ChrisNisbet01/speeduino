@@ -2,16 +2,16 @@
 #include <Arduino.h>
 #include <unity.h>
 
+#include "fuel_scheduler.h"
 #include "scheduler.h"
 #include "utilities.h"
 
 #define TIMEOUT 1000
 #define DURATION 1000
 
-static void injEmptyCallback(injector_id_t inj_id1, injector_id_t inj_id2)
+static void injEmptyCallback(void)
 {
-    UNUSED(inj_id1);
-    UNUSED(inj_id2);
+  /* Do nothing. */
 }
 
 static void test_status_running_to_pending_inj(FuelSchedule &fuelSchedule)
@@ -20,13 +20,32 @@ static void test_status_running_to_pending_inj(FuelSchedule &fuelSchedule)
   fuelSchedule.start.pCallback = injEmptyCallback;
   fuelSchedule.end.pCallback = injEmptyCallback;
   setFuelSchedule(fuelSchedule, TIMEOUT, DURATION);
-  while(fuelSchedule.Status == PENDING) /*Wait*/ ;
+  uint32_t start_time;
+
+  start_time = micros();
+  while (fuelSchedule.Status != RUNNING)
+  {
+    if (micros() - start_time > TIMEOUT * 2)
+    {
+      break;
+    }
+    /* Wait. */
+  }
+  TEST_ASSERT_EQUAL(RUNNING, fuelSchedule.Status);
   /*
    * Quickly insert another scheduled event before the current one ends.
    * This second event should get placed into the pending queue.
    */
-  setFuelSchedule(fuelSchedule, 2*TIMEOUT, DURATION);
-  while(fuelSchedule.Status == RUNNING) /*Wait*/ ;
+  setFuelSchedule(fuelSchedule, DURATION + TIMEOUT, DURATION);
+
+  start_time = micros();
+  while (fuelSchedule.Status == RUNNING)
+  {
+    if (micros() - start_time > DURATION * 2)
+    {
+      break;
+    }
+  }
   TEST_ASSERT_EQUAL(PENDING, fuelSchedule.Status);
 }
 

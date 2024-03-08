@@ -5,7 +5,6 @@
 #include "test_ignition_schedules.h"
 #include "scheduler.h"
 #include "injector_contexts.h"
-#include "injector_schedule.h"
 #include "src/decoders/missing_tooth.h"
 
 static void prepareForInitialiseAll(void)
