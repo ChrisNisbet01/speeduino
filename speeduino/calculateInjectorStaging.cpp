@@ -242,7 +242,7 @@ void calculateInjectorStaging(unsigned int const desiredPW, uint32_t const pwLim
   // overflow below (See #267)
   if (configPage10.stagingEnabled
       && (configPage2.nCylinders <= INJ_CHANNELS || configPage2.injType == INJ_TYPE_TBODY)
-      && injector_contexts[injChannel1].PW > inj_opentime_uS)
+      && desiredPW > inj_opentime_uS)
   {
     staged_PW_st const staged_PW = calculateStagedInjectorPulsewidths(desiredPW, pwLimit);
 
