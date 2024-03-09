@@ -386,8 +386,7 @@ static int16_t doAECalculation(int16_t const DOT, byte const threshold, struct t
         //If CLT is less than taper min temp, apply full modifier on top of accelValue
         if (currentStatus.coolant <= (int)(configPage2.aeColdTaperMin - CALIBRATION_TEMPERATURE_OFFSET))
         {
-          uint16_t accelValue_uint = percentage(configPage2.aeColdPct, accelValue);
-          accelValue = (int16_t)accelValue_uint;
+          accelValue = percentage(configPage2.aeColdPct, accelValue);
         }
         else
         {
@@ -396,9 +395,7 @@ static int16_t doAECalculation(int16_t const DOT, byte const threshold, struct t
           int16_t taperPercent = (int)((currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET - configPage2.aeColdTaperMin) * 100) / taperRange;
           int16_t coldPct = (int16_t)100 + percentage(100 - taperPercent, configPage2.aeColdPct - 100);
           //Potential overflow (if AE is large) without using uint16_t (percentage() may overflow)
-          uint16_t accelValue_uint = (uint16_t)accelValue * coldPct / 100;
-
-          accelValue = (int16_t)accelValue_uint;
+          accelValue = percentage(coldPct, accelValue);
         }
       }
 
@@ -758,26 +755,38 @@ byte correctionAFRClosedLoop(void)
 
 //******************************** IGNITION ADVANCE CORRECTIONS ********************************
 /** Correct ignition timing to configured fixed value.
- * Must be called near end to override all other corrections.
  */
-static int8_t correctionFixedTiming(int8_t advance)
+static bool correctionFixedTiming(int8_t &fixed_advance)
 {
-  int8_t ignFixValue = advance;
-  if (configPage2.fixAngEnable == 1) { ignFixValue = configPage4.FixAng; } //Check whether the user has set a fixed timing angle
-  return ignFixValue;
-}
-/** Correct ignition timing to configured fixed value to use during cranking.
- * Must be called near end to override all other corrections.
- */
-static int8_t correctionCrankingFixedTiming(int8_t advance)
-{
-  int8_t ignCrankFixValue = advance;
-  if ( BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) )
+  bool const is_fixed = configPage2.fixAngEnable == 1;
+
+  if (is_fixed)
   {
-    if ( configPage2.crkngAddCLTAdv == 0 ) { ignCrankFixValue = configPage4.CrankAng; } //Use the fixed cranking ignition angle
-    else { ignCrankFixValue = correctionCLTadvance(configPage4.CrankAng); } //Use the CLT compensated cranking ignition angle
+    fixed_advance = configPage4.FixAng;
   }
-  return ignCrankFixValue;
+
+  return is_fixed;
+}
+
+/** Correct ignition timing to configured fixed value to use during cranking.
+ */
+static bool correctionCrankingFixedTiming(int8_t &fixed_advance)
+{
+  bool const is_fixed = BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK);
+
+  if (is_fixed)
+  {
+    if (configPage2.crkngAddCLTAdv == 0)
+    {
+      fixed_advance = configPage4.CrankAng;
+    }
+    else //Use the CLT compensated cranking ignition angle
+    {
+      fixed_advance = correctionCLTadvance(configPage4.CrankAng);
+    }
+  }
+
+  return is_fixed;
 }
 
 /** Dispatch calculations for all ignition related corrections.
@@ -787,6 +796,17 @@ static int8_t correctionCrankingFixedTiming(int8_t advance)
 int8_t correctionsIgn(int8_t base_advance)
 {
   int8_t advance;
+
+  if (correctionCrankingFixedTiming(advance))
+  {
+    goto done;
+  }
+
+  if (correctionFixedTiming(advance))
+  {
+    goto done;
+  }
+
   advance = correctionFlexTiming(base_advance);
   advance = correctionWMITiming(advance);
   advance = correctionIATretard(advance);
@@ -800,10 +820,7 @@ int8_t correctionsIgn(int8_t base_advance)
 
   advance = correctionDFCOignition(advance);
 
-  //Fixed timing check must go last
-  advance = correctionFixedTiming(advance);
-  advance = correctionCrankingFixedTiming(advance); //This overrides the regular fixed timing, must come last
-
+done:
   return advance;
 }
 

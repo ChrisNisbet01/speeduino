@@ -13,6 +13,7 @@
 #include "sensors.h"
 #include "updates.h"
 #include "pages.h"
+#include "maths.h"
 #include EEPROM_LIB_H //This is defined in the board .h files
 
 void doUpdates(void)
@@ -126,13 +127,20 @@ void doUpdates(void)
       configPage10.flexFuelBins[x] = pct;
       configPage10.flexAdvBins[x] = pct;
 
-      int16_t boostAdder = (((configPage2.aeColdTaperMin - (int8_t)configPage2.aeColdPct) * pct) / 100) + (int8_t)configPage2.aeColdPct;
+      int16_t boostAdder =
+        percentage(pct, (int16_t)configPage2.aeColdTaperMin - configPage2.aeColdPct)
+        + (int8_t)configPage2.aeColdPct;
       configPage10.flexBoostAdj[x] = boostAdder;
 
-      uint8_t fuelAdder = (((configPage2.idleUpAdder - configPage2.idleUpPin) * pct) / 100) + configPage2.idleUpPin;
+      uint8_t fuelAdder =
+        percentage(pct, (uint16_t)configPage2.idleUpAdder - configPage2.idleUpPin)
+        + configPage2.idleUpPin;
       configPage10.flexFuelAdj[x] = fuelAdder;
 
-      uint8_t advanceAdder = (((configPage2.aeTaperMax - configPage2.aeTaperMin) * pct) / 100) + configPage2.aeTaperMin;
+      uint8_t advanceAdder =
+        percentage(pct, (uint16_t)configPage2.aeTaperMax - configPage2.aeTaperMin)
+        + configPage2.aeTaperMin;
+
       configPage10.flexAdvAdj[x] = advanceAdder;
     }
 

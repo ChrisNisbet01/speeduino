@@ -479,16 +479,22 @@ void loop(void)
       || configPage6.iacAlgorithm == IAC_ALGORITHM_STEP_CL
       || configPage6.iacAlgorithm == IAC_ALGORITHM_STEP_OLCL)
   {
-    idleControl(0); //Run idlecontrol every loop for stepper idle.
+    //Run idlecontrol every loop for stepper idle.
+    idleControl(0);
   }
 
 
-  //VE and advance calculation were moved outside the sync/RPM check so that the fuel and ignition load value will be accurately shown when RPM=0
+  //VE and advance calculation were moved outside the sync/RPM check so that the
+  //fuel and ignition load value will be accurately shown when RPM=0
   currentStatus.VE1 = getVE1();
-  currentStatus.VE = currentStatus.VE1; //Set the final VE value to be VE 1 as a default. This may be changed in the section below
+  //Set the final VE value to be VE 1 as a default.
+  //This may be changed in the section below
+  currentStatus.VE = currentStatus.VE1;
 
   currentStatus.advance1 = getAdvance1();
-  currentStatus.advance = currentStatus.advance1; //Set the final advance value to be advance 1 as a default. This may be changed in the section below
+  //Set the final advance value to be advance 1 as a default.
+  //This may be changed in the section below
+  currentStatus.advance = currentStatus.advance1;
 
   calculateSecondaryFuel();
   calculateSecondarySpark();
@@ -1475,12 +1481,14 @@ byte getVE1(void)
  */
 byte getAdvance1(void)
 {
-  currentStatus.ignLoad = calculate_engine_load((load_source_t)configPage2.ignAlgorithm, currentStatus);
+  currentStatus.ignLoad =
+    calculate_engine_load((load_source_t)configPage2.ignAlgorithm, currentStatus);
   //As for VE, but for ignition advance
-  byte tempAdvance = get3DTableValue(&ignitionTable, currentStatus.ignLoad, currentStatus.RPM) - OFFSET_IGNITION;
-  tempAdvance = correctionsIgn(tempAdvance);
+  byte spark1_ignition_advance =
+    get3DTableValue(&ignitionTable, currentStatus.ignLoad, currentStatus.RPM) - OFFSET_IGNITION;
+  spark1_ignition_advance = correctionsIgn(spark1_ignition_advance);
 
-  return tempAdvance;
+  return spark1_ignition_advance;
 }
 
 /** Calculate the Ignition angles for all cylinders (based on @ref config2.nCylinders).

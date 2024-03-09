@@ -4,6 +4,7 @@
 #include "engine_load_calcs.h"
 #include "auxiliary_pins.h"
 #include "bit_macros.h"
+#include "maths.h"
 
 void calculateSecondaryFuel(void)
 {
@@ -16,8 +17,9 @@ void calculateSecondaryFuel(void)
   {
     fuel2_is_active = true;
     currentStatus.VE2 = getVE2();
-    //Fuel 2 table is treated as a % value. Table 1 and 2 are multiplied together and divided by 100
-    uint16_t combinedVE = ((uint16_t)currentStatus.VE1 * (uint16_t)currentStatus.VE2) / 100;
+    //Fuel 2 table is treated as a % value.
+    uint16_t const combinedVE = percentage(currentStatus.VE2, currentStatus.VE1);
+
     if (combinedVE <= 255)
     {
       currentStatus.VE = combinedVE;
@@ -100,45 +102,53 @@ void calculateSecondaryFuel(void)
 void calculateSecondarySpark(void)
 {
   //Same as above but for the secondary ignition table
-  BIT_CLEAR(currentStatus.spark2, BIT_SPARK2_SPARK2_ACTIVE); //Clear the bit indicating that the 2nd spark table is in use.
+  //Clear the bit indicating that the 2nd spark table is in use.
+  bool spark2_is_active = false;
 
   if (configPage10.spark2Mode > 0)
   {
-    bool spark2_is_active = false;
     int8_t advance = 0;
     bool spark2_advance_required = false;
 
     if (configPage10.spark2Mode == SPARK2_MODE_MULTIPLY)
     {
       currentStatus.advance2 = getAdvance2();
-      //make sure we don't have a negative value in the multiplier table (sharing a signed 8 bit table)
-      if(currentStatus.advance2 < 0) { currentStatus.advance2 = 0; }
-      //Spark 2 table is treated as a % value. Table 1 and 2 are multiplied together and divided by 100
-      int16_t combinedAdvance = ((int16_t)currentStatus.advance1 * (int16_t)currentStatus.advance2) / 100;
-      //make sure we don't overflow and accidentally set negative timing, currentStatus.advance can only hold a signed 8 bit value
-      if (combinedAdvance <= 127)
+      //make sure we don't have a negative value in the multiplier table
+      //(sharing a signed 8 bit table)
+      if(currentStatus.advance2 < 0)
+      {
+        currentStatus.advance2 = 0;
+      }
+      //Spark 2 table is treated as a % value.
+      int16_t const combinedAdvance = percentage(currentStatus.advance2, currentStatus.advance1);
+
+      //make sure we don't overflow and accidentally set negative timing,
+      //currentStatus.advance can only hold a signed 8 bit value
+      if (combinedAdvance <= INT8_MAX)
       {
         advance = combinedAdvance;
       }
       else
       {
-        advance = 127;
+        advance = INT8_MAX;
       }
       spark2_is_active = true;
     }
     else if (configPage10.spark2Mode == SPARK2_MODE_ADD)
     {
       currentStatus.advance2 = getAdvance2();
-      //Spark tables are added together, but a check is made to make sure this won't overflow the 8-bit VE value
-      int16_t combinedAdvance = (int16_t)currentStatus.advance1 + (int16_t)currentStatus.advance2;
-      //make sure we don't overflow and accidentally set negative timing, currentStatus.advance can only hold a signed 8 bit value
-      if (combinedAdvance <= 127)
+      //Spark tables are added together, but a check is made to make sure this
+      //won't overflow the 8-bit VE value
+      int16_t const combinedAdvance = (int16_t)currentStatus.advance1 + (int16_t)currentStatus.advance2;
+      //make sure we don't overflow and accidentally set negative timing,
+      //currentStatus.advance can only hold a signed 8 bit value
+      if (combinedAdvance <= INT8_MAX)
       {
         advance = combinedAdvance;
       }
       else
       {
-        advance = 127;
+        advance = INT8_MAX;
       }
       spark2_is_active = true;
     }
@@ -173,12 +183,10 @@ void calculateSecondarySpark(void)
         }
       }
     }
-    else if (Spark2Input.is_configured())
+    else if (Spark2Input.is_configured()
+             && Spark2Input.read() == configPage10.spark2InputPolarity)
     {
-      if (Spark2Input.read() == configPage10.spark2InputPolarity)
-      {
-        spark2_advance_required = true;
-      }
+      spark2_advance_required = true;
     }
 
     if (spark2_advance_required)
@@ -199,42 +207,57 @@ void calculateSecondarySpark(void)
       {
         currentStatus.advance = advance;
       }
+      /*
+       * Else currentStatus.advance should remain at the previously calculated
+       * (by getAdvance()) fixed value.
+       */
     }
+  }
+
+  if (!spark2_is_active)
+  {
+    BIT_CLEAR(currentStatus.spark2, BIT_SPARK2_SPARK2_ACTIVE);
   }
 }
 
 /**
  * @brief Looks up and returns the VE value from the secondary fuel table
  *
- * This performs largely the same operations as getVE() however the lookup is of the secondary fuel table and uses the secondary load source
+ * This performs largely the same operations as getVE() however the lookup is of
+ * the secondary fuel table and uses the secondary load source
  * @return byte
  */
 byte getVE2(void)
 {
-  currentStatus.fuelLoad2 = calculate_engine_load((load_source_t)configPage10.fuel2Algorithm, currentStatus);
-  byte tempVE = get3DTableValue(&fuelTable2, currentStatus.fuelLoad2, currentStatus.RPM); //Perform lookup into fuel map for RPM vs MAP value
+  currentStatus.fuelLoad2 =
+    calculate_engine_load((load_source_t)configPage10.fuel2Algorithm, currentStatus);
+  //Perform lookup into fuel map for RPM vs MAP value
+  byte tempVE = get3DTableValue(&fuelTable2, currentStatus.fuelLoad2, currentStatus.RPM);
 
   return tempVE;
 }
 
 /**
- * @brief Performs a lookup of the second ignition advance table. The values used to look this up will be RPM and whatever load source the user has configured
+ * @brief Performs a lookup of the second ignition advance table.
+ * @brief The values used to look this up will be RPM and whatever load source the user has configured
  *
  * @return byte The current target advance value in degrees
  */
 byte getAdvance2(void)
 {
-  currentStatus.ignLoad2 = calculate_engine_load((load_source_t)configPage10.spark2Algorithm, currentStatus);
+  currentStatus.ignLoad2 =
+    calculate_engine_load((load_source_t)configPage10.spark2Algorithm, currentStatus);
   //As for VE2, but for ignition advance
-  byte tempAdvance = get3DTableValue(&ignitionTable2, currentStatus.ignLoad2, currentStatus.RPM) - OFFSET_IGNITION;
+  byte spark2_ignition_advance =
+    get3DTableValue(&ignitionTable2, currentStatus.ignLoad2, currentStatus.RPM) - OFFSET_IGNITION;
 
   //Perform the corrections calculation on the secondary advance value,
   //only if it uses a switched mode
   if (configPage10.spark2SwitchVariable == SPARK2_MODE_CONDITIONAL_SWITCH
       || configPage10.spark2SwitchVariable == SPARK2_MODE_INPUT_SWITCH)
   {
-    tempAdvance = correctionsIgn(tempAdvance);
+    spark2_ignition_advance = correctionsIgn(spark2_ignition_advance);
   }
 
-  return tempAdvance;
+  return spark2_ignition_advance;
 }
