@@ -994,7 +994,7 @@ void loop(void)
     //This may potentially be called a number of times as we get closer and closer to the opening time
 
     //Determine the current crank angle
-    int crankAngle = injectorLimits(decoder.handler.get_crank_angle());
+    int currentCrankAngle = injectorLimits(decoder.handler.get_crank_angle());
 
     //Check for any of the engine protections or rev limiters being turned on
     //The maximum RPM allowed by all the potential limiters (Engine protection,
@@ -1174,7 +1174,7 @@ void loop(void)
 #if INJ_CHANNELS >= 1
     if (injectors.isOperational(injChannel1))
     {
-      injector_contexts[injChannel1].applyInjectorControl(inj_opentime_uS, injector1StartAngle, crankAngle);
+      injector_contexts[injChannel1].applyInjectorControl(inj_opentime_uS, injector1StartAngle, currentCrankAngle);
     }
 #endif
 
@@ -1195,49 +1195,49 @@ void loop(void)
 #if INJ_CHANNELS >= 2
     if (injectors.isOperational(injChannel2))
     {
-      injector_contexts[injChannel2].applyInjectorControl(inj_opentime_uS, injector2StartAngle, crankAngle);
+      injector_contexts[injChannel2].applyInjectorControl(inj_opentime_uS, injector2StartAngle, currentCrankAngle);
     }
 #endif
 
 #if INJ_CHANNELS >= 3
     if (injectors.isOperational(injChannel3))
     {
-      injector_contexts[injChannel3].applyInjectorControl(inj_opentime_uS, injector3StartAngle, crankAngle);
+      injector_contexts[injChannel3].applyInjectorControl(inj_opentime_uS, injector3StartAngle, currentCrankAngle);
     }
 #endif
 
 #if INJ_CHANNELS >= 4
     if (injectors.isOperational(injChannel4))
     {
-      injector_contexts[injChannel4].applyInjectorControl(inj_opentime_uS, injector4StartAngle, crankAngle);
+      injector_contexts[injChannel4].applyInjectorControl(inj_opentime_uS, injector4StartAngle, currentCrankAngle);
     }
 #endif
 
 #if INJ_CHANNELS >= 5
     if (injectors.isOperational(injChannel5))
     {
-      injector_contexts[injChannel5].applyInjectorControl(inj_opentime_uS, injector5StartAngle, crankAngle);
+      injector_contexts[injChannel5].applyInjectorControl(inj_opentime_uS, injector5StartAngle, currentCrankAngle);
     }
 #endif
 
 #if INJ_CHANNELS >= 6
     if (injectors.isOperational(injChannel6))
     {
-      injector_contexts[injChannel6].applyInjectorControl(inj_opentime_uS, injector6StartAngle, crankAngle);
+      injector_contexts[injChannel6].applyInjectorControl(inj_opentime_uS, injector6StartAngle, currentCrankAngle);
     }
 #endif
 
 #if INJ_CHANNELS >= 7
     if (injectors.isOperational(injChannel7))
     {
-      injector_contexts[injChannel7].applyInjectorControl(inj_opentime_uS, injector7StartAngle, crankAngle);
+      injector_contexts[injChannel7].applyInjectorControl(inj_opentime_uS, injector7StartAngle, currentCrankAngle);
     }
 #endif
 
 #if INJ_CHANNELS >= 8
     if (injectors.isOperational(injChannel8))
     {
-      injector_contexts[injChannel8].applyInjectorControl(inj_opentime_uS, injector8StartAngle, crankAngle);
+      injector_contexts[injChannel8].applyInjectorControl(inj_opentime_uS, injector8StartAngle, currentCrankAngle);
     }
 #endif
 
@@ -1270,34 +1270,34 @@ void loop(void)
     if (ignitions.channelsOn != 0)
     {
       //Refresh the current crank angle info
-      crankAngle = ignitionLimits(decoder.handler.get_crank_angle());
+      currentCrankAngle = ignitionLimits(decoder.handler.get_crank_angle());
 
       ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
 
 #if IGN_CHANNELS >= 1
-      ignitions.applyIgnitionControl(ignChannel1, crankAngle);
+      ignitions.applyIgnitionControl(ignChannel1, currentCrankAngle);
 #endif
 
 #if defined(USE_IGN_REFRESH)
       if (ignition1.ignitionSchedule->Status == RUNNING
-          && ignition1.endAngle > crankAngle
+          && ignition1.endAngle > currentCrankAngle
           && configPage4.StgCycles == 0
           && !configPage2.perToothIgn)
       {
         unsigned long uSToEnd = 0;
 
         //Refresh the crank angle info
-        crankAngle = ignitionLimits(decoder.handler.get_crank_angle());
+        currentCrankAngle = ignitionLimits(decoder.handler.get_crank_angle());
 
         //ONLY ONE OF THE BELOW SHOULD BE USED (PROBABLY THE FIRST):
         //*********
-        if (ignition1.endAngle > crankAngle)
+        if (ignition1.endAngle > currentCrankAngle)
         {
-          uSToEnd = angleToTimeMicroSecPerDegree(ignition1.endAngle - crankAngle);
+          uSToEnd = angleToTimeMicroSecPerDegree(ignition1.endAngle - currentCrankAngle);
         }
         else
         {
-          uSToEnd = angleToTimeMicroSecPerDegree(360 + ignition1.endAngle - crankAngle);
+          uSToEnd = angleToTimeMicroSecPerDegree(360 + ignition1.endAngle - currentCrankAngle);
         }
         //*********
         //uSToEnd = ((ignition1.endAngle - crankAngle) * (toothLastToothTime - toothLastMinusOneToothTime)) / triggerToothAngle;
@@ -1308,31 +1308,31 @@ void loop(void)
 #endif
 
 #if IGN_CHANNELS >= 2
-      ignitions.applyIgnitionControl(ignChannel2, crankAngle);
+      ignitions.applyIgnitionControl(ignChannel2, currentCrankAngle);
 #endif
 
 #if IGN_CHANNELS >= 3
-      ignitions.applyIgnitionControl(ignChannel3, crankAngle);
+      ignitions.applyIgnitionControl(ignChannel3, currentCrankAngle);
 #endif
 
 #if IGN_CHANNELS >= 4
-      ignitions.applyIgnitionControl(ignChannel4, crankAngle);
+      ignitions.applyIgnitionControl(ignChannel4, currentCrankAngle);
 #endif
 
 #if IGN_CHANNELS >= 5
-      ignitions.applyIgnitionControl(ignChannel5, crankAngle);
+      ignitions.applyIgnitionControl(ignChannel5, currentCrankAngle);
 #endif
 
 #if IGN_CHANNELS >= 6
-      ignitions.applyIgnitionControl(ignChannel6, crankAngle);
+      ignitions.applyIgnitionControl(ignChannel6, currentCrankAngle);
 #endif
 
 #if IGN_CHANNELS >= 7
-      ignitions.applyIgnitionControl(ignChannel7, crankAngle);
+      ignitions.applyIgnitionControl(ignChannel7, currentCrankAngle);
 #endif
 
 #if IGN_CHANNELS >= 8
-      ignitions.applyIgnitionControl(ignChannel8, crankAngle);
+      ignitions.applyIgnitionControl(ignChannel8, currentCrankAngle);
 #endif
 
     } //Ignition schedules on
