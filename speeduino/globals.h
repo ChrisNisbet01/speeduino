@@ -1141,8 +1141,8 @@ struct config10 {
   byte n2o_stage1_unused : 1;
   byte n2o_stage1_minRPM;    //Byte 81
   byte n2o_stage1_maxRPM;    //Byte 82
-  byte n2o_stage1_adderMin;  //Byte 83
-  byte n2o_stage1_adderMax;  //Byte 84
+  byte n2o_stage1_adderMinRPM;  //Byte 83
+  byte n2o_stage1_adderMaxRPM;  //Byte 84
   byte n2o_stage1_retard;    //Byte 85
 
   //Byte 86
@@ -1150,8 +1150,8 @@ struct config10 {
   byte n2o_stage2_unused : 2;
   byte n2o_stage2_minRPM;    //Byte 87
   byte n2o_stage2_maxRPM;    //Byte 88
-  byte n2o_stage2_adderMin;  //Byte 89
-  byte n2o_stage2_adderMax;  //Byte 90
+  byte n2o_stage2_adderMinRPM;  //Byte 89
+  byte n2o_stage2_adderMaxRPM;  //Byte 90
   byte n2o_stage2_retard;    //Byte 91
 
   //Byte 92

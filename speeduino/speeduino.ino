@@ -68,29 +68,50 @@ static uint32_t nitrous_injection_amount(void)
   //are direct adders to the ms value, not % based
   if (currentStatus.nitrous_status == NITROUS_STAGE1 || currentStatus.nitrous_status == NITROUS_BOTH)
   {
-    int16_t adderRange = (configPage10.n2o_stage1_maxRPM - configPage10.n2o_stage1_minRPM) * 100;
-    //The percentage of the way through the RPM range
-    int16_t adderPercent = ((currentStatus.RPM - (configPage10.n2o_stage1_minRPM * 100)) * 100) / adderRange;
+    int16_t adderPercent;
 
-    //Flip the percentage as we go from a higher adder to a lower adder as the RPMs rise
-    adderPercent = 100 - adderPercent;
+    if (currentStatus.RPM >= configPage10.n2o_stage1_maxRPM * 100)
+    {
+      adderPercent = 0;
+    }
+    else if (currentStatus.RPM <= configPage10.n2o_stage1_minRPM * 100)
+    {
+      adderPercent = 100;
+    }
+    else
+    {
+      int16_t adderRange = (configPage10.n2o_stage1_maxRPM - configPage10.n2o_stage1_minRPM) * 100;
+      //The percentage of the way through the RPM range
+      //Flip the percentage as we go from a higher adder to a lower adder as the RPMs rise
+      adderPercent = (((configPage10.n2o_stage1_maxRPM * 100) - currentStatus.RPM) * 100) / adderRange;
+    }
     additional_pw +=
-      (configPage10.n2o_stage1_adderMax
-       + percentage(adderPercent, (configPage10.n2o_stage1_adderMin - configPage10.n2o_stage1_adderMax))
+      (configPage10.n2o_stage1_adderMaxRPM
+       + percentage(adderPercent, configPage10.n2o_stage1_adderMinRPM - configPage10.n2o_stage1_adderMaxRPM)
        ) * 100; //Calculate the above percentage of the calculated ms value.
   }
 
   if (currentStatus.nitrous_status == NITROUS_STAGE2 || currentStatus.nitrous_status == NITROUS_BOTH)
   {
-    int16_t adderRange = (configPage10.n2o_stage2_maxRPM - configPage10.n2o_stage2_minRPM) * 100;
-    //The percentage of the way through the RPM range
-    int16_t adderPercent = ((currentStatus.RPM - (configPage10.n2o_stage2_minRPM * 100)) * 100) / adderRange;
+    int16_t adderPercent;
 
-    //Flip the percentage as we go from a higher adder to a lower adder as the RPMs rise
-    adderPercent = 100 - adderPercent;
+    if (currentStatus.RPM >= configPage10.n2o_stage2_maxRPM * 100)
+    {
+      adderPercent = 0;
+    }
+    else if (currentStatus.RPM <= configPage10.n2o_stage2_minRPM * 100)
+    {
+      adderPercent = 100;
+    }
+    {
+      int16_t adderRange = (configPage10.n2o_stage2_maxRPM - configPage10.n2o_stage2_minRPM) * 100;
+      //The percentage of the way through the RPM range
+      //Flip the percentage as we go from a higher adder to a lower adder as the RPMs rise
+      adderPercent = (((configPage10.n2o_stage2_maxRPM * 100) - currentStatus.RPM) * 100) / adderRange;
+    }
     additional_pw +=
-      (configPage10.n2o_stage2_adderMax
-       + percentage(adderPercent, (configPage10.n2o_stage2_adderMin - configPage10.n2o_stage2_adderMax))
+      (configPage10.n2o_stage2_adderMaxRPM
+       + percentage(adderPercent, (configPage10.n2o_stage2_adderMinRPM - configPage10.n2o_stage2_adderMaxRPM))
        ) * 100; //Calculate the above percentage of the calculated ms value.
   }
 
