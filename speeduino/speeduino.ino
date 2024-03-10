@@ -524,6 +524,186 @@ static void apply_ignition_control(void)
   }
 }
 
+static void apply_engine_protections(void)
+{
+  //Check for any of the engine protections or rev limiters being turned on
+  //The maximum RPM allowed by all the potential limiters (Engine protection,
+  //2-step, flat shift etc). Divided by 100. `checkRevLimit()` returns the
+  //current maximum RPM allow (divided by 100) based on either the fixed hard
+  //limit or the current coolant temp
+  uint16_t maxAllowedRPM = checkRevLimit();
+  //Check each of the functions that has an RPM limit. Update the max allowed
+  //RPM if the function is active and has a lower RPM than already set
+  if (checkEngineProtect() && configPage4.engineProtectMaxRPM < maxAllowedRPM)
+  {
+    maxAllowedRPM = configPage4.engineProtectMaxRPM;
+  }
+  if (currentStatus.launchingHard && configPage6.lnchHardLim < maxAllowedRPM)
+  {
+    maxAllowedRPM = configPage6.lnchHardLim;
+  }
+  maxAllowedRPM = maxAllowedRPM * 100; //All of the above limits are divided by 100, convert back to RPM
+  if (currentStatus.flatShiftingHard && currentStatus.clutchEngagedRPM < maxAllowedRPM)
+  {
+    //Flat shifting is a special case as the RPM limit is based on when the clutch was engaged.
+    //It is not divided by 100 as it is set with the actual RPM
+    maxAllowedRPM = currentStatus.clutchEngagedRPM;
+  }
+
+  if (configPage2.hardCutType == HARD_CUT_FULL && currentStatus.RPM > maxAllowedRPM)
+  {
+    //Full hard cut turns outputs off completely.
+    switch (configPage6.engineProtectType)
+    {
+    case PROTECT_CUT_OFF:
+      //Make sure all channels are turned on
+      ignitions.setAllOn();
+      injectors.setAllOn();
+
+      currentStatus.engineProtectStatus = 0;
+      break;
+
+    case PROTECT_CUT_IGN:
+      ignitions.setAllOff();
+      break;
+
+    case PROTECT_CUT_FUEL:
+      injectors.setAllOff();
+      break;
+
+    case PROTECT_CUT_BOTH:
+    default:
+      ignitions.setAllOff();
+      injectors.setAllOff();
+      break;
+    }
+  } //Hard cut check
+  else if (configPage2.hardCutType == HARD_CUT_ROLLING
+           && currentStatus.RPM > (maxAllowedRPM + configPage15.rollingProtRPMDelta[0] * 10))
+  {
+    //Limit for rolling is the max allowed RPM minus the lowest value in the
+    //delta table (Delta values are negative!)
+    uint8_t revolutionsToCut = 1;
+
+    if (configPage2.strokes == FOUR_STROKE) //4 stroke needs to cut for at least 2 revolutions
+    {
+      revolutionsToCut *= 2;
+    }
+    //4 stroke and non-sequential will cut for 4 revolutions minimum.
+    //This is to ensure no half fuel ignition cycles take place
+    if (configPage4.sparkMode != IGN_MODE_SEQUENTIAL || configPage2.injLayout != INJ_SEQUENTIAL)
+    {
+      revolutionsToCut *= 2;
+    }
+
+    if (rollingCutLastRev == 0) //First time check
+    {
+      rollingCutLastRev = currentStatus.startRevolutions;
+    }
+
+    //If current RPM is over the max allowed RPM always cut,
+    //otherwise check if the required number of revolutions have passed since
+    //the last cut
+    if (currentStatus.startRevolutions >= rollingCutLastRev + revolutionsToCut
+        || currentStatus.RPM > maxAllowedRPM)
+    {
+      uint8_t cutPercent = 0;
+      int16_t rpmDelta = currentStatus.RPM - maxAllowedRPM;
+      if (rpmDelta >= 0) //If the current RPM is over the max allowed RPM then cut is full (100%)
+      {
+        cutPercent = 100;
+      }
+      else //
+      {
+        cutPercent = table2D_getValue(&rollingCutTable, (rpmDelta / 10));
+      }
+
+      for (uint8_t x = 0; x < max(ignitions.maxOutputs, injectors.maxOutputs); x++)
+      {
+        if (cutPercent == 100 || random1to100() < cutPercent)
+        {
+          switch (configPage6.engineProtectType)
+          {
+          case PROTECT_CUT_OFF:
+            //Make sure all channels are turned on
+            ignitions.setAllOn();
+            injectors.setAllOn();
+            break;
+
+          case PROTECT_CUT_IGN:
+            ignitions.setOff((ignitionChannelID_t)x);
+            disablePendingIgnSchedule(x);
+            break;
+
+          case PROTECT_CUT_FUEL:
+            injectors.setOff((injectorChannelID_t)x);
+            disablePendingFuelSchedule(x);
+            break;
+
+          case PROTECT_CUT_BOTH:
+          default:
+            ignitions.setOff((ignitionChannelID_t)x);
+            injectors.setOff((injectorChannelID_t)x);
+            disablePendingFuelSchedule(x);
+            disablePendingIgnSchedule(x);
+            break;
+          }
+        }
+        else
+        {
+          //Turn fuel and ignition channels on
+
+          //Special case for non-sequential, 4-stroke where both fuel and ignition are cut.
+          //The ignition pulses should wait 1 cycle after the fuel channels are
+          //turned back on before firing again
+          if (revolutionsToCut == 4 //4 stroke and non-sequential
+              && !injectors.isOperational((injectorChannelID_t)x)
+              && configPage6.engineProtectType == PROTECT_CUT_BOTH
+             )
+          {
+            //Fuel on this channel is currently off, meaning it is the first
+            //revolution after a cut
+            //Set this ignition channel as pending
+            BIT_SET(ignitions.channelsPending, x);
+          }
+          else
+          {
+            //Turn on this ignition channel
+            ignitions.setOn((ignitionChannelID_t)x);
+          }
+
+          injectors.setOn((injectorChannelID_t)x);
+        }
+      }
+      rollingCutLastRev = currentStatus.startRevolutions;
+    }
+
+    //Check whether there are any ignition channels that are waiting for
+    //injection pulses to occur before being turned back on.
+    //This can only occur when at least 2 revolutions have taken place since
+    //the fuel was turned back on.
+    //Note that ignitions.channelsPending can only be >0 on 4 stroke,
+    //non-sequential fuel when protect type is Both.
+    if (ignitions.channelsPending > 0
+        && currentStatus.startRevolutions >= rollingCutLastRev + 2)
+    {
+      ignitions.setChannelsOnMask(injectors.channelsOnMask());
+      ignitions.channelsPending = 0;
+    }
+  } //Rolling cut check
+  else
+  {
+    currentStatus.engineProtectStatus = 0;
+    //No engine protection active, so turn all the channels on
+    if (currentStatus.startRevolutions >= configPage4.StgCycles)
+    {
+      //Enable the fuel and ignition, assuming staging revolutions are complete
+      ignitions.setAllOn();
+      injectors.setAllOn();
+    }
+  }
+}
+
 #ifndef UNIT_TEST // Scope guard for unit testing
 void setup(void)
 {
@@ -945,10 +1125,9 @@ void loop(void)
       || configPage6.iacAlgorithm == IAC_ALGORITHM_STEP_CL
       || configPage6.iacAlgorithm == IAC_ALGORITHM_STEP_OLCL)
   {
-    //Run idlecontrol every loop for stepper idle.
+    //Run idle control every loop for stepper idle.
     idleControl(0);
   }
-
 
   //VE and advance calculation were moved outside the sync/RPM check so that the
   //fuel and ignition load value will be accurately shown when RPM=0
@@ -1074,195 +1253,14 @@ void loop(void)
     calculateIgnitionAngles(dwellAngle);
 
     //If ignition timing is being tracked per tooth, perform the calcs to get the end teeth
-    //This only needs to be run if the advance figure has changed, otherwise the
-    //end teeth will still be the same
+    //This only needs to be run if the advance figure has changed,
+    //otherwise the end teeth will still be the same.
     if (configPage2.perToothIgn)
     {
       decoder.handler.set_end_teeth();
     }
 
-    //***********************************************************************************************
-    //| BEGIN FUEL SCHEDULES
-    //Finally calculate the time (uS) until we reach the firing angles and set the schedules
-    //We only need to set the schedule if we're BEFORE the open angle
-    //This may potentially be called a number of times as we get closer and closer to the opening time
-
-    //Check for any of the engine protections or rev limiters being turned on
-    //The maximum RPM allowed by all the potential limiters (Engine protection,
-    //2-step, flat shift etc). Divided by 100. `checkRevLimit()` returns the
-    //current maximum RPM allow (divided by 100) based on either the fixed hard
-    //limit or the current coolant temp
-    uint16_t maxAllowedRPM = checkRevLimit();
-    //Check each of the functions that has an RPM limit. Update the max allowed
-    //RPM if the function is active and has a lower RPM than already set
-    if (checkEngineProtect() && configPage4.engineProtectMaxRPM < maxAllowedRPM)
-    {
-      maxAllowedRPM = configPage4.engineProtectMaxRPM;
-    }
-    if (currentStatus.launchingHard && configPage6.lnchHardLim < maxAllowedRPM)
-    {
-      maxAllowedRPM = configPage6.lnchHardLim;
-    }
-    maxAllowedRPM = maxAllowedRPM * 100; //All of the above limits are divided by 100, convert back to RPM
-    if (currentStatus.flatShiftingHard && currentStatus.clutchEngagedRPM < maxAllowedRPM)
-    {
-      //Flat shifting is a special case as the RPM limit is based on when the clutch was engaged.
-      //It is not divided by 100 as it is set with the actual RPM
-      maxAllowedRPM = currentStatus.clutchEngagedRPM;
-    }
-
-    if (configPage2.hardCutType == HARD_CUT_FULL && currentStatus.RPM > maxAllowedRPM)
-    {
-      //Full hard cut turns outputs off completely.
-      switch (configPage6.engineProtectType)
-      {
-      case PROTECT_CUT_OFF:
-        //Make sure all channels are turned on
-        ignitions.setAllOn();
-        injectors.setAllOn();
-
-        currentStatus.engineProtectStatus = 0;
-        break;
-
-      case PROTECT_CUT_IGN:
-        ignitions.setAllOff();
-        break;
-
-      case PROTECT_CUT_FUEL:
-        injectors.setAllOff();
-        break;
-
-      case PROTECT_CUT_BOTH:
-      default:
-        ignitions.setAllOff();
-        injectors.setAllOff();
-        break;
-      }
-    } //Hard cut check
-    else if (configPage2.hardCutType == HARD_CUT_ROLLING
-             && currentStatus.RPM > (maxAllowedRPM + configPage15.rollingProtRPMDelta[0] * 10))
-    {
-      //Limit for rolling is the max allowed RPM minus the lowest value in the
-      //delta table (Delta values are negative!)
-      uint8_t revolutionsToCut = 1;
-
-      if (configPage2.strokes == FOUR_STROKE) //4 stroke needs to cut for at least 2 revolutions
-      {
-        revolutionsToCut *= 2;
-      }
-      //4 stroke and non-sequential will cut for 4 revolutions minimum.
-      //This is to ensure no half fuel ignition cycles take place
-      if (configPage4.sparkMode != IGN_MODE_SEQUENTIAL || configPage2.injLayout != INJ_SEQUENTIAL)
-      {
-        revolutionsToCut *= 2;
-      }
-
-      if (rollingCutLastRev == 0) //First time check
-      {
-        rollingCutLastRev = currentStatus.startRevolutions;
-      }
-
-      //If current RPM is over the max allowed RPM always cut,
-      //otherwise check if the required number of revolutions have passed since
-      //the last cut
-      if (currentStatus.startRevolutions >= rollingCutLastRev + revolutionsToCut
-          || currentStatus.RPM > maxAllowedRPM)
-      {
-        uint8_t cutPercent = 0;
-        int16_t rpmDelta = currentStatus.RPM - maxAllowedRPM;
-        if (rpmDelta >= 0) //If the current RPM is over the max allowed RPM then cut is full (100%)
-        {
-          cutPercent = 100;
-        }
-        else //
-        {
-          cutPercent = table2D_getValue(&rollingCutTable, (rpmDelta / 10));
-        }
-
-        for (uint8_t x = 0; x < max(ignitions.maxOutputs, injectors.maxOutputs); x++)
-        {
-          if (cutPercent == 100 || random1to100() < cutPercent)
-          {
-            switch (configPage6.engineProtectType)
-            {
-            case PROTECT_CUT_OFF:
-              //Make sure all channels are turned on
-              ignitions.setAllOn();
-              injectors.setAllOn();
-              break;
-
-            case PROTECT_CUT_IGN:
-              ignitions.setOff((ignitionChannelID_t)x);
-              disablePendingIgnSchedule(x);
-              break;
-
-            case PROTECT_CUT_FUEL:
-              injectors.setOff((injectorChannelID_t)x);
-              disablePendingFuelSchedule(x);
-              break;
-
-            case PROTECT_CUT_BOTH:
-            default:
-              ignitions.setOff((ignitionChannelID_t)x);
-              injectors.setOff((injectorChannelID_t)x);
-              disablePendingFuelSchedule(x);
-              disablePendingIgnSchedule(x);
-              break;
-            }
-          }
-          else
-          {
-            //Turn fuel and ignition channels on
-
-            //Special case for non-sequential, 4-stroke where both fuel and ignition are cut.
-            //The ignition pulses should wait 1 cycle after the fuel channels are
-            //turned back on before firing again
-            if (revolutionsToCut == 4 //4 stroke and non-sequential
-                && !injectors.isOperational((injectorChannelID_t)x)
-                && configPage6.engineProtectType == PROTECT_CUT_BOTH
-               )
-            {
-              //Fuel on this channel is currently off, meaning it is the first
-              //revolution after a cut
-              //Set this ignition channel as pending
-              BIT_SET(ignitions.channelsPending, x);
-            }
-            else
-            {
-              //Turn on this ignition channel
-              ignitions.setOn((ignitionChannelID_t)x);
-            }
-
-            injectors.setOn((injectorChannelID_t)x);
-          }
-        }
-        rollingCutLastRev = currentStatus.startRevolutions;
-      }
-
-      //Check whether there are any ignition channels that are waiting for
-      //injection pulses to occur before being turned back on.
-      //This can only occur when at least 2 revolutions have taken place since
-      //the fuel was turned back on.
-      //Note that ignitions.channelsPending can only be >0 on 4 stroke,
-      //non-sequential fuel when protect type is Both.
-      if (ignitions.channelsPending > 0
-          && currentStatus.startRevolutions >= rollingCutLastRev + 2)
-      {
-        ignitions.setChannelsOnMask(injectors.channelsOnMask());
-        ignitions.channelsPending = 0;
-      }
-    } //Rolling cut check
-    else
-    {
-      currentStatus.engineProtectStatus = 0;
-      //No engine protection active, so turn all the channels on
-      if (currentStatus.startRevolutions >= configPage4.StgCycles)
-      {
-        //Enable the fuel and ignition, assuming staging revolutions are complete
-        ignitions.setAllOn();
-        injectors.setAllOn();
-      }
-    }
+    apply_engine_protections();
 
     apply_injector_control(inj_opentime_uS, start_angles);
 
