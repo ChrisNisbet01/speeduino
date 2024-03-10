@@ -59,6 +59,7 @@ uint32_t rollingCutLastRev = 0; /**< Tracks whether we're on the same or a diffe
 uint16_t staged_req_fuel_mult_pri = 0;
 uint16_t staged_req_fuel_mult_sec = 0;
 
+#ifndef UNIT_TEST // Scope guard for unit testing
 static uint32_t nitrous_injection_amount(void)
 {
   uint32_t additional_pw = 0;
@@ -704,7 +705,6 @@ static void apply_engine_protections(void)
   }
 }
 
-#ifndef UNIT_TEST // Scope guard for unit testing
 void setup(void)
 {
   currentStatus.initialisationComplete = false; //Tracks whether the initialiseAll() function has run completely
