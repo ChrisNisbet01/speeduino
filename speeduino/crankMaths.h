@@ -16,7 +16,10 @@ static inline int16_t ignitionLimits(int16_t angle)
 }
 
 /**
- * @brief Makes one pass at nudging the angle to within [0,CRANK_ANGLE_MAX_INJ]
+ * @brief Adjust the angle to within [0, CRANK_ANGLE_MAX_INJ]. If angle is less
+ * @brief than angle is adjusted upwards once by CRANK_ANGLE_MAX_INJ. angle is
+ * @brief adjusted downwards until it is less than CRANK_ANGLE_MAX_INJ.
+ *
  *
  * @param angle A crank angle in degrees
  * @return int16_t
@@ -24,8 +27,16 @@ static inline int16_t ignitionLimits(int16_t angle)
 static inline int16_t injectorLimits(int16_t angle)
 {
     int16_t tempAngle = angle;
-    if(tempAngle < 0) { tempAngle = tempAngle + CRANK_ANGLE_MAX_INJ; }
-    while(tempAngle > CRANK_ANGLE_MAX_INJ ) { tempAngle -= CRANK_ANGLE_MAX_INJ; }
+
+    if(tempAngle < 0)
+    {
+      tempAngle = tempAngle + CRANK_ANGLE_MAX_INJ;
+    }
+    while(tempAngle > CRANK_ANGLE_MAX_INJ )
+    {
+      tempAngle -= CRANK_ANGLE_MAX_INJ;
+    }
+
     return tempAngle;
 }
 
