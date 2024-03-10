@@ -183,9 +183,9 @@ static inline uint32_t div360(uint32_t n) {
  * @param value The value to operate on
  * @return uint32_t
  */
-static inline uint32_t percentage(uint8_t percent, uint32_t value) 
+static inline uint32_t percentage(uint8_t percent, uint32_t value)
 {
-    return (uint32_t)div100((uint32_t)value * (uint32_t)percent);
+    return div100(value * percent);
 }
 
 
@@ -197,11 +197,11 @@ static inline uint32_t percentage(uint8_t percent, uint32_t value)
  * @return uint16_t
  */
 static inline uint16_t halfPercentage(uint8_t percent, uint16_t value) {
-    uint32_t x200 = (uint32_t)percent * (uint32_t)value;
+    uint32_t x200 = (uint32_t)percent * value;
 #ifdef USE_LIBDIVIDE
-    return (uint16_t)libdivide::libdivide_u32_do_raw(x200 + DIV_ROUND_CORRECT(UINT32_C(200), uint32_t), 2748779070L, 7);
+    return libdivide::libdivide_u32_do_raw(x200 + DIV_ROUND_CORRECT(UINT32_C(200), uint32_t), 2748779070L, 7);
 #else
-    return (uint16_t)UDIV_ROUND_CLOSEST(x200, UINT16_C(200), uint32_t);
+    return UDIV_ROUND_CLOSEST(x200, UINT16_C(200), uint32_t);
 #endif
 }
 
@@ -216,9 +216,16 @@ static inline uint16_t halfPercentage(uint8_t percent, uint16_t value) {
  */
 static inline int16_t nudge(int16_t min, int16_t max, int16_t value, int16_t nudgeAmount)
 {
-    if (value<min) { return value + nudgeAmount; }
-    if (value>max) { return value - nudgeAmount; }
-    return value;
+  if (value < min)
+  {
+    return value + nudgeAmount;
+  }
+  if (value > max)
+  {
+    return value - nudgeAmount;
+  }
+
+  return value;
 }
 
 //This is a dedicated function that specifically handles the case of mapping 0-1023 values into a 0 to X range
@@ -229,8 +236,9 @@ static inline int16_t nudge(int16_t min, int16_t max, int16_t value, int16_t nud
 
 #if defined(CORE_AVR) || defined(ARDUINO_ARCH_AVR)
 
-static inline bool udiv_is16bit_result(uint32_t dividend, uint16_t divisor) {
-  return divisor>(uint16_t)(dividend>>16U);
+static inline bool udiv_is16bit_result(uint32_t dividend, uint16_t divisor)
+{
+  return divisor > (dividend >> 16U);
 }
 
 #endif
@@ -249,11 +257,14 @@ static inline bool udiv_is16bit_result(uint32_t dividend, uint16_t divisor) {
  * @param divisor The divisor (denominator)
  * @return uint16_t
  */
-static inline uint16_t udiv_32_16 (uint32_t dividend, uint16_t divisor)
+static inline uint16_t udiv_32_16(uint32_t dividend, uint16_t divisor)
 {
 #if defined(CORE_AVR) || defined(ARDUINO_ARCH_AVR)
 
-    if (divisor==0U || !udiv_is16bit_result(dividend, divisor)) { return UINT16_MAX; }
+    if (divisor == 0U || !udiv_is16bit_result(dividend, divisor))
+    {
+      return UINT16_MAX;
+    }
 
     #define INDEX_REG "r16"
 
@@ -282,10 +293,13 @@ static inline uint16_t udiv_32_16 (uint32_t dividend, uint16_t divisor)
 
     // Lower word contains the quotient, upper word contains the remainder.
     return dividend & 0xFFFFU;
+
 #else
+
     // The non-AVR platforms are all fast enough (or have built in hardware dividers)
     // so just fall back to regular 32-bit division.
     return dividend / divisor;
+
 #endif
 }
 
@@ -299,10 +313,14 @@ static inline uint16_t udiv_32_16 (uint32_t dividend, uint16_t divisor)
 static inline uint16_t udiv_32_16_closest(uint32_t dividend, uint16_t divisor)
 {
 #if defined(CORE_AVR) || defined(ARDUINO_ARCH_AVR)
+
     dividend = dividend + (uint32_t)(DIV_ROUND_CORRECT(divisor, uint16_t));
     return udiv_32_16(dividend, divisor);
+
 #else
-    return (uint16_t)UDIV_ROUND_CLOSEST(dividend, (uint32_t)divisor, uint32_t);
+
+    return UDIV_ROUND_CLOSEST(dividend, (uint32_t)divisor, uint32_t);
+
 #endif
 }
 
