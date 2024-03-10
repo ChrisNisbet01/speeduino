@@ -33,22 +33,30 @@ calculateIgnitionAngle(int const dwellAngle, int8_t const advance)
   ::calculateIgnitionAngle(dwellAngle, ignDegrees, advance, &endAngle, &startAngle);
 }
 
-uint32_t ignition_context_st::
-calculateIgnitionTimeout(int crankAngle)
-{
-  return ::calculateIgnitionTimeout(*ignitionSchedule, startAngle, ignDegrees, crankAngle);
-}
-
 void ignition_context_st::
 applyOverDwellCheck(uint32_t targetOverdwellTime)
 {
-  //Check first whether each spark output is currently on. Only check its dwell time if it is
+  //Check first whether each spark output is currently on.
+  //Only check its dwell time if it is.
   if (ignitionSchedule->Status == RUNNING && ignitionSchedule->startTime < targetOverdwellTime)
   {
     ignitionSchedule->end.pCallback();
     ignitionSchedule->Status = OFF;
   }
 }
+
+void ignition_context_st::
+applyIgnitionControl(int const crankAngle, uint16_t const dwell)
+{
+  uint32_t const start_time =
+    calculateIgnitionTimeout(*ignitionSchedule, startAngle, ignDegrees, crankAngle);
+
+  if (start_time > 0U)
+  {
+    setIgnitionSchedule(*ignitionSchedule, start_time, dwell);
+  }
+}
+
 
 void ignition_context_st::
 reset(void)
@@ -62,7 +70,7 @@ reset(void)
 void ignition_contexts_st::setMaxIgnitions(byte const maxOutputs)
 {
   this->maxOutputs = maxOutputs;
-  this->maxOutputMask = ((uint16_t)1 << maxOutputs) - 1;
+  this->maxOutputMask = ((uint8_t)1 << maxOutputs) - 1;
 }
 
 void ignition_contexts_st::setAllOn(void)
@@ -98,21 +106,6 @@ byte ignition_contexts_st::channelsOnMask(void)
 void ignition_contexts_st::setChannelsOnMask(uint8_t const mask)
 {
   channelsOn = mask;
-}
-
-void ignition_contexts_st::
-applyIgnitionControl(ignitionChannelID_t const ign, int const crankAngle)
-{
-  if (isOperational(ign))
-  {
-    ignition_context_st &ignition = ignition_contexts[ign];
-    uint32_t const timeOut = ignition.calculateIgnitionTimeout(crankAngle);
-
-    if (timeOut > 0U)
-    {
-      setIgnitionSchedule(ignitionSchedules[ign], timeOut, currentStatus.dwell + fixedCrankingOverride);
-    }
-  }
 }
 
 static void initialiseIgnitionSchedules(void)

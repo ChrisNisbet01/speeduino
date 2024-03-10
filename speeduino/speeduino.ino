@@ -451,6 +451,79 @@ static void apply_injector_control(
   }
 }
 
+static void apply_ignition_control(void)
+{
+  //fixedCrankingOverride is used to extend the dwell during cranking so that
+  //the decoder can trigger the spark upon seeing a certain tooth.
+  //Currently only available on the basic distributor and 4g63 decoders.
+  if (configPage4.ignCranklock
+      && BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK)
+      && BIT_CHECK(decoderState, BIT_DECODER_HAS_FIXED_CRANKING))
+  {
+    fixedCrankingOverride = currentStatus.dwell * 3;
+    //This is a safety step to prevent the ignition start time occurring AFTER
+    //the target tooth pulse has already occurred.
+    //It simply moves the start time forward a little, which is compensated
+    //for by the increase in the dwell time
+    if (currentStatus.RPM < 250)
+    {
+      ignitions.adjustStartAngle(-5);
+    }
+  }
+  else
+  {
+    fixedCrankingOverride = 0;
+  }
+
+  if (ignitions.channelsOn != 0)
+  {
+    //Refresh the current crank angle info
+    int currentCrankAngle = ignitionLimits(decoder.handler.get_crank_angle());
+    uint16_t const total_dwell = currentStatus.dwell + fixedCrankingOverride;
+    ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
+
+#if IGN_CHANNELS >= 1
+    if (ignitions.isOperational(ignChannel1))
+    {
+      ignition1.applyIgnitionControl(currentCrankAngle, total_dwell);
+    }
+#endif
+
+#if defined(USE_IGN_REFRESH)
+    if (ignition1.ignitionSchedule->Status == RUNNING
+        && ignition1.endAngle > currentCrankAngle
+        && configPage4.StgCycles == 0
+        && !configPage2.perToothIgn)
+    {
+      unsigned long uSToEnd = 0;
+
+      //Refresh the crank angle info
+      currentCrankAngle = ignitionLimits(decoder.handler.get_crank_angle());
+
+      //ONLY ONE OF THE BELOW SHOULD BE USED (PROBABLY THE FIRST):
+      //*********
+      if (ignition1.endAngle > currentCrankAngle)
+      {
+        uSToEnd = angleToTimeMicroSecPerDegree(ignition1.endAngle - currentCrankAngle);
+      }
+      else
+      {
+        uSToEnd = angleToTimeMicroSecPerDegree(360 + ignition1.endAngle - currentCrankAngle);
+      }
+      //*********
+      //uSToEnd = ((ignition1.endAngle - crankAngle) * (toothLastToothTime - toothLastMinusOneToothTime)) / triggerToothAngle;
+      //*********
+
+      refreshIgnitionSchedule1(uSToEnd + fixedCrankingOverride);
+    }
+#endif
+    for (size_t i = ignChannel2; i < ignChannelCount; i++)
+    {
+      ignition_contexts[i].applyIgnitionControl(currentCrankAngle, total_dwell);
+    }
+  }
+}
+
 #ifndef UNIT_TEST // Scope guard for unit testing
 void setup(void)
 {
@@ -1193,106 +1266,13 @@ void loop(void)
 
     apply_injector_control(inj_opentime_uS, start_angles);
 
-    //***********************************************************************************************
-    //| BEGIN IGNITION SCHEDULES
-    //Same as above, except for ignition
-
-    //fixedCrankingOverride is used to extend the dwell during cranking so that
-    //the decoder can trigger the spark upon seeing a certain tooth.
-    //Currently only available on the basic distributor and 4g63 decoders.
-    if (configPage4.ignCranklock
-        && BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK)
-        && BIT_CHECK(decoderState, BIT_DECODER_HAS_FIXED_CRANKING))
-    {
-      fixedCrankingOverride = currentStatus.dwell * 3;
-      //This is a safety step to prevent the ignition start time occurring AFTER
-      //the target tooth pulse has already occurred.
-      //It simply moves the start time forward a little, which is compensated
-      //for by the increase in the dwell time
-      if (currentStatus.RPM < 250)
-      {
-        ignitions.adjustStartAngle(-5);
-      }
-    }
-    else
-    {
-      fixedCrankingOverride = 0;
-    }
-
-    if (ignitions.channelsOn != 0)
-    {
-      //Refresh the current crank angle info
-      int currentCrankAngle = ignitionLimits(decoder.handler.get_crank_angle());
-
-      ignition_context_st &ignition1 = ignition_contexts[ignChannel1];
-
-#if IGN_CHANNELS >= 1
-      ignitions.applyIgnitionControl(ignChannel1, currentCrankAngle);
-#endif
-
-#if defined(USE_IGN_REFRESH)
-      if (ignition1.ignitionSchedule->Status == RUNNING
-          && ignition1.endAngle > currentCrankAngle
-          && configPage4.StgCycles == 0
-          && !configPage2.perToothIgn)
-      {
-        unsigned long uSToEnd = 0;
-
-        //Refresh the crank angle info
-        currentCrankAngle = ignitionLimits(decoder.handler.get_crank_angle());
-
-        //ONLY ONE OF THE BELOW SHOULD BE USED (PROBABLY THE FIRST):
-        //*********
-        if (ignition1.endAngle > currentCrankAngle)
-        {
-          uSToEnd = angleToTimeMicroSecPerDegree(ignition1.endAngle - currentCrankAngle);
-        }
-        else
-        {
-          uSToEnd = angleToTimeMicroSecPerDegree(360 + ignition1.endAngle - currentCrankAngle);
-        }
-        //*********
-        //uSToEnd = ((ignition1.endAngle - crankAngle) * (toothLastToothTime - toothLastMinusOneToothTime)) / triggerToothAngle;
-        //*********
-
-        refreshIgnitionSchedule1(uSToEnd + fixedCrankingOverride);
-      }
-#endif
-
-#if IGN_CHANNELS >= 2
-      ignitions.applyIgnitionControl(ignChannel2, currentCrankAngle);
-#endif
-
-#if IGN_CHANNELS >= 3
-      ignitions.applyIgnitionControl(ignChannel3, currentCrankAngle);
-#endif
-
-#if IGN_CHANNELS >= 4
-      ignitions.applyIgnitionControl(ignChannel4, currentCrankAngle);
-#endif
-
-#if IGN_CHANNELS >= 5
-      ignitions.applyIgnitionControl(ignChannel5, currentCrankAngle);
-#endif
-
-#if IGN_CHANNELS >= 6
-      ignitions.applyIgnitionControl(ignChannel6, currentCrankAngle);
-#endif
-
-#if IGN_CHANNELS >= 7
-      ignitions.applyIgnitionControl(ignChannel7, currentCrankAngle);
-#endif
-
-#if IGN_CHANNELS >= 8
-      ignitions.applyIgnitionControl(ignChannel8, currentCrankAngle);
-#endif
-
-    } //Ignition schedules on
+    apply_ignition_control();
 
     if (!BIT_CHECK(currentStatus.status3, BIT_STATUS3_RESET_PREVENT)
         && resetControl == RESET_CONTROL_PREVENT_WHEN_RUNNING)
     {
-      //Reset prevention is supposed to be on while the engine is running but isn't. Fix that.
+      //Reset prevention is supposed to be on while the engine is running but isn't.
+      //Fix that.
       ResetControl.on();
       BIT_SET(currentStatus.status3, BIT_STATUS3_RESET_PREVENT);
     }

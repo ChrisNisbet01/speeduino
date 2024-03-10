@@ -28,9 +28,9 @@ public:
 
   void calculateIgnitionAngle(int dwellAngle, int8_t advance);
 
-  uint32_t calculateIgnitionTimeout(int crankAngle);
-
   void applyOverDwellCheck(uint32_t targetOverdwellTime);
+
+  void applyIgnitionControl(int crankAngle, uint16_t dwell);
 
 } ignition_context_st;
 
@@ -91,8 +91,6 @@ public:
   byte channelsOnMask(void);
 
   void setChannelsOnMask(uint8_t mask);
-
-  void applyIgnitionControl(ignitionChannelID_t ign, int crankAngle);
 
 private:
   byte maxOutputMask = 0x01;

@@ -40,7 +40,7 @@ reset(void)
 void injectors_state_st::setMaxInjectors(byte const maxOutputs)
 {
   this->maxOutputs = maxOutputs;
-  this->maxOutputMask = ((uint16_t)1 << maxOutputs) - 1;
+  this->maxOutputMask = ((uint8_t)1 << maxOutputs) - 1;
 }
 
 void injectors_state_st::setAllOn(void)
