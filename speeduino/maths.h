@@ -185,7 +185,20 @@ static inline uint32_t div360(uint32_t n) {
  */
 static inline uint32_t percentage(uint8_t percent, uint32_t value)
 {
-    return div100(value * percent);
+  if (percent == 0 || value == 0)
+  {
+    return 0;
+  }
+  if (percent == 100)
+  {
+    return value;
+  }
+  if (value == 100)
+  {
+    return percent;
+  }
+
+  return div100(value * percent);
 }
 
 

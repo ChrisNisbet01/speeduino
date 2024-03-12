@@ -74,106 +74,71 @@ This is the only function that should be called from anywhere outside the file
 */
 uint16_t correctionsFuel(void)
 {
-  uint32_t sumCorrections = 100;
+  static uint16_t const correction_scale_factor = 7;
+  uint32_t sumCorrections = 100 << correction_scale_factor;
   uint16_t result; //temporary variable to store the result of each corrections function
 
   //The values returned by each of the correction functions are multiplied together
   //and then divided back to give a single 0-255 value.
   currentStatus.wueCorrection = correctionWUE();
-  if (currentStatus.wueCorrection != 100)
-  {
-    sumCorrections = div100(sumCorrections * currentStatus.wueCorrection);
-  }
+  sumCorrections = percentage(currentStatus.wueCorrection, sumCorrections);
 
   currentStatus.ASEValue = correctionASE();
-  if (currentStatus.ASEValue != 100)
-  {
-    sumCorrections = div100(sumCorrections * currentStatus.ASEValue);
-  }
+  sumCorrections = percentage(currentStatus.ASEValue, sumCorrections);
 
   result = correctionCranking();
-  if (result != 100)
-  {
-    sumCorrections = div100(sumCorrections * result);
-  }
+  sumCorrections = percentage(result, sumCorrections);
 
   currentStatus.AEamount = correctionAccel();
   // multiply by the AE amount in case of multiplier AE mode or Decel
   if (configPage2.aeApplyMode == AE_MODE_MULTIPLIER
       || BIT_CHECK(currentStatus.engine, BIT_ENGINE_DCC))
   {
-    if (currentStatus.AEamount != 100)
-    {
-      sumCorrections = div100(sumCorrections * currentStatus.AEamount);
-    }
+    sumCorrections = percentage(currentStatus.AEamount, sumCorrections);
   }
 
   result = correctionFloodClear();
-  if (result != 100)
-  {
-    sumCorrections = div100(sumCorrections * result);
-  }
+  sumCorrections = percentage(result, sumCorrections);
 
   currentStatus.egoCorrection = correctionAFRClosedLoop();
-  if (currentStatus.egoCorrection != 100)
-  {
-    sumCorrections = div100(sumCorrections * currentStatus.egoCorrection);
-  }
+  sumCorrections = percentage(currentStatus.egoCorrection, sumCorrections);
 
   currentStatus.batCorrection = correctionBatVoltage();
   if (configPage2.battVCorMode == BATTV_COR_MODE_OPENTIME)
   {
-    inj_opentime_uS = configPage2.injOpen * currentStatus.batCorrection; // Apply voltage correction to injector open time.
-    currentStatus.batCorrection = 100; // This is to ensure that the correction is not applied twice. There is no battery correction fator as we have instead changed the open time
+     // Apply voltage correction to injector open time.
+    inj_opentime_uS = configPage2.injOpen * currentStatus.batCorrection;
+    // This is to ensure that the correction is not applied twice.
+    //There is no battery correction factor as we have instead changed the open time
+    currentStatus.batCorrection = 100;
+
   }
   if (configPage2.battVCorMode == BATTV_COR_MODE_WHOLE)
   {
-    if (currentStatus.batCorrection != 100)
-    {
-      sumCorrections = div100(sumCorrections * currentStatus.batCorrection);
-    }
+    sumCorrections = percentage(currentStatus.batCorrection, sumCorrections);
   }
 
   currentStatus.iatCorrection = correctionIATDensity();
-  if (currentStatus.iatCorrection != 100)
-  {
-    sumCorrections = div100(sumCorrections * currentStatus.iatCorrection);
-  }
+  sumCorrections = percentage(currentStatus.iatCorrection, sumCorrections);
 
   currentStatus.baroCorrection = correctionBaro();
-  if (currentStatus.baroCorrection != 100)
-  {
-    sumCorrections = div100(sumCorrections * currentStatus.baroCorrection);
-  }
+  sumCorrections = percentage(currentStatus.baroCorrection, sumCorrections);
 
   currentStatus.flexCorrection = correctionFlex();
-  if (currentStatus.flexCorrection != 100)
-  {
-    sumCorrections = div100(sumCorrections * currentStatus.flexCorrection);
-  }
+  sumCorrections = percentage(currentStatus.flexCorrection, sumCorrections);
 
   currentStatus.fuelTempCorrection = correctionFuelTemp();
-  if (currentStatus.fuelTempCorrection != 100)
-  {
-    sumCorrections = div100(sumCorrections * currentStatus.fuelTempCorrection);
-  }
+  sumCorrections = percentage(currentStatus.fuelTempCorrection, sumCorrections);
 
   currentStatus.launchCorrection = correctionLaunch();
-  if (currentStatus.launchCorrection != 100)
-  {
-    sumCorrections = div100(sumCorrections * currentStatus.launchCorrection);
-  }
+  sumCorrections = percentage(currentStatus.launchCorrection, sumCorrections);
 
   bitWrite(currentStatus.status1, BIT_STATUS1_DFCO, correctionDFCO());
   byte dfcoTaperCorrection = correctionDFCOfuel();
-  if (dfcoTaperCorrection == 0)
-  {
-    sumCorrections = 0;
-  }
-  else if (dfcoTaperCorrection != 100)
-  {
-    sumCorrections = div100(sumCorrections * dfcoTaperCorrection);
-  }
+  sumCorrections = percentage(dfcoTaperCorrection, sumCorrections);
+
+  /* Now scale the correction back to normal percentage. */
+  sumCorrections >>= correction_scale_factor;
 
   //This is the maximum allowable increase during cranking
   uint32_t const max_fuel_corrections = 1500;
@@ -183,7 +148,7 @@ uint16_t correctionsFuel(void)
     sumCorrections = max_fuel_corrections;
   }
 
-  return (uint16_t)sumCorrections;
+  return sumCorrections;
 }
 
 /*
@@ -237,7 +202,7 @@ byte correctionWUE(void)
   //Possibly reduce the frequency this runs at (Costs about 50 loops per second)
   if (currentStatus.coolant > table2D_getAxisValue(&WUETable, 9) - CALIBRATION_TEMPERATURE_OFFSET)
   {
-    //This prevents us doing the 2D lookup if we're already up to temp
+    //This avoids doing the 2D lookup if we're already up to temp
     BIT_CLEAR(currentStatus.engine, BIT_ENGINE_WARMUP);
     WUEValue = table2D_getRawValue(&WUETable, 9);
   }
