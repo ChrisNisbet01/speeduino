@@ -80,7 +80,7 @@ void test_corrections_WUE_active_value(void)
   WUETable.cacheTime = currentStatus.secl - 1;
 
   //Value should be midway between 120 and 130 = 125
-  TEST_ASSERT_EQUAL(125, correctionWUE() );
+  TEST_ASSERT_EQUAL(125, correctionWUE());
 }
 
 void test_corrections_WUE(void)

@@ -62,10 +62,14 @@ void initialiseCorrections(void)
 {
   egoPID.SetMode(AUTOMATIC); //Turn O2 PID on
   currentStatus.flexIgnCorrection = 0;
-  currentStatus.egoCorrection = 100; //Default value of no adjustment must be set to avoid randomness on first correction cycle after startup
+  //Default value of no adjustment must be set to avoid randomness on first
+  //correction cycle after startup
+  currentStatus.egoCorrection = 100;
   AFRnextCycle = 0;
   currentStatus.knockActive = false;
-  currentStatus.battery10 = 125; //Set battery voltage to sensible value for dwell correction for "flying start" (else ignition gets spurious pulses after boot)
+  //Set battery voltage to sensible value for dwell correction for "flying start"
+  //(else ignition gets spurious pulses after boot)
+  currentStatus.battery10 = 125;
 }
 
 /** Dispatch calculations for all fuel related corrections.
@@ -75,33 +79,33 @@ This is the only function that should be called from anywhere outside the file
 uint16_t correctionsFuel(void)
 {
   static uint16_t const correction_scale_factor = 7;
-  uint32_t sumCorrections = 100 << correction_scale_factor;
+  uint32_t fuel_corrections_percent = 100 << correction_scale_factor;
   uint16_t result; //temporary variable to store the result of each corrections function
 
   //The values returned by each of the correction functions are multiplied together
   //and then divided back to give a single 0-255 value.
   currentStatus.wueCorrection = correctionWUE();
-  sumCorrections = percentage(currentStatus.wueCorrection, sumCorrections);
+  fuel_corrections_percent = percentage(currentStatus.wueCorrection, fuel_corrections_percent);
 
   currentStatus.ASEValue = correctionASE();
-  sumCorrections = percentage(currentStatus.ASEValue, sumCorrections);
+  fuel_corrections_percent = percentage(currentStatus.ASEValue, fuel_corrections_percent);
 
   result = correctionCranking();
-  sumCorrections = percentage(result, sumCorrections);
+  fuel_corrections_percent = percentage(result, fuel_corrections_percent);
 
   currentStatus.AEamount = correctionAccel();
   // multiply by the AE amount in case of multiplier AE mode or Decel
   if (configPage2.aeApplyMode == AE_MODE_MULTIPLIER
       || BIT_CHECK(currentStatus.engine, BIT_ENGINE_DCC))
   {
-    sumCorrections = percentage(currentStatus.AEamount, sumCorrections);
+    fuel_corrections_percent = percentage(currentStatus.AEamount, fuel_corrections_percent);
   }
 
   result = correctionFloodClear();
-  sumCorrections = percentage(result, sumCorrections);
+  fuel_corrections_percent = percentage(result, fuel_corrections_percent);
 
   currentStatus.egoCorrection = correctionAFRClosedLoop();
-  sumCorrections = percentage(currentStatus.egoCorrection, sumCorrections);
+  fuel_corrections_percent = percentage(currentStatus.egoCorrection, fuel_corrections_percent);
 
   currentStatus.batCorrection = correctionBatVoltage();
   if (configPage2.battVCorMode == BATTV_COR_MODE_OPENTIME)
@@ -115,81 +119,40 @@ uint16_t correctionsFuel(void)
   }
   if (configPage2.battVCorMode == BATTV_COR_MODE_WHOLE)
   {
-    sumCorrections = percentage(currentStatus.batCorrection, sumCorrections);
+    fuel_corrections_percent = percentage(currentStatus.batCorrection, fuel_corrections_percent);
   }
 
   currentStatus.iatCorrection = correctionIATDensity();
-  sumCorrections = percentage(currentStatus.iatCorrection, sumCorrections);
+  fuel_corrections_percent = percentage(currentStatus.iatCorrection, fuel_corrections_percent);
 
   currentStatus.baroCorrection = correctionBaro();
-  sumCorrections = percentage(currentStatus.baroCorrection, sumCorrections);
+  fuel_corrections_percent = percentage(currentStatus.baroCorrection, fuel_corrections_percent);
 
   currentStatus.flexCorrection = correctionFlex();
-  sumCorrections = percentage(currentStatus.flexCorrection, sumCorrections);
+  fuel_corrections_percent = percentage(currentStatus.flexCorrection, fuel_corrections_percent);
 
   currentStatus.fuelTempCorrection = correctionFuelTemp();
-  sumCorrections = percentage(currentStatus.fuelTempCorrection, sumCorrections);
+  fuel_corrections_percent = percentage(currentStatus.fuelTempCorrection, fuel_corrections_percent);
 
   currentStatus.launchCorrection = correctionLaunch();
-  sumCorrections = percentage(currentStatus.launchCorrection, sumCorrections);
+  fuel_corrections_percent = percentage(currentStatus.launchCorrection, fuel_corrections_percent);
 
   bitWrite(currentStatus.status1, BIT_STATUS1_DFCO, correctionDFCO());
   byte dfcoTaperCorrection = correctionDFCOfuel();
-  sumCorrections = percentage(dfcoTaperCorrection, sumCorrections);
+  fuel_corrections_percent = percentage(dfcoTaperCorrection, fuel_corrections_percent);
 
   /* Now scale the correction back to normal percentage. */
-  sumCorrections >>= correction_scale_factor;
+  fuel_corrections_percent >>= correction_scale_factor;
 
   //This is the maximum allowable increase during cranking
   uint32_t const max_fuel_corrections = 1500;
 
-  if (sumCorrections > max_fuel_corrections)
+  if (fuel_corrections_percent > max_fuel_corrections)
   {
-    sumCorrections = max_fuel_corrections;
+    fuel_corrections_percent = max_fuel_corrections;
   }
 
-  return sumCorrections;
-}
-
-/*
-correctionsTotal() calls all the other corrections functions and combines their results.
-This is the only function that should be called from anywhere outside the file
-*/
-static inline byte correctionsFuel_new(void)
-{
-  uint32_t sumCorrections = 100;
-  byte numCorrections = 0;
-
-  //The values returned by each of the correction functions are multiplied together
-  //and then divided back to give a single 0-255 value.
-  currentStatus.wueCorrection = correctionWUE(); numCorrections++;
-  currentStatus.ASEValue = correctionASE(); numCorrections++;
-  uint16_t correctionCrankingValue = correctionCranking(); numCorrections++;
-  currentStatus.AEamount = correctionAccel(); numCorrections++;
-  uint8_t correctionFloodClearValue = correctionFloodClear(); numCorrections++;
-  currentStatus.egoCorrection = correctionAFRClosedLoop(); numCorrections++;
-
-  currentStatus.batCorrection = correctionBatVoltage(); numCorrections++;
-  currentStatus.iatCorrection = correctionIATDensity(); numCorrections++;
-  currentStatus.baroCorrection = correctionBaro(); numCorrections++;
-  currentStatus.flexCorrection = correctionFlex(); numCorrections++;
-  currentStatus.launchCorrection = correctionLaunch(); numCorrections++;
-
-  bitWrite(currentStatus.status1, BIT_STATUS1_DFCO, correctionDFCO());
-  if ( BIT_CHECK(currentStatus.status1, BIT_STATUS1_DFCO) == 1 ) { sumCorrections = 0; }
-
-  sumCorrections = currentStatus.wueCorrection \
-                  + currentStatus.ASEValue \
-                  + correctionCrankingValue \
-                  + currentStatus.AEamount \
-                  + correctionFloodClearValue \
-                  + currentStatus.batCorrection \
-                  + currentStatus.iatCorrection \
-                  + currentStatus.baroCorrection \
-                  + currentStatus.flexCorrection \
-                  + currentStatus.launchCorrection;
-  return (sumCorrections);
-
+  return fuel_corrections_percent;
 }
 
 /** Warm Up Enrichment (WUE) corrections.
@@ -804,7 +767,6 @@ int8_t correctionsIgn(int8_t base_advance)
   advance = correctionSoftLaunch(advance);
   advance = correctionSoftFlatShift(advance);
   advance = correctionKnock(advance);
-
   advance = correctionDFCOignition(advance);
 
 done:
@@ -814,29 +776,38 @@ done:
 int8_t correctionFlexTiming(int8_t advance)
 {
   int16_t ignFlexValue = advance;
-  if( configPage2.flexEnabled == 1 ) //Check for flex being enabled
+
+  if (configPage2.flexEnabled == 1) //Check for flex being enabled
   {
-    ignFlexValue = (int16_t) table2D_getValue(&flexAdvTable, currentStatus.ethanolPct) - OFFSET_IGNITION; //Negative values are achieved with offset
-    currentStatus.flexIgnCorrection = (int8_t) ignFlexValue; //This gets cast to a signed 8 bit value to allows for negative advance (ie retard) values here.
-    ignFlexValue = (int8_t) advance + currentStatus.flexIgnCorrection;
+    //Negative values are achieved with offset
+    ignFlexValue = (int16_t)table2D_getValue(&flexAdvTable, currentStatus.ethanolPct) - OFFSET_IGNITION;
+    //This gets cast to a signed 8 bit value to allow for negative advance (ie retard).
+    currentStatus.flexIgnCorrection = (int8_t)ignFlexValue;
+    ignFlexValue = (int8_t)advance + currentStatus.flexIgnCorrection;
   }
-  return (int8_t) ignFlexValue;
+
+  return ignFlexValue;
 }
 
 int8_t correctionWMITiming(int8_t advance)
 {
-  if( (configPage10.wmiEnabled >= 1) && (configPage10.wmiAdvEnabled == 1) && !BIT_CHECK(currentStatus.status4, BIT_STATUS4_WMI_EMPTY) ) //Check for wmi being enabled
+  if (configPage10.wmiEnabled >= 1
+      && configPage10.wmiAdvEnabled == 1
+      && !BIT_CHECK(currentStatus.status4, BIT_STATUS4_WMI_EMPTY))
   {
-    if( (currentStatus.TPS >= configPage10.wmiTPS)
-        && (currentStatus.RPM >= configPage10.wmiRPM)
-        && (currentStatus.MAP/2 >= configPage10.wmiMAP)
-        && ((currentStatus.IAT + CALIBRATION_TEMPERATURE_OFFSET) >= configPage10.wmiIAT) )
+    if (currentStatus.TPS >= configPage10.wmiTPS
+        && currentStatus.RPM >= configPage10.wmiRPM
+        && currentStatus.MAP / 2 >= configPage10.wmiMAP
+        && currentStatus.IAT + CALIBRATION_TEMPERATURE_OFFSET >= configPage10.wmiIAT)
     {
-      return (int16_t) advance + table2D_getValue(&wmiAdvTable, currentStatus.MAP/2) - OFFSET_IGNITION; //Negative values are achieved with offset
+      //Negative values are achieved with offset
+      return (int16_t)advance + table2D_getValue(&wmiAdvTable, currentStatus.MAP / 2) - OFFSET_IGNITION;
     }
   }
+
   return advance;
 }
+
 /** Ignition correction for inlet air temperature (IAT).
  */
 int8_t correctionIATretard(int8_t advance)
@@ -845,6 +816,7 @@ int8_t correctionIATretard(int8_t advance)
 
   return advance - advanceIATadjust;
 }
+
 /** Ignition correction for coolant temperature (CLT).
  */
 int8_t correctionCLTadvance(int8_t advance)
@@ -856,55 +828,90 @@ int8_t correctionCLTadvance(int8_t advance)
 
   return ignCLTValue;
 }
+
 /** Ignition Idle advance correction.
  */
 int8_t correctionIdleAdvance(int8_t advance)
 {
   int8_t ignIdleValue = advance;
+
   //Adjust the advance based on idle target rpm.
-  if( (configPage2.idleAdvEnabled >= 1) && (runSecsX10 >= (configPage2.idleAdvDelay * 5)) && idleAdvActive)
+  if (configPage2.idleAdvEnabled >= 1
+      && runSecsX10 >= configPage2.idleAdvDelay * 5
+      && idleAdvActive)
   {
-    //currentStatus.CLIdleTarget = (byte)table2D_getValue(&idleTargetTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET); //All temps are offset by 40 degrees
-    int idleRPMdelta = (currentStatus.CLIdleTarget - (currentStatus.RPM / 10) ) + 50;
+    int idleRPMdelta = (currentStatus.CLIdleTarget - (currentStatus.RPM / 10)) + 50;
+
     // Limit idle rpm delta between -500rpm - 500rpm
-    if(idleRPMdelta > 100) { idleRPMdelta = 100; }
-    if(idleRPMdelta < 0) { idleRPMdelta = 0; }
-    if( (currentStatus.RPM < (configPage2.idleAdvRPM * 100)) && ((configPage2.vssMode == 0) || (currentStatus.vss < configPage2.idleAdvVss))
-    && (((configPage2.idleAdvAlgorithm == 0) && (currentStatus.TPS < configPage2.idleAdvTPS)) || ((configPage2.idleAdvAlgorithm == 1) && (currentStatus.CTPSActive == 1))) ) // closed throttle position sensor (CTPS) based idle state
+    if (idleRPMdelta > 100)
     {
-      if( idleAdvTaper < configPage9.idleAdvStartDelay )
+      idleRPMdelta = 100;
+    }
+    if (idleRPMdelta < 0)
+    {
+      idleRPMdelta = 0;
+    }
+
+    if (currentStatus.RPM < configPage2.idleAdvRPM * 100
+        && (configPage2.vssMode == 0 || currentStatus.vss < configPage2.idleAdvVss)
+        && ((configPage2.idleAdvAlgorithm == 0 && currentStatus.TPS < configPage2.idleAdvTPS)
+            || (configPage2.idleAdvAlgorithm == 1 && currentStatus.CTPSActive == 1))) // closed throttle position sensor (CTPS) based idle state
+    {
+      if (idleAdvTaper < configPage9.idleAdvStartDelay)
       {
-        if( BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ) ) { idleAdvTaper++; }
+        if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ))
+        {
+          idleAdvTaper++;
+        }
       }
       else
       {
         int8_t advanceIdleAdjust = (int16_t)(table2D_getValue(&idleAdvanceTable, idleRPMdelta)) - 15;
-        if(configPage2.idleAdvEnabled == 1) { ignIdleValue = (advance + advanceIdleAdjust); }
-        else if(configPage2.idleAdvEnabled == 2) { ignIdleValue = advanceIdleAdjust; }
+        if (configPage2.idleAdvEnabled == 1)
+        {
+          ignIdleValue = (advance + advanceIdleAdjust);
+        }
+        else if (configPage2.idleAdvEnabled == 2)
+        {
+          ignIdleValue = advanceIdleAdjust;
+        }
       }
     }
-    else { idleAdvTaper = 0; }
+    else
+    {
+      idleAdvTaper = 0;
+    }
   }
 
-/* When Idle advance is the only idle speed control mechanism, activate as soon as not cranking.
-When some other mechanism is also present, wait until the engine is no more than 200 RPM below idle target speed on first time
-*/
+  /*
+   * When Idle advance is the only idle speed control mechanism, activate as soon as not cranking.
+   * When some other mechanism is also present, wait until the engine is no more
+   * than 200 RPM below idle target speed on first time.
+   */
 
-  if ((!idleAdvActive && BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN)) &&
-   ((configPage6.iacAlgorithm == 0) || (currentStatus.RPM > (((uint16_t)currentStatus.CLIdleTarget * 10) - (uint16_t)IGN_IDLE_THRESHOLD))))
+  if (!idleAdvActive)
   {
-    idleAdvActive = true;
+    if (BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN)
+        && (configPage6.iacAlgorithm == 0
+            || currentStatus.RPM > (((uint16_t)currentStatus.CLIdleTarget * 10) - (uint16_t)IGN_IDLE_THRESHOLD)))
+    {
+      idleAdvActive = true;
+    }
   }
-  else
-    if (idleAdvActive && !BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN)) { idleAdvActive = false; } //Clear flag if engine isn't running anymore
+  else if (!BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN)) //Clear flag if engine isn't running anymore
+  {
+    idleAdvActive = false;
+  }
 
   return ignIdleValue;
 }
+
 /** Ignition soft revlimit correction.
  */
 int8_t correctionSoftRevLimit(int8_t advance)
 {
   byte ignSoftRevValue = advance;
+
   BIT_CLEAR(currentStatus.spark, BIT_SPARK_SFTLIM);
 
   if (configPage6.engineProtectType == PROTECT_CUT_IGN || configPage6.engineProtectType == PROTECT_CUT_BOTH)
@@ -912,33 +919,47 @@ int8_t correctionSoftRevLimit(int8_t advance)
     if (currentStatus.RPMdiv100 >= configPage4.SoftRevLim) //Softcut RPM limit
     {
       BIT_SET(currentStatus.spark, BIT_SPARK_SFTLIM);
-      if( softLimitTime < configPage4.SoftLimMax )
+      if (softLimitTime < configPage4.SoftLimMax)
       {
-        if (configPage2.SoftLimitMode == SOFT_LIMIT_RELATIVE) { ignSoftRevValue = ignSoftRevValue - configPage4.SoftLimRetard; } //delay timing by configured number of degrees in relative mode
-        else if (configPage2.SoftLimitMode == SOFT_LIMIT_FIXED) { ignSoftRevValue = configPage4.SoftLimRetard; } //delay timing to configured number of degrees in fixed mode
+        if (configPage2.SoftLimitMode == SOFT_LIMIT_RELATIVE) //delay timing by configured number of degrees in relative mode
+        {
+          ignSoftRevValue = ignSoftRevValue - configPage4.SoftLimRetard;
+        }
+        else if (configPage2.SoftLimitMode == SOFT_LIMIT_FIXED) //delay timing to configured number of degrees in fixed mode
+        {
+          ignSoftRevValue = configPage4.SoftLimRetard;
+        }
 
-        if( BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ) ) { softLimitTime++; }
+        if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ))
+        {
+          softLimitTime++;
+        }
       }
     }
-    else if( BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ) ) { softLimitTime = 0; } //Only reset time at runSecsX10 update rate
+    else if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ)) //Only reset time at runSecsX10 update rate
+    {
+      softLimitTime = 0;
+    }
   }
 
   return ignSoftRevValue;
 }
+
 /** Ignition Nitrous oxide correction.
  */
 int8_t correctionNitrous(int8_t advance)
 {
   byte ignNitrous = advance;
+
   //Check if nitrous is currently active
-  if(configPage10.n2o_enable > 0)
+  if (configPage10.n2o_enable > 0)
   {
     //Check which stage is running (if any)
-    if( (currentStatus.nitrous_status == NITROUS_STAGE1) || (currentStatus.nitrous_status == NITROUS_BOTH) )
+    if ((currentStatus.nitrous_status == NITROUS_STAGE1) || (currentStatus.nitrous_status == NITROUS_BOTH))
     {
       ignNitrous -= configPage10.n2o_stage1_retard;
     }
-    if( (currentStatus.nitrous_status == NITROUS_STAGE2) || (currentStatus.nitrous_status == NITROUS_BOTH) )
+    if ((currentStatus.nitrous_status == NITROUS_STAGE2) || (currentStatus.nitrous_status == NITROUS_BOTH))
     {
       ignNitrous -= configPage10.n2o_stage2_retard;
     }
@@ -946,13 +967,19 @@ int8_t correctionNitrous(int8_t advance)
 
   return ignNitrous;
 }
+
 /** Ignition soft launch correction.
  */
 int8_t correctionSoftLaunch(int8_t advance)
 {
   byte ignSoftLaunchValue = advance;
+
   //SoftCut rev limit for 2-step launch control.
-  if (configPage6.launchEnabled && currentStatus.clutchTrigger && (currentStatus.clutchEngagedRPM < ((unsigned int)(configPage6.flatSArm) * 100)) && (currentStatus.RPM > ((unsigned int)(configPage6.lnchSoftLim) * 100)) && (currentStatus.TPS >= configPage10.lnchCtrlTPS) )
+  if (configPage6.launchEnabled
+      && currentStatus.clutchTrigger
+      && currentStatus.clutchEngagedRPM < (unsigned int)configPage6.flatSArm * 100
+      && currentStatus.RPM > (unsigned int)configPage6.lnchSoftLim * 100
+      && currentStatus.TPS >= configPage10.lnchCtrlTPS)
   {
     currentStatus.launchingSoft = true;
     BIT_SET(currentStatus.spark, BIT_SPARK_SLAUNCH);
@@ -994,17 +1021,16 @@ int8_t correctionKnock(int8_t advance)
   byte knockRetard = 0;
 
   //First check is to do the window calculations (Assuming knock is enabled)
-  if( configPage10.knock_mode != KNOCK_MODE_OFF )
+  if (configPage10.knock_mode != KNOCK_MODE_OFF)
   {
     knockWindowMin = table2D_getValue(&knockWindowStartTable, currentStatus.RPMdiv100);
     knockWindowMax = knockWindowMin + table2D_getValue(&knockWindowDurationTable, currentStatus.RPMdiv100);
   }
 
-
-  if( (configPage10.knock_mode == KNOCK_MODE_DIGITAL)  )
+  if ((configPage10.knock_mode == KNOCK_MODE_DIGITAL))
   {
     //
-    if(knockCounter > configPage10.knock_count)
+    if (knockCounter > configPage10.knock_count)
     {
       if (currentStatus.knockActive)
       {
@@ -1029,15 +1055,23 @@ int8_t correctionKnock(int8_t advance)
 int8_t correctionDFCOignition(int8_t advance)
 {
   int8_t dfcoRetard = advance;
-  if ( (configPage9.dfcoTaperEnable == 1) && BIT_CHECK(currentStatus.status1, BIT_STATUS1_DFCO) )
+
+  if (configPage9.dfcoTaperEnable == 1 && BIT_CHECK(currentStatus.status1, BIT_STATUS1_DFCO))
   {
-    if ( dfcoTaper != 0 )
+    if (dfcoTaper != 0)
     {
       dfcoRetard -= map(dfcoTaper, configPage9.dfcoTaperTime, 0, 0, configPage9.dfcoTaperAdvance);
     }
-    else { dfcoRetard -= configPage9.dfcoTaperAdvance; } //Taper ended, use full value
+    else //Taper ended, use full value
+    {
+      dfcoRetard -= configPage9.dfcoTaperAdvance;
+    }
   }
-  else { dfcoTaper = configPage9.dfcoTaperTime; } //Keep updating the duration until DFCO is active
+  else //Keep updating the duration until DFCO is active
+  {
+    dfcoTaper = configPage9.dfcoTaperTime;
+  }
+
   return dfcoRetard;
 }
 
@@ -1046,24 +1080,48 @@ int8_t correctionDFCOignition(int8_t advance)
 uint16_t correctionsDwell(uint16_t dwell)
 {
   uint16_t tempDwell = dwell;
-  uint16_t sparkDur_uS = (configPage4.sparkDur * 100); //Spark duration is in mS*10. Multiple it by 100 to get spark duration in uS
-  if(currentStatus.actualDwell == 0) { currentStatus.actualDwell = tempDwell; } //Initialise the actualDwell value if this is the first time being called
+  //Spark duration config is in mS*10.
+  //Multiply it by 100 to get spark duration in uS
+  uint16_t sparkDur_uS = configPage4.sparkDur * 100;
+
+  if(currentStatus.actualDwell == 0)
+  {
+    //Initialise the actualDwell value if this is the first time being called.
+    currentStatus.actualDwell = tempDwell;
+  }
 
   //**************************************************************************************************************************
   //Pull battery voltage based dwell correction and apply if needed
   currentStatus.dwellCorrection = table2D_getValue(&dwellVCorrectionTable, currentStatus.battery10);
-  if (currentStatus.dwellCorrection != 100) { tempDwell = div100(dwell) * currentStatus.dwellCorrection; }
-
+  if (currentStatus.dwellCorrection != 100)
+  {
+    tempDwell = percentage(currentStatus.dwellCorrection, dwell);
+  }
 
   //**************************************************************************************************************************
-  //Dwell error correction is a basic closed loop to keep the dwell time consistent even when adjusting its end time for the per tooth timing.
+  //Dwell error correction is a basic closed loop to keep the dwell time
+  //consistent even when adjusting its end time for the per tooth timing.
   //This is mostly of benefit to low resolution triggers at low rpm (<1500)
   if (configPage2.perToothIgn && configPage4.dwellErrCorrect == 1)
   {
     int16_t error = tempDwell - currentStatus.actualDwell;
-    if(tempDwell > INT16_MAX) { tempDwell = INT16_MAX; } //Prevent overflow when casting to signed int
-    if(error > ((int16_t)tempDwell / 2)) { error += error; } //Double correction amount if actual dwell is less than 50% of the requested dwell
-    if(error > 0) { tempDwell += error; }
+
+    //Prevent overflow when casting to signed int
+    if (tempDwell > INT16_MAX)
+    {
+
+      tempDwell = INT16_MAX;
+    }
+    //Double correction amount if actual dwell is less than 50% of the requested dwell
+    if (error > ((int16_t)tempDwell / 2))
+    {
+      error += error;
+    }
+
+    if (error > 0)
+    {
+      tempDwell += error;
+    }
   }
 
   //**************************************************************************************************************************
@@ -1078,6 +1136,7 @@ uint16_t correctionsDwell(uint16_t dwell)
   */
   uint16_t dwellPerRevolution = tempDwell + sparkDur_uS;
   int8_t pulsesPerRevolution = 1;
+
   if ((configPage4.sparkMode == IGN_MODE_SINGLE
        || (configPage4.sparkMode == IGN_MODE_ROTARY && configPage10.rotaryType != ROTARY_IGN_RX8))
       && configPage2.nCylinders > 1
@@ -1086,6 +1145,7 @@ uint16_t correctionsDwell(uint16_t dwell)
     pulsesPerRevolution = (configPage2.nCylinders >> 1);
     dwellPerRevolution = dwellPerRevolution * pulsesPerRevolution;
   }
+
   if (dwellPerRevolution > revolutionTime)
   {
     //Possibly need some method of reducing spark duration here as well, but this is a start

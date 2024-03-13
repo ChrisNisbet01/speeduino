@@ -726,6 +726,23 @@ static void apply_engine_protections(void)
   }
 }
 
+static void WMI_indicator_update(void)
+{
+  if (configPage10.wmiEnabled > 0 && configPage10.wmiIndicatorEnabled > 0)
+  {
+    // water tank empty
+    if (BIT_CHECK(currentStatus.status4, BIT_STATUS4_WMI_EMPTY))
+    {
+      // flash with 1sec interval
+      WMIIndicator.toggle();
+    }
+    else
+    {
+      WMIIndicator.write(configPage10.wmiIndicatorPolarity ? HIGH : LOW);
+    }
+  }
+}
+
 void setup(void)
 {
   currentStatus.initialisationComplete = false; //Tracks whether the initialiseAll() function has run completely
@@ -767,7 +784,7 @@ void loop(void)
   }
 
   //Check for any CAN comms requiring action
-#     if defined(secondarySerial_AVAILABLE)
+#if defined(secondarySerial_AVAILABLE)
   //if can or secondary serial interface is enabled then check for requests.
   if (configPage9.enable_secondarySerial == 1)  //secondary serial interface enabled
   {
@@ -779,8 +796,8 @@ void loop(void)
       }
     }
   }
-#     endif
-#     if defined (NATIVE_CAN_AVAILABLE)
+#endif
+#if defined (NATIVE_CAN_AVAILABLE)
   if (configPage9.enable_intcan == 1) // use internal can module
   {
     //check local can module
@@ -795,7 +812,7 @@ void loop(void)
       }
     }
   }
-#     endif
+#endif
 
   currentLoopTime = micros_safe();
   //Check how long ago the last tooth was seen compared to now. If it was more
@@ -898,15 +915,15 @@ void loop(void)
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_200HZ))
   {
     BIT_CLEAR(TIMER_mask, BIT_TIMER_200HZ);
-#     if defined(ANALOG_ISR)
+#if defined(ANALOG_ISR)
     //ADC in free running mode does 1 complete conversion of all 16 channels and
     //then the interrupt is disabled. Every 200Hz we re-enable the interrupt to
     //get another conversion cycle
     BIT_SET(ADCSRA, ADIE); //Enable ADC interrupt
-#     endif
+#endif
   }
 
-  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_15HZ)) //Every 32 loops
+  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_15HZ))
   {
     BIT_CLEAR(TIMER_mask, BIT_TIMER_15HZ);
 #if TPS_READ_FREQUENCY == 15
@@ -931,7 +948,7 @@ void loop(void)
     }
   }
 
-  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ)) //10 hertz
+  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ))
   {
     unsigned const delta_ms = 100;
 
@@ -1012,13 +1029,17 @@ void loop(void)
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_4HZ))
   {
     BIT_CLEAR(TIMER_mask, BIT_TIMER_4HZ);
-    //The IAT and CLT readings can be done less frequently (4 times per second)
+    //The IAT and CLT readings can be done less frequently
     readCLT();
     readIAT();
     readBat();
+    currentStatus.fuelPressure = getFuelPressure();
+    currentStatus.oilPressure = getOilPressure();
+
     nitrousControl();
 
-    //Lookup the current target idle RPM. This is aligned with coolant and so needs to be calculated at the same rate CLT is read
+    //Lookup the current target idle RPM. This is aligned with coolant and so
+    //needs to be calculated at the same rate CLT is read
     if (configPage2.idleAdvEnabled >= 1 || configPage6.iacAlgorithm != IAC_ALGORITHM_NONE)
     {
       //All temps are offset by 40 degrees
@@ -1039,9 +1060,6 @@ void loop(void)
     }
     syncSDLog(); //Sync the SD log file to the card 4 times per second.
 #endif
-
-    currentStatus.fuelPressure = getFuelPressure();
-    currentStatus.oilPressure = getOilPressure();
 
     if (auxIsEnabled)
     {
@@ -1110,25 +1128,13 @@ void loop(void)
     } //aux channels are enabled
   } //4Hz timer
 
-  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) //Once per second)
+  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ))
   {
     BIT_CLEAR(TIMER_mask, BIT_TIMER_1HZ);
     //Infrequent baro readings are not an issue.
     readBaro(currentStatus.initialisationComplete);
 
-    if (configPage10.wmiEnabled > 0 && configPage10.wmiIndicatorEnabled > 0)
-    {
-      // water tank empty
-      if (BIT_CHECK(currentStatus.status4, BIT_STATUS4_WMI_EMPTY))
-      {
-        // flash with 1sec interval
-        WMIIndicator.toggle();
-      }
-      else
-      {
-        WMIIndicator.write(configPage10.wmiIndicatorPolarity ? HIGH : LOW);
-      }
-    }
+    WMI_indicator_update();
 
     //Check whether fuel pump priming is complete.
     fuelPriming.update(currentStatus.secl, configPage2.fpPrime);
@@ -1172,7 +1178,7 @@ void loop(void)
   {
     //Check whether running or cranking
     //Crank RPM in the config is stored as a x10. currentStatus.crankRPM is set
-    //in timers.ino and represents the true value
+    //in timers.cpp and represents the true value
     if (currentStatus.RPM > currentStatus.crankRPM)
     {
       BIT_SET(currentStatus.engine, BIT_ENGINE_RUN); //Sets the engine running bit
@@ -1214,10 +1220,15 @@ void loop(void)
 
     //Begin the fuel calculation
     //Calculate an injector pulsewidth from the VE
-    currentStatus.corrections = correctionsFuel();
+    currentStatus.fuel_corrections_percent = correctionsFuel();
 
     uint32_t injector_pulsewidth =
-      calculateTotalInjectorPW(req_fuel_uS, currentStatus.VE, currentStatus.MAP, currentStatus.corrections, inj_opentime_uS);
+      calculateTotalInjectorPW(
+        req_fuel_uS,
+        currentStatus.VE,
+        currentStatus.MAP,
+        currentStatus.fuel_corrections_percent,
+        inj_opentime_uS);
 
     injector_pulsewidth += nitrous_injection_amount();
 
@@ -1311,7 +1322,7 @@ void loop(void)
  * @param REQ_FUEL The required fuel value in uS, as calculated by TunerStudio
  * @param VE Lookup from the main fuel table. This can either have been MAP or TPS based, depending on the algorithm used
  * @param MAP In KPa, read from the sensor (This is used when performing a multiply of the map only. It is applicable in both Speed density and Alpha-N)
- * @param corrections Sum of Enrichment factors (Cold start, acceleration). This is a multiplication factor (Eg to add 10%, this should be 110)
+ * @param corrections combination of Enrichment factors (Cold start, acceleration). This is a multiplication factor (Eg to add 10%, this should be 110)
  * @param injOpen Injector opening time. The time the injector takes to open minus the time it takes to close (Both in uS)
  * @return uint16_t The injector pulse width in uS
  */
@@ -1328,14 +1339,18 @@ uint16_t calculateTotalInjectorPW(int REQ_FUEL, byte VE, long MAP, uint16_t corr
 
   //If corrections are huge, use less bitshift to avoid overflow.
   //Sacrifices a bit more accuracy (basically only during very cold temp cranking)
-  byte bitShift = 7;
-  if (corrections > 511)
-  {
-    bitShift = 6;
-  }
+  byte bitShift;
   if (corrections > 1023)
   {
     bitShift = 5;
+  }
+  else if (corrections > 511)
+  {
+    bitShift = 6;
+  }
+  else
+  {
+    bitShift = 7;
   }
 
   iVE = div100((uint16_t)VE << 7);

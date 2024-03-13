@@ -842,7 +842,7 @@ void sendValuesLegacy(void)
   bytestosend -= Serial.write(99); // baroCorrection
   bytestosend -= Serial.write(99); // baroCorrection
 
-  temp = currentStatus.corrections * 10;
+  temp = currentStatus.fuel_corrections_percent * 10;
   bytestosend -= Serial.write(temp>>8); // gammaEnrich
   bytestosend -= Serial.write(temp); // gammaEnrich
 

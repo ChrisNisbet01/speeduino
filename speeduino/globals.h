@@ -565,7 +565,7 @@ struct statuses {
   int8_t advance;                /**< The current advance value being used in the spark calculation. Can be the same as advance1 or advance2, or a calculated value of both */
   int8_t advance1;               /**< The advance value from ignition table 1 */
   int8_t advance2;               /**< The advance value from ignition table 2 */
-  uint16_t corrections;          /**< The total current corrections % amount */
+  uint16_t fuel_corrections_percent; /**< The total current corrections % amount for fuel injection */
   uint16_t AEamount;             /**< The amount of acceleration enrichment currently being applied. 100=No change. Varies above 255 */
   byte egoCorrection;            /**< The amount of closed loop AFR enrichment currently being applied */
   byte wueCorrection;            /**< The amount of warmup enrichment currently being applied */
