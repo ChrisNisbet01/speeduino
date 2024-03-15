@@ -50,49 +50,94 @@ byte pinTranslate(byte const rawPin)
 byte pinTranslateAnalog(byte rawPin)
 {
   byte outputPin = rawPin;
-  switch(rawPin)
+  switch (rawPin)
   {
-    case 0: outputPin = A0; break;
-    case 1: outputPin = A1; break;
-    case 2: outputPin = A2; break;
-    case 3: outputPin = A3; break;
-    case 4: outputPin = A4; break;
-    case 5: outputPin = A5; break;
-    case 6: outputPin = A6; break;
-    case 7: outputPin = A7; break;
-    case 8: outputPin = A8; break;
-    case 9: outputPin = A9; break;
-    case 10: outputPin = A10; break;
-    case 11: outputPin = A11; break;
-    case 12: outputPin = A12; break;
-    case 13: outputPin = A13; break;
-  #if BOARD_MAX_ADC_PINS >= 14
-      case 14: outputPin = A14; break;
-    #endif
-    #if BOARD_MAX_ADC_PINS >= 15
-      case 15: outputPin = A15; break;
-    #endif
-    #if BOARD_MAX_ADC_PINS >= 16
-      case 16: outputPin = A16; break;
-    #endif
-    #if BOARD_MAX_ADC_PINS >= 17
-      case 17: outputPin = A17; break;
-    #endif
-    #if BOARD_MAX_ADC_PINS >= 18
-      case 18: outputPin = A18; break;
-    #endif
-    #if BOARD_MAX_ADC_PINS >= 19
-      case 19: outputPin = A19; break;
-    #endif
-    #if BOARD_MAX_ADC_PINS >= 20
-      case 20: outputPin = A20; break;
-    #endif
-    #if BOARD_MAX_ADC_PINS >= 21
-      case 21: outputPin = A21; break;
-    #endif
-    #if BOARD_MAX_ADC_PINS >= 22
-      case 22: outputPin = A22; break;
-    #endif
+  case 0:
+    outputPin = A0; break;
+
+  case 1:
+    outputPin = A1; break;
+
+  case 2:
+    outputPin = A2; break;
+
+  case 3:
+    outputPin = A3; break;
+
+  case 4:
+    outputPin = A4; break;
+
+  case 5:
+    outputPin = A5; break;
+
+  case 6:
+    outputPin = A6; break;
+
+  case 7:
+    outputPin = A7; break;
+
+  case 8:
+    outputPin = A8; break;
+
+  case 9:
+    outputPin = A9; break;
+
+  case 10:
+    outputPin = A10; break;
+
+  case 11:
+    outputPin = A11; break;
+
+  case 12:
+    outputPin = A12; break;
+
+  case 13:
+    outputPin = A13; break;
+# if BOARD_MAX_ADC_PINS >= 14
+
+  case 14:
+    outputPin = A14; break;
+#   endif
+#   if BOARD_MAX_ADC_PINS >= 15
+
+  case 15:
+    outputPin = A15; break;
+#   endif
+#   if BOARD_MAX_ADC_PINS >= 16
+
+  case 16:
+    outputPin = A16; break;
+#   endif
+#   if BOARD_MAX_ADC_PINS >= 17
+
+  case 17:
+    outputPin = A17; break;
+#   endif
+#   if BOARD_MAX_ADC_PINS >= 18
+
+  case 18:
+    outputPin = A18; break;
+#   endif
+#   if BOARD_MAX_ADC_PINS >= 19
+
+  case 19:
+    outputPin = A19; break;
+#   endif
+#   if BOARD_MAX_ADC_PINS >= 20
+
+  case 20:
+    outputPin = A20; break;
+#   endif
+#   if BOARD_MAX_ADC_PINS >= 21
+
+  case 21:
+    outputPin = A21; break;
+#   endif
+#   if BOARD_MAX_ADC_PINS >= 22
+
+  case 22:
+    outputPin = A22; break;
+#   endif
   }
 
   return outputPin;
@@ -145,13 +190,13 @@ void checkProgrammableIO(void)
     bool firstCheck = false;
     bool secondCheck = false;
 
-    if ( BIT_CHECK(pinIsValid, y) ) //if outputPin == 0 it is disabled
+    if (BIT_CHECK(pinIsValid, y)) //if outputPin == 0 it is disabled
     {
       dataRequested = configPage13.firstDataIn[y];
       if (dataRequested > 239U) //Somehow using 239 uses 9 bytes of RAM, why??
       {
         dataRequested -= REUSE_RULES;
-        if ( dataRequested <= sizeof(configPage13.outputPin) )
+        if (dataRequested <= sizeof(configPage13.outputPin))
         {
           data = BIT_CHECK(currentRuleStatus, dataRequested);
         }
@@ -166,55 +211,124 @@ void checkProgrammableIO(void)
       }
       data2 = configPage13.firstTarget[y];
 
-      if ( (configPage13.operation[y].firstCompType == COMPARATOR_EQUAL) && (data == data2) ) { firstCheck = true; }
-      else if ( (configPage13.operation[y].firstCompType == COMPARATOR_NOT_EQUAL) && (data != data2) ) { firstCheck = true; }
-      else if ( (configPage13.operation[y].firstCompType == COMPARATOR_GREATER) && (data > data2) ) { firstCheck = true; }
-      else if ( (configPage13.operation[y].firstCompType == COMPARATOR_GREATER_EQUAL) && (data >= data2) ) { firstCheck = true; }
-      else if ( (configPage13.operation[y].firstCompType == COMPARATOR_LESS) && (data < data2) ) { firstCheck = true; }
-      else if ( (configPage13.operation[y].firstCompType == COMPARATOR_LESS_EQUAL) && (data <= data2) ) { firstCheck = true; }
-      else if ( (configPage13.operation[y].firstCompType == COMPARATOR_AND) && ((data & data2) != 0) ) { firstCheck = true; }
-      else if ( (configPage13.operation[y].firstCompType == COMPARATOR_XOR) && ((data ^ data2) != 0) ) { firstCheck = true; }
+      if ((configPage13.operation[y].firstCompType == COMPARATOR_EQUAL) && (data == data2))
+      {
+        firstCheck = true;
+      }
+      else if ((configPage13.operation[y].firstCompType == COMPARATOR_NOT_EQUAL) && (data != data2))
+      {
+        firstCheck = true;
+      }
+      else if ((configPage13.operation[y].firstCompType == COMPARATOR_GREATER) && (data > data2))
+      {
+        firstCheck = true;
+      }
+      else if ((configPage13.operation[y].firstCompType == COMPARATOR_GREATER_EQUAL) && (data >= data2))
+      {
+        firstCheck = true;
+      }
+      else if ((configPage13.operation[y].firstCompType == COMPARATOR_LESS) && (data < data2))
+      {
+        firstCheck = true;
+      }
+      else if ((configPage13.operation[y].firstCompType == COMPARATOR_LESS_EQUAL) && (data <= data2))
+      {
+        firstCheck = true;
+      }
+      else if ((configPage13.operation[y].firstCompType == COMPARATOR_AND) && ((data & data2) != 0))
+      {
+        firstCheck = true;
+      }
+      else if ((configPage13.operation[y].firstCompType == COMPARATOR_XOR) && ((data ^ data2) != 0))
+      {
+        firstCheck = true;
+      }
 
       if (configPage13.operation[y].bitwise != BITWISE_DISABLED)
       {
         dataRequested = configPage13.secondDataIn[y];
-        if ( dataRequested <= (REUSE_RULES + sizeof(configPage13.outputPin)) ) //Failsafe check
+        if (dataRequested <= (REUSE_RULES + sizeof(configPage13.outputPin))) //Failsafe check
         {
-          if ( dataRequested > 239U ) //Somehow using 239 uses 9 bytes of RAM, why??
+          if (dataRequested > 239U) //Somehow using 239 uses 9 bytes of RAM, why??
           {
             dataRequested -= REUSE_RULES;
             data = BIT_CHECK(currentRuleStatus, dataRequested);
           }
-          else { data = ProgrammableIOGetData(dataRequested); }
+          else
+          {
+            data = ProgrammableIOGetData(dataRequested);
+          }
           data2 = configPage13.secondTarget[y];
 
-          if ( (configPage13.operation[y].secondCompType == COMPARATOR_EQUAL) && (data == data2) ) { secondCheck = true; }
-          else if ( (configPage13.operation[y].secondCompType == COMPARATOR_NOT_EQUAL) && (data != data2) ) { secondCheck = true; }
-          else if ( (configPage13.operation[y].secondCompType == COMPARATOR_GREATER) && (data > data2) ) { secondCheck = true; }
-          else if ( (configPage13.operation[y].secondCompType == COMPARATOR_GREATER_EQUAL) && (data >= data2) ) { secondCheck = true; }
-          else if ( (configPage13.operation[y].secondCompType == COMPARATOR_LESS) && (data < data2) ) { secondCheck = true; }
-          else if ( (configPage13.operation[y].secondCompType == COMPARATOR_LESS_EQUAL) && (data <= data2) ) { secondCheck = true; }
-          else if ( (configPage13.operation[y].secondCompType == COMPARATOR_AND) && ((data & data2) != 0) ) { secondCheck = true; }
-          else if ( (configPage13.operation[y].secondCompType == COMPARATOR_XOR) && ((data ^ data2) != 0) ) { secondCheck = true; }
+          if ((configPage13.operation[y].secondCompType == COMPARATOR_EQUAL) && (data == data2))
+          {
+            secondCheck = true;
+          }
+          else if ((configPage13.operation[y].secondCompType == COMPARATOR_NOT_EQUAL) && (data != data2))
+          {
+            secondCheck = true;
+          }
+          else if ((configPage13.operation[y].secondCompType == COMPARATOR_GREATER) && (data > data2))
+          {
+            secondCheck = true;
+          }
+          else if ((configPage13.operation[y].secondCompType == COMPARATOR_GREATER_EQUAL) && (data >= data2))
+          {
+            secondCheck = true;
+          }
+          else if ((configPage13.operation[y].secondCompType == COMPARATOR_LESS) && (data < data2))
+          {
+            secondCheck = true;
+          }
+          else if ((configPage13.operation[y].secondCompType == COMPARATOR_LESS_EQUAL) && (data <= data2))
+          {
+            secondCheck = true;
+          }
+          else if ((configPage13.operation[y].secondCompType == COMPARATOR_AND) && ((data & data2) != 0))
+          {
+            secondCheck = true;
+          }
+          else if ((configPage13.operation[y].secondCompType == COMPARATOR_XOR) && ((data ^ data2) != 0))
+          {
+            secondCheck = true;
+          }
 
-          if (configPage13.operation[y].bitwise == BITWISE_AND) { firstCheck &= secondCheck; }
-          if (configPage13.operation[y].bitwise == BITWISE_OR) { firstCheck |= secondCheck; }
-          if (configPage13.operation[y].bitwise == BITWISE_XOR) { firstCheck ^= secondCheck; }
+          if (configPage13.operation[y].bitwise == BITWISE_AND)
+          {
+            firstCheck &= secondCheck;
+          }
+          if (configPage13.operation[y].bitwise == BITWISE_OR)
+          {
+            firstCheck |= secondCheck;
+          }
+          if (configPage13.operation[y].bitwise == BITWISE_XOR)
+          {
+            firstCheck ^= secondCheck;
+          }
         }
       }
 
       //If the limiting time is active(>0) and using maximum time
       if (BIT_CHECK(configPage13.kindOfLimiting, y))
       {
-        if(firstCheck)
+        if (firstCheck)
         {
-          if ((configPage13.outputTimeLimit[y] != 0) && (ioOutDelay[y] >= configPage13.outputTimeLimit[y])) { firstCheck = false; } //Time has counted, disable the output
+          if ((configPage13.outputTimeLimit[y] != 0) && (ioOutDelay[y] >= configPage13.outputTimeLimit[y])) //Time has counted, disable the output
+          {
+            firstCheck = false;
+          }
         }
         else
         {
           //Released before Maximum time, set delay to maximum to flip the output next
-          if(BIT_CHECK(currentStatus.outputsStatus, y)) { ioOutDelay[y] = configPage13.outputTimeLimit[y]; }
-          else { ioOutDelay[y] = 0; } //Reset the counter for next time
+          if (BIT_CHECK(currentStatus.outputsStatus, y))
+          {
+            ioOutDelay[y] = configPage13.outputTimeLimit[y];
+          }
+          else //Reset the counter for next time
+          {
+            ioOutDelay[y] = 0;
+          }
         }
       }
 
@@ -223,24 +337,48 @@ void checkProgrammableIO(void)
         if (ioDelay[y] >= configPage13.outputDelay[y])
         {
           bool bitStatus = BIT_CHECK(configPage13.outputInverted, y) ^ firstCheck;
-          if (BIT_CHECK(currentStatus.outputsStatus, y) && (ioOutDelay[y] < configPage13.outputTimeLimit[y])) { ioOutDelay[y]++; }
-          if (configPage13.outputPin[y] < 128) { digitalWrite(configPage13.outputPin[y], bitStatus); }
-          else { BIT_WRITE(currentRuleStatus, y, bitStatus); }
+          if (BIT_CHECK(currentStatus.outputsStatus, y) && (ioOutDelay[y] < configPage13.outputTimeLimit[y]))
+          {
+            ioOutDelay[y]++;
+          }
+          if (configPage13.outputPin[y] < 128)
+          {
+            digitalWrite(configPage13.outputPin[y], bitStatus);
+          }
+          else
+          {
+            BIT_WRITE(currentRuleStatus, y, bitStatus);
+          }
           BIT_WRITE(currentStatus.outputsStatus, y, bitStatus);
         }
-        else { ioDelay[y]++; }
+        else
+        {
+          ioDelay[y]++;
+        }
       }
       else
       {
         if (ioOutDelay[y] >= configPage13.outputTimeLimit[y])
         {
           bool bitStatus = BIT_CHECK(configPage13.outputInverted, y) ^ firstCheck;
-          if (configPage13.outputPin[y] < 128) { digitalWrite(configPage13.outputPin[y], bitStatus); }
-          else { BIT_WRITE(currentRuleStatus, y, bitStatus); }
+          if (configPage13.outputPin[y] < 128)
+          {
+            digitalWrite(configPage13.outputPin[y], bitStatus);
+          }
+          else
+          {
+            BIT_WRITE(currentRuleStatus, y, bitStatus);
+          }
           BIT_WRITE(currentStatus.outputsStatus, y, bitStatus);
-          if(!BIT_CHECK(configPage13.kindOfLimiting, y)) { ioOutDelay[y] = 0; }
+          if (!BIT_CHECK(configPage13.kindOfLimiting, y))
+          {
+            ioOutDelay[y] = 0;
+          }
         }
-        else { ioOutDelay[y]++; }
+        else
+        {
+          ioOutDelay[y]++;
+        }
 
         ioDelay[y] = 0;
       }
@@ -254,15 +392,30 @@ void checkProgrammableIO(void)
 int16_t ProgrammableIOGetData(uint16_t index)
 {
   int16_t result;
-  if ( index < LOG_ENTRY_SIZE )
+  if (index < LOG_ENTRY_SIZE)
   {
-    if(is2ByteEntry(index)) { result = word(getTSLogEntry(index+1), getTSLogEntry(index)); }
-    else { result = getTSLogEntry(index); }
+    if (is2ByteEntry(index))
+    {
+      result = word(getTSLogEntry(index + 1), getTSLogEntry(index));
+    }
+    else
+    {
+      result = getTSLogEntry(index);
+    }
 
     //Special cases for temperatures
-    if( (index == 6) || (index == 7) ) { result -= CALIBRATION_TEMPERATURE_OFFSET; }
+    if ((index == 6) || (index == 7))
+    {
+      result -= CALIBRATION_TEMPERATURE_OFFSET;
+    }
   }
-  else if ( index == 239U ) { result = (int16_t)max((uint32_t)runSecsX10, (uint32_t)32768); } //STM32 used std lib
-  else { result = -1; } //Index is bigger than fullStatus array
+  else if (index == 239U) //STM32 used std lib
+  {
+    result = (int16_t)max((uint32_t)runSecsX10, (uint32_t)32768);
+  }
+  else //Index is bigger than fullStatus array
+  {
+    result = -1;
+  }
   return result;
 }
