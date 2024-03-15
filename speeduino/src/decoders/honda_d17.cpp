@@ -120,7 +120,7 @@ int getCrankAngle_HondaD17(void)
   }
 
   //Estimate the number of degrees travelled since the last tooth}
-  unsigned long const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
+  uint32_t const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
   crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
 
   if (crankAngle >= 720)

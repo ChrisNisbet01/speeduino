@@ -990,22 +990,22 @@ byte getGear(void)
       tempGear = 2;
     }
     else if (pulsesPer1000rpm > configPage2.vssRatio3 - VSS_GEAR_HYSTERESIS
-             && pulsesPer1000rpm < (configPage2.vssRatio3 + VSS_GEAR_HYSTERESIS)
+             && pulsesPer1000rpm < configPage2.vssRatio3 + VSS_GEAR_HYSTERESIS)
     {
       tempGear = 3;
     }
     else if (pulsesPer1000rpm > configPage2.vssRatio4 - VSS_GEAR_HYSTERESIS
-             && pulsesPer1000rpm < (configPage2.vssRatio4 + VSS_GEAR_HYSTERESIS)
+             && pulsesPer1000rpm < configPage2.vssRatio4 + VSS_GEAR_HYSTERESIS)
     {
       tempGear = 4;
     }
     else if (pulsesPer1000rpm > configPage2.vssRatio5 - VSS_GEAR_HYSTERESIS
-             && pulsesPer1000rpm < (configPage2.vssRatio5 + VSS_GEAR_HYSTERESIS)
+             && pulsesPer1000rpm < configPage2.vssRatio5 + VSS_GEAR_HYSTERESIS)
     {
       tempGear = 5;
     }
     else if (pulsesPer1000rpm > configPage2.vssRatio6 - VSS_GEAR_HYSTERESIS
-             && pulsesPer1000rpm < (configPage2.vssRatio6 + VSS_GEAR_HYSTERESIS)
+             && pulsesPer1000rpm < configPage2.vssRatio6 + VSS_GEAR_HYSTERESIS)
     {
       tempGear = 6;
     }

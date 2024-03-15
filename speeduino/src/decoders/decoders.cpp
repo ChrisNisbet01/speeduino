@@ -568,7 +568,7 @@ bool SetRevolutionTime(uint32_t revTime)
   {
     revolutionTime = revTime;
     microsPerDegree = div360(revolutionTime << microsPerDegree_Shift);
-    degreesPerMicro = (uint16_t)UDIV_ROUND_CLOSEST(UINT32_C(360) << degreesPerMicro_Shift, revolutionTime, uint32_t);
+    degreesPerMicro = UDIV_ROUND_CLOSEST(UINT32_C(360) << degreesPerMicro_Shift, revolutionTime, uint32_t);
   }
 
   return revolution_time_changed;

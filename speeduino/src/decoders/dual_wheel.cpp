@@ -204,8 +204,8 @@ int getCrankAngle_DualWheel(void)
   //tooth represents, plus the angle that tooth 1 is ATDC. This gives accuracy
   //only to the nearest tooth.
   int crankAngle = ((tempToothCurrentCount - 1) * triggerToothAngle) + configPage4.triggerAngle;
+  uint32_t const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
 
-  unsigned long const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
   crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
 
   //Sequential check (simply sets whether we're on the first or 2nd revolution of the cycle)

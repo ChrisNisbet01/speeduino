@@ -170,8 +170,8 @@ int getCrankAngle_FordST170(void)
     crankAngle += 360;
   }
 
-  unsigned long const lastCrankAngleCalc = micros();
-  unsigned long const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
+  uint32_t const lastCrankAngleCalc = micros();
+  uint32_t const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
   crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
 
   if (crankAngle >= 720)

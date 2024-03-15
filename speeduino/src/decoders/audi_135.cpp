@@ -141,7 +141,7 @@ int getCrankAngle_Audi135(void)
     ((tempToothCurrentCount - 1) * triggerToothAngle) + configPage4.triggerAngle;
 
   //Estimate the number of degrees travelled since the last tooth}
-  unsigned long const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
+  uint32_t const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
   crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
 
   //Sequential check (simply sets whether we're on the first or 2nd revolution of the cycle)

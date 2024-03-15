@@ -87,7 +87,7 @@ int getCrankAngle_non360(void)
   crankAngle = (crankAngle / configPage4.TrigAngMul) + configPage4.triggerAngle;
 
   //Estimate the number of degrees travelled since the last tooth}
-  unsigned long const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
+  uint32_t const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
   crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
 
   if (crankAngle >= 720)

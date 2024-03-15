@@ -391,6 +391,7 @@ int getCrankAngle_SuzukiK6A(void)
     triggerToothAngle = 70;
     break;
   }
+
   crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
   if (crankAngle >= 720)
   {
