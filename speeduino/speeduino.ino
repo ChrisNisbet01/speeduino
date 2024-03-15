@@ -69,21 +69,23 @@ static uint32_t nitrous_injection_amount(void)
   if (currentStatus.nitrous_status == NITROUS_STAGE1 || currentStatus.nitrous_status == NITROUS_BOTH)
   {
     int16_t adderPercent;
+    uint16_t const stage1_max_rpm = configPage10.n2o_stage1_maxRPM * 100;
+    uint16_t const stage1_min_rpm = configPage10.n2o_stage1_minRPM * 100;
 
-    if (currentStatus.RPM >= configPage10.n2o_stage1_maxRPM * 100)
+    if (currentStatus.RPM >= stage1_max_rpm)
     {
       adderPercent = 0;
     }
-    else if (currentStatus.RPM <= configPage10.n2o_stage1_minRPM * 100)
+    else if (currentStatus.RPM <= stage1_min_rpm)
     {
       adderPercent = 100;
     }
     else
     {
-      int16_t adderRange = (configPage10.n2o_stage1_maxRPM - configPage10.n2o_stage1_minRPM) * 100;
+      int16_t const adderRange = stage1_max_rpm - stage1_min_rpm;
       //The percentage of the way through the RPM range
       //Flip the percentage as we go from a higher adder to a lower adder as the RPMs rise
-      adderPercent = (((configPage10.n2o_stage1_maxRPM * 100) - currentStatus.RPM) * 100) / adderRange;
+      adderPercent = ((stage1_max_rpm - currentStatus.RPM) * 100) / adderRange;
     }
     additional_pw +=
       (configPage10.n2o_stage1_adderMaxRPM
@@ -94,20 +96,22 @@ static uint32_t nitrous_injection_amount(void)
   if (currentStatus.nitrous_status == NITROUS_STAGE2 || currentStatus.nitrous_status == NITROUS_BOTH)
   {
     int16_t adderPercent;
+    uint16_t const stage2_max_rpm = configPage10.n2o_stage2_maxRPM * 100;
+    uint16_t const stage2_min_rpm = configPage10.n2o_stage2_minRPM * 100;
 
-    if (currentStatus.RPM >= configPage10.n2o_stage2_maxRPM * 100)
+    if (currentStatus.RPM >= stage2_max_rpm)
     {
       adderPercent = 0;
     }
-    else if (currentStatus.RPM <= configPage10.n2o_stage2_minRPM * 100)
+    else if (currentStatus.RPM <= stage2_min_rpm)
     {
       adderPercent = 100;
     }
     {
-      int16_t adderRange = (configPage10.n2o_stage2_maxRPM - configPage10.n2o_stage2_minRPM) * 100;
+      int16_t const adderRange = stage2_max_rpm - stage2_min_rpm;
       //The percentage of the way through the RPM range
       //Flip the percentage as we go from a higher adder to a lower adder as the RPMs rise
-      adderPercent = (((configPage10.n2o_stage2_maxRPM * 100) - currentStatus.RPM) * 100) / adderRange;
+      adderPercent = ((stage2_max_rpm - currentStatus.RPM) * 100) / adderRange;
     }
     additional_pw +=
       (configPage10.n2o_stage2_adderMaxRPM

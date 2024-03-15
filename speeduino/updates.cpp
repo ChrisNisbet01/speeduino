@@ -40,14 +40,18 @@ void doUpdates(void)
     storeEEPROMVersion(3);
   }
   //June 2017 required the forced addition of some CAN values to avoid weird errors
-  if(readEEPROMVersion() == 3)
+  if (readEEPROMVersion() == 3)
   {
     configPage9.speeduino_tsCanId = 0;
     configPage9.true_address = 256;
     configPage9.realtime_base_address = 336;
 
-    //There was a bad value in the May base tune for the spark duration setting, fix it here if it's a problem
-    if(configPage4.sparkDur == 255) { configPage4.sparkDur = 10; }
+    //There was a bad value in the May base tune for the spark duration setting,
+    //fix it here if it's a problem
+    if (configPage4.sparkDur == 255)
+    {
+      configPage4.sparkDur = 10;
+    }
 
     writeAllConfig();
     storeEEPROMVersion(4);

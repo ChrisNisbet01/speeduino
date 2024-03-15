@@ -192,7 +192,7 @@ uint16_t getRPM_Vmax(void)
 
   if (currentStatus.hasSync)
   {
-    if (currentStatus.RPM < (configPage4.crankRPM * 100))
+    if (currentStatus.RPM < configPage4.crankRPM * 100)
     {
       int tempToothAngle;
       unsigned long toothTime;
