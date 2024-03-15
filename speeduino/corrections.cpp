@@ -33,6 +33,7 @@ There are 2 top level functions that call more detailed corrections for Fuel and
 #include "tps_dot.h"
 #include "map_dot.h"
 #include "bit_macros.h"
+#include "utilities.h"
 
 long PID_O2, PID_output, PID_AFRTarget;
 /** Instance of the PID object in case that algorithm is used (Always instantiated).
@@ -726,13 +727,13 @@ static bool correctionCrankingFixedTiming(int8_t &fixed_advance)
 
   if (is_fixed)
   {
-    if (configPage2.crkngAddCLTAdv == 0)
+    if (configPage2.crkngAddCLTAdv != 0)
     {
-      fixed_advance = configPage4.CrankAng;
+      fixed_advance = correctionCLTadvance(configPage4.CrankAng);
     }
     else //Use the CLT compensated cranking ignition angle
     {
-      fixed_advance = correctionCLTadvance(configPage4.CrankAng);
+      fixed_advance = configPage4.CrankAng;
     }
   }
 
@@ -1081,8 +1082,7 @@ uint16_t correctionsDwell(uint16_t dwell)
 {
   uint16_t tempDwell = dwell;
   //Spark duration config is in mS*10.
-  //Multiply it by 100 to get spark duration in uS
-  uint16_t sparkDur_uS = configPage4.sparkDur * 100;
+  uint16_t sparkDur_uS = MS_TIMES_10_TO_US(configPage4.sparkDur);
 
   if(currentStatus.actualDwell == 0)
   {
@@ -1093,10 +1093,7 @@ uint16_t correctionsDwell(uint16_t dwell)
   //**************************************************************************************************************************
   //Pull battery voltage based dwell correction and apply if needed
   currentStatus.dwellCorrection = table2D_getValue(&dwellVCorrectionTable, currentStatus.battery10);
-  if (currentStatus.dwellCorrection != 100)
-  {
-    tempDwell = percentage(currentStatus.dwellCorrection, dwell);
-  }
+  tempDwell = percentage(currentStatus.dwellCorrection, dwell);
 
   //**************************************************************************************************************************
   //Dwell error correction is a basic closed loop to keep the dwell time

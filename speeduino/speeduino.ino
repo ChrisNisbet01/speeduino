@@ -743,6 +743,45 @@ static void WMI_indicator_update(void)
   }
 }
 
+static void calculate_ignition(void)
+{
+  //Set dwell
+  //Dwell is stored as ms * 10. i.e. dwell of 4.3ms would be 43 in configPage4.
+  //This number therefore needs to be multiplied by 100 to get dwell in uS
+  uint16_t uncorrected_dwell;
+
+  if (BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK))
+  {
+    //use cranking dwell
+    uncorrected_dwell = configPage4.dwellCrank;
+  }
+  else if (configPage2.useDwellMap)
+  {
+    //use running dwell from map
+    uncorrected_dwell = get3DTableValue(&dwellTable, currentStatus.ignLoad, currentStatus.RPM);
+  }
+  else
+  {
+    //use fixed running dwell
+    uncorrected_dwell =  configPage4.dwellRun;
+  }
+
+  currentStatus.dwell = correctionsDwell(MS_TIMES_10_TO_US(uncorrected_dwell));
+
+  //Convert the dwell time to dwell angle based on the current engine speed
+  int const dwellAngle = timeToAngleDegPerMicroSec(currentStatus.dwell, degreesPerMicro);
+
+  calculateIgnitionAngles(dwellAngle);
+
+  //If ignition timing is being tracked per tooth, perform the calcs to get the end teeth
+  //This only needs to be run if the advance figure has changed,
+  //otherwise the end teeth will still be the same.
+  if (configPage2.perToothIgn)
+  {
+    decoder.handler.set_end_teeth();
+  }
+}
+
 void setup(void)
 {
   currentStatus.initialisationComplete = false; //Tracks whether the initialiseAll() function has run completely
@@ -1253,44 +1292,7 @@ void loop(void)
 
     //***********************************************************************************************
     //| BEGIN IGNITION CALCULATIONS
-
-    //Set dwell
-    //Dwell is stored as ms * 10. ie Dwell of 4.3ms would be 43 in configPage4.
-    //This number therefore needs to be multiplied by 100 to get dwell in uS
-    unsigned const dwell_multiplier = 100;
-
-    if (BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK))
-    {
-      //use cranking dwell
-      currentStatus.dwell = configPage4.dwellCrank * dwell_multiplier;
-    }
-    else
-    {
-      if (configPage2.useDwellMap)
-      {
-        //use running dwell from map
-        currentStatus.dwell = get3DTableValue(&dwellTable, currentStatus.ignLoad, currentStatus.RPM) * dwell_multiplier;
-      }
-      else
-      {
-        //use fixed running dwell
-        currentStatus.dwell =  configPage4.dwellRun * dwell_multiplier;
-      }
-    }
-    currentStatus.dwell = correctionsDwell(currentStatus.dwell);
-
-    //Convert the dwell time to dwell angle based on the current engine speed
-    int dwellAngle = timeToAngleDegPerMicroSec(currentStatus.dwell, degreesPerMicro);
-
-    calculateIgnitionAngles(dwellAngle);
-
-    //If ignition timing is being tracked per tooth, perform the calcs to get the end teeth
-    //This only needs to be run if the advance figure has changed,
-    //otherwise the end teeth will still be the same.
-    if (configPage2.perToothIgn)
-    {
-      decoder.handler.set_end_teeth();
-    }
+    calculate_ignition();
 
     apply_engine_protections();
 
