@@ -975,29 +975,37 @@ byte getGear(void)
     //If the speed is non-zero, default to the last calculated gear
     tempGear = currentStatus.gear;
 
-    uint16_t pulsesPer1000rpm = udiv_32_16(currentStatus.vss * 10000UL, currentStatus.RPM); //Gives the current pulses per 1000RPM, multiplied by 10 (10x is the multiplication factor for the ratios in TS)
+    //Gives the current pulses per 1000RPM, multiplied by 10
+    //(10x is the multiplication factor for the ratios in TS)
+    uint16_t pulsesPer1000rpm = udiv_32_16(currentStatus.vss * 10000UL, currentStatus.RPM);
     //Begin gear detection
-    if ((pulsesPer1000rpm > (configPage2.vssRatio1 - VSS_GEAR_HYSTERESIS)) && (pulsesPer1000rpm < (configPage2.vssRatio1 + VSS_GEAR_HYSTERESIS)))
+    if (pulsesPer1000rpm > configPage2.vssRatio1 - VSS_GEAR_HYSTERESIS
+        && pulsesPer1000rpm < configPage2.vssRatio1 + VSS_GEAR_HYSTERESIS)
     {
       tempGear = 1;
     }
-    else if ((pulsesPer1000rpm > (configPage2.vssRatio2 - VSS_GEAR_HYSTERESIS)) && (pulsesPer1000rpm < (configPage2.vssRatio2 + VSS_GEAR_HYSTERESIS)))
+    else if (pulsesPer1000rpm > configPage2.vssRatio2 - VSS_GEAR_HYSTERESIS
+             && pulsesPer1000rpm < configPage2.vssRatio2 + VSS_GEAR_HYSTERESIS)
     {
       tempGear = 2;
     }
-    else if ((pulsesPer1000rpm > (configPage2.vssRatio3 - VSS_GEAR_HYSTERESIS)) && (pulsesPer1000rpm < (configPage2.vssRatio3 + VSS_GEAR_HYSTERESIS)))
+    else if (pulsesPer1000rpm > configPage2.vssRatio3 - VSS_GEAR_HYSTERESIS
+             && pulsesPer1000rpm < (configPage2.vssRatio3 + VSS_GEAR_HYSTERESIS)
     {
       tempGear = 3;
     }
-    else if ((pulsesPer1000rpm > (configPage2.vssRatio4 - VSS_GEAR_HYSTERESIS)) && (pulsesPer1000rpm < (configPage2.vssRatio4 + VSS_GEAR_HYSTERESIS)))
+    else if (pulsesPer1000rpm > configPage2.vssRatio4 - VSS_GEAR_HYSTERESIS
+             && pulsesPer1000rpm < (configPage2.vssRatio4 + VSS_GEAR_HYSTERESIS)
     {
       tempGear = 4;
     }
-    else if ((pulsesPer1000rpm > (configPage2.vssRatio5 - VSS_GEAR_HYSTERESIS)) && (pulsesPer1000rpm < (configPage2.vssRatio5 + VSS_GEAR_HYSTERESIS)))
+    else if (pulsesPer1000rpm > configPage2.vssRatio5 - VSS_GEAR_HYSTERESIS
+             && pulsesPer1000rpm < (configPage2.vssRatio5 + VSS_GEAR_HYSTERESIS)
     {
       tempGear = 5;
     }
-    else if ((pulsesPer1000rpm > (configPage2.vssRatio6 - VSS_GEAR_HYSTERESIS)) && (pulsesPer1000rpm < (configPage2.vssRatio6 + VSS_GEAR_HYSTERESIS)))
+    else if (pulsesPer1000rpm > configPage2.vssRatio6 - VSS_GEAR_HYSTERESIS
+             && pulsesPer1000rpm < (configPage2.vssRatio6 + VSS_GEAR_HYSTERESIS)
     {
       tempGear = 6;
     }

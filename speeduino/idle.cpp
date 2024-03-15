@@ -207,8 +207,8 @@ void initialiseIdle(bool forcehoming)
       iacCrankStepsTable.axisSize = SIZE_BYTE;
       iacCrankStepsTable.values = configPage6.iacCrankSteps;
       iacCrankStepsTable.axisX = configPage6.iacCrankBins;
-      iacStepTime_uS = configPage6.iacStepTime * 1000;
-      iacCoolTime_uS = configPage9.iacCoolTime * 1000;
+      iacStepTime_uS = MS_TO_US(configPage6.iacStepTime);
+      iacCoolTime_uS = MS_TO_US(configPage9.iacCoolTime);
 
       if (forcehoming)
       {
@@ -238,8 +238,8 @@ void initialiseIdle(bool forcehoming)
       iacCrankStepsTable.axisSize = SIZE_BYTE;
       iacCrankStepsTable.values = configPage6.iacCrankSteps;
       iacCrankStepsTable.axisX = configPage6.iacCrankBins;
-      iacStepTime_uS = configPage6.iacStepTime * 1000;
-      iacCoolTime_uS = configPage9.iacCoolTime * 1000;
+      iacStepTime_uS = MS_TO_US(configPage6.iacStepTime);
+      iacCoolTime_uS = MS_TO_US(configPage9.iacCoolTime);
 
       if (forcehoming)
       {
@@ -283,8 +283,8 @@ void initialiseIdle(bool forcehoming)
       iacCrankStepsTable.axisSize = SIZE_BYTE;
       iacCrankStepsTable.values = configPage6.iacCrankSteps;
       iacCrankStepsTable.axisX = configPage6.iacCrankBins;
-      iacStepTime_uS = configPage6.iacStepTime * 1000;
-      iacCoolTime_uS = configPage9.iacCoolTime * 1000;
+      iacStepTime_uS = MS_TO_US(configPage6.iacStepTime);
+      iacCoolTime_uS = MS_TO_US(configPage9.iacCoolTime);
 
       if (forcehoming)
       {

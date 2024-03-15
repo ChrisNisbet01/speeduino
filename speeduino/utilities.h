@@ -41,10 +41,6 @@ int16_t ProgrammableIOGetData(uint16_t index);
 #define _end_range_address(array) ((array) + _countof((array)))
 #define _end_range_byte_address(array) (((byte*)(array)) + sizeof((array)))
 
-// Pre-processor arithmetic increment (pulled from Boost.Preprocessor)
-#define PP_INC(x) PP_INC_I(x)
-#define PP_INC_I(x) PP_INC_ ## x
-
 #if !defined(MIN)
 #define MIN(a, b) \
     ({\
@@ -57,6 +53,10 @@ int16_t ProgrammableIOGetData(uint16_t index);
 #define TENTHS_TO_MS(tenths) ((tenths) * 100)
 #define MS_TO_US(ms) ((ms) * 1000)
 #define MS_TIMES_10_TO_US(ms) ((ms) * 100)
+
+// Pre-processor arithmetic increment (pulled from Boost.Preprocessor)
+#define PP_INC(x) PP_INC_I(x)
+#define PP_INC_I(x) PP_INC_ ## x
 
 #define PP_INC_0 1
 #define PP_INC_1 2
