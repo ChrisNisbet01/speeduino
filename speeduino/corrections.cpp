@@ -47,7 +47,7 @@ byte activateTPSDOT; //The tpsDOT value seen when the MAE was activated.
 
 bool idleAdvActive = false;
 uint16_t AFRnextCycle;
-unsigned long knockStartTime;
+uint32_t knockStartTime;
 byte lastKnockCount;
 int16_t knockWindowMin; //The current minimum crank angle for a knock pulse to be valid
 int16_t knockWindowMax;//The current maximum crank angle for a knock pulse to be valid
@@ -200,7 +200,7 @@ uint16_t correctionCranking(void)
     crankingValue = table2D_getValue(&crankingEnrichTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET);
     crankingValue = (uint16_t) crankingValue * 5; //multiplied by 5 to get range from 0% to 1275%
     //Taper start value needs to account for ASE that is now running, so total correction does not increase when taper begins
-    unsigned long taperStart = (unsigned long) crankingValue * 100 / currentStatus.ASEValue;
+    uint32_t taperStart = (uint32_t) crankingValue * 100 / currentStatus.ASEValue;
     crankingValue = (uint16_t) map(crankingEnrichTaper, 0, configPage10.crankingEnrichTaper, taperStart, 100); //Taper from start value to 100%
     if (crankingValue < 100) { crankingValue = 100; } //Sanity check
     if( BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ) ) { crankingEnrichTaper++; }
@@ -313,7 +313,7 @@ static int16_t doAECalculation(
   activateDOT = abs(DOT);
   //Set the time in the future where the enrichment will be turned off.
   //aeTime is stored as mS / 10, so multiply it by 10000 to get it in uS
-  currentStatus.AEEndTime = micros_safe() + ((unsigned long)configPage2.aeTime * 10000);
+  currentStatus.AEEndTime = micros_safe() + ((uint32_t)configPage2.aeTime * 10000);
 
   //Check if the rate of change is negative or positive. Negative means deceleration.
   if (DOT < 0)

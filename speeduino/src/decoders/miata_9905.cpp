@@ -257,7 +257,7 @@ uint16_t getRPM_Miata9905(void)
     else
     {
       int tempToothAngle;
-      unsigned long toothTime;
+      uint32_t toothTime;
 
       noInterrupts();
 
@@ -269,7 +269,7 @@ uint16_t getRPM_Miata9905(void)
       interrupts();
 
       toothTime = toothTime * 36;
-      tempRPM = ((unsigned long)tempToothAngle * (MICROS_PER_MIN / 10U)) / toothTime;
+      tempRPM = ((uint32_t)tempToothAngle * (MICROS_PER_MIN / 10U)) / toothTime;
       SetRevolutionTime((10UL * toothTime) / tempToothAngle);
       MAX_STALL_TIME = 366667UL; // 50RPM
     }
@@ -297,7 +297,7 @@ int getCrankAngle_Miata9905(void)
     //This is the current angle ATDC the engine is at. This is the last known
     //position based on what tooth was last 'seen'. It is only accurate to the
     //resolution of the trigger wheel (Eg 36-1 is 10 degrees)
-    unsigned long tempToothLastToothTime;
+    uint32_t tempToothLastToothTime;
     int tempToothCurrentCount;
 
     //Grab some variables that are used in the trigger code and assign them to temp variables.
@@ -306,7 +306,7 @@ int getCrankAngle_Miata9905(void)
 
     tempToothCurrentCount = toothCurrentCount;
     tempToothLastToothTime = toothLastToothTime;
-    unsigned long const lastCrankAngleCalc = micros();
+    uint32_t const lastCrankAngleCalc = micros();
 
     interrupts();
 

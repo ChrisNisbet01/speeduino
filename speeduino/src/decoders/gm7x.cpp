@@ -116,7 +116,7 @@ int getCrankAngle_GM7X(void)
   //This is the current angle ATDC the engine is at. This is the last known
   //position based on what tooth was last 'seen'. It is only accurate to the
   //resolution of the trigger wheel (Eg 36-1 is 10 degrees)
-  unsigned long tempToothLastToothTime;
+  uint32_t tempToothLastToothTime;
   int tempToothCurrentCount;
   //Grab some variables that are used in the trigger code and assign them to temp variables.
 
@@ -124,7 +124,7 @@ int getCrankAngle_GM7X(void)
 
   tempToothCurrentCount = toothCurrentCount;
   tempToothLastToothTime = toothLastToothTime;
-  unsigned long const lastCrankAngleCalc = micros();
+  uint32_t const lastCrankAngleCalc = micros();
 
   interrupts();
 

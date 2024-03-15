@@ -27,7 +27,7 @@ struct FuelSchedule {
   {
   }
 
-  volatile unsigned long duration = 0;///< Scheduled duration (uS ?)
+  volatile uint32_t duration = 0;///< Scheduled duration (uS ?)
   volatile ScheduleStatus Status = OFF; ///< Schedule status: OFF, PENDING, STAGED, RUNNING
   volatile COMPARE_TYPE startCompare = 0; ///< The counter value of the timer when this will start
   volatile COMPARE_TYPE endCompare = 0;   ///< The counter value of the timer when this will end
@@ -92,13 +92,13 @@ void fuelSchedule8Interrupt(void);
 #endif
 #endif
 
-void _setFuelScheduleRunning(FuelSchedule &schedule, unsigned long timeout, unsigned long duration);
-void _setFuelScheduleNext(FuelSchedule &schedule, unsigned long timeout, unsigned long duration);
+void _setFuelScheduleRunning(FuelSchedule &schedule, uint32_t timeout, uint32_t duration);
+void _setFuelScheduleNext(FuelSchedule &schedule, uint32_t timeout, uint32_t duration);
 void disablePendingFuelSchedule(byte channel);
 void nullInjCallback(void);
 
 inline __attribute__((always_inline)) void
-setFuelSchedule(FuelSchedule &schedule, unsigned long timeout, unsigned long duration)
+setFuelSchedule(FuelSchedule &schedule, uint32_t timeout, uint32_t duration)
 {
     if(schedule.Status != RUNNING)
     {

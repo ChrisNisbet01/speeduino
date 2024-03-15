@@ -65,7 +65,7 @@ void FuelSchedule::reset(void)
   interrupts();
 }
 
-void _setFuelScheduleRunning(FuelSchedule &schedule, unsigned long timeout, unsigned long duration)
+void _setFuelScheduleRunning(FuelSchedule &schedule, uint32_t timeout, uint32_t duration)
 {
   schedule.duration = duration;
 
@@ -101,7 +101,7 @@ void _setFuelScheduleRunning(FuelSchedule &schedule, unsigned long timeout, unsi
   interrupts();
 }
 
-void _setFuelScheduleNext(FuelSchedule &schedule, unsigned long timeout, unsigned long duration)
+void _setFuelScheduleNext(FuelSchedule &schedule, uint32_t timeout, uint32_t duration)
 {
   //If the schedule is already running, we can set the next schedule so it is ready to go
   //This is required in cases of high rpm and high DC where there otherwise would not be enough time to set the schedule

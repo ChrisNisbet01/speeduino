@@ -142,7 +142,7 @@ void triggerPri_Vmax(void)
   {
     // Inverted due to vr conditioner. So this is the falling lobe. We only
     // process if there was a valid trigger.
-    unsigned long curGapLocal = curTime - curGap2;
+    uint32_t curGapLocal = curTime - curGap2;
     // Small lobe is 5 degrees, big lobe is 45 degrees. So this should be the wide lobe.
     if (curGapLocal > lastGap * 2)
     {
@@ -195,7 +195,7 @@ uint16_t getRPM_Vmax(void)
     if (currentStatus.RPM < configPage4.crankRPM * 100)
     {
       int tempToothAngle;
-      unsigned long toothTime;
+      uint32_t toothTime;
 
       if (toothLastToothTime == 0 || toothLastMinusOneToothTime == 0)
       {
@@ -214,7 +214,7 @@ uint16_t getRPM_Vmax(void)
         interrupts();
 
         toothTime = toothTime * 36;
-        tempRPM = ((unsigned long)tempToothAngle * (MICROS_PER_MIN / 10U)) / toothTime;
+        tempRPM = ((uint32_t)tempToothAngle * (MICROS_PER_MIN / 10U)) / toothTime;
       }
     }
     else
@@ -232,7 +232,7 @@ int getCrankAngle_Vmax(void)
   //This is the current angle ATDC the engine is at. This is the last known
   //position based on what tooth was last 'seen'. It is only accurate to the
   //resolution of the trigger wheel (Eg 36-1 is 10 degrees)
-  unsigned long tempToothLastToothTime;
+  uint32_t tempToothLastToothTime;
   int tempsecondaryToothCount;
   //Grab some variables that are used in the trigger code and assign them to temp variables.
 

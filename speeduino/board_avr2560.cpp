@@ -122,9 +122,9 @@ ISR(TIMER5_OVF_vect)
     ++timer5_overflow_count;
 }
 
-static inline unsigned long micros_safe(void)
+static inline uint32_t micros_safe(void)
 {
-  unsigned long newMicros;
+  uint32_t newMicros;
   noInterrupts();
   newMicros = (((timer5_overflow_count << 16) + TCNT5) * 4);
   interrupts();

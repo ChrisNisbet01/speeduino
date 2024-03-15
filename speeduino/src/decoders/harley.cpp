@@ -90,7 +90,7 @@ uint16_t getRPM_Harley(void)
     {
       // No difference with this option?
       int tempToothAngle;
-      unsigned long toothTime;
+      uint32_t toothTime;
       if (toothLastToothTime == 0 || toothLastMinusOneToothTime == 0)
       {
         tempRPM = 0;
@@ -110,7 +110,7 @@ uint16_t getRPM_Harley(void)
         interrupts();
 
         toothTime = toothTime * 36;
-        tempRPM = ((unsigned long)tempToothAngle * (MICROS_PER_MIN / 10U)) / toothTime;
+        tempRPM = ((uint32_t)tempToothAngle * (MICROS_PER_MIN / 10U)) / toothTime;
       }
     }
     else
@@ -126,7 +126,7 @@ int getCrankAngle_Harley(void)
   //This is the current angle ATDC the engine is at. This is the last known
   //position based on what tooth was last 'seen'. It is only accurate to the
   //resolution of the trigger wheel (Eg 36-1 is 10 degrees)
-  unsigned long tempToothLastToothTime;
+  uint32_t tempToothLastToothTime;
   int tempToothCurrentCount;
   //Grab some variables that are used in the trigger code and assign them to temp variables.
 
@@ -134,7 +134,7 @@ int getCrankAngle_Harley(void)
 
   tempToothCurrentCount = toothCurrentCount;
   tempToothLastToothTime = toothLastToothTime;
-  unsigned long const lastCrankAngleCalc = micros();
+  uint32_t const lastCrankAngleCalc = micros();
 
   interrupts();
 

@@ -521,7 +521,7 @@ static void apply_ignition_control(void)
         && configPage4.StgCycles == 0
         && !configPage2.perToothIgn)
     {
-      unsigned long uSToEnd = 0;
+      uint32_t uSToEnd = 0;
 
       //Refresh the crank angle info
       currentCrankAngle = ignitionLimits(decoder.handler.get_crank_angle());

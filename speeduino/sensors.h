@@ -29,8 +29,8 @@
 #define TPS_READ_FREQUENCY  30 //ONLY VALID VALUES ARE 15 or 30!!!
 
 extern volatile byte flexCounter;
-extern volatile unsigned long flexStartTime;
-extern volatile unsigned long flexPulseWidth;
+extern volatile uint32_t flexStartTime;
+extern volatile uint32_t flexPulseWidth;
 
 #define ADMUX_DEFAULT_CONFIG  0x40 //AVCC reference, ADC0 input, right adjusted, ADC enabled
 

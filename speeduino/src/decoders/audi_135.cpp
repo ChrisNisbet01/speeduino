@@ -27,7 +27,7 @@ void triggerSetup_Audi135(bool const initialisationComplete)
   toothSystemCount = 0;
   //Trigger filter time is the shortest possible time (in uS) that there can be between crank teeth (ie at max RPM).
   //Any pulses that occur faster than this time will be discarded as noise
-  triggerFilterTime = (unsigned long)(MICROS_PER_SEC / (MAX_RPM / 60U * 135UL));
+  triggerFilterTime = (uint32_t)(MICROS_PER_SEC / (MAX_RPM / 60U * 135UL));
   //Same as above, but fixed at 2 teeth on the secondary input and divided by 2 (for cam speed)
   triggerSecFilterTime = (int)(MICROS_PER_SEC / (MAX_RPM / 60U * 2U)) / 2U;
   //Minimum 50rpm. (3333uS is the time per degree at 50rpm)
@@ -114,7 +114,7 @@ int getCrankAngle_Audi135(void)
   //This is the current angle ATDC the engine is at. This is the last known
   //position based on what tooth was last 'seen'. It is only accurate to the
   //resolution of the trigger wheel (Eg 36-1 is 10 degrees)
-  unsigned long tempToothLastToothTime;
+  uint32_t tempToothLastToothTime;
   int tempToothCurrentCount;
   bool tempRevolutionOne;
   //Grab some variables that are used in the trigger code and assign them to temp variables.
@@ -124,7 +124,7 @@ int getCrankAngle_Audi135(void)
   tempToothCurrentCount = toothCurrentCount;
   tempToothLastToothTime = toothLastToothTime;
   tempRevolutionOne = revolutionOne;
-  unsigned long const lastCrankAngleCalc = micros();
+  uint32_t const lastCrankAngleCalc = micros();
 
   interrupts();
 

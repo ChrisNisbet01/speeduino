@@ -312,7 +312,7 @@ int16_t SPIFlash::readShort(uint32_t _addr, bool fastRead) {
   return data;
 }
 
-// Reads an unsigned long of data from a specific location in a page.
+// Reads an uint32_t of data from a specific location in a page.
 //  Takes two arguments -
 //    1. _addr --> Any address from 0 to capacity
 //    2. fastRead --> defaults to false - executes _beginFastRead() if set to true
@@ -740,10 +740,10 @@ bool SPIFlash::writeShort(uint32_t _addr, int16_t data, bool errorCheck) {
   return true;
 }
 
-// Writes an unsigned long as four bytes starting from a specific location in a page.
+// Writes an uint32_t as four bytes starting from a specific location in a page.
 //  Takes three arguments -
 //    1. _addr --> Any address - from 0 to capacity
-//    2. data --> One unsigned long to be written to a particular location on a page
+//    2. data --> One uint32_t to be written to a particular location on a page
 //    3. errorCheck --> Turned on by default. Checks for writing errors
 // WARNING: You can only write to previously erased memory locations (see datasheet).
 // Use the eraseSector()/eraseBlock32K/eraseBlock64K commands to first clear memory (write 0xFFs)

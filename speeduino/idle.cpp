@@ -30,7 +30,7 @@ uint16_t idle_pwm_max_count; //Used for variable PWM frequency
 volatile unsigned int idle_pwm_cur_value;
 long idle_pid_target_value;
 long FeedForwardTerm;
-unsigned long idle_pwm_target_value;
+uint32_t idle_pwm_target_value;
 long idle_cl_target_rpm;
 
 struct table2D iacPWMTable;
@@ -768,7 +768,7 @@ void idleControl(unsigned const delta_ms)
       if (PID_computed)
       {
         idle_pwm_target_value = idle_pid_target_value >> hi_res_shift;
-        currentStatus.idleLoad = ((unsigned long)(idle_pwm_target_value * 100UL) / idle_pwm_max_count);
+        currentStatus.idleLoad = ((uint32_t)(idle_pwm_target_value * 100UL) / idle_pwm_max_count);
       }
       idleCounter++;
     }

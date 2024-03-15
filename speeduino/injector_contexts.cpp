@@ -25,7 +25,7 @@ void injector_context_st::applyInjectorControl(uint16_t injOpenTime, uint16_t op
 
     if (timeout > 0)
     {
-      setFuelSchedule(*fuelSchedule, timeout, (unsigned long)PW);
+      setFuelSchedule(*fuelSchedule, timeout, (uint32_t)PW);
     }
   }
 }
@@ -87,8 +87,8 @@ static void initialiseFuelSchedules(void)
  */
 void beginInjectorPriming(void)
 {
-  static unsigned long const priming_delay_us = 100;
-  unsigned long primingValue =
+  static uint32_t const priming_delay_us = 100;
+  uint32_t primingValue =
     table2D_getValue(&PrimingPulseTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET);
 
   if (primingValue > 0 && currentStatus.TPS < configPage4.floodClear)

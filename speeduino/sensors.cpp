@@ -27,15 +27,15 @@ A full copy of the license may be found in the projects root directory
 
 uint32_t MAPcurRev; //Tracks which revolution we're sampling on
 unsigned int MAPcount; //Number of samples taken in the current MAP cycle
-unsigned long MAPrunningValue; //Used for tracking either the total of all MAP readings in this cycle (Event average) or the lowest value detected in this cycle (event minimum)
-unsigned long EMAPrunningValue; //As above but for EMAP
+uint32_t MAPrunningValue; //Used for tracking either the total of all MAP readings in this cycle (Event average) or the lowest value detected in this cycle (event minimum)
+uint32_t EMAPrunningValue; //As above but for EMAP
 bool auxIsEnabled;
-volatile unsigned long vssTimes[VSS_SAMPLES] = { 0 };
+volatile uint32_t vssTimes[VSS_SAMPLES] = { 0 };
 volatile byte vssIndex;
 
 volatile byte flexCounter = 0;
-volatile unsigned long flexStartTime;
-volatile unsigned long flexPulseWidth;
+volatile uint32_t flexStartTime;
+volatile uint32_t flexPulseWidth;
 
 volatile byte knockCounter = 0;
 volatile uint16_t knockAngle;
@@ -519,9 +519,9 @@ void readMAP(void)
         //Error check
         if ((tempReading < VALID_MAP_MAX) && (tempReading > VALID_MAP_MIN))
         {
-          if ((unsigned long)tempReading < MAPrunningValue) //Check whether the current reading is lower than the running minimum
+          if ((uint32_t)tempReading < MAPrunningValue) //Check whether the current reading is lower than the running minimum
           {
-            MAPrunningValue = (unsigned long)tempReading;
+            MAPrunningValue = (uint32_t)tempReading;
           }
         }
         else
@@ -1084,7 +1084,7 @@ void flexPulse(void)
 {
   if (Flex.read())
   {
-    unsigned long const tempPW = micros() - flexStartTime; //Calculate the pulse width
+    uint32_t const tempPW = micros() - flexStartTime; //Calculate the pulse width
 
     flexPulseWidth = ADC_FILTER(tempPW, configPage4.FILTER_FLEX, flexPulseWidth);
     ++flexCounter;

@@ -634,7 +634,7 @@ void boostControl(void)
       {
         //Convert boost duty (Which is a % multiplied by 100) to a pwm count
         boost_pwm_target_value =
-          ((unsigned long)currentStatus.boostDuty * boost_pwm_max_count) / 10000;
+          ((uint32_t)currentStatus.boostDuty * boost_pwm_max_count) / 10000;
       }
     }
     else if (configPage4.boostType == CLOSED_LOOP_BOOST)
@@ -700,7 +700,7 @@ void boostControl(void)
           else if (PIDcomputed)
           {
             //Convert boost duty (Which is a % multiplied by 100) to a pwm count
-            boost_pwm_target_value = ((unsigned long)(currentStatus.boostDuty) * boost_pwm_max_count) / 10000;
+            boost_pwm_target_value = ((uint32_t)(currentStatus.boostDuty) * boost_pwm_max_count) / 10000;
           }
           else
           {
@@ -718,7 +718,7 @@ void boostControl(void)
         boostPID.Initialize(); //This resets the ITerm value to prevent rubber banding
         //Boost control needs to have a high duty cycle if control is below threshold (baro or fixed value). This ensures the waste gate is closed as much as possible, this build boost as fast as possible.
         currentStatus.boostDuty = configPage15.boostDCWhenDisabled * 100;
-        boost_pwm_target_value = ((unsigned long)(currentStatus.boostDuty) * boost_pwm_max_count) / 10000; //Convert boost duty (Which is a % multiplied by 100) to a pwm count
+        boost_pwm_target_value = ((uint32_t)(currentStatus.boostDuty) * boost_pwm_max_count) / 10000; //Convert boost duty (Which is a % multiplied by 100) to a pwm count
         ENABLE_BOOST_TIMER(); //Turn on the compare unit (ie turn on the interrupt) if boost duty >0
         if (currentStatus.boostDuty == 0) //If boost control does nothing disable PWM completely
         {
@@ -855,7 +855,7 @@ void vvtControl(void)
         else
         {
           //This is dumb, but need to convert the current angle into a long pointer.
-          vvt_pid_target_angle = (unsigned long)currentStatus.vvt1TargetAngle;
+          vvt_pid_target_angle = (uint32_t)currentStatus.vvt1TargetAngle;
           vvt_pid_current_angle = (long)currentStatus.vvt1Angle;
 
           //If not already at target angle, calculate new value from PID
@@ -908,7 +908,7 @@ void vvtControl(void)
           else
           {
             //This is dumb, but need to convert the current angle into a long pointer.
-            vvt2_pid_target_angle = (unsigned long)currentStatus.vvt2TargetAngle;
+            vvt2_pid_target_angle = (uint32_t)currentStatus.vvt2TargetAngle;
             vvt2_pid_current_angle = (long)currentStatus.vvt2Angle;
             //If not already at target angle, calculate new value from PID
             bool PID_compute = vvt2PID.Compute(true);

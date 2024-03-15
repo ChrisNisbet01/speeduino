@@ -70,7 +70,7 @@ void IgnitionSchedule::reset(void)
 }
 
 void _setIgnitionScheduleRunning(
-  IgnitionSchedule &schedule, unsigned long timeout, unsigned long durationMicrosecs)
+  IgnitionSchedule &schedule, uint32_t timeout, uint32_t durationMicrosecs)
 {
   schedule.duration = durationMicrosecs;
 
@@ -107,7 +107,7 @@ void _setIgnitionScheduleRunning(
   interrupts();
 }
 
-void _setIgnitionScheduleNext(IgnitionSchedule &schedule, unsigned long timeout, unsigned long durationMicrosecs)
+void _setIgnitionScheduleNext(IgnitionSchedule &schedule, uint32_t timeout, uint32_t durationMicrosecs)
 {
   //If the schedule is already running, we can set the next schedule so it is ready to go
   //This is required in cases of high rpm and high DC where there otherwise would not be enough time to set the schedule
@@ -117,7 +117,7 @@ void _setIgnitionScheduleNext(IgnitionSchedule &schedule, unsigned long timeout,
 }
 
 
-void refreshIgnitionSchedule1(unsigned long timeToEnd)
+void refreshIgnitionSchedule1(uint32_t timeToEnd)
 {
   //Must have the threshold check here otherwise it can cause a condition where
   //the compare fires twice, once after the other, both for the end

@@ -212,20 +212,20 @@ static inline bool HasAnySync(const statuses &status)
   return status.hasSync || BIT_CHECK(status.status3, BIT_STATUS3_HALFSYNC);
 }
 
-volatile unsigned long curTime;
-volatile unsigned long curGap;
-volatile unsigned long curTime2;
-volatile unsigned long curGap2;
-volatile unsigned long curTime3;
-volatile unsigned long curGap3;
-volatile unsigned long lastGap;
-volatile unsigned long targetGap;
+volatile uint32_t curTime;
+volatile uint32_t curGap;
+volatile uint32_t curTime2;
+volatile uint32_t curGap2;
+volatile uint32_t curTime3;
+volatile uint32_t curGap3;
+volatile uint32_t lastGap;
+volatile uint32_t targetGap;
 
 //The maximum time (in uS) that the system will continue to function before the
 //engine is considered stalled/stopped. This is unique to each decoder,
 //depending on the number of teeth etc. 500000 (half a second) is used as the
 //default value, most decoders will be much less.
-unsigned long MAX_STALL_TIME = MICROS_PER_SEC / 2U;
+uint32_t MAX_STALL_TIME = MICROS_PER_SEC / 2U;
 //The current number of teeth (Once sync has been achieved, this can never actually be 0)
 volatile uint16_t toothCurrentCount = 0;
 //Used for decoders such as Audi 135 where not every tooth is used for
@@ -233,29 +233,29 @@ volatile uint16_t toothCurrentCount = 0;
 //not the number being used to calculate crank angle
 volatile byte toothSystemCount = 0;
 //As below, but used for decoders where not every tooth count is used for calculation
-volatile unsigned long toothSystemLastToothTime = 0;
+volatile uint32_t toothSystemLastToothTime = 0;
 //The time (micros()) that the last tooth was registered
-volatile unsigned long toothLastToothTime = 0;
+volatile uint32_t toothLastToothTime = 0;
 //The time (micros()) that the last tooth was registered on the secondary input
-volatile unsigned long toothLastSecToothTime = 0;
+volatile uint32_t toothLastSecToothTime = 0;
 //The time (micros()) that the last tooth was registered on the second cam input
-volatile unsigned long toothLastThirdToothTime = 0;
+volatile uint32_t toothLastThirdToothTime = 0;
 //The time (micros()) that the tooth before the last tooth was registered
-volatile unsigned long toothLastMinusOneToothTime = 0;
+volatile uint32_t toothLastMinusOneToothTime = 0;
 //The time (micros()) that the tooth before the last tooth was registered on secondary input
-volatile unsigned long toothLastMinusOneSecToothTime = 0;
+volatile uint32_t toothLastMinusOneSecToothTime = 0;
 //The time (micros()) that the last tooth rose (used by special decoders to
 //determine missing teeth polarity)
-volatile unsigned long toothLastToothRisingTime = 0;
+volatile uint32_t toothLastToothRisingTime = 0;
 //The time (micros()) that the last tooth rose on the secondary input (used by
 //special decoders to determine missing teeth polarity)
-volatile unsigned long toothLastSecToothRisingTime = 0;
-volatile unsigned long targetGap2;
-volatile unsigned long targetGap3;
+volatile uint32_t toothLastSecToothRisingTime = 0;
+volatile uint32_t targetGap2;
+volatile uint32_t targetGap3;
 //The time (micros()) that tooth 1 last triggered
-volatile unsigned long toothOneTime = 0;
+volatile uint32_t toothOneTime = 0;
 //The 2nd to last time (micros()) that tooth 1 last triggered
-volatile unsigned long toothOneMinusOneTime = 0;
+volatile uint32_t toothOneMinusOneTime = 0;
 // For sequential operation, this tracks whether the current revolution is 1 or 2 (not 1)
 volatile bool revolutionOne = false;
 // used to identify in the rover pattern which has a non unique primary trigger
@@ -269,26 +269,26 @@ volatile unsigned int secondaryToothCount;
 // something unique - has the secondary tooth changed.
 volatile unsigned int secondaryLastToothCount = 0;
 //The time (micros()) that the last tooth was registered (Cam input)
-volatile unsigned long secondaryLastToothTime = 0;
+volatile uint32_t secondaryLastToothTime = 0;
 //The time (micros()) that the last tooth was registered (Cam input)
-volatile unsigned long secondaryLastToothTime1 = 0;
+volatile uint32_t secondaryLastToothTime1 = 0;
 
 //Used for identifying the current third (Usually exhaust cam - used for VVT2) tooth for patterns with multiple secondary teeth
 volatile unsigned int thirdToothCount;
 //The time (micros()) that the last tooth was registered (Cam input)
-volatile unsigned long thirdLastToothTime = 0;
+volatile uint32_t thirdLastToothTime = 0;
 //The time (micros()) that the last tooth was registered (Cam input)
-volatile unsigned long thirdLastToothTime1 = 0;
+volatile uint32_t thirdLastToothTime1 = 0;
 
 uint16_t triggerActualTeeth;
 // The shortest time (in uS) that pulses will be accepted (Used for debounce filtering)
-volatile unsigned long triggerFilterTime;
+volatile uint32_t triggerFilterTime;
 // The shortest time (in uS) that pulses will be accepted (Used for debounce filtering)
 // for the secondary input
-volatile unsigned long triggerSecFilterTime;
+volatile uint32_t triggerSecFilterTime;
 // The shortest time (in uS) that pulses will be accepted (Used for debounce filtering)
 // for the Third input
-volatile unsigned long triggerThirdFilterTime;
+volatile uint32_t triggerThirdFilterTime;
 
 volatile uint8_t decoderState = 0;
 
@@ -303,7 +303,7 @@ volatile uint16_t triggerToothAngle;
 //(Useful for missing tooth type decoders)
 byte checkSyncToothCount;
 //The time between the vvt reference pulse and the last crank pulse
-unsigned long lastVVTtime;
+uint32_t lastVVTtime;
 
 //An array for storing fixed tooth angles. Currently sized at 24 for the GM 24X decoder,
 //but may grow later if there are other decoders that use this style
@@ -327,7 +327,7 @@ libdivide::libdivide_s16_t divTriggerToothAngle;
  * @param whichTooth - 0 for Primary (Crank), 2 for Secondary (Cam) 3 for Tertiary (Cam)
  */
 static inline void
-addToothLogEntry(unsigned long toothTime, tooth_source_t whichTooth)
+addToothLogEntry(uint32_t toothTime, tooth_source_t whichTooth)
 {
   if (BIT_CHECK(currentStatus.status1, BIT_STATUS1_TOOTHLOG1READY))
   {

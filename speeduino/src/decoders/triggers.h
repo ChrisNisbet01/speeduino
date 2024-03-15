@@ -9,11 +9,11 @@ extern libdivide::libdivide_s16_t divTriggerToothAngle;
 #endif
 
 extern volatile unsigned int thirdToothCount;
-extern volatile unsigned long triggerThirdFilterTime;
-extern volatile unsigned long toothLastToothRisingTime;
+extern volatile uint32_t triggerThirdFilterTime;
+extern volatile uint32_t toothLastToothRisingTime;
 //The time (micros()) that the last tooth rose on the secondary input (used by
 //special decoders to determine missing teeth polarity)
-extern volatile unsigned long toothLastSecToothRisingTime;
+extern volatile uint32_t toothLastSecToothRisingTime;
 extern volatile unsigned int secondaryLastToothCount;
 
 //The current number of teeth
@@ -45,7 +45,7 @@ static inline void checkPerToothTiming(int16_t crankAngle, uint16_t currentTooth
  * Sets the new filter time based on the current settings.
  * This ONLY works for even spaced decoders.
  */
-static inline void setFilter(unsigned long curGap)
+static inline void setFilter(uint32_t curGap)
 {
   if (configPage4.triggerFilter == 1)
   {

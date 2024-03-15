@@ -7,9 +7,9 @@
 
 struct crankmaths_rev_testdata {
   uint16_t rpm;
-  unsigned long revolutionTime;
+  uint32_t revolutionTime;
   uint16_t angle;
-  unsigned long expected;
+  uint32_t expected;
 } *crankmaths_rev_testdata_current;
 
 void test_crankmaths_angletotime_revolution_execute() {
@@ -21,9 +21,9 @@ void test_crankmaths_angletotime_revolution_execute() {
 struct crankmaths_tooth_testdata {
   uint16_t rpm;
   uint16_t triggerToothAngle;
-  unsigned long toothTime;
+  uint32_t toothTime;
   uint16_t angle;
-  unsigned long expected;
+  uint32_t expected;
 } *crankmaths_tooth_testdata_current;
 
 void test_crankmaths_angletotime_tooth_execute() {

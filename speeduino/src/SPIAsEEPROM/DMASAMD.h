@@ -13,7 +13,7 @@
 #define BYTES 1024
 char txbuf[BYTES], rxbuf[BYTES];
 
-/*void prmbs(char *lbl,unsigned long us,int bits) {
+/*void prmbs(char *lbl,uint32_t us,int bits) {
     float mbs = (float)bits/us;
     Serial.print(mbs,2); Serial.print(" mbs  ");
     Serial.print(us); Serial.print(" us   ");

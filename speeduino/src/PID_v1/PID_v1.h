@@ -69,10 +69,10 @@ class PID
     long *mySetpoint;           //   PID, freeing the user from having to constantly tell us
                                   //   what these values are.  with pointers we'll just know.
 
-	unsigned long lastTime;
+	uint32_t lastTime;
 	long ITerm, lastInput;
 
-	unsigned long SampleTime;
+	uint32_t SampleTime;
 	long outMin, outMax;
 	bool inAuto;
 };
@@ -144,7 +144,7 @@ class integerPID
     long *mySetpoint;           //   PID, freeing the user from having to constantly tell us
                                   //   what these values are.  with pointers we'll just know.
 
-	unsigned long lastTime;
+	uint32_t lastTime;
 	long outputSum, lastInput, lastMinusOneInput;
   int16_t lastError;
 
@@ -222,7 +222,7 @@ class integerPID_ideal
     byte *mySampleTime;
 
 
-	unsigned long lastTime;
+	uint32_t lastTime;
   long lastError;
 	long ITerm, lastInput;
 

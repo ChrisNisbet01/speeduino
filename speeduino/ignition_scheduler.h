@@ -24,7 +24,7 @@ struct IgnitionSchedule {
   {
   }
 
-  volatile unsigned long duration = 0;///< Scheduled duration (uS ?)
+  volatile uint32_t duration = 0;///< Scheduled duration (uS ?)
   volatile ScheduleStatus Status = OFF; ///< Schedule status: OFF, PENDING, STAGED, RUNNING
   struct
   {
@@ -34,7 +34,7 @@ struct IgnitionSchedule {
   {
     coilCallback_fn pCallback = nullptr;
   } end;
-  volatile unsigned long startTime = 0; /**< The system time (in uS) that the schedule started, used by the overdwell protection in timers.ino */
+  volatile uint32_t startTime = 0; /**< The system time (in uS) that the schedule started, used by the overdwell protection in timers.ino */
   volatile COMPARE_TYPE startCompare = 0; ///< The counter value of the timer when this will start
   volatile COMPARE_TYPE endCompare = 0;   ///< The counter value of the timer when this will end
 
@@ -79,7 +79,7 @@ typedef enum
 
 void disablePendingIgnSchedule(byte channel);
 
-void refreshIgnitionSchedule1(unsigned long timeToEnd);
+void refreshIgnitionSchedule1(uint32_t timeToEnd);
 
 //The ARM cores use separate functions for their ISRs
 #if defined(ARDUINO_ARCH_STM32) || defined(CORE_TEENSY)
@@ -111,13 +111,13 @@ void refreshIgnitionSchedule1(unsigned long timeToEnd);
 
 #endif
 
-void _setIgnitionScheduleRunning(IgnitionSchedule &schedule, unsigned long timeout, unsigned long duration);
-void _setIgnitionScheduleNext(IgnitionSchedule &schedule, unsigned long timeout, unsigned long duration);
+void _setIgnitionScheduleRunning(IgnitionSchedule &schedule, uint32_t timeout, uint32_t duration);
+void _setIgnitionScheduleNext(IgnitionSchedule &schedule, uint32_t timeout, uint32_t duration);
 void nullIgnCallback(void);
 
 static inline __attribute__((always_inline))
 void setIgnitionSchedule(
-  IgnitionSchedule &schedule, unsigned long timeout, unsigned long durationMicrosecs)
+  IgnitionSchedule &schedule, uint32_t timeout, uint32_t durationMicrosecs)
 {
   //Check that we're not already part way through a schedule.
   if(schedule.Status != RUNNING)

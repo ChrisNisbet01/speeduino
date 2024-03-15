@@ -128,7 +128,7 @@ byte checkAFRLimit(void)
 {
   static bool checkAFRLimitActive = false;
   static bool afrProtectCountEnabled = false;
-  static unsigned long afrProtectCount = 0;
+  static uint32_t afrProtectCount = 0;
   static constexpr char X2_MULTIPLIER = 2;
   static constexpr char X100_MULTIPLIER = 100;
 

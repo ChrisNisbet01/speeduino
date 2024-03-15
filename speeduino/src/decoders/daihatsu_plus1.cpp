@@ -108,7 +108,7 @@ void triggerPri_Daihatsu(void)
     {
       if (toothSystemCount >= 3) //Need to have seen at least 3 teeth to determine SYNC
       {
-        unsigned long targetTime;
+        uint32_t targetTime;
         //We need to try and find the extra tooth (#2) which is located 30 degrees
         //after tooth #1
         //Aim for tooth times less than about 60 degrees
@@ -190,7 +190,7 @@ int getCrankAngle_Daihatsu(void)
   //This is the current angle ATDC the engine is at. This is the last known
   //position based on what tooth was last 'seen'. It is only accurate to the
   //resolution of the trigger wheel (Eg 36-1 is 10 degrees)
-  unsigned long tempToothLastToothTime;
+  uint32_t tempToothLastToothTime;
   int tempToothCurrentCount;
   int crankAngle;
   //Grab some variables that are used in the trigger code and assign them to temp variables.
@@ -199,7 +199,7 @@ int getCrankAngle_Daihatsu(void)
 
   tempToothCurrentCount = toothCurrentCount;
   tempToothLastToothTime = toothLastToothTime;
-  unsigned long const lastCrankAngleCalc = micros();
+  uint32_t const lastCrankAngleCalc = micros();
 
   interrupts();
 

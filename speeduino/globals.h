@@ -476,14 +476,14 @@ extern byte triggerInterrupt3;
 
 extern uint8_t softLimitTime;  //The time (in 0.1 seconds, based on seclx10) that the soft limiter started
 extern volatile uint16_t mainLoopCount;
-extern unsigned long revolutionTime;                  //The time in uS that one revolution would take at current speed (The time tooth 1 was last seen, minus the time it was seen prior to that)
-extern volatile unsigned long timer5_overflow_count;  //Increments every time counter 5 overflows. Used for the fast version of micros()
-extern volatile unsigned long ms_counter;             //A counter that increments once per ms
+extern uint32_t revolutionTime;                  //The time in uS that one revolution would take at current speed (The time tooth 1 was last seen, minus the time it was seen prior to that)
+extern volatile uint32_t timer5_overflow_count;  //Increments every time counter 5 overflows. Used for the fast version of micros()
+extern volatile uint32_t ms_counter;             //A counter that increments once per ms
 extern uint16_t fixedCrankingOverride;
 extern volatile uint32_t toothHistory[TOOTH_LOG_SIZE];
 extern volatile uint8_t compositeLogHistory[TOOTH_LOG_SIZE];
 extern volatile unsigned int toothHistoryIndex;
-extern unsigned long currentLoopTime;   /**< The time (in uS) that the current mainloop started */
+extern uint32_t currentLoopTime;   /**< The time (in uS) that the current mainloop started */
 extern volatile uint16_t ignitionCount; /**< The count of ignition events that have taken place since the engine started */
 //The below shouldn't be needed and probably should be cleaned up, but the Atmel SAM (ARM) boards use a specific type for the trigger edge values rather than a simple byte/int
 #if defined(CORE_SAMD21)
@@ -582,7 +582,7 @@ struct statuses {
   bool CTPSActive;               /**< Whether the externally controlled closed throttle position sensor is currently active */
   volatile byte ethanolPct;      /**< Ethanol reading (if enabled). 0 = No ethanol, 100 = pure ethanol. Eg E85 = 85. */
   volatile int8_t fuelTemp;
-  unsigned long AEEndTime;          /**< The target end time used whenever AE (acceleration enrichment) is turned on */
+  uint32_t AEEndTime;          /**< The target end time used whenever AE (acceleration enrichment) is turned on */
   volatile byte status1;            ///< Status bits (See BIT_STATUS1_* defines on top of this file)
   volatile byte spark;              ///< Spark status/control indicator bits (launch control, boost cut, spark errors, See BIT_SPARK_* defines)
   volatile byte spark2;             ///< Spark 2 ... (See also @ref config10 spark2* members and BIT_SPARK2_* defines)

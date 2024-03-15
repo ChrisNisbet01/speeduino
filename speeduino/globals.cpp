@@ -69,8 +69,8 @@ volatile uint16_t mainLoopCount; //Main loop counter (incremented at each main l
 //(The time tooth 1 was last seen, minus the time it was seen prior to that)
 uint32_t revolutionTime;
 //Increments every time counter 5 overflows. Used for the fast version of micros()
-volatile unsigned long timer5_overflow_count = 0;
-volatile unsigned long ms_counter = 0; //A counter that increments once per ms
+volatile uint32_t timer5_overflow_count = 0;
+volatile uint32_t ms_counter = 0; //A counter that increments once per ms
 uint16_t fixedCrankingOverride = 0;
 bool clutchTrigger;
 bool previousClutchTrigger;
@@ -79,7 +79,7 @@ volatile uint8_t compositeLogHistory[TOOTH_LOG_SIZE];
 volatile bool fpPrimed = false; ///< Tracks whether or not the fuel pump priming has been completed yet
 volatile bool injPrimed = false; ///< Tracks whether or not the injectors priming has been completed yet
 volatile unsigned int toothHistoryIndex = 0; ///< Current index to @ref toothHistory array
-unsigned long currentLoopTime; /**< The time (in uS) that the current mainloop started */
+uint32_t currentLoopTime; /**< The time (in uS) that the current mainloop started */
 volatile uint16_t ignitionCount; /**< The count of ignition events that have taken place since the engine started */
 #if defined(CORE_SAMD21)
   PinStatus primaryTriggerEdge;

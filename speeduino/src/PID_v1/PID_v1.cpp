@@ -47,7 +47,7 @@ PID::PID(long* Input, long* Output, long* Setpoint,
 bool PID::Compute()
 {
    if(!inAuto) return false;
-   unsigned long now = millis();
+   uint32_t now = millis();
    SampleTime = (now - lastTime);
    //if(timeChange>=SampleTime)
    {
@@ -110,11 +110,11 @@ void PID::SetSampleTime(int NewSampleTime)
 {
    if (NewSampleTime > 0)
    {
-      unsigned long ratioX1000  = (unsigned long)(NewSampleTime * 1000) / (unsigned long)SampleTime;
+      uint32_t ratioX1000  = (uint32_t)(NewSampleTime * 1000) / (uint32_t)SampleTime;
       ki = (ki * ratioX1000) / 1000;
       //kd /= ratio;
       kd = (kd * 1000) / ratioX1000;
-      SampleTime = (unsigned long)NewSampleTime;
+      SampleTime = (uint32_t)NewSampleTime;
    }
 }
 
@@ -242,8 +242,8 @@ bool integerPID::Compute(bool pOnE, long FeedForwardTerm)
       return false;
    }
 
-   unsigned long now = millis();
-   unsigned long timeChange = now - lastTime;
+   uint32_t now = millis();
+   uint32_t timeChange = now - lastTime;
 
    if(timeChange >= SampleTime)
    {
@@ -366,7 +366,7 @@ bool integerPID::Compute2(int target, int input, bool pOnE)
      return false;
    }
 
-   unsigned long now = millis();
+   uint32_t now = millis();
    uint16_t timeChange = now - lastTime;
 
    if (timeChange >= SampleTime)
@@ -481,7 +481,7 @@ void integerPID::SetTunings(int16_t Kp, int16_t Ki, int16_t Kd, byte realTime)
  ******************************************************************************/
 void integerPID::SetSampleTime(uint16_t NewSampleTime)
 {
-   if (SampleTime == (unsigned long)NewSampleTime) return; //If new value = old value, no action required.
+   if (SampleTime == (uint32_t)NewSampleTime) return; //If new value = old value, no action required.
    SampleTime = NewSampleTime;
 
    //This resets the tuning values with the appropriate new scaling
@@ -613,8 +613,8 @@ bool integerPID_ideal::Compute()
  **********************************************************************************/
 bool integerPID_ideal::Compute(uint16_t FeedForward)
 {
-   unsigned long now = millis();
-   unsigned long timeChange = now - lastTime;
+   uint32_t now = millis();
+   uint32_t timeChange = now - lastTime;
    if (timeChange >= *mySampleTime)
    {
       /*Compute all the working error variables*/

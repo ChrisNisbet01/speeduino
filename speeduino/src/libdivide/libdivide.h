@@ -374,8 +374,8 @@ static LIBDIVIDE_INLINE int16_t libdivide_count_leading_zeros16(uint16_t val) {
     // Fast way to count leading zeros
     return __builtin_clz(val) - 16;
 #elif defined(LIBDIVIDE_VC)
-    unsigned long result;
-    if (_BitScanReverse(&result, (unsigned long)val)) {
+    uint32_t result;
+    if (_BitScanReverse(&result, (uint32_t)val)) {
         return (int16_t)(15 - result);
     }
     return 0;
@@ -403,7 +403,7 @@ static LIBDIVIDE_INLINE int32_t libdivide_count_leading_zeros32(uint32_t val) {
     // Fast way to count leading zeros
     return __builtin_clz(val);
 #elif defined(LIBDIVIDE_VC)
-    unsigned long result;
+    uint32_t result;
     if (_BitScanReverse(&result, val)) {
         return 31 - result;
     }
@@ -429,7 +429,7 @@ static LIBDIVIDE_INLINE int32_t libdivide_count_leading_zeros64(uint64_t val) {
     // Fast way to count leading zeros
     return __builtin_clzll(val);
 #elif defined(LIBDIVIDE_VC) && defined(_WIN64)
-    unsigned long result;
+    uint32_t result;
     if (_BitScanReverse64(&result, val)) {
         return 63 - result;
     }
