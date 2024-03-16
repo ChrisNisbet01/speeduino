@@ -5,6 +5,7 @@
 #include "../../bit_macros.h"
 #include "../../auxiliary_pins.h"
 #include "../../utilities.h"
+#include "../../crank.h"
 
 static inline void triggerRecordVVT1Angle(void)
 {
@@ -499,7 +500,7 @@ int getCrankAngle_missingTooth(void)
 
   uint32_t const lastCrankAngleCalc = micros();
   uint32_t const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
-  crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
+  crankAngle += crank.timeToAngleDegPerMicroSec(elapsedTime);
 
   if (crankAngle >= 720)
   {

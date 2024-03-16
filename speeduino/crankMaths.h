@@ -81,21 +81,6 @@ uint32_t angleToTimeMicroSecPerDegree(uint16_t angle);
 uint32_t angleToTimeIntervalTooth(uint16_t angle);
 ///@}
 
-/**
- * @name Converts a time interval in microseconds to the equivalent degrees of angular (crank)
- * rotation at current RPM.
- *
- * @param time_us Time interval in uS
- * @param degrees_per_us Amount of crank angle expected per microsecond
- * @return Angle in degrees
- */
-///@{
-/** @brief Converts based on the the interval on time one degree of rotation takes
- *
- * Inverse of angleToTimeMicroSecPerDegree
-*/
-uint16_t timeToAngleDegPerMicroSec(uint32_t time_us, uint32_t degrees_per_us);
-
 /** @brief Converts based on the time interval between the 2 most recently detected decoder teeth
  *
  * Inverse of angleToTimeIntervalTooth

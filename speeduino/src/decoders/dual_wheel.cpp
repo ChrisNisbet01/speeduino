@@ -207,7 +207,7 @@ int getCrankAngle_DualWheel(void)
   int crankAngle = ((tempToothCurrentCount - 1) * triggerToothAngle) + configPage4.triggerAngle;
   uint32_t const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
 
-  crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
+  crankAngle += crank.timeToAngleDegPerMicroSec(elapsedTime);
 
   //Sequential check (simply sets whether we're on the first or 2nd revolution of the cycle)
   if (tempRevolutionOne && configPage4.TrigSpeed == CRANK_SPEED)

@@ -8,6 +8,7 @@
 #include "../../auxiliary_pins.h"
 #include "../../utilities.h"
 #include "../../globals.h"
+#include "../../crank.h"
 
 /** Yamaha Vmax 1990+ with 6 uneven teeth, triggering on the wide lobe.
 Within the decoder code, the sync tooth is referred to as tooth #1.*
@@ -248,7 +249,7 @@ int getCrankAngle_Vmax(void)
 
   //Estimate the number of degrees travelled since the last tooth}
   uint32_t const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
-  crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
+  crankAngle += crank.timeToAngleDegPerMicroSec(elapsedTime);
 
   if (crankAngle >= 720)
   {

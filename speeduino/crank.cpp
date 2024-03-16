@@ -2,6 +2,9 @@
 #include "maths.h"
 #include "src/decoders/decoders.h"
 
+static constexpr uint8_t UQ1X15_Shift = 15U;
+static constexpr uint8_t const degreesPerMicro_Shift = UQ1X15_Shift;
+
 Crank crank;
 
 bool Crank::setRevolutionTime(uint32_t const new_revolution_time)
@@ -16,5 +19,12 @@ bool Crank::setRevolutionTime(uint32_t const new_revolution_time)
   }
 
   return revolution_time_changed;
+}
+
+uint16_t Crank::timeToAngleDegPerMicroSec(uint32_t const time_us)
+{
+  uint32_t const degFixed = time_us * degreesPerMicro;
+
+  return RSHIFT_ROUND(degFixed, degreesPerMicro_Shift);
 }
 

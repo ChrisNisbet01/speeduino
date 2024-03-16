@@ -294,9 +294,6 @@ volatile uint32_t triggerThirdFilterTime;
 
 volatile uint8_t decoderState = 0;
 
-UQ24X8_t microsPerDegree;
-UQ1X15_t degreesPerMicro;
-
 // The shortest valid time (in uS) pulse DURATION
 unsigned int triggerSecFilterTime_duration;
 //The number of crank degrees that elapse per tooth
@@ -565,18 +562,6 @@ __attribute__((noinline))
 bool SetRevolutionTime(uint32_t revTime)
 {
   return crank.setRevolutionTime(revTime);
-#if 0
-  bool const revolution_time_changed = revTime != revolutionTime;
-
-  if (revolution_time_changed)
-  {
-    revolutionTime = revTime;
-    microsPerDegree = div360(revolutionTime << microsPerDegree_Shift);
-    degreesPerMicro = UDIV_ROUND_CLOSEST(UINT32_C(360) << degreesPerMicro_Shift, revolutionTime, uint32_t);
-  }
-
-  return revolution_time_changed;
-#endif
 }
 
 bool UpdateRevolutionTimeFromTeeth(bool isCamTeeth)

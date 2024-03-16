@@ -3,6 +3,7 @@
 #include "test_calcs_common.h"
 #include "schedule_calcs.h"
 #include "crankMaths.h"
+#include "crank.h"
 #include "src/decoders/decoders.h"
 
 #define _countof(x) (sizeof(x) / sizeof (x[0]))
@@ -20,7 +21,7 @@ static void test_calc_inj_timeout(const inj_test_parameters &parameters)
 {
     static constexpr uint16_t injAngle = 355;
     char msg[150];
-    uint16_t PWdivTimerPerDegree = timeToAngleDegPerMicroSec(parameters.pw, degreesPerMicro);
+    uint16_t PWdivTimerPerDegree = crank.timeToAngleDegPerMicroSec(parameters.pw);
 
     FuelSchedule schedule(FUEL2_COUNTER, FUEL2_COMPARE, nullInjCallback, nullInjCallback);
 

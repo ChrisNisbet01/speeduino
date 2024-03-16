@@ -9,6 +9,7 @@
 #include "../../auxiliary_pins.h"
 #include "../../utilities.h"
 #include "../../globals.h"
+#include "../../crank.h"
 
 /*****************************************************************
  * Rover MEMS decoder
@@ -313,7 +314,7 @@ int getCrankAngle_RoverMEMS(void)
 
   uint32_t const lastCrankAngleCalc = micros();
   uint32_t const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
-  crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
+  crankAngle += crank.timeToAngleDegPerMicroSec(elapsedTime);
 
   if (crankAngle >= 720)
   {

@@ -393,7 +393,7 @@ int getCrankAngle_SuzukiK6A(void)
     break;
   }
 
-  crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
+  crankAngle += crank.timeToAngleDegPerMicroSec(elapsedTime);
   if (crankAngle >= 720)
   {
     crankAngle -= 720;

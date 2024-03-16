@@ -8,6 +8,7 @@
 #include "../../ignition_control.h"
 #include "../../auxiliary_pins.h"
 #include "../../utilities.h"
+#include "../../crank.h"
 
 /** Ford ST170 - a dedicated decoder for 01-04 Ford Focus ST170/SVT engine.
 Standard 36-1 trigger wheel running at crank speed and 8-3 trigger wheel running at cam speed.
@@ -172,7 +173,7 @@ int getCrankAngle_FordST170(void)
 
   uint32_t const lastCrankAngleCalc = micros();
   uint32_t const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
-  crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
+  crankAngle += crank.timeToAngleDegPerMicroSec(elapsedTime);
 
   if (crankAngle >= 720)
   {

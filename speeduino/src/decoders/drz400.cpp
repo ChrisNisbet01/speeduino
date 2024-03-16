@@ -8,6 +8,7 @@
 #include "../../ignition_control.h"
 #include "../../auxiliary_pins.h"
 #include "../../utilities.h"
+#include "../../crank.h"
 
 void triggerSetup_DRZ400(bool const initialisationComplete)
 {

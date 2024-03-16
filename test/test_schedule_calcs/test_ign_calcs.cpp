@@ -3,6 +3,7 @@
 #include "test_calcs_common.h"
 #include "schedule_calcs.h"
 #include "crankMaths.h"
+#include "crank.h"
 #include "src/decoders/decoders.h"
 #include "src/decoders/triggers.h"
 
@@ -16,7 +17,7 @@ void setEngineSpeed(uint16_t rpm, int16_t max_crank) {
     SetRevolutionTime(UDIV_ROUND_CLOSEST(60UL*1000000UL, rpm, uint32_t));
     CRANK_ANGLE_MAX_IGN = max_crank;
     CRANK_ANGLE_MAX_INJ = max_crank;
-    dwellAngle = timeToAngleDegPerMicroSec(DWELL_TIME_MS*1000UL, degreesPerMicro);
+    dwellAngle = crank.timeToAngleDegPerMicroSec(DWELL_TIME_MS*1000UL);
 }
 
 struct ign_test_parameters
@@ -67,8 +68,8 @@ void test_calc_ign_timeout_360()
     setEngineSpeed(4000, 360);
 
     TEST_ASSERT_EQUAL(15000, crank.revolutionTime);
-    TEST_ASSERT_EQUAL(786, degreesPerMicro);
-    TEST_ASSERT_EQUAL(10667, microsPerDegree);
+    TEST_ASSERT_EQUAL(786, crank.degreesPerMicro);
+    TEST_ASSERT_EQUAL(10667, crank.microsPerDegree);
     TEST_ASSERT_EQUAL(96, dwellAngle);
 
     // Expected test values were generated using floating point calculations (in Excel)

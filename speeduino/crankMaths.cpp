@@ -2,6 +2,7 @@
 #include "crankMaths.h"
 #include "src/decoders/decoders.h"
 #include "bit_macros.h"
+#include "crank.h"
 
 #define SECOND_DERIV_ENABLED 0
 
@@ -13,8 +14,8 @@ distance = v0.t + 1/2.a(0).t^2 + 1/6.a(t).t^3
 #endif
 
 uint32_t angleToTimeMicroSecPerDegree(uint16_t angle) {
-  UQ24X8_t micros = (uint32_t)angle * (uint32_t)microsPerDegree;
-  return RSHIFT_ROUND(micros, microsPerDegree_Shift);
+  UQ24X8_t micros = (uint32_t)angle * (uint32_t)crank.microsPerDegree;
+  return RSHIFT_ROUND(micros, crank.microsPerDegree_Shift);
 }
 
 uint32_t angleToTimeIntervalTooth(uint16_t angle)
@@ -44,14 +45,6 @@ uint32_t angleToTimeIntervalTooth(uint16_t angle)
   return time_us;
 }
 
-uint16_t timeToAngleDegPerMicroSec(uint32_t time_us, uint32_t const degrees_per_us)
-{
-  uint32_t const degFixed = time_us * degrees_per_us;
-
-  return RSHIFT_ROUND(degFixed, degreesPerMicro_Shift);
-}
-
-
 uint16_t timeToAngleIntervalTooth(uint32_t time)
 {
   uint16_t angle;
@@ -75,7 +68,7 @@ uint16_t timeToAngleIntervalTooth(uint32_t time)
     interrupts();
 
     //Safety check. This can occur if the last tooth seen was outside the normal pattern etc
-    angle = timeToAngleDegPerMicroSec(time, degreesPerMicro);
+    angle = crank.timeToAngleDegPerMicroSec(time);
   }
 
   return angle;

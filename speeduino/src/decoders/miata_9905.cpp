@@ -314,7 +314,7 @@ int getCrankAngle_Miata9905(void)
 
     //Estimate the number of degrees travelled since the last tooth}
     uint32_t const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
-    crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
+    crankAngle += crank.timeToAngleDegPerMicroSec(elapsedTime);
 
     if (crankAngle >= 720)
     {
@@ -338,7 +338,7 @@ int getCamAngle_Miata9905(void)
   int16_t curAngle;//lastVVTtime is the time between tooth #1 (10* BTDC) and the single cam tooth.
   //All cam angles in in BTDC, so the actual advance angle is
   //370 - timeToAngleDegPerMicroSec(lastVVTtime) - <the angle of the cam at 0 advance>
-  curAngle = 370 - timeToAngleDegPerMicroSec(lastVVTtime, degreesPerMicro) - configPage10.vvtCL0DutyAng;
+  curAngle = 370 - crank.timeToAngleDegPerMicroSec(lastVVTtime) - configPage10.vvtCL0DutyAng;
   currentStatus.vvt1Angle =
     ANGLE_FILTER((curAngle << 1), configPage4.ANGLEFILTER_VVT, currentStatus.vvt1Angle);
 

@@ -7,6 +7,7 @@
 #include "../../ignition_control.h"
 #include "../../auxiliary_pins.h"
 #include "../../utilities.h"
+#include "../../crank.h"
 
 /** @} */
 
@@ -152,7 +153,7 @@ int getCrankAngle_24X(void)
 
   //Estimate the number of degrees travelled since the last tooth}
   uint32_t const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
-  crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
+  crankAngle += crank.timeToAngleDegPerMicroSec(elapsedTime);
 
   //Sequential check (simply sets whether we're on the first or 2nd revolution of the cycle)
   if (tempRevolutionOne == 1)

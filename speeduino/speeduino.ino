@@ -138,7 +138,7 @@ static void calculate_injector_start_angles(uint16_t (&start_angles)[injChannelC
 
     //How many crank degrees the calculated PW will take at the current speed
     unsigned int PWdivTimerPerDegree =
-      timeToAngleDegPerMicroSec(injector_contexts[injChannel1].PW, degreesPerMicro);
+      crank.timeToAngleDegPerMicroSec(injector_contexts[injChannel1].PW);
     bool const staging_is_required =
       configPage10.stagingEnabled && BIT_CHECK(currentStatus.status4, BIT_STATUS4_STAGING_ACTIVE);
 
@@ -155,7 +155,7 @@ static void calculate_injector_start_angles(uint16_t (&start_angles)[injChannelC
       {
         //Need to redo this for PW2 as it will be dramatically different to PW1 when staging.
         PWdivTimerPerDegree =
-          timeToAngleDegPerMicroSec(injector_contexts[injChannel2].PW, degreesPerMicro);
+          crank.timeToAngleDegPerMicroSec(injector_contexts[injChannel2].PW);
         start_angles[injChannel2] =
           injector_contexts[injChannel2].calculateInjectorStartAngle(PWdivTimerPerDegree, currentStatus.injAngle);
       }
@@ -175,7 +175,7 @@ static void calculate_injector_start_angles(uint16_t (&start_angles)[injChannelC
       {
         //Need to redo this for PW3 as it will be dramatically different to PW1 when staging
         PWdivTimerPerDegree =
-          timeToAngleDegPerMicroSec(injector_contexts[injChannel3].PW, degreesPerMicro);
+          crank.timeToAngleDegPerMicroSec(injector_contexts[injChannel3].PW);
         start_angles[injChannel3] =
           injector_contexts[injChannel1].calculateInjectorStartAngle(PWdivTimerPerDegree, currentStatus.injAngle);
 
@@ -207,7 +207,7 @@ static void calculate_injector_start_angles(uint16_t (&start_angles)[injChannelC
         {
           //Need to redo this for PW4 as it will be dramatically different to PW1 when staging
           PWdivTimerPerDegree =
-            timeToAngleDegPerMicroSec(injector_contexts[injChannel4].PW, degreesPerMicro);
+            crank.timeToAngleDegPerMicroSec(injector_contexts[injChannel4].PW);
           start_angles[injChannel4] =
             injector_contexts[injChannel1].calculateInjectorStartAngle(PWdivTimerPerDegree, currentStatus.injAngle);
           start_angles[injChannel5] =
@@ -221,7 +221,7 @@ static void calculate_injector_start_angles(uint16_t (&start_angles)[injChannelC
       {
         //Need to redo this for PW4 as it will be dramatically different to PW1 when staging
         PWdivTimerPerDegree =
-          timeToAngleDegPerMicroSec(injector_contexts[injChannel4].PW, degreesPerMicro);
+          crank.timeToAngleDegPerMicroSec(injector_contexts[injChannel4].PW);
         start_angles[injChannel4] =
           injector_contexts[injChannel1].calculateInjectorStartAngle(PWdivTimerPerDegree, currentStatus.injAngle);
 #if INJ_CHANNELS >= 6
@@ -254,7 +254,7 @@ static void calculate_injector_start_angles(uint16_t (&start_angles)[injChannelC
         {
           //Need to redo this for PW5 as it will be dramatically different to PW1 when staging
           PWdivTimerPerDegree =
-            timeToAngleDegPerMicroSec(injector_contexts[injChannel5].PW, degreesPerMicro);
+            crank.timeToAngleDegPerMicroSec(injector_contexts[injChannel5].PW);
           start_angles[injChannel5] =
             injector_contexts[injChannel1].calculateInjectorStartAngle(PWdivTimerPerDegree, currentStatus.injAngle);
           start_angles[injChannel6] =
@@ -278,7 +278,7 @@ static void calculate_injector_start_angles(uint16_t (&start_angles)[injChannelC
       {
         //Need to redo this for PW3 as it will be dramatically different to PW1 when staging
         PWdivTimerPerDegree =
-          timeToAngleDegPerMicroSec(injector_contexts[injChannel3].PW, degreesPerMicro);
+          crank.timeToAngleDegPerMicroSec(injector_contexts[injChannel3].PW);
         start_angles[injChannel3] =
           injector_contexts[injChannel1].calculateInjectorStartAngle(PWdivTimerPerDegree, currentStatus.injAngle);
         start_angles[injChannel4] =
@@ -311,7 +311,7 @@ static void calculate_injector_start_angles(uint16_t (&start_angles)[injChannelC
       if (staging_is_required)
       {
         PWdivTimerPerDegree =
-          timeToAngleDegPerMicroSec(injector_contexts[injChannel6].PW, degreesPerMicro);
+          crank.timeToAngleDegPerMicroSec(injector_contexts[injChannel6].PW);
         start_angles[injChannel6] =
           injector_contexts[injChannel6].calculateInjectorStartAngle(PWdivTimerPerDegree, currentStatus.injAngle);
       }
@@ -357,12 +357,12 @@ static void calculate_injector_start_angles(uint16_t (&start_angles)[injChannelC
         {
           //Need to redo this for staging PW as it will be dramatically different to PW1 when staging
           PWdivTimerPerDegree =
-            timeToAngleDegPerMicroSec(injector_contexts[injChannel7].PW, degreesPerMicro);
+            crank.timeToAngleDegPerMicroSec(injector_contexts[injChannel7].PW);
           start_angles[injChannel7] =
             injector_contexts[injChannel7].calculateInjectorStartAngle(PWdivTimerPerDegree, currentStatus.injAngle);
 
           PWdivTimerPerDegree =
-            timeToAngleDegPerMicroSec(injector_contexts[injChannel8].PW, degreesPerMicro);
+            crank.timeToAngleDegPerMicroSec(injector_contexts[injChannel8].PW);
           start_angles[injChannel8] =
             injector_contexts[injChannel8].calculateInjectorStartAngle(PWdivTimerPerDegree, currentStatus.injAngle);
         }
@@ -379,7 +379,7 @@ static void calculate_injector_start_angles(uint16_t (&start_angles)[injChannelC
         {
           //Need to redo this for staging PW as it will be dramatically different to PW1 when staging
           PWdivTimerPerDegree =
-            timeToAngleDegPerMicroSec(injector_contexts[injChannel4].PW, degreesPerMicro);
+            crank.timeToAngleDegPerMicroSec(injector_contexts[injChannel4].PW);
           start_angles[injChannel4] =
             injector_contexts[injChannel1].calculateInjectorStartAngle(PWdivTimerPerDegree, currentStatus.injAngle);
           start_angles[injChannel5] =
@@ -440,7 +440,7 @@ static void calculate_injector_start_angles(uint16_t (&start_angles)[injChannelC
         {
           //Need to redo this for PW5 as it will be dramatically different to PW1 when staging
           PWdivTimerPerDegree =
-            timeToAngleDegPerMicroSec(injector_contexts[injChannel5].PW, degreesPerMicro);
+            crank.timeToAngleDegPerMicroSec(injector_contexts[injChannel5].PW);
           start_angles[injChannel5] =
             injector_contexts[injChannel1].calculateInjectorStartAngle(PWdivTimerPerDegree, currentStatus.injAngle);
           start_angles[injChannel6] =
@@ -774,7 +774,7 @@ static void calculate_ignition(void)
   currentStatus.dwell = correctionsDwell(MS_TIMES_10_TO_US(uncorrected_dwell));
 
   //Convert the dwell time to dwell angle based on the current engine speed
-  int const dwellAngle = timeToAngleDegPerMicroSec(currentStatus.dwell, degreesPerMicro);
+  int const dwellAngle = crank.timeToAngleDegPerMicroSec(currentStatus.dwell);
 
   calculateIgnitionAngles(dwellAngle);
 

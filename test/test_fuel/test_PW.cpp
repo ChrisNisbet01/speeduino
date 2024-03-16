@@ -3,6 +3,7 @@
 #include <unity.h>
 #include "test_PW.h"
 #include "injector_contexts.h"
+#include "crank.h"
 
 #define PW_ALLOWED_ERROR  30
 

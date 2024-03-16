@@ -7,6 +7,7 @@
 #include "../../ignition_control.h"
 #include "../../auxiliary_pins.h"
 #include "../../utilities.h"
+#include "../../crank.h"
 
 /** DSM 420a, For the DSM Eclipse with 16 teeth total on the crank.
 * Tracks the falling side of the signal.
@@ -186,7 +187,7 @@ int getCrankAngle_420a(void)
 
   //Estimate the number of degrees travelled since the last tooth}
   uint32_t const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
-  crankAngle += timeToAngleDegPerMicroSec(elapsedTime, degreesPerMicro);
+  crankAngle += crank.timeToAngleDegPerMicroSec(elapsedTime);
 
   if (crankAngle >= 720)
   {
