@@ -5,6 +5,7 @@
 #include "crankMaths.h"
 #include "maths.h"
 #include "timers.h"
+#include "crank.h"
 
 static inline uint16_t
 calculateInjectorStartAngle(uint16_t pwDegrees, int16_t injChannelDegrees, uint16_t injAngle)
@@ -36,6 +37,7 @@ static inline uint32_t
 _calculateInjectorTimeout(const FuelSchedule &schedule, uint16_t openAngle, uint16_t crankAngle)
 {
   int16_t delta = openAngle - crankAngle;
+
   if (delta < 0)
   {
     if (schedule.Status == RUNNING && delta > -CRANK_ANGLE_MAX_INJ)
@@ -49,7 +51,7 @@ _calculateInjectorTimeout(const FuelSchedule &schedule, uint16_t openAngle, uint
     }
   }
 
-  return angleToTimeMicroSecPerDegree((uint16_t)delta);
+  return crank.angleToTimeMicroSecPerDegree((uint16_t)delta);
 }
 
 static inline int _adjustToInjChannel(int angle, int channelInjDegrees) {
@@ -119,7 +121,7 @@ _calculateIgnitionTimeout(const IgnitionSchedule &schedule, int16_t startAngle, 
     }
   }
 
-  return angleToTimeMicroSecPerDegree(delta);
+  return crank.angleToTimeMicroSecPerDegree(delta);
 }
 
 static inline uint16_t _adjustToIgnChannel(int angle, int channelInjDegrees)
@@ -161,7 +163,7 @@ adjustCrankAngle(IgnitionSchedule &schedule, int endAngle, int crankAngle)
      */
     int const degreesToEndAngle = endAngle - crankAngle;
     uint32_t const microsecsUntilEndAngle =
-      angleToTimeMicroSecPerDegree(ignitionLimits(degreesToEndAngle));
+      crank.angleToTimeMicroSecPerDegree(ignitionLimits(degreesToEndAngle));
     COMPARE_TYPE const endCompare = schedule.counter + uS_TO_TIMER_COMPARE(microsecsUntilEndAngle);
 
     SET_COMPARE(schedule.compare, endCompare);
@@ -170,7 +172,7 @@ adjustCrankAngle(IgnitionSchedule &schedule, int endAngle, int crankAngle)
   {
     int const degreesToEndAngle = endAngle - crankAngle;
     uint32_t const microsecsUntilEndAngle =
-      angleToTimeMicroSecPerDegree(ignitionLimits(degreesToEndAngle));
+      crank.angleToTimeMicroSecPerDegree(ignitionLimits(degreesToEndAngle));
     COMPARE_TYPE const endCompare = schedule.counter + uS_TO_TIMER_COMPARE(microsecsUntilEndAngle);
 
     schedule.endCompare = endCompare;

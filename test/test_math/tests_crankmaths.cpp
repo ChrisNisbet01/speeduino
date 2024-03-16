@@ -4,6 +4,7 @@
 #include "src/decoders/decoders.h"
 #include "src/decoders/triggers.h"
 #include "bit_macros.h"
+#include "crank.h"
 
 struct crankmaths_rev_testdata {
   uint16_t rpm;
@@ -15,7 +16,7 @@ struct crankmaths_rev_testdata {
 void test_crankmaths_angletotime_revolution_execute() {
   crankmaths_rev_testdata *testdata = crankmaths_rev_testdata_current;
   SetRevolutionTime(testdata->revolutionTime);
-  TEST_ASSERT_INT32_WITHIN(1, testdata->expected, angleToTimeMicroSecPerDegree(testdata->angle));
+  TEST_ASSERT_INT32_WITHIN(1, testdata->expected, crank.angleToTimeMicroSecPerDegree(testdata->angle));
 }
 
 struct crankmaths_tooth_testdata {

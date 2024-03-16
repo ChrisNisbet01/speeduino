@@ -13,11 +13,6 @@ int rpmDelta;
 distance = v0.t + 1/2.a(0).t^2 + 1/6.a(t).t^3
 #endif
 
-uint32_t angleToTimeMicroSecPerDegree(uint16_t angle) {
-  UQ24X8_t micros = (uint32_t)angle * (uint32_t)crank.microsPerDegree;
-  return RSHIFT_ROUND(micros, crank.microsPerDegree_Shift);
-}
-
 uint32_t angleToTimeIntervalTooth(uint16_t angle)
 {
   uint32_t time_us;
@@ -39,7 +34,7 @@ uint32_t angleToTimeIntervalTooth(uint16_t angle)
     //Safety check. This can occur if the last tooth seen was outside the normal pattern etc
     interrupts();
 
-    time_us = angleToTimeMicroSecPerDegree(angle);
+    time_us = crank.angleToTimeMicroSecPerDegree(angle);
   }
 
   return time_us;

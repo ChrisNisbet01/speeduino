@@ -531,11 +531,11 @@ static void apply_ignition_control(void)
       //*********
       if (ignition1.endAngle > currentCrankAngle)
       {
-        uSToEnd = angleToTimeMicroSecPerDegree(ignition1.endAngle - currentCrankAngle);
+        uSToEnd = crank.angleToTimeMicroSecPerDegree(ignition1.endAngle - currentCrankAngle);
       }
       else
       {
-        uSToEnd = angleToTimeMicroSecPerDegree(360 + ignition1.endAngle - currentCrankAngle);
+        uSToEnd = crank.angleToTimeMicroSecPerDegree(360 + ignition1.endAngle - currentCrankAngle);
       }
       //*********
       //uSToEnd = ((ignition1.endAngle - crankAngle) * (toothLastToothTime - toothLastMinusOneToothTime)) / triggerToothAngle;

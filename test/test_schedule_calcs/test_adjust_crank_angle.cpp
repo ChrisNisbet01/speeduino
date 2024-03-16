@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <unity.h>
 #include "schedule_calcs.h"
+#include "crank.h"
 
 void test_adjust_crank_angle_pending_below_minrevolutions()
 {
@@ -43,7 +44,8 @@ void test_adjust_crank_angle_pending_above_minrevolutions()
 
     TEST_ASSERT_EQUAL(101, schedule.compare);
     TEST_ASSERT_EQUAL(100, schedule.counter);
-    TEST_ASSERT_EQUAL(schedule.counter+uS_TO_TIMER_COMPARE(angleToTimeMicroSecPerDegree(chargeAngle-newCrankAngle)), schedule.endCompare);
+    TEST_ASSERT_EQUAL(schedule.counter + uS_TO_TIMER_COMPARE(crank.angleToTimeMicroSecPerDegree(chargeAngle-newCrankAngle)),
+                      schedule.endCompare);
     TEST_ASSERT_TRUE(schedule.endScheduleSetByDecoder);
 }
 
@@ -65,7 +67,8 @@ void test_adjust_crank_angle_running()
 
     adjustCrankAngle(schedule, chargeAngle, newCrankAngle);
 
-    TEST_ASSERT_EQUAL(schedule.counter+uS_TO_TIMER_COMPARE(angleToTimeMicroSecPerDegree(chargeAngle-newCrankAngle)), schedule.compare);
+    TEST_ASSERT_EQUAL(schedule.counter + uS_TO_TIMER_COMPARE(crank.angleToTimeMicroSecPerDegree(chargeAngle-newCrankAngle)),
+                      schedule.compare);
     TEST_ASSERT_EQUAL(100, schedule.counter);
     TEST_ASSERT_EQUAL(100, schedule.endCompare);
     TEST_ASSERT_FALSE(schedule.endScheduleSetByDecoder);

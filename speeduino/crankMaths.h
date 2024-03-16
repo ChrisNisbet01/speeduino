@@ -57,23 +57,6 @@ static inline int16_t injectorLimits(int16_t angle)
 */
 #define MIN_RPM ((MICROS_PER_DEG_1_RPM/(UINT16_MAX/16UL))+1UL)
 
-/**
- * @name Converts angular degrees to the time interval that amount of rotation
- * will take at current RPM.
- *
- * Based on angle of [0,720] and min/max RPM, result ranges from
- * 9 (MAX_RPM, 1 deg) to 2926828 (MIN_RPM, 720 deg)
- *
- * @param angle Angle in degrees
- * @return Time interval in uS
- */
-///@{
-/** @brief Converts based on the time one degree of rotation takes
- *
- * Inverse of timeToAngleDegPerMicroSec
-*/
-uint32_t angleToTimeMicroSecPerDegree(uint16_t angle);
-
 /** @brief Converts based on the time interval between the 2 most recently detected decoder teeth
  *
  * Inverse of timeToAngleIntervalTooth

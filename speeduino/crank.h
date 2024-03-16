@@ -1,9 +1,8 @@
 #pragma once
 
-#include "uq.h"
-
 #include <stdint.h>
 
+typedef uint32_t UQ24X8_t;
 typedef uint16_t UQ1X15_t;
 
 class Crank
@@ -14,7 +13,12 @@ public:
   uint32_t revolutionTime;
 
   UQ24X8_t microsPerDegree;
-  static uint8_t const microsPerDegree_Shift = UQ24X8_Shift;
+
+    /** @brief Degrees per uS in UQ1.15 fixed point.
+   *
+   * Ranges from 8 (0.000246) at MIN_RPM to 3542 (0.108) at MAX_RPM
+   */
+  UQ1X15_t degreesPerMicro;
 
   bool setRevolutionTime(uint32_t new_revolution_time);
 
@@ -33,13 +37,24 @@ public:
   */
   uint16_t timeToAngleDegPerMicroSec(uint32_t time_us);
 
-private:
-    /** @brief Degrees per uS in UQ1.15 fixed point.
+  /**
+   * @name Converts angular degrees to the time interval that amount of rotation
+   * will take at current RPM.
    *
-   * Ranges from 8 (0.000246) at MIN_RPM to 3542 (0.108) at MAX_RPM
+   * Based on angle of [0,720] and min/max RPM, result ranges from
+   * 9 (MAX_RPM, 1 deg) to 2926828 (MIN_RPM, 720 deg)
+   *
+   * @param angle Angle in degrees
+   * @return Time interval in uS
    */
-  UQ1X15_t degreesPerMicro;
+  ///@{
+  /** @brief Converts based on the time one degree of rotation takes
+   *
+   * Inverse of timeToAngleDegPerMicroSec
+  */
+  uint32_t angleToTimeMicroSecPerDegree(uint16_t angle);
 
+private:
 };
 
 extern Crank crank;

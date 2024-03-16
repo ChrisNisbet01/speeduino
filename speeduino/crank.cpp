@@ -5,6 +5,10 @@
 static constexpr uint8_t UQ1X15_Shift = 15U;
 static constexpr uint8_t const degreesPerMicro_Shift = UQ1X15_Shift;
 
+constexpr uint8_t UQ24X8_Shift = 8U;
+
+static uint8_t const microsPerDegree_Shift = UQ24X8_Shift;
+
 Crank crank;
 
 bool Crank::setRevolutionTime(uint32_t const new_revolution_time)
@@ -27,4 +31,11 @@ uint16_t Crank::timeToAngleDegPerMicroSec(uint32_t const time_us)
 
   return RSHIFT_ROUND(degFixed, degreesPerMicro_Shift);
 }
+
+uint32_t Crank::angleToTimeMicroSecPerDegree(uint16_t angle)
+{
+  UQ24X8_t micros = (uint32_t)angle * microsPerDegree;
+  return RSHIFT_ROUND(micros, microsPerDegree_Shift);
+}
+
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../globals.h"
-#include "../../uq.h"
 #include "decoder_structs.h"
 
 #include <stdint.h>
