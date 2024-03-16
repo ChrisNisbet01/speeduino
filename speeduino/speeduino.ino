@@ -1516,13 +1516,13 @@ void calculateIgnitionAngles(int dwellAngle)
       calculateIgnitionTrailingRotary(
         dwellAngle, splitDegrees,
         ignition_contexts[ignChannel1].endAngle,
-        &ignition_contexts[ignChannel3].endAngle,
-        &ignition_contexts[ignChannel3].startAngle);
+        ignition_contexts[ignChannel3].endAngle,
+        ignition_contexts[ignChannel3].startAngle);
       calculateIgnitionTrailingRotary(
         dwellAngle, splitDegrees,
         ignition_contexts[ignChannel2].endAngle,
-        &ignition_contexts[ignChannel4].endAngle,
-        &ignition_contexts[ignChannel4].startAngle);
+        ignition_contexts[ignChannel4].endAngle,
+        ignition_contexts[ignChannel4].startAngle);
     }
     else
     {

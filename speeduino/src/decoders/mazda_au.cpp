@@ -154,7 +154,7 @@ uint16_t getRPM_MazdaAU(void)
       uint32_t const tempToothAngle = triggerToothAngle;
       //Note that trigger tooth angle changes between 72 and 108 depending on
       //the last tooth that was seen
-      SetRevolutionTime(36 * (toothLastToothTime - toothLastMinusOneToothTime));
+      crank.setRevolutionTime(36 * (toothLastToothTime - toothLastMinusOneToothTime));
 
       interrupts();
 

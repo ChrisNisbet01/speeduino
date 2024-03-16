@@ -24,13 +24,13 @@ void ignition_context_st::
 calculateIgnitionAngle(
   int const dwellAngle, uint16_t const channelIgnDegrees, int8_t const advance)
 {
-  ::calculateIgnitionAngle(dwellAngle, channelIgnDegrees, advance, &endAngle, &startAngle);
+  ::calculateIgnitionAngle(dwellAngle, channelIgnDegrees, advance, endAngle, startAngle);
 }
 
 void ignition_context_st::
 calculateIgnitionAngle(int const dwellAngle, int8_t const advance)
 {
-  ::calculateIgnitionAngle(dwellAngle, ignDegrees, advance, &endAngle, &startAngle);
+  ::calculateIgnitionAngle(dwellAngle, ignDegrees, advance, endAngle, startAngle);
 }
 
 void ignition_context_st::

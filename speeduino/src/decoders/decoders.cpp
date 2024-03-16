@@ -558,12 +558,6 @@ static inline bool IsCranking(const statuses &status)
   return status.RPM < status.crankRPM && status.startRevolutions == 0U;
 }
 
-__attribute__((noinline))
-bool SetRevolutionTime(uint32_t revTime)
-{
-  return crank.setRevolutionTime(revTime);
-}
-
 bool UpdateRevolutionTimeFromTeeth(bool isCamTeeth)
 {
   noInterrupts();
@@ -575,7 +569,7 @@ bool UpdateRevolutionTimeFromTeeth(bool isCamTeeth)
     && toothOneTime > toothOneMinusOneTime
     //The time in uS that one revolution would take at current speed
     //(The time tooth 1 was last seen, minus the time it was seen prior to that)
-    && SetRevolutionTime((toothOneTime - toothOneMinusOneTime) >> isCamTeeth);
+    && crank.setRevolutionTime((toothOneTime - toothOneMinusOneTime) >> isCamTeeth);
 
   interrupts();
 
@@ -603,11 +597,11 @@ __attribute__((noinline))int crankingGetRPM(byte totalTeeth, bool isCamTeeth)
       uint32_t const temp =
         ((toothLastToothTime - toothLastMinusOneToothTime) * totalTeeth) >> isCamTeeth;
 
-      bool const setNewRevtime = SetRevolutionTime(temp);
+      bool const have_set_new_revolution_time = crank.setRevolutionTime(temp);
 
       interrupts();
 
-      if (setNewRevtime)
+      if (have_set_new_revolution_time)
       {
         return RpmFromRevolutionTimeUs(crank.revolutionTime);
       }

@@ -206,7 +206,7 @@ uint16_t getRPM_Nissan360(void)
       noInterrupts();
 
       //Each tooth covers 2 crank degrees, so multiply by 180 to get a full revolution time.
-      SetRevolutionTime((toothLastToothTime - toothLastMinusOneToothTime) * 180);
+      crank.setRevolutionTime((toothLastToothTime - toothLastMinusOneToothTime) * 180);
 
       interrupts();
     }
@@ -216,7 +216,7 @@ uint16_t getRPM_Nissan360(void)
 
       //The time in uS that one revolution would take at current speed
       //(The time tooth 1 was last seen, minus the time it was seen prior to that)
-      SetRevolutionTime((toothOneTime - toothOneMinusOneTime) >> 1);
+      crank.setRevolutionTime((toothOneTime - toothOneMinusOneTime) >> 1);
 
       interrupts();
     }

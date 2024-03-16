@@ -206,7 +206,8 @@ uint16_t getRPM_Vmax(void)
         uint32_t const tempToothAngle = triggerToothAngle;
         //The time in uS that one revolution would take at current speed
         //(The time tooth 1 was last seen, minus the time it was seen prior to that)
-        SetRevolutionTime(toothOneTime - toothOneMinusOneTime);
+        crank.setRevolutionTime(toothOneTime - toothOneMinusOneTime);
+
         uint32_t const toothTimeDelta = toothLastToothTime - toothLastMinusOneToothTime;
 
         interrupts();

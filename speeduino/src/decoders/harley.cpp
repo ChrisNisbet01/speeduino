@@ -101,7 +101,7 @@ uint16_t getRPM_Harley(void)
         uint32_t const tempToothAngle = triggerToothAngle;
         //The time in uS that one revolution would take at current speed
         //(The time tooth 1 was last seen, minus the time it was seen prior to that)
-        SetRevolutionTime(toothOneTime - toothOneMinusOneTime);
+        crank.setRevolutionTime(toothOneTime - toothOneMinusOneTime);
         //Note that trigger tooth angle changes between 129 and 332 depending on
         //the last tooth that was seen
         uint32_t const toothTimeDelta = toothLastToothTime - toothLastMinusOneToothTime;

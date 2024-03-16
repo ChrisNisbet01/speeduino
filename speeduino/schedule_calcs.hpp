@@ -54,9 +54,14 @@ _calculateInjectorTimeout(const FuelSchedule &schedule, uint16_t openAngle, uint
   return crank.angleToTimeMicroSecPerDegree((uint16_t)delta);
 }
 
-static inline int _adjustToInjChannel(int angle, int channelInjDegrees) {
+static inline int _adjustToInjChannel(int angle, int channelInjDegrees)
+{
   angle = angle - channelInjDegrees;
-  if( angle < 0) { return angle + CRANK_ANGLE_MAX_INJ; }
+  if (angle < 0)
+  {
+    return angle + CRANK_ANGLE_MAX_INJ;
+  }
+
   return angle;
 }
 
@@ -73,19 +78,21 @@ calculateIgnitionAngle(
   const int dwellAngle,
   const uint16_t channelIgnDegrees,
   int8_t advance,
-  int * pEndAngle,
-  int * pStartAngle)
+  int &endAngle,
+  int &startAngle)
 {
-  *pEndAngle = (int16_t)(channelIgnDegrees == 0U ? (uint16_t)CRANK_ANGLE_MAX_IGN : channelIgnDegrees) - (int16_t)advance;
-  if (*pEndAngle > CRANK_ANGLE_MAX_IGN)
+  endAngle =
+    (int16_t)(channelIgnDegrees == 0U ? (uint16_t)CRANK_ANGLE_MAX_IGN : channelIgnDegrees)
+    - advance;
+  if (endAngle > CRANK_ANGLE_MAX_IGN)
   {
-    *pEndAngle -= CRANK_ANGLE_MAX_IGN;
+    endAngle -= CRANK_ANGLE_MAX_IGN;
   }
 
-  *pStartAngle = *pEndAngle - dwellAngle;
-  if (*pStartAngle < 0)
+  startAngle = endAngle - dwellAngle;
+  if (startAngle < 0)
   {
-    *pStartAngle += CRANK_ANGLE_MAX_IGN;
+    startAngle += CRANK_ANGLE_MAX_IGN;
   }
 }
 
@@ -94,13 +101,19 @@ calculateIgnitionTrailingRotary(
   int dwellAngle,
   int rotarySplitDegrees,
   int leadIgnitionAngle,
-  int *pEndAngle,
-  int *pStartAngle)
+  int &endAngle,
+  int &startAngle)
 {
-  *pEndAngle = leadIgnitionAngle + rotarySplitDegrees;
-  *pStartAngle = *pEndAngle - dwellAngle;
-  if(*pStartAngle > CRANK_ANGLE_MAX_IGN) {*pStartAngle -= CRANK_ANGLE_MAX_IGN;}
-  if(*pStartAngle < 0) {*pStartAngle += CRANK_ANGLE_MAX_IGN;}
+  endAngle = leadIgnitionAngle + rotarySplitDegrees;
+  startAngle = endAngle - dwellAngle;
+  if (startAngle > CRANK_ANGLE_MAX_IGN)
+  {
+    startAngle -= CRANK_ANGLE_MAX_IGN;
+  }
+  if (startAngle < 0)
+  {
+    startAngle += CRANK_ANGLE_MAX_IGN;
+  }
 }
 
 static inline uint32_t

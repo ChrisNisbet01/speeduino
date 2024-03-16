@@ -12,11 +12,11 @@ static inline uint32_t __attribute__((always_inline))
 calculateInjectorTimeout(const FuelSchedule &schedule, int channelInjDegrees, int injectorStartAngle, int crankAngle);
 
 static inline void __attribute__((always_inline))
-calculateIgnitionAngle(const int dwellAngle, const uint16_t channelIgnDegrees, int8_t advance, int *pEndAngle, int *pStartAngle);
+calculateIgnitionAngle(const int dwellAngle, const uint16_t channelIgnDegrees, int8_t advance, int &endAngle, int &startAngle);
 
 // Ignition for rotary.
 static inline void __attribute__((always_inline))
-calculateIgnitionTrailingRotary(int dwellAngle, int rotarySplitDegrees, int leadIgnitionAngle, int *pEndAngle, int *pStartAngle);
+calculateIgnitionTrailingRotary(int dwellAngle, int rotarySplitDegrees, int leadIgnitionAngle, int &endAngle, int &startAngle);
 
 static inline uint32_t __attribute__((always_inline))
 calculateIgnitionTimeout(const IgnitionSchedule &schedule, int startAngle, int channelIgnDegrees, int crankAngle);

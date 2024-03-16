@@ -106,21 +106,18 @@ static inline uint16_t clampRpm(uint16_t rpm)
   return (rpm >= MAX_RPM) ? currentStatus.RPM : rpm;
 }
 
-__attribute__((noinline))
-bool SetRevolutionTime(uint32_t revTime);
-
-static inline uint16_t RpmFromRevolutionTimeUs(uint32_t revTime)
+static inline uint16_t RpmFromRevolutionTimeUs(uint32_t revolution_time_us)
 {
   uint16_t rpm;
 
-  if (revTime < UINT16_MAX)
+  if (revolution_time_us < UINT16_MAX)
   {
-    rpm = udiv_32_16_closest(MICROS_PER_MIN, revTime);
+    rpm = udiv_32_16_closest(MICROS_PER_MIN, revolution_time_us);
   }
   else
   {
     //Calc RPM based on last full revolution time (Faster as /)
-    rpm = UDIV_ROUND_CLOSEST(MICROS_PER_MIN, revTime, uint32_t);
+    rpm = UDIV_ROUND_CLOSEST(MICROS_PER_MIN, revolution_time_us, uint32_t);
   }
 
   return clampRpm(rpm);

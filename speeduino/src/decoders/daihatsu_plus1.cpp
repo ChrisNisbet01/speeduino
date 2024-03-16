@@ -165,7 +165,7 @@ uint16_t getRPM_Daihatsu(void)
         uint32_t const tooth_time_delta =
           toothLastToothTime - toothLastMinusOneToothTime;
 
-        SetRevolutionTime(tooth_time_delta * (triggerActualTeeth - 1));
+        crank.SetRevolutionTime(tooth_time_delta * (triggerActualTeeth - 1));
 
         interrupts();
 

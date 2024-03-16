@@ -15,7 +15,7 @@ struct crankmaths_rev_testdata {
 
 void test_crankmaths_angletotime_revolution_execute() {
   crankmaths_rev_testdata *testdata = crankmaths_rev_testdata_current;
-  SetRevolutionTime(testdata->revolutionTime);
+  crank.setRevolutionTime(testdata->revolutionTime);
   TEST_ASSERT_INT32_WITHIN(1, testdata->expected, crank.angleToTimeMicroSecPerDegree(testdata->angle));
 }
 

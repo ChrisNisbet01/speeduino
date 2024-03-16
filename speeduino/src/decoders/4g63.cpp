@@ -432,8 +432,9 @@ uint16_t getRPM_4G63(void)
         interrupts();
 
         uint32_t const toothTime = toothTimeDelta * 36;
+
         tempRPM = (tempToothAngle * (MICROS_PER_MIN / 10U)) / toothTime;
-        SetRevolutionTime((10UL * toothTime) / tempToothAngle);
+        crank.setRevolutionTime((10UL * toothTime) / tempToothAngle);
         MAX_STALL_TIME = 366667UL; // 50RPM
       }
     }
