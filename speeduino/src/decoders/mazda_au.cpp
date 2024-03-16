@@ -7,6 +7,7 @@
 #include "../../ignition_control.h"
 #include "../../auxiliary_pins.h"
 #include "../../utilities.h"
+#include "../../crank.h"
 
 /** @} */
 
@@ -157,7 +158,7 @@ uint16_t getRPM_MazdaAU(void)
 
       interrupts();
 
-      tempRPM = (tempToothAngle * MICROS_PER_MIN) / revolutionTime;
+      tempRPM = (tempToothAngle * MICROS_PER_MIN) / crank.revolutionTime;
     }
     else
     {

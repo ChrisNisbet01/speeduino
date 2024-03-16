@@ -168,7 +168,7 @@ uint16_t getRPM_Daihatsu(void)
 
         interrupts();
 
-        tempRPM = RpmFromRevolutionTimeUs(revolutionTime);
+        tempRPM = RpmFromRevolutionTimeUs(crank.revolutionTime);
       } //is tooth #2
     }
     else //No sync

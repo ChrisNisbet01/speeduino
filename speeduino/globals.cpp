@@ -65,9 +65,6 @@ struct table2D rollingCutTable;
 bool initialisationComplete = false; ///< Tracks whether the setup() function has run completely (true = has run)
 uint8_t softLimitTime = 0; //The time (in 0.1 seconds, based on seclx10) that the soft limiter started
 volatile uint16_t mainLoopCount; //Main loop counter (incremented at each main loop rev., used for maintaining currentStatus.loopsPerSecond)
-//The time in uS that one revolution would take at current speed
-//(The time tooth 1 was last seen, minus the time it was seen prior to that)
-uint32_t revolutionTime;
 //Increments every time counter 5 overflows. Used for the fast version of micros()
 volatile uint32_t timer5_overflow_count = 0;
 volatile uint32_t ms_counter = 0; //A counter that increments once per ms

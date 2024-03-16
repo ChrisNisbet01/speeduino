@@ -44,6 +44,8 @@ A full copy of the license may be found in the projects root directory
 #include "../../bit_macros.h"
 #include "triggers.h"
 #include "../../utilities.h"
+#include "../../crank.h"
+
 #include "null_trigger.h"
 #include "missing_tooth.h"
 #include "default.h"
@@ -562,6 +564,8 @@ static inline bool IsCranking(const statuses &status)
 __attribute__((noinline))
 bool SetRevolutionTime(uint32_t revTime)
 {
+  return crank.setRevolutionTime(revTime);
+#if 0
   bool const revolution_time_changed = revTime != revolutionTime;
 
   if (revolution_time_changed)
@@ -572,6 +576,7 @@ bool SetRevolutionTime(uint32_t revTime)
   }
 
   return revolution_time_changed;
+#endif
 }
 
 bool UpdateRevolutionTimeFromTeeth(bool isCamTeeth)
@@ -619,7 +624,7 @@ __attribute__((noinline))int crankingGetRPM(byte totalTeeth, bool isCamTeeth)
 
       if (setNewRevtime)
       {
-        return RpmFromRevolutionTimeUs(revolutionTime);
+        return RpmFromRevolutionTimeUs(crank.revolutionTime);
       }
     }
   }
@@ -639,7 +644,7 @@ stdGetRPM(bool isCamTeeth)
 {
   if (UpdateRevolutionTimeFromTeeth(isCamTeeth))
   {
-    return RpmFromRevolutionTimeUs(revolutionTime);
+    return RpmFromRevolutionTimeUs(crank.revolutionTime);
   }
 
   return currentStatus.RPM;

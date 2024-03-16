@@ -34,6 +34,7 @@ There are 2 top level functions that call more detailed corrections for Fuel and
 #include "map_dot.h"
 #include "bit_macros.h"
 #include "utilities.h"
+#include "crank.h"
 
 long PID_O2, PID_output, PID_AFRTarget;
 /** Instance of the PID object in case that algorithm is used (Always instantiated).
@@ -1143,11 +1144,11 @@ uint16_t correctionsDwell(uint16_t dwell)
     dwellPerRevolution = dwellPerRevolution * pulsesPerRevolution;
   }
 
-  if (dwellPerRevolution > revolutionTime)
+  if (dwellPerRevolution > crank.revolutionTime)
   {
     //Possibly need some method of reducing spark duration here as well, but this is a start
-    uint16_t adjustedSparkDur = udiv_32_16(sparkDur_uS * revolutionTime, dwellPerRevolution);
-    tempDwell = udiv_32_16(revolutionTime, (uint16_t)pulsesPerRevolution) - adjustedSparkDur;
+    uint16_t adjustedSparkDur = udiv_32_16(sparkDur_uS * crank.revolutionTime, dwellPerRevolution);
+    tempDwell = udiv_32_16(crank.revolutionTime, (uint16_t)pulsesPerRevolution) - adjustedSparkDur;
   }
 
   return tempDwell;

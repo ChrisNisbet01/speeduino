@@ -6,6 +6,7 @@
 #include "null_trigger.h"
 #include "../../utilities.h"
 #include "../../auxiliary_pins.h"
+#include "../../crank.h"
 
 /** @} */
 
@@ -150,7 +151,7 @@ void triggerSec_DualWheel(void)
     //Set filter at 25% of the current cam speed. This needs to be performed
     //here to prevent a situation where the RPM and triggerSecFilterTime get out
     //of alignment and curGap2 never exceeds the filter value
-    triggerSecFilterTime = revolutionTime >> 1;
+    triggerSecFilterTime = crank.revolutionTime >> 1;
   } //Trigger filter
 }
 /** Dual Wheel - Get RPM.

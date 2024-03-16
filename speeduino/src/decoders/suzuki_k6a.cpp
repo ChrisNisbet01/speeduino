@@ -9,6 +9,7 @@
 #include "../../auxiliary_pins.h"
 #include "../../utilities.h"
 #include "../../globals.h"
+#include "../../crank.h"
 
 /** Suzuki K6A 3 cylinder engine
 
@@ -327,7 +328,7 @@ uint16_t getRPM_SuzukiK6A(void)
   //Set the stall time to be twice the current RPM.
   //This is a safe figure as there should be no single revolution where this
   //changes more than this
-  MAX_STALL_TIME = revolutionTime << 1;
+  MAX_STALL_TIME = crank.revolutionTime << 1;
   if (MAX_STALL_TIME < 366667UL) //Check for 50rpm minimum
   {
     MAX_STALL_TIME = 366667UL;

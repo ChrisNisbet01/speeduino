@@ -7,6 +7,7 @@
 #include "../../ignition_control.h"
 #include "../../auxiliary_pins.h"
 #include "../../utilities.h"
+#include "../../crank.h"
 
 /** @} */
 
@@ -220,10 +221,10 @@ uint16_t getRPM_Nissan360(void)
       interrupts();
     }
     //Calc RPM based on last full revolution time (Faster as /)
-    tempRPM = RpmFromRevolutionTimeUs(revolutionTime);
+    tempRPM = RpmFromRevolutionTimeUs(crank.revolutionTime);
     //Set the stall time to be twice the current RPM. This is a safe figure as
     //there should be no single revolution where this changes more than this
-    MAX_STALL_TIME = revolutionTime << 1;
+    MAX_STALL_TIME = crank.revolutionTime << 1;
   }
   else
   {

@@ -50,6 +50,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "ignition_contexts.h"
 #include "fuel_pump.h"
 #include "calculateInjectorStaging.h"
+#include "crank.h"
 
 uint16_t req_fuel_uS = 0; /**< The required fuel variable (As calculated by TunerStudio) in uS */
 uint16_t inj_opentime_uS = 0;
@@ -1612,7 +1613,7 @@ uint16_t calculatePWLimit(void)
 {
   //The pulsewidth limit is determined to be the duty cycle limit (Eg 85%) by
   //the total time it takes to perform 1 revolution
-  uint32_t tempLimit = percentage(configPage2.dutyLim, revolutionTime);
+  uint32_t tempLimit = percentage(configPage2.dutyLim, crank.revolutionTime);
 
   //Handle multiple squirts per rev
   if (configPage2.strokes == FOUR_STROKE)
