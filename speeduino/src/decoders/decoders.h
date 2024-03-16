@@ -1,7 +1,9 @@
 #pragma once
 
 #include "../../globals.h"
+#include "../../uq.h"
 #include "decoder_structs.h"
+
 #include <stdint.h>
 
 #define DECODER_MISSING_TOOTH     0
@@ -106,15 +108,10 @@ extern unsigned int triggerSecFilterTime_duration; // The shortest valid time (i
 extern byte checkSyncToothCount; //How many teeth must've been seen on this revolution before we try to confirm sync (Useful for missing tooth type decoders)
 extern uint32_t lastVVTtime; //The time between the vvt reference pulse and the last crank pulse
 
-typedef uint32_t UQ24X8_t;
-constexpr uint8_t UQ24X8_Shift = 8U;
 
 /** @brief uS per degree at current RPM in UQ24.8 fixed point */
 extern UQ24X8_t microsPerDegree;
 constexpr uint8_t microsPerDegree_Shift = UQ24X8_Shift;
-
-typedef uint16_t UQ1X15_t;
-constexpr uint8_t UQ1X15_Shift = 15U;
 
 /** @brief Degrees per uS in UQ1.15 fixed point.
  *

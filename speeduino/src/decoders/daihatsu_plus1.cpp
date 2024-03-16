@@ -147,16 +147,13 @@ uint16_t getRPM_Daihatsu(void)
   uint16_t tempRPM = 0;
 
   //Disable special cranking processing for now
-  if (0 && (currentStatus.RPM < currentStatus.crankRPM))
+#ifdef INCLUDE_DAIHATSU_SPECIAL_CRANK_PROCESSING
+  if (currentStatus.RPM < currentStatus.crankRPM)
   {
     //Can't use standard cranking RPM function due to extra tooth
     if (currentStatus.hasSync)
     {
-      if (toothCurrentCount == 2)
-      {
-        tempRPM = currentStatus.RPM;
-      }
-      else if (toothCurrentCount == 3)
+      if (toothCurrentCount == 2 || toothCurrentCount == 3)
       {
         tempRPM = currentStatus.RPM;
       }
@@ -164,7 +161,10 @@ uint16_t getRPM_Daihatsu(void)
       {
         noInterrupts();
 
-        SetRevolutionTime((toothLastToothTime - toothLastMinusOneToothTime) * (triggerActualTeeth - 1));
+        uint32_t const tooth_time_delta =
+          toothLastToothTime - toothLastMinusOneToothTime;
+
+        SetRevolutionTime(tooth_time_delta * (triggerActualTeeth - 1));
 
         interrupts();
 
@@ -177,6 +177,7 @@ uint16_t getRPM_Daihatsu(void)
     }
   }
   else
+#endif
   {
     //Tracking over 2 crank revolutions
     tempRPM = stdGetRPM(CAM_SPEED);

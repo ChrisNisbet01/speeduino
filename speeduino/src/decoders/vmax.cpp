@@ -194,9 +194,6 @@ uint16_t getRPM_Vmax(void)
   {
     if (currentStatus.RPM < configPage4.crankRPM * 100)
     {
-      int tempToothAngle;
-      uint32_t toothTime;
-
       if (toothLastToothTime == 0 || toothLastMinusOneToothTime == 0)
       {
         tempRPM = 0;
@@ -205,16 +202,16 @@ uint16_t getRPM_Vmax(void)
       {
         noInterrupts();
 
-        tempToothAngle = triggerToothAngle;
+        uint32_t const tempToothAngle = triggerToothAngle;
         //The time in uS that one revolution would take at current speed
         //(The time tooth 1 was last seen, minus the time it was seen prior to that)
         SetRevolutionTime(toothOneTime - toothOneMinusOneTime);
-        toothTime = (toothLastToothTime - toothLastMinusOneToothTime);
+        uint32_t const toothTimeDelta = toothLastToothTime - toothLastMinusOneToothTime;
 
         interrupts();
 
-        toothTime = toothTime * 36;
-        tempRPM = ((uint32_t)tempToothAngle * (MICROS_PER_MIN / 10U)) / toothTime;
+        uint32_t const toothTime = toothTimeDelta * 36;
+        tempRPM = (tempToothAngle * (MICROS_PER_MIN / 10U)) / toothTime;
       }
     }
     else

@@ -148,11 +148,9 @@ uint16_t getRPM_MazdaAU(void)
     //Because these signals aren't even (Alternating 108 and 72 degrees), this needs a special function
     if (currentStatus.RPM < currentStatus.crankRPM)
     {
-      int tempToothAngle;
-
       noInterrupts();
 
-      tempToothAngle = triggerToothAngle;
+      uint32_t const tempToothAngle = triggerToothAngle;
       //Note that trigger tooth angle changes between 72 and 108 depending on
       //the last tooth that was seen
       SetRevolutionTime(36 * (toothLastToothTime - toothLastMinusOneToothTime));

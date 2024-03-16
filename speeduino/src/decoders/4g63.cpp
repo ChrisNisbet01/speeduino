@@ -415,9 +415,6 @@ uint16_t getRPM_4G63(void)
   {
     if (currentStatus.RPM < currentStatus.crankRPM)
     {
-      int tempToothAngle;
-      uint32_t toothTime;
-
       if (toothLastToothTime == 0 || toothLastMinusOneToothTime == 0)
       {
         tempRPM = 0;
@@ -426,15 +423,15 @@ uint16_t getRPM_4G63(void)
       {
         noInterrupts();
 
-        tempToothAngle = triggerToothAngle;
+        uint32_t const tempToothAngle = triggerToothAngle;
         //Note that trigger tooth angle changes between 70 and 110 depending on
         //the last tooth that was seen (or 70/50 for 6 cylinders)
-        toothTime = (toothLastToothTime - toothLastMinusOneToothTime);
+        uint32_t const toothTimeDelta = toothLastToothTime - toothLastMinusOneToothTime;
 
         interrupts();
 
-        toothTime *= 36;
-        tempRPM = ((uint32_t)tempToothAngle * (MICROS_PER_MIN / 10U)) / toothTime;
+        uint32_t const toothTime = toothTimeDelta * 36;
+        tempRPM = (tempToothAngle * (MICROS_PER_MIN / 10U)) / toothTime;
         SetRevolutionTime((10UL * toothTime) / tempToothAngle);
         MAX_STALL_TIME = 366667UL; // 50RPM
       }

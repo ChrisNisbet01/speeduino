@@ -256,20 +256,17 @@ uint16_t getRPM_Miata9905(void)
     }
     else
     {
-      int tempToothAngle;
-      uint32_t toothTime;
-
       noInterrupts();
 
-      tempToothAngle = triggerToothAngle;
+      uint32_t const tempToothAngle = triggerToothAngle;
       //Note that trigger tooth angle changes between 70 and 110 depending on
       //the last tooth that was seen
-      toothTime = toothLastToothTime - toothLastMinusOneToothTime;
+      uint32_t const toothTimeDelta = toothLastToothTime - toothLastMinusOneToothTime;
 
       interrupts();
 
-      toothTime = toothTime * 36;
-      tempRPM = ((uint32_t)tempToothAngle * (MICROS_PER_MIN / 10U)) / toothTime;
+      uint32_t const toothTime = toothTimeDelta * 36;
+      tempRPM = (tempToothAngle * (MICROS_PER_MIN / 10U)) / toothTime;
       SetRevolutionTime((10UL * toothTime) / tempToothAngle);
       MAX_STALL_TIME = 366667UL; // 50RPM
     }
