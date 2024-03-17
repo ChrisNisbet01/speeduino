@@ -73,6 +73,7 @@ extern volatile uint32_t curTime3;
 extern volatile uint32_t curGap3;
 extern volatile uint32_t lastGap;
 extern volatile uint32_t targetGap;
+extern volatile uint32_t targetGap2;
 
 //The maximum time (in uS) that the system will continue to function before the
 //engine is considered stalled/stopped. This is unique to each decoder,
@@ -86,7 +87,6 @@ extern volatile uint32_t toothLastSecToothTime; //The time (micros()) that the l
 extern volatile uint32_t toothLastThirdToothTime; //The time (micros()) that the last tooth was registered on the second cam input
 extern volatile uint32_t toothLastMinusOneToothTime; //The time (micros()) that the tooth before the last tooth was registered
 extern volatile uint32_t toothLastMinusOneSecToothTime; //The time (micros()) that the tooth before the last tooth was registered on secondary input
-extern volatile uint32_t targetGap2;
 
 extern volatile uint32_t toothOneTime; //The time (micros()) that tooth 1 last triggered
 extern volatile uint32_t toothOneMinusOneTime; //The 2nd to last time (micros()) that tooth 1 last triggered
@@ -97,11 +97,11 @@ extern volatile uint32_t secondaryLastToothTime; //The time (micros()) that the 
 extern volatile uint32_t secondaryLastToothTime1; //The time (micros()) that the last tooth was registered (Cam input)
 
 extern uint16_t triggerActualTeeth;
+//The number of crank degrees that elapse per tooth
+extern volatile uint16_t triggerToothAngle;
 // The shortest time (in uS) that pulses will be accepted
 // (Used for debounce filtering)
 extern volatile uint32_t triggerFilterTime;
-//The number of crank degrees that elapse per tooth
-extern volatile uint16_t triggerToothAngle;
 extern volatile uint32_t triggerSecFilterTime; // The shortest time (in uS) that pulses will be accepted (Used for debounce filtering) for the secondary input
 extern unsigned int triggerSecFilterTime_duration; // The shortest valid time (in uS) pulse DURATION
 extern byte checkSyncToothCount; //How many teeth must've been seen on this revolution before we try to confirm sync (Useful for missing tooth type decoders)

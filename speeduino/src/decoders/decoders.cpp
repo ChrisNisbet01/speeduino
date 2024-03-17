@@ -215,13 +215,14 @@ static inline bool HasAnySync(const statuses &status)
 }
 
 volatile uint32_t curTime;
-volatile uint32_t curGap;
+volatile uint32_t curGap; /* The time (in us) since the previous tooth. */
 volatile uint32_t curTime2;
 volatile uint32_t curGap2;
 volatile uint32_t curTime3;
 volatile uint32_t curGap3;
 volatile uint32_t lastGap;
 volatile uint32_t targetGap;
+volatile uint32_t targetGap2;
 
 //The maximum time (in uS) that the system will continue to function before the
 //engine is considered stalled/stopped. This is unique to each decoder,
@@ -252,17 +253,13 @@ volatile uint32_t toothLastToothRisingTime = 0;
 //The time (micros()) that the last tooth rose on the secondary input (used by
 //special decoders to determine missing teeth polarity)
 volatile uint32_t toothLastSecToothRisingTime = 0;
-volatile uint32_t targetGap2;
-volatile uint32_t targetGap3;
+
 //The time (micros()) that tooth 1 last triggered
 volatile uint32_t toothOneTime = 0;
 //The 2nd to last time (micros()) that tooth 1 last triggered
 volatile uint32_t toothOneMinusOneTime = 0;
 // For sequential operation, this tracks whether the current revolution is 1 or 2 (not 1)
 volatile bool revolutionOne = false;
-// used to identify in the rover pattern which has a non unique primary trigger
-// something unique - has the secondary tooth changed.
-volatile bool revolutionLastOne = false;
 
 //Used for identifying the current secondary (Usually cam) tooth for patterns
 //with multiple secondary teeth

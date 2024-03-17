@@ -172,19 +172,16 @@ uint16_t getRPM_ThirtySixMinus222(void)
 
   if (currentStatus.RPM < currentStatus.crankRPM)
   {
-    if (configPage2.nCylinders == 4
-        && toothCurrentCount != 19
-        && toothCurrentCount != 16
-        && toothCurrentCount != 34
-        && BIT_CHECK(decoderState, BIT_DECODER_TOOTH_ANG_CORRECT))
-    {
-      tempRPM = crankingGetRPM(36, CRANK_SPEED);
-    }
-    else if (configPage2.nCylinders == 6
-             && toothCurrentCount != 9
-             && toothCurrentCount != 12
-             && toothCurrentCount != 33
-             && BIT_CHECK(decoderState, BIT_DECODER_TOOTH_ANG_CORRECT))
+    if ((configPage2.nCylinders == 4
+         && toothCurrentCount != 16
+         && toothCurrentCount != 19
+         && toothCurrentCount != 34
+         && BIT_CHECK(decoderState, BIT_DECODER_TOOTH_ANG_CORRECT))
+        || (configPage2.nCylinders == 6
+            && toothCurrentCount != 9
+            && toothCurrentCount != 12
+            && toothCurrentCount != 33
+            && BIT_CHECK(decoderState, BIT_DECODER_TOOTH_ANG_CORRECT)))
     {
       tempRPM = crankingGetRPM(36, CRANK_SPEED);
     }
@@ -199,6 +196,7 @@ uint16_t getRPM_ThirtySixMinus222(void)
   {
     tempRPM = stdGetRPM(CRANK_SPEED);
   }
+
   return tempRPM;
 }
 
