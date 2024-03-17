@@ -152,8 +152,8 @@ int getCrankAngle_24X(void)
   }
 
   //Estimate the number of degrees travelled since the last tooth}
-  uint32_t const elapsedTime = lastCrankAngleCalc - tempToothLastToothTime;
-  crankAngle += crank.timeToAngleDegPerMicroSec(elapsedTime);
+  uint32_t const elapsedTime_us = lastCrankAngleCalc - tempToothLastToothTime;
+  crankAngle += crank.timeToAngleDegPerMicroSec(elapsedTime_us);
 
   //Sequential check (simply sets whether we're on the first or 2nd revolution of the cycle)
   if (tempRevolutionOne == 1)

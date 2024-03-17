@@ -11,10 +11,9 @@ public:
   //The time in uS that one revolution would take at current speed
   //(The time tooth 1 was last seen, minus the time it was seen prior to that)
   uint32_t revolutionTime;
-
   UQ24X8_t microsPerDegree;
 
-    /** @brief Degrees per uS in UQ1.15 fixed point.
+  /** @brief Degrees per uS in UQ1.15 fixed point.
    *
    * Ranges from 8 (0.000246) at MIN_RPM to 3542 (0.108) at MAX_RPM
    */
