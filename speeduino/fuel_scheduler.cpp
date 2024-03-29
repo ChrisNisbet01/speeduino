@@ -87,7 +87,7 @@ void _setFuelScheduleRunning(FuelSchedule &schedule, uint32_t timeout, uint32_t 
   }
 
 
-  //The following must be enclosed in the noInterupts block to avoid contention
+  //The following must be enclosed in the noInterrupts block to avoid contention
   //caused if the relevant interrupt fires before the state is fully set
   noInterrupts();
 

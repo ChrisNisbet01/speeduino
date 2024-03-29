@@ -4,11 +4,7 @@
 
 #include <stdint.h>
 
-#if defined(CORE_SAMD21)
-typedef PinStatus interrupt_mode_t;
-#else
-typedef byte interrupt_mode_t;
-#endif
+typedef trigger_edge_t interrupt_mode_t;
 
 typedef void (*trigger_setup_fn)(bool initialisationComplete);
 typedef void (*trigger_handler_fn)(void);

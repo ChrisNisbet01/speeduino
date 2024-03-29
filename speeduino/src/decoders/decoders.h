@@ -36,22 +36,15 @@
 #define BIT_DECODER_2ND_DERIV           0 //The use of the 2nd derivative calculation is limited to certain decoders. This is set to either true or false in each decoders setup routine
 #define BIT_DECODER_IS_SEQUENTIAL       1 //Whether or not the decoder supports sequential operation
 #define BIT_DECODER_UNUSED1             2
-#define BIT_DECODER_HAS_SECONDARY       3 //Whether or not the decoder supports fixed cranking timing
-#define BIT_DECODER_HAS_FIXED_CRANKING  4
+#define BIT_DECODER_HAS_SECONDARY       3
+#define BIT_DECODER_HAS_FIXED_CRANKING  4 //Whether or not the decoder supports fixed cranking timing
 #define BIT_DECODER_VALID_TRIGGER       5 //Is set true when the last trigger (Primary or secondary) was valid (ie passed filters)
-#define BIT_DECODER_TOOTH_ANG_CORRECT   6 //Whether or not the triggerToothAngle variable is currently accurate. Some patterns have times when the triggerToothAngle variable cannot be accurately set.
+//Whether or not the triggerToothAngle variable is currently accurate.
+//Some patterns have times when the triggerToothAngle variable cannot be accurately set.
+#define BIT_DECODER_TOOTH_ANG_CORRECT   6
 
 //220 bytes free
 extern volatile uint8_t decoderState;
-
-/*
-extern volatile bool validTrigger; //Is set true when the last trigger (Primary or secondary) was valid (ie passed filters)
-extern volatile bool triggerToothAngleIsCorrect; //Whether or not the triggerToothAngle variable is currently accurate. Some patterns have times when the triggerToothAngle variable cannot be accurately set.
-extern bool secondDerivEnabled; //The use of the 2nd derivative calculation is limited to certain decoders. This is set to either true or false in each decoders setup routine
-extern bool decoderIsSequential; //Whether or not the decoder supports sequential operation
-extern bool decoderHasSecondary; //Whether or not the pattern uses a secondary input
-extern bool decoderHasFixedCrankingTiming;
-*/
 
 //This isn't to to filter out wrong pulses on triggers, but just to smooth out
 //the cam angle reading for better closed loop VVT control.

@@ -5,10 +5,13 @@ A full copy of the license may be found in the projects root directory
 */
 
 /*
-Timers are used for having actions performed repeatedly at a fixed interval (Eg every 100ms)
-They should not be confused with Schedulers, which are for performing an action once at a given point of time in the future
+Timers are used for having actions performed repeatedly at a fixed interval
+(e.g. every 100ms)
+They should not be confused with Schedulers, which are for performing an action
+once at a given point of time in the future
 
-Timers are typically low resolution (Compared to Schedulers), with maximum frequency currently being approximately every 10ms
+Timers are typically low resolution (Compared to Schedulers), with maximum
+frequency currently being approximately every 10ms
 */
 #include "timers.h"
 #include "globals.h"
@@ -378,23 +381,6 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     loopSec = 0; //Reset counter.
     BIT_SET(TIMER_mask, BIT_TIMER_1HZ);
 
-    dwellLimit_uS = (1000 * configPage4.dwellLimit); //Update uS value in case setting has changed
-    currentStatus.crankRPM = ((unsigned int)configPage4.crankRPM * 10);
-
-    //**************************************************************************************************************************************************
-    //This updates the runSecs variable
-    //If the engine is running or cranking, we need to update the run time counter.
-    if (BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN))
-    {
-      //NOTE - There is a potential for a ~1sec gap between engine crank starting
-      //and the runSec number being incremented. This may delay ASE!
-      //Ensure we cap out at 255 and don't overflow. (which would reset ASE and
-      //cause problems with the closed loop fuelling (Which has to wait for the O2 to warmup))
-      if (currentStatus.runSecs <= 254)
-      {
-        currentStatus.runSecs++;
-      }
-    }
     //**************************************************************************************************************************************************
     //This records the number of main loops the system has completed in the last second
     currentStatus.loopsPerSecond = mainLoopCount;
@@ -402,12 +388,6 @@ void oneMSInterval(void) //Most ARM chips can simply call a function
     //**************************************************************************************************************************************************
     //increment secl (secl is simply a counter that increments every second and is used to track whether the system has unexpectedly reset
     currentStatus.secl++;
-    //**************************************************************************************************************************************************
-    //Check the fan output status
-    if (configPage2.fanEnable >= 1)
-    {
-       fanControl(); // Function to turn the cooling fan on/off
-    }
 
     //**************************************************************************************************************************************************
     //Set the flex reading (if enabled). The flexCounter is updated with every pulse from the sensor.

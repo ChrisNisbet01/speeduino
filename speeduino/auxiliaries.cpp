@@ -319,12 +319,16 @@ void initialiseFan(void)
 void fanControl(void)
 {
   bool const fanPermit = configPage2.fanWhenOff || BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN);
-  bool stop_fan = false;
-  bool start_fan = false;
+  enum fan_control_t
+  {
+    fan_do_nothing,
+    fan_turn_off,
+    fan_turn_on,
+  } fan_control = fan_do_nothing;
 
   if (!fanPermit)
   {
-    stop_fan = true;
+    fan_control = fan_turn_off;
     goto done;
   }
 
@@ -332,7 +336,7 @@ void fanControl(void)
       && configPage2.fanWhenCranking == 0)
   {
     //If the user has elected to disable the fan during cranking, make sure it's off
-    stop_fan = true;
+    fan_control = fan_turn_off;
     goto done;
   }
 
@@ -347,14 +351,13 @@ void fanControl(void)
     {
       //Fan needs to be turned on - either by high coolant temp, or from an
       //A/C request (to ensure there is airflow over the A/C radiator).
-      start_fan = true;
+      fan_control = fan_turn_on;
       goto done;
     }
 
     if (currentStatus.coolant < offTemp)
     {
-      //Fan needs to be turned off.
-      stop_fan = true;
+      fan_control = fan_turn_off;
       goto done;
     }
   }
@@ -366,7 +369,8 @@ void fanControl(void)
     if (configPage15.airConTurnsFanOn == 1
         && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON))
     {
-      // Clamp the fan duty to airConPwmFanMinDuty or above, to ensure there is airflow over the A/C radiator
+      // Clamp the fan duty to airConPwmFanMinDuty or above, to ensure there is
+      // airflow over the A/C radiator
       if (tempFanDuty < configPage15.airConPwmFanMinDuty)
       {
         tempFanDuty = configPage15.airConPwmFanMinDuty;
@@ -376,14 +380,15 @@ void fanControl(void)
     currentStatus.fanDuty = tempFanDuty;
     if (currentStatus.fanDuty == 0)
     {
-      stop_fan = true;
+      fan_control = fan_turn_off;
       goto done;
     }
 
 #if defined(PWM_FAN_AVAILABLE)
     if (currentStatus.fanDuty < 200)
     {
-      fan_pwm_value = halfPercentage(currentStatus.fanDuty, fan_pwm_max_count); //update FAN PWM value last
+      //update FAN PWM value last
+      fan_pwm_value = halfPercentage(currentStatus.fanDuty, fan_pwm_max_count);
       BIT_SET(currentStatus.status4, BIT_STATUS4_FAN);
       ENABLE_FAN_TIMER();
     }
@@ -391,13 +396,13 @@ void fanControl(void)
 #endif
     {
       //Make sure fan has 100% duty
-      start_fan = true;
+      fan_control = fan_turn_on;
       goto done;
     }
   }
 
 done:
-  if (stop_fan)
+  if (fan_control == fan_turn_off)
   {
     currentStatus.fanDuty = 0;
     FAN_OFF();
@@ -406,13 +411,17 @@ done:
     DISABLE_FAN_TIMER();
 #endif
   }
-  else if (start_fan) /* Fan should be at 100%. */
+  else if (fan_control == fan_turn_on) /* Fan should be at 100%. */
   {
     FAN_ON();
     BIT_SET(currentStatus.status4, BIT_STATUS4_FAN);
 #if defined(PWM_FAN_AVAILABLE)
     DISABLE_FAN_TIMER();
 #endif
+  }
+  else
+  {
+    /* Do nothing. */
   }
 }
 

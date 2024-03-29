@@ -78,15 +78,9 @@ volatile bool injPrimed = false; ///< Tracks whether or not the injectors primin
 volatile unsigned int toothHistoryIndex = 0; ///< Current index to @ref toothHistory array
 uint32_t currentLoopTime; /**< The time (in uS) that the current mainloop started */
 volatile uint16_t ignitionCount; /**< The count of ignition events that have taken place since the engine started */
-#if defined(CORE_SAMD21)
-  PinStatus primaryTriggerEdge;
-  PinStatus secondaryTriggerEdge;
-  PinStatus tertiaryTriggerEdge;
-#else
-  byte primaryTriggerEdge;
-  byte secondaryTriggerEdge;
-  byte tertiaryTriggerEdge;
-#endif
+trigger_edge_t primaryTriggerEdge;
+trigger_edge_t secondaryTriggerEdge;
+trigger_edge_t tertiaryTriggerEdge;
 int CRANK_ANGLE_MAX_IGN = 360;
 ///< The number of crank degrees that the system tracks over.
 ///Typically 720 divided by the number of squirts per cycle
