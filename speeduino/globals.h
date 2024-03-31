@@ -109,10 +109,6 @@
 //This can only be included after the above section
 #include BOARD_H  //Note that this is not a real file, it is defined in globals.h.
 
-#if !defined(ARRAY_SIZE)
-#define ARRAY_SIZE(A) (sizeof(A)/sizeof(A[0]))
-#endif
-
 #define CRANK_ANGLE_MAX (max(CRANK_ANGLE_MAX_IGN, CRANK_ANGLE_MAX_INJ))
 
 #define MICROS_PER_SEC INT32_C(1000000)
