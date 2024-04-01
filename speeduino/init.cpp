@@ -3695,7 +3695,7 @@ void changeFullToHalfSync(void)
         fuelSchedules[injChannel1].end.pCallback = closeInjector1and4;
         fuelSchedules[injChannel2].start.pCallback = openInjector2and5;
         fuelSchedules[injChannel2].end.pCallback = closeInjector2and5;
-        fuelSchedules[injChannel3].start.pCallback = openInjector3and6
+        fuelSchedules[injChannel3].start.pCallback = openInjector3and6;
         fuelSchedules[injChannel3].end.pCallback = closeInjector3and6;
         injectors.setMaxInjectors(3);
 #endif
@@ -3707,9 +3707,9 @@ void changeFullToHalfSync(void)
         fuelSchedules[injChannel1].end.pCallback = closeInjector1and5;
         fuelSchedules[injChannel2].start.pCallback = openInjector2and6;
         fuelSchedules[injChannel2].end.pCallback = closeInjector2and6;
-        fuelSchedules[injChannel3].start.pCallback = openInjector3and7
+        fuelSchedules[injChannel3].start.pCallback = openInjector3and7;
         fuelSchedules[injChannel3].end.pCallback = closeInjector3and7;
-        fuelSchedules[injChannel4].start.pCallback = openInjector4and8
+        fuelSchedules[injChannel4].start.pCallback = openInjector4and8;
         fuelSchedules[injChannel4].end.pCallback = closeInjector4and8;
         injectors.setMaxInjectors(4);
 #endif
