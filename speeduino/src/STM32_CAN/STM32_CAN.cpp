@@ -1,6 +1,17 @@
 #if HAL_CAN_MODULE_ENABLED
 #include "STM32_CAN.h"
 
+STM32_CAN* _CAN1 = nullptr;
+CAN_HandleTypeDef     hcan1;
+#ifdef CAN2
+STM32_CAN* _CAN2 = nullptr;
+CAN_HandleTypeDef     hcan2;
+#endif
+#ifdef CAN3
+STM32_CAN* _CAN3 = nullptr;
+CAN_HandleTypeDef     hcan3;
+#endif
+
 STM32_CAN::STM32_CAN( CAN_TypeDef* canPort, CAN_PINS pins, RXQUEUE_TABLE rxSize, TXQUEUE_TABLE txSize ) {
 
   if (_canIsActive) { return; }
@@ -336,9 +347,8 @@ bool STM32_CAN::setFilter(uint8_t bank_num, uint32_t filter_id, uint32_t mask, u
 void STM32_CAN::setMBFilter(CAN_BANK bank_num, CAN_FLTEN input)
 {
   CAN_FilterTypeDef sFilterConfig;
-  sFilterConfig.FilterBank = uint8_t(bank_num);
-  if (input = ACCEPT_ALL) { sFilterConfig.FilterActivation = ENABLE; }
-  else { sFilterConfig.FilterActivation = DISABLE; }
+  sFilterConfig.FilterBank = (uint8_t)bank_num;
+  sFilterConfig.FilterActivation = (input == ACCEPT_ALL) ? ENABLE : DISABLE;
 
   HAL_CAN_ConfigFilter(n_pCanHandle, &sFilterConfig);
 }
@@ -346,17 +356,26 @@ void STM32_CAN::setMBFilter(CAN_BANK bank_num, CAN_FLTEN input)
 void STM32_CAN::setMBFilter(CAN_FLTEN input)
 {
   CAN_FilterTypeDef sFilterConfig;
-  uint8_t max_bank_num = 27;
-  uint8_t min_bank_num = 0;
-  #ifdef CAN2
-  if (_canPort == CAN1){ max_bank_num = 13;}
-  else if (_canPort == CAN2){ min_bank_num = 14;}
-  #endif
-  for (uint8_t bank_num = min_bank_num ; bank_num <= max_bank_num ; bank_num++)
+  unsigned int max_bank_num = 27;
+  unsigned int min_bank_num = 0;
+#ifdef CAN2
+  if (_canPort == CAN1)
+  {
+    max_bank_num = 13;
+  }
+  else if (_canPort == CAN2)
+  {
+    min_bank_num = 14;
+  }
+  else
+  {
+    /* Do nothing. */
+  }
+#endif
+  for (unsigned int bank_num = min_bank_num ; bank_num <= max_bank_num ; bank_num++)
   {
     sFilterConfig.FilterBank = bank_num;
-    if (input = ACCEPT_ALL) { sFilterConfig.FilterActivation = ENABLE; }
-    else { sFilterConfig.FilterActivation = DISABLE; }
+    sFilterConfig.FilterActivation = (input == ACCEPT_ALL) ? ENABLE : DISABLE;
     HAL_CAN_ConfigFilter(n_pCanHandle, &sFilterConfig);
   }
 }
@@ -754,14 +773,17 @@ void STM32_CAN::enableSilentLoopBack( bool yes ) {
 
 void STM32_CAN::enableFIFO(bool status)
 {
-  //Nothing to do here. The FIFO is on by default. This is just to work with code made for Teensy FlexCan.
+  //Nothing to do here. The FIFO is on by default. This is just to work with
+  //code made for Teensy FlexCan.
+  UNUSED(status);
 }
 
-/* Interupt functions
+/* Interrupt functions
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 */
 
-// There is 3 TX mailboxes. Each one has own transmit complete callback function, that we use to pull next message from TX ringbuffer to be sent out in TX mailbox.
+// There is 3 TX mailboxes. Each one has own transmit complete callback function,
+// that we use to pull next message from TX ringbuffer to be sent out in TX mailbox.
 extern "C" void HAL_CAN_TxMailbox0CompleteCallback( CAN_HandleTypeDef *CanHandle )
 {
   CAN_message_t txmsg;

@@ -8,6 +8,7 @@ A full copy of the license may be found in the projects root directory
 This is for handling the data broadcasted to various CAN dashes and instrument clusters.
 */
 #include "globals.h"
+#include "bit_macros.h"
 
 #if defined(NATIVE_CAN_AVAILABLE)
 #include "comms_CAN.h"
@@ -168,26 +169,30 @@ void DashMessage(uint16_t DashMessageID)
       outMsg.buf[7] = 0x00;  //not used, but set to zero just in case.
     break;
 
-    case 0x545:       //fuel consumption and CEl light for BMW e46/e39/e38 instrument cluster
-                      //fuel consumption calculation not implemented yet. But this still needs to be sent to get rid of the CEL and EML fault lights on the dash.
-      outMsg.id = DashMessageID;
-      outMsg.len = 5;
-      outMsg.buf[0] = 0x00;  //Check engine light (binary 10), Cruise light (binary 1000), EML (binary 10000).
-      outMsg.buf[1] = 0x00;  //LSB Fuel consumption
-      outMsg.buf[2] = 0x00;  //MSB Fuel Consumption
-      //Turn on overheat light if coolant temp hits 120 degrees celsius.
-      int const overheat_temperature_c = 120;
+    case 0x545:
+    //fuel consumption and CEl light for BMW e46/e39/e38 instrument cluster
+    //fuel consumption calculation not implemented yet.
+    //But this still needs to be sent to get rid of the CEL and EML fault lights on the dash.
+    {
+          outMsg.id = DashMessageID;
+          outMsg.len = 5;
+          outMsg.buf[0] = 0x00;  //Check engine light (binary 10), Cruise light (binary 1000), EML (binary 10000).
+          outMsg.buf[1] = 0x00;  //LSB Fuel consumption
+          outMsg.buf[2] = 0x00;  //MSB Fuel Consumption
+          //Turn on overheat light if coolant temp hits 120 degrees celsius.
+          int const overheat_temperature_c = 120;
 
-      if (currentStatus.coolant -  CALIBRATION_TEMPERATURE_OFFSET >= overheat_temperature_c)
-      {
-        outMsg.buf[3] = 0x08;
-      }
-      else
-      {
-        //Overheat light off at normal engine temps.
-        outMsg.buf[3] = 0x00;
-      }
-      outMsg.buf[4] = 0x7E; //this is oil temp
+          if (currentStatus.coolant -  CALIBRATION_TEMPERATURE_OFFSET >= overheat_temperature_c)
+          {
+            outMsg.buf[3] = 0x08;
+          }
+          else
+          {
+            //Overheat light off at normal engine temps.
+            outMsg.buf[3] = 0x00;
+          }
+          outMsg.buf[4] = 0x7E; //this is oil temp
+    }
     break;
 
     case 0x280:       //RPM for VW instrument cluster
