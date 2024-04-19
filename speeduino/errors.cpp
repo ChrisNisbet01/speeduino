@@ -17,11 +17,14 @@ byte errorCodes[4];
 
 byte setError(byte errorID)
 {
-  if(errorCount < MAX_ERRORS)
+  if (errorCount < MAX_ERRORS)
   {
     errorCodes[errorCount] = errorID;
     errorCount++;
-    if(errorCount == 1) { BIT_SET(currentStatus.spark, BIT_SPARK_ERROR); } //Enable the error indicator
+    if (errorCount == 1) //Enable the error indicator
+    {
+      BIT_SET(currentStatus.spark, BIT_SPARK_ERROR);
+    }
   }
   return errorCount;
 }
@@ -30,23 +33,38 @@ void clearError(byte errorID)
 {
   byte clearedError = 255;
 
-  if (errorID == errorCodes[0]) { clearedError = 0; }
-  else if(errorID == errorCodes[1]) { clearedError = 1; }
-  else if(errorID == errorCodes[2]) { clearedError = 2; }
-  else if(errorID == errorCodes[3]) { clearedError = 3; }
+  if (errorID == errorCodes[0])
+  {
+    clearedError = 0;
+  }
+  else if (errorID == errorCodes[1])
+  {
+    clearedError = 1;
+  }
+  else if (errorID == errorCodes[2])
+  {
+    clearedError = 2;
+  }
+  else if (errorID == errorCodes[3])
+  {
+    clearedError = 3;
+  }
 
-  if(clearedError < MAX_ERRORS)
+  if (clearedError < MAX_ERRORS)
   {
     errorCodes[clearedError] = ERR_NONE;
     //Clear the required error and move any from above it 'down' in the error array
-    for (byte x=clearedError; x < (errorCount-1); x++)
+    for (byte x = clearedError; x < (errorCount - 1); x++)
     {
-      errorCodes[x] = errorCodes[x+1];
-      errorCodes[x+1] = ERR_NONE;
+      errorCodes[x] = errorCodes[x + 1];
+      errorCodes[x + 1] = ERR_NONE;
     }
 
     errorCount--;
-    if(errorCount == 0) { BIT_CLEAR(currentStatus.spark, BIT_SPARK_ERROR); } //Enable the error indicator
+    if (errorCount == 0) //Enable the error indicator
+    {
+      BIT_CLEAR(currentStatus.spark, BIT_SPARK_ERROR);
+    }
   }
 }
 
@@ -55,7 +73,7 @@ byte getNextError(void)
   packedError currentError;
   byte currentErrorNum = 0;
 
-  if(errorCount > 0)
+  if (errorCount > 0)
   {
     //We alternate through the errors once per second
     currentErrorNum = currentStatus.secl % errorCount; //Which error number will be returned. This changes once per second.
@@ -70,5 +88,5 @@ byte getNextError(void)
   }
 
 
-  return *(byte*)&currentError; //Ugly, but this forces the cast of the currentError struct to a byte.
+  return *(byte *)&currentError; //Ugly, but this forces the cast of the currentError struct to a byte.
 }

@@ -617,10 +617,16 @@ byte correctionAFRClosedLoop(void)
   //and always if incorporateAFR is enabled
   if (configPage6.egoType > 0 || configPage2.incorporateAFR)
   {
-    currentStatus.afrTarget = currentStatus.O2; //Catch all in case the below doesn't run. This prevents the Include AFR option from doing crazy things if the AFR target conditions aren't met. This value is changed again below if all conditions are met.
+    //Catch all in case the below doesn't run.
+    //This prevents the Include AFR option from doing crazy things if the AFR
+    //target conditions aren't met.
+    //This value is changed again below if all conditions are met.
+    currentStatus.afrTarget = currentStatus.O2;
 
-    //Determine whether the Y axis of the AFR target table tshould be MAP (Speed-Density) or TPS (Alpha-N)
-    //Note that this should only run after the sensor warmup delay when using Include AFR option, but on Incorporate AFR option it needs to be done at all times
+    //Determine whether the Y axis of the AFR target table tshould be MAP
+    //(Speed-Density) or TPS (Alpha-N)
+    //Note that this should only run after the sensor warmup delay when using
+    //Include AFR option, but on Incorporate AFR option it needs to be done at all times.
     if (currentStatus.runSecs > configPage6.ego_sdelay || configPage2.incorporateAFR)
     {
       //Perform the target lookup
@@ -642,63 +648,70 @@ byte correctionAFRClosedLoop(void)
       AFRnextCycle = ignitionCount + configPage6.egoCount;
 
       //Check all other requirements for closed loop adjustments
-      if (currentStatus.coolant > (int)(configPage6.egoTemp - CALIBRATION_TEMPERATURE_OFFSET)
+      if (currentStatus.coolant > (int)configPage6.egoTemp - CALIBRATION_TEMPERATURE_OFFSET
           && currentStatus.RPM > (uint16_t)configPage6.egoRPM * 100
           && currentStatus.TPS <= configPage6.egoTPSMax
           && currentStatus.O2 < configPage6.ego_max
           && currentStatus.O2 > configPage6.ego_min
           && currentStatus.runSecs > configPage6.ego_sdelay
-          &&  !BIT_CHECK(currentStatus.status1, BIT_STATUS1_DFCO)
+          && !BIT_CHECK(currentStatus.status1, BIT_STATUS1_DFCO)
           && currentStatus.MAP <= configPage9.egoMAPMax * 2L
           && currentStatus.MAP >= configPage9.egoMAPMin * 2L)
       {
-
         //Check which algorithm is used, simple or PID
         if (configPage6.egoAlgorithm == EGO_ALGORITHM_SIMPLE)
         {
           //*************************************************************************************************************************************
           //Simple algorithm
-          if(currentStatus.O2 > currentStatus.afrTarget)
+          if (currentStatus.O2 > currentStatus.afrTarget)
           {
             //Running lean
-            if(currentStatus.egoCorrection < (100 + configPage6.egoLimit) ) //Fuelling adjustment must be at most the egoLimit amount (up or down)
+            //Fuelling adjustment must be at most the egoLimit amount (up or down)
+            if (currentStatus.egoCorrection < 100 + configPage6.egoLimit)
             {
-              AFRValue = (currentStatus.egoCorrection + 1); //Increase the fuelling by 1%
+              //Increase the fuelling by 1%
+              AFRValue++;
             }
-            else { AFRValue = currentStatus.egoCorrection; } //Means we're at the maximum adjustment amount, so simply return that again
           }
-          else if(currentStatus.O2 < currentStatus.afrTarget)
+          else if (currentStatus.O2 < currentStatus.afrTarget)
           {
             //Running Rich
-            if(currentStatus.egoCorrection > (100 - configPage6.egoLimit) ) //Fuelling adjustment must be at most the egoLimit amount (up or down)
+            //Fuelling adjustment must be at most the egoLimit amount (up or down)
+            if (currentStatus.egoCorrection > 100 - configPage6.egoLimit)
             {
-              AFRValue = (currentStatus.egoCorrection - 1); //Decrease the fuelling by 1%
+              //Decrease the fuelling by 1%
+              AFRValue--;
             }
-            else { AFRValue = currentStatus.egoCorrection; } //Means we're at the maximum adjustment amount, so simply return that again
           }
-          else { AFRValue = currentStatus.egoCorrection; } //Means we're already right on target
-
         }
-        else if(configPage6.egoAlgorithm == EGO_ALGORITHM_PID)
+        else if (configPage6.egoAlgorithm == EGO_ALGORITHM_PID)
         {
           //*************************************************************************************************************************************
           //PID algorithm
-          egoPID.SetOutputLimits((long)(-configPage6.egoLimit), (long)(configPage6.egoLimit)); //Set the limits again, just in case the user has changed them since the last loop. Note that these are sent to the PID library as (Eg:) -15 and +15
-          egoPID.SetTunings(configPage6.egoKP, configPage6.egoKI, configPage6.egoKD); //Set the PID values again, just in case the user has changed them since the last loop
+          //Set the limits again, just in case the user has changed them since the last loop.
+          //Note that these are sent to the PID library as (Eg:) -15 and +15
+          egoPID.SetOutputLimits((long)(-configPage6.egoLimit), (long)(configPage6.egoLimit));
+          //Set the PID values again, just in case the user has changed them since the last loop
+          egoPID.SetTunings(configPage6.egoKP, configPage6.egoKI, configPage6.egoKD);
           PID_O2 = (long)(currentStatus.O2);
           PID_AFRTarget = (long)(currentStatus.afrTarget);
 
           bool PID_compute = egoPID.Compute();
-          //currentStatus.egoCorrection = 100 + PID_output;
+
           if (PID_compute)
           {
             AFRValue = 100 + PID_output;
           }
-
         }
-        else { AFRValue = 100; } // Occurs if the egoAlgorithm is set to 0 (No Correction)
+        else // Occurs if the egoAlgorithm is set to 0 (No Correction)
+        {
+          AFRValue = 100;
+        }
       } //Multi variable check
-      else { AFRValue = 100; } // If multivariable check fails disable correction
+      else // If multivariable check fails disable correction
+      {
+        AFRValue = 100;
+      }
     } //Ignition count check
   } //egoType
 
@@ -995,6 +1008,7 @@ int8_t correctionSoftLaunch(int8_t advance)
 
   return ignSoftLaunchValue;
 }
+
 /** Ignition correction for soft flat shift.
  */
 int8_t correctionSoftFlatShift(int8_t advance)
@@ -1003,7 +1017,7 @@ int8_t correctionSoftFlatShift(int8_t advance)
 
   if (configPage6.flatSEnable
       && currentStatus.clutchTrigger
-      && currentStatus.clutchEngagedRPM > ((unsigned int)configPage6.flatSArm * 100)
+      && currentStatus.clutchEngagedRPM > (unsigned int)configPage6.flatSArm * 100
       && currentStatus.RPM > currentStatus.clutchEngagedRPM - (configPage6.flatSSoftWin * 100))
   {
     BIT_SET(currentStatus.spark2, BIT_SPARK2_FLATSS);
@@ -1016,6 +1030,7 @@ int8_t correctionSoftFlatShift(int8_t advance)
 
   return ignSoftFlatValue;
 }
+
 /** Ignition knock (retard) correction.
  */
 int8_t correctionKnock(int8_t advance)
@@ -1153,3 +1168,4 @@ uint16_t correctionsDwell(uint16_t dwell)
 
   return tempDwell;
 }
+

@@ -73,7 +73,6 @@ void initMC33810(void)
   1111 = Set all 1 GD[0...3] outputs to use GPGD mode
   00000000 = All remaining values are unused (For us)
   */
-  //uint16_t cmd = 0b000111110000;
   uint16_t cmd = 0b0001111100000000;
   //IC1
   MC33810_1_CS.off();

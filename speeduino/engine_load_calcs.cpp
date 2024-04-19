@@ -25,3 +25,4 @@ int16_t calculate_engine_load(load_source_t const load_source, struct statuses c
 
   return load;
 }
+

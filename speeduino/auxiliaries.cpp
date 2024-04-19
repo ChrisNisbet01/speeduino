@@ -318,7 +318,8 @@ void initialiseFan(void)
 
 void fanControl(void)
 {
-  bool const fanPermit = configPage2.fanWhenOff || BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN);
+  bool const fanPermit =
+    configPage2.fanWhenOff || BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN);
   enum fan_control_t
   {
     fan_do_nothing,
@@ -364,7 +365,8 @@ void fanControl(void)
   else if (configPage2.fanEnable == 2) // PWM Fan control
   {
     //In normal situation read PWM duty from the table
-    byte tempFanDuty = table2D_getValue(&fanPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET);
+    byte tempFanDuty =
+      table2D_getValue(&fanPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET);
 
     if (configPage15.airConTurnsFanOn == 1
         && BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON))
@@ -578,7 +580,7 @@ void boostByGear(void)
 
       uint16_t const maxBoostDuty = 10000;
 
-      currentStatus.boostDuty = combinedBoost <= maxBoostDuty ? combinedBoost : maxBoostDuty;
+      currentStatus.boostDuty = (combinedBoost <= maxBoostDuty) ? combinedBoost : maxBoostDuty;
     }
     else if (configPage9.boostByGearEnabled == 2)
     {
@@ -726,9 +728,11 @@ void boostControl(void)
       else
       {
         boostPID.Initialize(); //This resets the ITerm value to prevent rubber banding
-        //Boost control needs to have a high duty cycle if control is below threshold (baro or fixed value). This ensures the waste gate is closed as much as possible, this build boost as fast as possible.
+        //Boost control needs to have a high duty cycle if control is below threshold (baro or fixed value).
+        //This ensures the waste gate is closed as much as possible, this build boost as fast as possible.
         currentStatus.boostDuty = configPage15.boostDCWhenDisabled * 100;
-        boost_pwm_target_value = ((uint32_t)(currentStatus.boostDuty) * boost_pwm_max_count) / 10000; //Convert boost duty (Which is a % multiplied by 100) to a pwm count
+        //Convert boost duty (Which is a % multiplied by 100) to a pwm count
+        boost_pwm_target_value = ((uint32_t)(currentStatus.boostDuty) * boost_pwm_max_count) / 10000;
         ENABLE_BOOST_TIMER(); //Turn on the compare unit (ie turn on the interrupt) if boost duty >0
         if (currentStatus.boostDuty == 0) //If boost control does nothing disable PWM completely
         {
@@ -848,7 +852,7 @@ void vvtControl(void)
         // if the cam sensor is faulty and giving wrong cam angles, so if that happens, default to 0 duty.
         // This also prevents using zero or negative current angle values for PID adjustment,
         // because those don't work in integer PID.
-        if (currentStatus.vvt1Angle <=  configPage10.vvtCLMinAng || currentStatus.vvt1Angle > configPage10.vvtCLMaxAng)
+        if (currentStatus.vvt1Angle <= configPage10.vvtCLMinAng || currentStatus.vvt1Angle > configPage10.vvtCLMaxAng)
         {
           currentStatus.vvt1Duty = 0;
           vvt1_pwm_value = halfPercentage(currentStatus.vvt1Duty, vvt_pwm_max_count);
